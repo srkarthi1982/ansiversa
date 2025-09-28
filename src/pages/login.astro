@@ -1,0 +1,82 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { server } from "../actions";
+
+// Ensure this page is rendered on-demand (required for form actions)
+export const prerender = false;
+
+// If the user is already logged in, skip login
+const existing = Astro.cookies.get('session')?.value;
+if (existing) {
+  return Astro.redirect('/'); // or '/dashboard'
+}
+
+// Read the result when the action POST happens
+const loginResult = await Astro.getActionResult(server.auth.login);
+const loginError =
+  loginResult?.error?.message ||
+  (loginResult?.error && 'Login failed. Please try again.');
+---
+
+<Layout>
+  <section class="mx-auto max-w-md px-4 py-16">
+    <h1 class="text-2xl font-bold">Log in</h1>
+    <p class="mt-2 text-slate-600">Welcome back! Enter your credentials to continue.</p>
+
+    {loginError && (
+      <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {loginError}
+      </div>
+    )}
+
+    <form class="mt-6 space-y-4" method="POST" action={server.auth.login}>
+      <div>
+        <label for="username" class="block text-sm font-medium text-slate-700">Username</label>
+        <input
+          id="username"
+          name="username"
+          required
+          class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="you@example.com"
+        />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          required
+          minlength="6"
+          class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="••••••••"
+        />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" name="remember" value="on" class="h-4 w-4 rounded border" />
+          <span>Remember me</span>
+        </label>
+        <a href="/forgot-password" class="text-sm text-indigo-600 hover:underline">Forgot password?</a>
+      </div>
+
+      <button
+        type="submit"
+        class="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500"
+      >
+        Sign in
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-slate-600">
+      Don’t have an account?
+      <a href="/signup" class="font-medium text-indigo-600 hover:underline">Create one</a>
+    </p>
+  </section>
+
+  {loginResult?.data?.ok && Astro.redirect('/')} 
+  <!-- If you prefer redirecting in the action page instead of here, remove this line
+       and do a redirect from /pages after reading the result. -->
+</Layout>

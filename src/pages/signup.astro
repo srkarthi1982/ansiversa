@@ -1,0 +1,83 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { server } from "../actions";
+
+export const prerender = false;
+
+const existing = Astro.cookies.get('session')?.value;
+if (existing) {
+  return Astro.redirect('/'); // already logged in
+}
+
+const result = await Astro.getActionResult(server.auth.register);
+const errorMsg =
+  result?.error?.message ||
+  (result?.error && 'Registration failed. Please check your details.');
+---
+
+<Layout>
+  <section class="mx-auto max-w-md px-4 py-16">
+    <h1 class="text-2xl font-bold">Create your account</h1>
+    <p class="mt-2 text-slate-600">It takes less than a minute.</p>
+
+    {errorMsg && (
+      <div class="mt-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        {errorMsg}
+      </div>
+    )}
+
+    <form class="mt-6 space-y-4" method="POST" action={server.auth.register}>
+      <div>
+        <label for="username" class="block text-sm font-medium text-slate-700">Username</label>
+        <input id="username" name="username" required
+          class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="yourname" />
+      </div>
+
+      <div>
+        <label for="email" class="block text-sm font-medium text-slate-700">Email</label>
+        <input id="email" name="email" type="email" required
+          class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="you@example.com" />
+      </div>
+
+      <div>
+        <label for="password" class="block text-sm font-medium text-slate-700">Password</label>
+        <input id="password" name="password" type="password" minlength="6" required
+          class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="••••••••" />
+      </div>
+
+      <div>
+        <label for="confirm" class="block text-sm font-medium text-slate-700">Confirm password</label>
+        <input id="confirm" name="confirm" type="password" minlength="6" required
+          class="mt-1 w-full rounded-lg border px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+          placeholder="••••••••" />
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" name="remember" value="on" class="h-4 w-4 rounded border" />
+          <span>Remember me</span>
+        </label>
+
+        <label class="inline-flex items-center gap-2 text-sm">
+          <input type="checkbox" name="terms" value="on" class="h-4 w-4 rounded border" required />
+          <span>I agree to the <a href="/terms" class="text-indigo-600 hover:underline">Terms</a></span>
+        </label>
+      </div>
+
+      <button type="submit"
+        class="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500">
+        Create account
+      </button>
+    </form>
+
+    <p class="mt-6 text-center text-sm text-slate-600">
+      Already have an account?
+      <a href="/login" class="font-medium text-indigo-600 hover:underline">Log in</a>
+    </p>
+  </section>
+
+  {result?.data?.ok && Astro.redirect('/')} 
+</Layout>
