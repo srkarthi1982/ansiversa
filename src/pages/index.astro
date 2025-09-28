@@ -74,18 +74,17 @@ import Layout from "../layouts/Layout.astro";
 // auth.actions.ts (excerpt)
 import &#123; defineAction &#125; from 'astro:actions';
 import &#123; z &#125; from 'astro:schema';
-
 export const server = &#123;
-login: defineAction(&#123;
-	accept: 'form',
-	input: z.object(&#123;
-	username: z.string(),
-	password: z.string().min(6),
-	&#125;),
-	handler: async (&#123; username, password &#125;) => &#123;
-	return &#123; ok: true &#125;;
-	&#125;
-&#125;)
+  login: defineAction(&#123;
+    accept: 'form',
+    input: z.object(&#123;
+    username: z.string(),
+    password: z.string().min(6),
+    &#125;),
+    handler: async (&#123; username, password &#125;) => &#123;
+    return &#123; ok: true &#125;;
+    &#125;
+  &#125;)
 &#125;;
 					</code>
 				</pre>
@@ -219,6 +218,14 @@ login: defineAction(&#123;
     </div>
   </section>
 
+  <!-- Add a docs section target -->
+  <section id="docs" class="py-20 border-t">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold tracking-tight">Docs</h2>
+      <p class="mt-2 text-slate-600">Getting started, actions, billing, AI blocks…</p>
+    </div>
+  </section>
+
   <!-- FAQ -->
   <section id="faq" class="py-20 border-t bg-slate-50">
     <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
@@ -241,7 +248,7 @@ login: defineAction(&#123;
   </section>
 
   <!-- CTA -->
-  <section class="py-14">
+  <section id="cta" class="py-14">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="rounded-2xl border bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-500 p-8 text-white">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
