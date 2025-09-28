@@ -1,0 +1,260 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <!-- NAVBAR -->
+  <header x-data="{ open:false }" class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+          <span class="inline-grid h-8 w-8 place-items-center rounded-lg bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-400"></span>
+          <span class="font-semibold tracking-tight">Ansiversa</span>
+        </a>
+        <nav class="hidden md:flex items-center gap-8 text-sm">
+          <a href="#features" class="hover:text-indigo-600">Features</a>
+          <a href="#solutions" class="hover:text-indigo-600">Solutions</a>
+          <a href="#pricing" class="hover:text-indigo-600">Pricing</a>
+          <a href="#docs" class="hover:text-indigo-600">Docs</a>
+        </nav>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="/login" class="text-sm font-medium hover:text-indigo-600">Log in</a>
+          <a href="#cta" class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Get started</a>
+        </div>
+        <button @click="open=!open" class="md:hidden inline-flex items-center rounded-lg border px-3 py-2 text-sm">Menu</button>
+      </div>
+      <div x-show="open" x-collapse class="md:hidden pb-4">
+        <div class="flex flex-col gap-2 text-sm">
+          <a @click="open=false" href="#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
+          <a @click="open=false" href="#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
+          <a @click="open=false" href="#pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
+          <a @click="open=false" href="#docs" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          <div class="mt-2 flex gap-2">
+            <a href="/login" class="flex-1 text-center rounded-lg border px-4 py-2">Log in</a>
+            <a href="#cta" class="flex-1 text-center rounded-lg bg-indigo-600 text-white px-4 py-2">Get started</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <section class="relative overflow-hidden">
+    <div class="absolute inset-0 -z-10 bg-gradient-to-b from-slate-50 to-white"></div>
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <span class="inline-flex items-center gap-2 rounded-full border px-2.5 py-1 text-xs font-medium text-slate-600 bg-white shadow-sm">
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Now with Astro Actions Auth
+          </span>
+          <h1 class="mt-6 text-4xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+            Build faster with <span class="text-transparent bg-clip-text bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-500">versatile</span> apps and AI tooling
+          </h1>
+          <p class="mt-4 text-slate-600 max-w-xl">Ansiversa is a modern platform of ready-made building blocks—auth, billing, and AI—so your team ships in days, not weeks.</p>
+          <div class="mt-8 flex flex-col sm:flex-row gap-3">
+            <a id="cta" href="/signup" class="inline-flex items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-white font-semibold hover:bg-indigo-500">Start for free</a>
+            <a href="#docs" class="inline-flex items-center justify-center rounded-lg border px-6 py-3 font-semibold hover:bg-white">Read the docs</a>
+          </div>
+          <div class="mt-6 flex items-center gap-6 text-xs text-slate-500">
+            <div class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-indigo-600"></span> Astro-native</div>
+            <div class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-sky-500"></span> Tailwind-first</div>
+            <div class="flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-emerald-500"></span> Stripe & AI ready</div>
+          </div>
+        </div>
+        <div>
+          <div class="relative rounded-2xl border bg-white shadow-lg p-2">
+            <div class="aspect-video rounded-xl bg-slate-900 flex items-start justify-start">
+              <div class="w-full">
+                <div class="flex items-center gap-1 px-3 py-2">
+                  <span class="h-2.5 w-2.5 rounded-full bg-red-400"></span>
+                  <span class="h-2.5 w-2.5 rounded-full bg-amber-400"></span>
+                  <span class="h-2.5 w-2.5 rounded-full bg-emerald-400"></span>
+                </div>
+                <pre class="px-4 pb-4 text-xs leading-6 text-slate-200 overflow-auto"><code>
+// auth.actions.ts (excerpt)
+import &#123; defineAction &#125; from 'astro:actions';
+import &#123; z &#125; from 'astro:schema';
+
+export const server = &#123;
+login: defineAction(&#123;
+	accept: 'form',
+	input: z.object(&#123;
+	username: z.string(),
+	password: z.string().min(6),
+	&#125;),
+	handler: async (&#123; username, password &#125;) => &#123;
+	return &#123; ok: true &#125;;
+	&#125;
+&#125;)
+&#125;;
+					</code>
+				</pre>
+              </div>
+            </div>
+          </div>
+          <p class="mt-3 text-center text-xs text-slate-500">Developer-friendly APIs with secure server-only actions.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGOS -->
+  <section aria-label="Trusted by" class="py-8 border-t">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 opacity-70 text-sm">
+        <span>Astro</span><span>Tailwind</span><span>Vercel</span><span>Stripe</span><span>OpenAI</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURES -->
+  <section id="features" class="py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="max-w-2xl">
+        <h2 class="text-3xl font-bold tracking-tight">Everything you need to launch</h2>
+        <p class="mt-2 text-slate-600">Flowbite-like clarity: cards, tables, nav, modals—styled to your brand.</p>
+      </div>
+      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div class="rounded-xl border p-6 hover:shadow-sm transition">
+          <div class="h-10 w-10 grid place-items-center rounded-lg bg-indigo-600/10">🔐</div>
+          <h3 class="mt-4 font-semibold">Authentication</h3>
+          <p class="mt-2 text-sm text-slate-600">Email/password, magic links, roles, and guards via Astro Actions.</p>
+        </div>
+        <div class="rounded-xl border p-6 hover:shadow-sm transition">
+          <div class="h-10 w-10 grid place-items-center rounded-lg bg-sky-600/10">💳</div>
+          <h3 class="mt-4 font-semibold">Billing</h3>
+          <p class="mt-2 text-sm text-slate-600">Stripe subscriptions & one-offs with webhooks and clean UI.</p>
+        </div>
+        <div class="rounded-xl border p-6 hover:shadow-sm transition">
+          <div class="h-10 w-10 grid place-items-center rounded-lg bg-emerald-600/10">🤖</div>
+          <h3 class="mt-4 font-semibold">AI Building Blocks</h3>
+          <p class="mt-2 text-sm text-slate-600">Server-only OpenAI helpers for content, chat, and workflows.</p>
+        </div>
+        <div class="rounded-xl border p-6 hover:shadow-sm transition">
+          <div class="h-10 w-10 grid place-items-center rounded-lg bg-amber-600/10">⚡</div>
+          <h3 class="mt-4 font-semibold">Performance</h3>
+          <p class="mt-2 text-sm text-slate-600">Astro islands, partial hydration, edge-first routing.</p>
+        </div>
+        <div class="rounded-xl border p-6 hover:shadow-sm transition">
+          <div class="h-10 w-10 grid place-items-center rounded-lg bg-fuchsia-600/10">🧩</div>
+          <h3 class="mt-4 font-semibold">UI Primitives</h3>
+          <p class="mt-2 text-sm text-slate-600">Buttons, tabs, alerts, dropdowns—accessible and extensible.</p>
+        </div>
+        <div class="rounded-xl border p-6 hover:shadow-sm transition">
+          <div class="h-10 w-10 grid place-items-center rounded-lg bg-cyan-600/10">🔎</div>
+          <h3 class="mt-4 font-semibold">Docs & Examples</h3>
+          <p class="mt-2 text-sm text-slate-600">Copy-paste snippets and full pages to speed delivery.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SOLUTIONS -->
+  <section id="solutions" class="py-16 bg-slate-50">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-6">
+        <div class="rounded-2xl border bg-white p-6">
+          <h3 class="text-xl font-semibold">Education Suite</h3>
+          <p class="mt-2 text-sm text-slate-600">Launch learning platforms with quizzes, progress, and AI hints.</p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-700">
+            <li>✔ Quiz engine with 1M+ items</li>
+            <li>✔ Adaptive practice & streaks</li>
+            <li>✔ Payment plans for schools</li>
+          </ul>
+          <a href="https://quiz.ansiversa.com" class="mt-4 inline-flex rounded-lg border px-4 py-2 text-sm font-semibold hover:bg-white">Open Quiz Institute</a>
+        </div>
+        <div class="rounded-2xl border bg-white p-6">
+          <h3 class="text-xl font-semibold">Workspace Tools</h3>
+          <p class="mt-2 text-sm text-slate-600">Docs, notes, and automations with role-based access.</p>
+          <ul class="mt-4 space-y-2 text-sm text-slate-700">
+            <li>✔ Markdown docs & comments</li>
+            <li>✔ Tasks & automations</li>
+            <li>✔ SSO for teams</li>
+          </ul>
+          <a href="#" class="mt-4 inline-flex rounded-lg border px-4 py-2 text-sm font-semibold hover:bg-white">Preview</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PRICING -->
+  <section id="pricing" class="py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="text-center max-w-2xl mx-auto">
+        <h2 class="text-3xl font-bold tracking-tight">Simple, transparent pricing</h2>
+        <p class="mt-2 text-slate-600">Start free. Upgrade when you grow.</p>
+      </div>
+      <div class="mt-10 grid gap-6 lg:grid-cols-3">
+        <div class="rounded-2xl border p-6">
+          <p class="text-sm font-semibold">Free</p>
+          <div class="mt-2 flex items-end gap-1"><span class="text-4xl font-black">$0</span><span class="pb-1 text-sm">/mo</span></div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-700">
+            <li>✔ 1 project</li>
+            <li>✔ Community support</li>
+            <li>✔ Basic auth</li>
+          </ul>
+          <a href="/signup" class="mt-6 inline-flex rounded-lg border px-4 py-2 font-semibold hover:bg-white">Start</a>
+        </div>
+        <div class="rounded-2xl border p-6 ring-2 ring-indigo-600">
+          <p class="text-sm font-semibold text-indigo-600">Pro</p>
+          <div class="mt-2 flex items-end gap-1"><span class="text-4xl font-black">$19</span><span class="pb-1 text-sm">/mo</span></div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-700">
+            <li>✔ Unlimited projects</li>
+            <li>✔ Team roles</li>
+            <li>✔ Priority support</li>
+          </ul>
+          <a href="/signup" class="mt-6 inline-flex rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500">Upgrade</a>
+        </div>
+        <div class="rounded-2xl border p-6">
+          <p class="text-sm font-semibold">Enterprise</p>
+          <div class="mt-2 flex items-end gap-1"><span class="text-4xl font-black">Custom</span></div>
+          <ul class="mt-4 space-y-2 text-sm text-slate-700">
+            <li>✔ SSO & SLAs</li>
+            <li>✔ Dedicated support</li>
+            <li>✔ Onboarding & migration</li>
+          </ul>
+          <a href="/contact" class="mt-6 inline-flex rounded-lg border px-4 py-2 font-semibold hover:bg-white">Talk to sales</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq" class="py-20 border-t bg-slate-50">
+    <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+      <h2 class="text-3xl font-bold tracking-tight">FAQ</h2>
+      <div class="mt-6 divide-y rounded-xl border bg-white">
+        <details class="p-6 group" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between"><span class="font-semibold">Do I need Flowbite to use this?</span><span class="transition group-open:rotate-180">⌄</span></summary>
+          <p class="mt-3 text-sm text-slate-600">No—this page is Tailwind-only, styled like Flowbite. You can add Flowbite later if you want ready-made components.</p>
+        </details>
+        <details class="p-6 group">
+          <summary class="flex cursor-pointer list-none items-center justify-between"><span class="font-semibold">Is Astro DB supported?</span><span class="transition group-open:rotate-180">⌄</span></summary>
+          <p class="mt-3 text-sm text-slate-600">Yes. We provide starter schemas and server-only utilities for actions, sessions, and queries.</p>
+        </details>
+        <details class="p-6 group">
+          <summary class="flex cursor-pointer list-none items-center justify-between"><span class="font-semibold">Can I connect Stripe?</span><span class="transition group-open:rotate-180">⌄</span></summary>
+          <p class="mt-3 text-sm text-slate-600">Absolutely. Plans and Checkout examples are included.</p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-500 p-8 text-white">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 class="text-2xl font-bold">Ready to build with Ansiversa?</h3>
+            <p class="mt-1 text-sm text-white/90">Create an account and deploy your first app in minutes.</p>
+          </div>
+          <div class="flex gap-3">
+            <a href="/signup" class="rounded-lg bg-white px-5 py-3 font-semibold text-slate-900 hover:bg-slate-100">Get started</a>
+            <a href="#docs" class="rounded-lg bg-black/10 px-5 py-3 font-semibold text-white hover:bg-black/20">View docs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
