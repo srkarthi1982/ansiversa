@@ -22,9 +22,17 @@ const PasswordResetToken = defineTable({
   },
 });
 
+const Platform = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true, autoIncrement: true }),
+    name: column.text(),
+  },
+});
+
 export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
     PasswordResetToken,  // ← same here
+    Platform
   },
 });

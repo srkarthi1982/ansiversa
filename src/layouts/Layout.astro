@@ -17,7 +17,58 @@ import '../styles/global.css'
 		<link rel="icon" href="/favicon/favicon.ico">
 	</head>
 	<body class="antialiased bg-white text-slate-900">
+		<!-- NAVBAR -->
+  <header x-data="{ open:false }" class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="flex h-16 items-center justify-between">
+        <a href="/" class="flex items-center gap-2">
+          <img src="/logo_full.png" alt="Ansiversa Logo" class="h-48 rounded-lg" />
+        </a>
+        <nav class="hidden md:flex items-center gap-8 text-sm">
+          <a href="#features" class="hover:text-indigo-600">Features</a>
+          <a href="#solutions" class="hover:text-indigo-600">Solutions</a>
+          <a href="#pricing" class="hover:text-indigo-600">Pricing</a>
+          <a href="#docs" class="hover:text-indigo-600">Docs</a>
+        </nav>
+        <div class="hidden md:flex items-center gap-3">
+          <a href="/login" class="text-sm font-medium hover:text-indigo-600">Log in</a>
+          <a href="/platform" class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Get started</a>
+        </div>
+        <button @click="open=!open" class="md:hidden inline-flex items-center rounded-lg border px-3 py-2 text-sm">Menu</button>
+      </div>
+      <div x-show="open" x-collapse class="md:hidden pb-4">
+        <div class="flex flex-col gap-2 text-sm">
+          <a @click="open=false" href="#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
+          <a @click="open=false" href="#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
+          <a @click="open=false" href="#pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
+          <a @click="open=false" href="#docs" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          <div class="mt-2 flex gap-2">
+            <a href="/login" class="flex-1 text-center rounded-lg border px-4 py-2">Log in</a>
+            <a href="#cta" class="flex-1 text-center rounded-lg bg-indigo-600 text-white px-4 py-2">Get started</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
 		<slot />
+
+		<!-- CTA -->
+  <section id="cta" class="py-14">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <div class="rounded-2xl border bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-500 p-8 text-white">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 class="text-2xl font-bold">Ready to build with Ansiversa?</h3>
+            <p class="mt-1 text-sm text-white/90">Create an account and deploy your first app in minutes.</p>
+          </div>
+          <div class="flex gap-3">
+            <a href="/signup" class="rounded-lg bg-white px-5 py-3 font-semibold text-slate-900 hover:bg-slate-100">Get started</a>
+            <a href="#docs" class="rounded-lg bg-black/10 px-5 py-3 font-semibold text-white hover:bg-black/20">View docs</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 	</body>
 </html>
 
