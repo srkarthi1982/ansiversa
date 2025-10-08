@@ -1,1 +1,154 @@
+/* Tailwind v4 entry */
 @import "tailwindcss";
+
+/* -----------------------
+   Design tokens (CSS vars)
+------------------------ */
+:root {
+  --ans-bg: 255 255 255;
+  --ans-fg: 15 23 42;          /* slate-900 */
+  --ans-muted: 100 116 139;    /* slate-500 */
+  --ans-card: 248 250 252;     /* slate-50 */
+  --ans-primary: 99 102 241;   /* indigo-500 */
+  --ans-primary-600: 79 70 229;
+  --ans-accent: 6 182 212;     /* cyan-500 */
+  --ans-ring: 129 140 248;     /* indigo-400 */
+}
+
+.dark {
+  --ans-bg: 2 6 23;            /* slate-950 */
+  --ans-fg: 226 232 240;       /* slate-200 */
+  --ans-muted: 148 163 184;    /* slate-400 */
+  --ans-card: 15 23 42;        /* slate-900 */
+  --ans-primary: 129 140 248;  /* indigo-400 */
+  --ans-primary-600: 99 102 241;
+  --ans-accent: 34 211 238;    /* cyan-400 */
+  --ans-ring: 165 180 252;     /* indigo-300 */
+}
+
+/* Base page */
+html, body {
+  @apply antialiased;
+  background-color: rgb(var(--ans-bg));
+  color: rgb(var(--ans-fg));
+}
+
+/* -----------------------
+   Typography (no variants in @apply)
+------------------------ */
+h1 { @apply scroll-m-20 text-4xl font-bold tracking-tight; }
+h2 { @apply scroll-m-20 text-3xl font-semibold tracking-tight; }
+h3 { @apply scroll-m-20 text-2xl font-semibold tracking-tight; }
+h4 { @apply scroll-m-20 text-xl font-semibold tracking-tight; }
+p  { @apply leading-7; }
+small { @apply text-sm; color: rgb(var(--ans-muted)); }
+code { @apply rounded px-1.5 py-0.5 text-sm; background-color: rgb(241 245 249); color: rgb(30 41 59); } /* slate-100 on slate-800 */
+.dark code { background-color: rgb(30 41 59); color: rgb(241 245 249); }
+
+/* Responsive sizes (use media queries instead of `lg:` in @apply) */
+@media (min-width: 1024px) {
+  h1 { @apply text-5xl; }
+  h2 { @apply text-4xl; }
+}
+
+/* -----------------------
+   Reusable utilities
+------------------------ */
+.shadow-soft { box-shadow: 0 10px 25px -10px rgb(0 0 0 / 0.15); }
+.shadow-glass { box-shadow: inset 0 1px 0 0 rgb(255 255 255 / 0.06), 0 8px 30px rgb(0 0 0 / 0.12); }
+
+/* -----------------------
+   Components (no variants inside @apply)
+------------------------ */
+.btn {
+  @apply inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-medium transition;
+  box-shadow: 0 10px 25px -10px rgb(0 0 0 / 0.15);
+}
+
+.btn-primary {
+  @apply text-white;
+  background-color: rgb(var(--ans-primary));
+}
+.btn-primary:hover { background-color: rgb(var(--ans-primary-600)); }
+.btn-primary:focus { outline: 0; box-shadow: 0 0 0 4px rgba(var(--ans-ring), 0.4); }
+
+.btn-secondary {
+  @apply text-white;
+  background-color: rgb(15 23 42); /* slate-900 */
+}
+.btn-secondary:hover { background-color: rgb(30 41 59); } /* slate-800 */
+.dark .btn-secondary { background-color: rgb(241 245 249); color: rgb(15 23 42); } /* light-on-dark */
+
+.btn-ghost {
+  background: transparent;
+  color: rgb(71 85 105); /* slate-700 */
+}
+.btn-ghost:hover {
+  background-color: rgb(248 250 252); /* slate-50 */
+}
+.dark .btn-ghost { color: rgb(226 232 240); }         /* slate-200 */
+.dark .btn-ghost:hover { background-color: rgb(30 41 59); } /* slate-800 */
+
+.badge {
+  @apply inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium;
+}
+.badge-soft {
+  @apply border-transparent;
+  background-color: rgb(241 245 249); /* slate-100 */
+  color: rgb(71 85 105);              /* slate-700 */
+}
+.dark .badge-soft {
+  background-color: rgb(30 41 59);    /* slate-800 */
+  color: rgb(226 232 240);            /* slate-200 */
+}
+
+.card {
+  @apply rounded-2xl border p-6;
+  border-color: rgb(226 232 240 / 0.6); /* slate-200/60 */
+  background-color: rgb(var(--ans-card));
+  box-shadow: 0 10px 25px -10px rgb(0 0 0 / 0.15);
+}
+.dark .card { border-color: rgb(30 41 59); } /* slate-800 */
+
+.input {
+  @apply block w-full rounded-xl px-3 py-2 text-sm shadow-inner;
+  background-color: #fff;
+  border: 1px solid rgb(203 213 225); /* slate-300 */
+  color: inherit;
+}
+.input:focus {
+  border-color: rgb(99 102 241); /* indigo-500 */
+  box-shadow: 0 0 0 3px rgb(99 102 241 / 0.35);
+  outline: 0;
+}
+.dark .input { background-color: rgb(15 23 42); color: rgb(241 245 249); } /* slate-900, slate-100 */
+
+.label { @apply mb-1 block text-sm font-medium; color: rgb(71 85 105); } /* slate-700 */
+.dark .label { color: rgb(203 213 225); } /* slate-300 */
+
+.switch {
+  @apply relative inline-flex h-6 w-11 items-center rounded-full transition;
+  background-color: rgb(203 213 225); /* slate-300 */
+}
+.switch-dot { @apply inline-block h-5 w-5 transform rounded-full bg-white transition; translate: 4px 0; }
+
+.switch[data-on="true"] { background-color: rgb(79 70 229); } /* indigo-600 */
+.switch[data-on="true"] .switch-dot { translate: 24px 0; }
+
+/* -----------------------
+   Utility: glass (no arbitrary variant)
+------------------------ */
+.glass {
+  background-color: rgba(255, 255, 255, 0.60);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+@supports (backdrop-filter: blur(6px)) {
+  .glass {
+    background-color: rgba(255, 255, 255, 0.40);
+    backdrop-filter: blur(8px);
+  }
+}
+.dark .glass {
+  background-color: rgba(2, 6, 23, 0.50); /* slate-950/50 */
+}
