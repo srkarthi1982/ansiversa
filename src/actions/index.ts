@@ -1,8 +1,10 @@
 // src/actions/index.ts
 import { defineAction, ActionError } from 'astro:actions';
+import type { AstroCookies } from 'astro';
 import { z } from 'astro:schema';
-import { db, User, PasswordResetToken, eq, or } from 'astro:db';
+import { db, User, PasswordResetToken, Session, eq, or } from 'astro:db';
 import { randomUUID, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
+import { deleteSessionByToken, hashSessionToken, SESSION_COOKIE_NAME } from '../utils/session';
 
 // ---------- helpers ----------
 function hashPassword(password: string) {
@@ -42,6 +44,44 @@ async function findUserByEmail(email: string) {
   return rows[0];
 }
 
+const SESSION_TTL_SECONDS = 60 * 60 * 24;
+const SESSION_TTL_REMEMBER_SECONDS = SESSION_TTL_SECONDS * 30;
+
+async function createSession(userId: string, remember: boolean, ctx: { cookies: AstroCookies }) {
+  const previousToken = ctx.cookies.get(SESSION_COOKIE_NAME)?.value;
+  if (previousToken) {
+    await deleteSessionByToken(previousToken);
+  }
+
+  const rawToken = randomUUID();
+  const tokenHash = hashSessionToken(rawToken);
+  const maxAge = remember ? SESSION_TTL_REMEMBER_SECONDS : SESSION_TTL_SECONDS;
+  const expiresAt = new Date(Date.now() + maxAge * 1000);
+
+  await db.insert(Session).values({
+    id: randomUUID(),
+    userId,
+    tokenHash,
+    expiresAt,
+  });
+
+  ctx.cookies.set(SESSION_COOKIE_NAME, rawToken, {
+    httpOnly: true,
+    path: '/',
+    sameSite: 'lax',
+    secure: true,
+    maxAge,
+  });
+}
+
+async function clearSession(ctx: { cookies: AstroCookies }) {
+  const token = ctx.cookies.get(SESSION_COOKIE_NAME)?.value;
+  if (token) {
+    await deleteSessionByToken(token);
+  }
+  ctx.cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
+}
+
 // ---------- actions ----------
 export const server = {
   auth: {
@@ -78,15 +118,7 @@ export const server = {
         const passwordHash = hashPassword(password);
         await db.insert(User).values({ id: userId, username, email, passwordHash });
 
-        // simple session cookie (replace with signed/JWT session if needed)
-        const token = `sess-${randomUUID()}`;
-        ctx.cookies.set('session', token, {
-          httpOnly: true,
-          path: '/',
-          sameSite: 'lax',
-          secure: true,
-          maxAge: remember ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
-        });
+        await createSession(userId, remember, ctx);
 
         return { ok: true, user: { id: userId, username, email } };
       },
@@ -106,14 +138,7 @@ export const server = {
           throw new ActionError({ code: 'UNAUTHORIZED', message: 'Invalid credentials' });
         }
 
-        const token = `sess-${randomUUID()}`;
-        ctx.cookies.set('session', token, {
-          httpOnly: true,
-          path: '/',
-          sameSite: 'lax',
-          secure: true,
-          maxAge: remember ? 60 * 60 * 24 * 30 : 60 * 60 * 24,
-        });
+        await createSession(user.id, remember, ctx);
 
         return { ok: true, user: { id: user.id, username: user.username, email: user.email } };
       },
@@ -208,6 +233,15 @@ export const server = {
         const newHash = hashPassword(newPassword);
         await db.update(User).set({ passwordHash: newHash }).where(eq(User.id, user.id));
         return { ok: true };
+      },
+    }),
+
+    // LOGOUT
+    logout: defineAction({
+      accept: 'form',
+      async handler(_, ctx) {
+        await clearSession(ctx);
+        return ctx.redirect('/');
       },
     }),
   },

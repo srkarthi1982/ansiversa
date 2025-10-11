@@ -1,15 +1,17 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { server } from "../actions";
+import { actions } from 'astro:actions';
+import { getSessionWithUser } from '../utils/session';
 
 export const prerender = false;
 
-const existing = Astro.cookies.get('session')?.value;
-if (existing) {
+const existingSession = await getSessionWithUser(Astro.cookies);
+if (existingSession) {
   return Astro.redirect('/'); // already logged in
 }
 
-const result = await Astro.getActionResult(server.auth.register);
+const registerAction = actions.auth.register;
+const result = await Astro.getActionResult(registerAction);
 const errorMsg =
   result?.error?.message ||
   (result?.error && 'Registration failed. Please check your details.');
@@ -26,7 +28,7 @@ const errorMsg =
       </div>
     )}
 
-    <form class="mt-6 space-y-4" method="POST" action={server.auth.register}>
+    <form class="mt-6 space-y-4" method="POST" action={registerAction}>
       <div>
         <label for="username" class="block text-sm font-medium text-slate-700">Username</label>
         <input id="username" name="username" required

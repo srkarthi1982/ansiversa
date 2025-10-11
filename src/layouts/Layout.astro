@@ -1,5 +1,11 @@
 ---
-import '../styles/global.css'
+import '../styles/global.css';
+import { actions } from 'astro:actions';
+import { getSessionWithUser } from '../utils/session';
+
+const sessionData = await getSessionWithUser(Astro.cookies);
+const isLoggedIn = Boolean(sessionData);
+const logoutAction = actions.auth.logout;
 ---
 <!doctype html>
 <html lang="en">
@@ -31,7 +37,18 @@ import '../styles/global.css'
           <a href="#docs" class="hover:text-indigo-600">Docs</a>
         </nav>
         <div class="hidden md:flex items-center gap-3">
-          <a href="/login" class="text-sm font-medium hover:text-indigo-600">Log in</a>
+          {isLoggedIn ? (
+            <form method="POST" action={logoutAction} class="inline-flex">
+              <button
+                type="submit"
+                class="text-sm font-medium hover:text-indigo-600"
+              >
+                Log out
+              </button>
+            </form>
+          ) : (
+            <a href="/login" class="text-sm font-medium hover:text-indigo-600">Log in</a>
+          )}
           <a href="/platform" class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Get started</a>
         </div>
         <button @click="open=!open" class="md:hidden inline-flex items-center rounded-lg border px-3 py-2 text-sm">Menu</button>
@@ -43,7 +60,18 @@ import '../styles/global.css'
           <a @click="open=false" href="#pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
           <a @click="open=false" href="#docs" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
           <div class="mt-2 flex gap-2">
-            <a href="/login" class="flex-1 text-center rounded-lg border px-4 py-2">Log in</a>
+            {isLoggedIn ? (
+              <form method="POST" action={logoutAction} class="flex-1">
+                <button
+                  type="submit"
+                  class="w-full text-center rounded-lg border px-4 py-2 hover:bg-slate-100"
+                >
+                  Log out
+                </button>
+              </form>
+            ) : (
+              <a href="/login" class="flex-1 text-center rounded-lg border px-4 py-2">Log in</a>
+            )}
             <a href="/platform" class="flex-1 text-center rounded-lg bg-indigo-600 text-white px-4 py-2">Get started</a>
           </div>
         </div>

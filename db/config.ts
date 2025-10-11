@@ -22,6 +22,16 @@ const PasswordResetToken = defineTable({
   },
 });
 
+const Session = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    userId: column.text(),
+    tokenHash: column.text({ unique: true }),
+    expiresAt: column.date(),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
 const Platform = defineTable({
   columns: {
     id: column.number({ primaryKey: true, autoIncrement: true }),
@@ -33,6 +43,7 @@ export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
     PasswordResetToken,  // ← same here
+    Session,
     Platform
   },
 });
