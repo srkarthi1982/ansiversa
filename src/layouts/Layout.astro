@@ -31,10 +31,11 @@ const logoutAction = actions.auth.logout;
           <img src="/logo_full.png" alt="Ansiversa Logo" class="h-48 rounded-lg" />
         </a>
         <nav class="hidden md:flex items-center gap-8 text-sm">
-          <a href="#features" class="hover:text-indigo-600">Features</a>
-          <a href="#solutions" class="hover:text-indigo-600">Solutions</a>
-          <a href="#pricing" class="hover:text-indigo-600">Pricing</a>
-          <a href="#docs" class="hover:text-indigo-600">Docs</a>
+          <a href="/#features" class="hover:text-indigo-600">Features</a>
+          <a href="/#solutions" class="hover:text-indigo-600">Solutions</a>
+          <a href="/pricing" class="hover:text-indigo-600">Pricing</a>
+          <a href="/documentation" class="hover:text-indigo-600">Docs</a>
+          <a href="/faqs" class="hover:text-indigo-600">FAQs</a>
           {isLoggedIn && <a href="/change-password" class="hover:text-indigo-600">Change password</a>}
         </nav>
         <div class="hidden md:flex items-center gap-3">
@@ -56,10 +57,11 @@ const logoutAction = actions.auth.logout;
       </div>
       <div x-show="open" x-collapse class="md:hidden pb-4">
         <div class="flex flex-col gap-2 text-sm">
-          <a @click="open=false" href="#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
-          <a @click="open=false" href="#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
-          <a @click="open=false" href="#pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
-          <a @click="open=false" href="#docs" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          <a @click="open=false" href="/#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
+          <a @click="open=false" href="/#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
+          <a @click="open=false" href="/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
+          <a @click="open=false" href="/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          <a @click="open=false" href="/faqs" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQs</a>
           {isLoggedIn && (
             <a
               @click="open=false"
@@ -101,7 +103,7 @@ const logoutAction = actions.auth.logout;
           </div>
           <div class="flex gap-3">
             <a href="/signup" class="rounded-lg bg-white px-5 py-3 font-semibold text-slate-900 hover:bg-slate-100">Get started</a>
-            <a href="#docs" class="rounded-lg bg-black/10 px-5 py-3 font-semibold text-white hover:bg-black/20">View docs</a>
+            <a href="/documentation" class="rounded-lg bg-black/10 px-5 py-3 font-semibold text-white hover:bg-black/20">View docs</a>
           </div>
         </div>
       </div>

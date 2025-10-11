@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="bg-slate-950 py-16 text-white">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">FAQ</p>
+      <h1 class="mt-4 text-4xl font-black tracking-tight">Answers for builders and stakeholders</h1>
+      <p class="mt-4 text-base text-white/70">
+        Have questions about curated Ansiversa apps, integrations, or support? Browse the most common topics our teams discuss during onboarding.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-white py-20">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div class="mt-10 divide-y rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <details class="group p-6" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">Can I use Ansiversa without Flowbite or heavy UI kits?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Yes. The entire system is built with Tailwind CSS + Alpine.js, aligned with our global tokens. You can adopt any component selectively.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">Does it integrate with Astro DB and serverless auth?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Absolutely. We ship ready-to-use schemas, server actions, and helper utilities so your sessions, tokens, and verification flows are secure.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">How opinionated is the Stripe setup?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Stripe integration is modular. Swap plans or add usage-based billing with minimal tweaks while keeping webhook security intact.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">What support do I get on Pro versus Enterprise?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Pro includes priority async support and roadmap input. Enterprise customers get a dedicated engineer, migration help, and compliance reviews.
+          </p>
+        </details>
+      </div>
+      <p class="mt-8 text-center text-sm text-slate-500">
+        Need something else? Email us at <a class="font-medium text-indigo-600 hover:text-indigo-500" href="mailto:hello@ansiversa.com">hello@ansiversa.com</a>.
+      </p>
+    </div>
+  </section>
+</Layout>
