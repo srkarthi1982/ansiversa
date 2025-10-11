@@ -35,6 +35,7 @@ const logoutAction = actions.auth.logout;
           <a href="#solutions" class="hover:text-indigo-600">Solutions</a>
           <a href="#pricing" class="hover:text-indigo-600">Pricing</a>
           <a href="#docs" class="hover:text-indigo-600">Docs</a>
+          {isLoggedIn && <a href="/change-password" class="hover:text-indigo-600">Change password</a>}
         </nav>
         <div class="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
@@ -59,6 +60,15 @@ const logoutAction = actions.auth.logout;
           <a @click="open=false" href="#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
           <a @click="open=false" href="#pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
           <a @click="open=false" href="#docs" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          {isLoggedIn && (
+            <a
+              @click="open=false"
+              href="/change-password"
+              class="px-3 py-2 rounded-lg hover:bg-slate-100"
+            >
+              Change password
+            </a>
+          )}
           <div class="mt-2 flex gap-2">
             {isLoggedIn ? (
               <form method="POST" action={logoutAction} class="flex-1">
