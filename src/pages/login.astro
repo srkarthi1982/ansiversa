@@ -4,6 +4,7 @@ import { actions } from 'astro:actions';
 import { getSessionWithUser } from '../utils/session';
 import Textbox from "../components/Textbox.astro";
 import Password from "../components/Password.astro";
+import Button from "../components/Button.astro";
 
 // Ensure this page is rendered on-demand (required for form actions)
 export const prerender = false;
@@ -47,7 +48,7 @@ const loginError =
         name="password"
         label="Password"
         placeholder="••••••••"
-        minlength="6"
+        minlength={6}
         required
         autocomplete="current-password"
       />
@@ -60,12 +61,9 @@ const loginError =
         <a href="/forgot-password" class="text-sm text-indigo-600 hover:underline">Forgot password?</a>
       </div>
 
-      <button
-        type="submit"
-        class="w-full rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white hover:bg-indigo-500"
-      >
+      <Button type="submit" block>
         Sign in
-      </button>
+      </Button>
     </form>
 
     <p class="mt-6 text-center text-sm text-slate-600">

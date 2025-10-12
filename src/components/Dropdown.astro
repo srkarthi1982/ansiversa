@@ -1,0 +1,86 @@
+---
+type Props = {
+  id?: string;
+  align?: 'left' | 'right' | 'center' | 'stretch';
+  wrapperClass?: string;
+  triggerClass?: string;
+  panelClass?: string;
+  panelWidthClass?: string;
+  triggerAriaLabel?: string;
+};
+
+const {
+  id,
+  align = 'right',
+  wrapperClass = '',
+  triggerClass = '',
+  panelClass = '',
+  panelWidthClass,
+  triggerAriaLabel,
+  ...rest
+} = Astro.props as Props & Record<string, unknown>;
+
+const dropdownId = id ?? `dropdown-${Math.random().toString(36).slice(2)}`;
+const dropdownMenuId = `${dropdownId}-menu`;
+
+let positionClass = 'right-0';
+if (align === 'left') {
+  positionClass = 'left-0';
+} else if (align === 'center') {
+  positionClass = 'left-1/2 -translate-x-1/2';
+} else if (align === 'stretch') {
+  positionClass = 'left-0 right-0';
+}
+
+const resolvedWidthClass =
+  panelWidthClass ??
+  (align === 'stretch' ? 'w-full' : 'w-44');
+
+const wrapperClassName = ['relative', wrapperClass].filter(Boolean).join(' ');
+const triggerClassName = [
+  'inline-flex items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2',
+  triggerClass,
+]
+  .filter(Boolean)
+  .join(' ');
+const panelClassName = [
+  'absolute z-10 mt-2 rounded-lg border border-slate-200 bg-white py-2 text-sm shadow-lg',
+  positionClass,
+  resolvedWidthClass,
+  panelClass,
+]
+  .filter(Boolean)
+  .join(' ');
+---
+<div
+  x-data="{ open: false }"
+  x-on:keydown.escape.window="open = false"
+  x-on:dropdown-close.window="open = false"
+  x-on:dropdown-close="open = false"
+  class={wrapperClassName}
+  {...rest}
+>
+  <button
+    type="button"
+    class={triggerClassName}
+    x-on:click="open = !open"
+    :aria-expanded="open"
+    aria-haspopup="menu"
+    aria-controls={dropdownMenuId}
+    aria-label={triggerAriaLabel}
+  >
+    <slot name="trigger" />
+  </button>
+  <div
+    x-cloak
+    x-show="open"
+    x-transition
+    x-on:click.outside="open = false"
+    id={dropdownMenuId}
+    role="menu"
+    aria-orientation="vertical"
+    class={panelClassName}
+  >
+    <slot />
+  </div>
+</div>

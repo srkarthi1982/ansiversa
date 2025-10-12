@@ -1,10 +1,13 @@
 ---
 import '../styles/global.css';
 import { actions } from 'astro:actions';
+import Dropdown from '../components/Dropdown.astro';
+import Button from '../components/Button.astro';
 import { getSessionWithUser } from '../utils/session';
 
 const sessionData = await getSessionWithUser(Astro.cookies);
 const isLoggedIn = Boolean(sessionData);
+const userInitial = sessionData?.user?.username?.charAt(0)?.toUpperCase() ?? 'U';
 const logoutAction = actions.auth.logout;
 ---
 <!doctype html>
@@ -24,7 +27,11 @@ const logoutAction = actions.auth.logout;
 	</head>
 	<body class="antialiased bg-white text-slate-900">
 		<!-- NAVBAR -->
-  <header x-data="{ open:false }" class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur">
+  <header
+    x-data="{ open:false }"
+    x-on:close-nav.window="open=false"
+    class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur"
+  >
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <a href="/" class="flex items-center gap-2">
@@ -36,55 +43,121 @@ const logoutAction = actions.auth.logout;
           <a href="/pricing" class="hover:text-indigo-600">Pricing</a>
           <a href="/documentation" class="hover:text-indigo-600">Docs</a>
           <a href="/faqs" class="hover:text-indigo-600">FAQs</a>
-          {isLoggedIn && <a href="/change-password" class="hover:text-indigo-600">Change password</a>}
         </nav>
         <div class="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
-            <form method="POST" action={logoutAction} class="inline-flex">
-              <button
-                type="submit"
-                class="text-sm font-medium hover:text-indigo-600"
-              >
-                Log out
-              </button>
-            </form>
-          ) : (
-            <a href="/login" class="text-sm font-medium hover:text-indigo-600">Log in</a>
-          )}
-          <a href="/platform" class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Get started</a>
-        </div>
-        <button @click="open=!open" class="md:hidden inline-flex items-center rounded-lg border px-3 py-2 text-sm">Menu</button>
-      </div>
-      <div x-show="open" x-collapse class="md:hidden pb-4">
-        <div class="flex flex-col gap-2 text-sm">
-          <a @click="open=false" href="/#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
-          <a @click="open=false" href="/#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
-          <a @click="open=false" href="/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
-          <a @click="open=false" href="/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
-          <a @click="open=false" href="/faqs" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQs</a>
-          {isLoggedIn && (
-            <a
-              @click="open=false"
-              href="/change-password"
-              class="px-3 py-2 rounded-lg hover:bg-slate-100"
+            <Dropdown
+              align="right"
+              triggerClass="flex h-10 w-10 items-center justify-center rounded-full border border-indigo-100 bg-indigo-50 text-sm font-semibold text-indigo-600 hover:bg-indigo-100"
+              triggerAriaLabel="User menu"
             >
-              Change password
-            </a>
-          )}
-          <div class="mt-2 flex gap-2">
-            {isLoggedIn ? (
-              <form method="POST" action={logoutAction} class="flex-1">
+              <span slot="trigger">{userInitial}</span>
+              <a
+                href="/change-password"
+                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                x-on:click="$dispatch('dropdown-close')"
+              >
+                Change password
+              </a>
+              <form method="POST" action={logoutAction}>
                 <button
                   type="submit"
-                  class="w-full text-center rounded-lg border px-4 py-2 hover:bg-slate-100"
+                  class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100"
+                  x-on:click="$dispatch('dropdown-close')"
                 >
                   Log out
                 </button>
               </form>
+            </Dropdown>
+          ) : (
+            <a
+              href="/login"
+              class="inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+            >
+              Log in
+            </a>
+          )}
+        </div>
+        <button
+          x-on:click="
+            open = !open;
+            if (!open) { $dispatch('dropdown-close'); }
+          "
+          class="md:hidden inline-flex items-center justify-center rounded-lg border p-2"
+          aria-label="Toggle navigation menu"
+        >
+          <svg
+            class="h-5 w-5"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+      <div x-show="open" x-transition.duration.200ms x-cloak class="md:hidden pb-4">
+        <div class="flex flex-col gap-2 text-sm">
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/faqs" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQs</a>
+          <div class="mt-4">
+            {isLoggedIn ? (
+              <Dropdown
+                align="stretch"
+                triggerClass="flex w-full items-center justify-between rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+                panelClass="top-full"
+                triggerAriaLabel="Account menu"
+              >
+                <span slot="trigger" class="flex w-full items-center justify-between gap-3">
+                  <span class="flex items-center gap-3">
+                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                      {userInitial}
+                    </span>
+                    <span>Account</span>
+                  </span>
+                  <svg
+                    class="h-4 w-4 transition-transform duration-200"
+                    :class="open ? 'rotate-180' : ''"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                  >
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
+                <a
+                  href="/change-password"
+                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
+                >
+                  Change password
+                </a>
+                <form method="POST" action={logoutAction}>
+                  <button
+                    type="submit"
+                    class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100"
+                    x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
+                  >
+                    Log out
+                  </button>
+                </form>
+              </Dropdown>
             ) : (
-              <a href="/login" class="flex-1 text-center rounded-lg border px-4 py-2">Log in</a>
+              <a
+                href="/login"
+                class="flex w-full items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
+                x-on:click="open=false; $dispatch('dropdown-close')"
+              >
+                Log in
+              </a>
             )}
-            <a href="/platform" class="flex-1 text-center rounded-lg bg-indigo-600 text-white px-4 py-2">Get started</a>
           </div>
         </div>
       </div>
@@ -102,8 +175,12 @@ const logoutAction = actions.auth.logout;
             <p class="mt-1 text-sm text-white/90">Create an account and deploy your first app in minutes.</p>
           </div>
           <div class="flex gap-3">
-            <a href="/signup" class="rounded-lg bg-white px-5 py-3 font-semibold text-slate-900 hover:bg-slate-100">Get started</a>
-            <a href="/documentation" class="rounded-lg bg-black/10 px-5 py-3 font-semibold text-white hover:bg-black/20">View docs</a>
+            <Button href="/signup" variant="light" size="lg">
+              Get started
+            </Button>
+            <Button href="/documentation" variant="tinted" size="lg">
+              View docs
+            </Button>
           </div>
         </div>
       </div>
