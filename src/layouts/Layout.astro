@@ -5,7 +5,7 @@ import { ClientRouter } from 'astro:transitions';
 import Dropdown from '../components/Dropdown.astro';
 import Button from '../components/Button.astro';
 import { getSessionWithUser } from '../utils/session';
-
+import Loader from '../components/Loader.astro';
 const sessionData = await getSessionWithUser(Astro.cookies);
 const isLoggedIn = Boolean(sessionData);
 const userInitial = sessionData?.user?.username?.charAt(0)?.toUpperCase() ?? 'U';
@@ -27,8 +27,21 @@ const username = sessionData?.user?.username ?? 'Account';
 		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/favicon_180x180.png">
 		<link rel="icon" type="image/png" sizes="128x128" href="/favicon/favicon_128x128.png">
 		<link rel="icon" href="/favicon/favicon.ico">
+    <script>import '../alpineStores';</script>
+    <script is:inline>
+      function onPreparation(location) {
+				console.log('location', location)
+        Alpine.store("loader").show();
+        setTimeout(() => {
+          Alpine.store("loader").hide();
+        }, 5000);
+			}
+      document.addEventListener('astro:before-preparation', e => onPreparation(e.to));
+			document.addEventListener('DOMContentLoaded', () => onPreparation(window.location));
+    </script>
 	</head>
 	<body class="antialiased bg-white text-slate-900">
+    <div id="loading" class="fixed top-0 left-0 w-full h-0.5 bg-primary-600 scale-x-1 origin-left transition-transform duration-400 ease-out z-50"></div>
 		<!-- NAVBAR -->
   <header
     x-data="{ open:false }"
@@ -128,7 +141,7 @@ const username = sessionData?.user?.username ?? 'Account';
                   </span>
                   <svg
                     class="h-4 w-4 transition-transform duration-200"
-                    :class="open ? 'rotate-180' : ''"
+                    x-on:class="open ? 'rotate-180' : ''"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -194,6 +207,7 @@ const username = sessionData?.user?.username ?? 'Account';
       </div>
     </div>
   </section>
+  		<Loader />
 	</body>
 </html>
 
