@@ -156,6 +156,3 @@ code { @apply rounded px-1.5 py-0.5 text-sm; background-color: rgb(241 245 249);
 .dark .glass {
   background-color: rgba(2, 6, 23, 0.50); /* slate-950/50 */
 }
-/* loadings */
-.spinner { @apply w-5 mx-auto fill-primary-600 z-30  }
-@keyframes loading { 0% { transform: scaleX(0); } 100% { transform: scaleX(1); } }

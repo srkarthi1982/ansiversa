@@ -27,17 +27,36 @@ const username = sessionData?.user?.username ?? 'Account';
 		<link rel="apple-touch-icon" sizes="180x180" href="/favicon/favicon_180x180.png">
 		<link rel="icon" type="image/png" sizes="128x128" href="/favicon/favicon_128x128.png">
 		<link rel="icon" href="/favicon/favicon.ico">
-    <script>import '../alpineStores';</script>
-    <script is:inline>
+    <script>import '../alpineStores/index.ts';</script>
+    <script type="module" is:inline>
+      
+
+      const slugToStoreName = (pathname) => {
+        if (!pathname || pathname === '/') return 'home';
+
+        const segments = pathname.split('/').filter(Boolean);
+        if (segments.length === 0) return 'home';
+
+        const slug = segments[segments.length - 1];
+        return slug.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
+      };
+
+      const getStore = (name) => {
+        try {
+          return Alpine.store(name);
+        } catch {
+          return undefined;
+        }
+      };
+
       function onPreparation(location) {
-				console.log('location', location)
-        Alpine.store("loader").show();
-        setTimeout(() => {
-          Alpine.store("loader").hide();
-        }, 5000);
-			}
-      document.addEventListener('astro:before-preparation', e => onPreparation(e.to));
-			document.addEventListener('DOMContentLoaded', () => onPreparation(window.location));
+        const storeName = slugToStoreName(location?.pathname ?? '/');
+        const store = storeName ? getStore(storeName) : undefined;
+        store?.onInit?.();
+      }
+
+      document.addEventListener('astro:before-preparation', (event) => onPreparation(event.to));
+      document.addEventListener('DOMContentLoaded', () => onPreparation(window.location));
     </script>
 	</head>
 	<body class="antialiased bg-white text-slate-900">

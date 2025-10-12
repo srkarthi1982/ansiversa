@@ -1,0 +1,10 @@
+import './loader';
+import './home';
+import './login';
+import './signup';
+import './forgotPassword';
+import './changePassword';
+import './verifyEmail';
+import './documentation';
+import './pricing';
+import './faqs';
