@@ -33,6 +33,10 @@ html, body {
   color: rgb(var(--ans-fg));
 }
 
+[x-cloak] {
+  display: none !important;
+}
+
 /* -----------------------
    Typography (no variants in @apply)
 ------------------------ */

@@ -7,6 +7,7 @@ import vercel from '@astrojs/vercel';
 import db from '@astrojs/db';
 
 export default defineConfig({
+  viewTransitions: true,
   integrations: [alpinejs(), db()],
   vite: {
     plugins: [tailwindcss()]
