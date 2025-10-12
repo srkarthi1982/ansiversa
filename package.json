@@ -10,15 +10,15 @@
   },
   "dependencies": {
     "@astrojs/alpinejs": "^0.4.9",
-    "@astrojs/vercel": "^8.2.8",
-    "@tailwindcss/vite": "^4.1.13",
+    "@astrojs/vercel": "^8.2.9",
+    "@tailwindcss/vite": "^4.1.14",
     "@types/alpinejs": "^3.13.11",
     "alpinejs": "^3.15.0",
     "nodemailer": "^6.9.15",
-    "tailwindcss": "^4.1.13"
+    "tailwindcss": "^4.1.14"
   },
   "devDependencies": {
     "@astrojs/db": "^0.18.0",
-    "astro": "^5.14.1"
+    "astro": "^5.14.4"
   }
 }
