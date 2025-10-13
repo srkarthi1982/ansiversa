@@ -9,48 +9,55 @@ const miniAppCategories = [
     name: "Learning & Knowledge",
     blurb: "Adaptive tools that keep study sessions sharp and personal.",
     accent: "from-indigo-500 via-sky-500 to-purple-500",
-    apps: ["Quiz Institute", "FlashNote"],
+    apps: [
+      { name: "Quiz Institute", href: "/quiz" },
+      { name: "FlashNote" },
+    ],
   },
   {
     name: "Career & Professional",
     blurb: "Polish portfolios, job materials, and first impressions in minutes.",
     accent: "from-purple-500 via-indigo-500 to-sky-500",
     apps: [
-      "Resume Builder",
-      "Visiting Card Maker",
-      "Email & Cover Letter Polisher",
-      "Interview Coach",
+      { name: "Resume Builder" },
+      { name: "Visiting Card Maker" },
+      { name: "Email & Cover Letter Polisher" },
+      { name: "Interview Coach" },
     ],
   },
   {
     name: "Writing & Creativity",
     blurb: "Unlock storytelling, poems, and tone-matched narratives with AI.",
     accent: "from-sky-500 via-purple-500 to-indigo-500",
-    apps: ["StoryCrafter", "Poem Studio", "Language & Tone Assistant"],
+    apps: [
+      { name: "StoryCrafter" },
+      { name: "Poem Studio" },
+      { name: "Language & Tone Assistant" },
+    ],
   },
   {
     name: "Utility & Developer",
     blurb: "Snappy helpers that automate workflows for makers and teams.",
     accent: "from-indigo-500 via-slate-500 to-purple-500",
-    apps: ["Snippet Generator"],
+    apps: [{ name: "Snippet Generator" }],
   },
   {
     name: "Lifestyle & Well-being",
     blurb: "Plan habits and wellness goals with gentle nudges and insights.",
     accent: "from-emerald-500 via-sky-500 to-indigo-500",
-    apps: ["Wellness & Goal Planner"],
+    apps: [{ name: "Wellness & Goal Planner" }],
   },
   {
     name: "Fun & Engagement",
     blurb: "Bring playful experiences to every break and team meetup.",
     accent: "from-purple-500 via-fuchsia-500 to-sky-500",
-    apps: ["Trivia Arena"],
+    apps: [{ name: "Trivia Arena" }],
   },
   {
     name: "Shopping & Productivity",
     blurb: "Stay savvy with purchases using real-time comparators.",
     accent: "from-sky-500 via-indigo-500 to-emerald-500",
-    apps: ["Price Checker"],
+    apps: [{ name: "Price Checker" }],
   },
 ];
 
@@ -163,7 +170,16 @@ const plans = [
                 {category.apps.map((app) => (
                   <li class="flex items-center gap-3 rounded-2xl bg-slate-50/80 px-3 py-2 transition group-hover:bg-slate-100">
                     <span class={`inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-gradient-to-r ${category.accent}`}></span>
-                    {app}
+                    {app.href ? (
+                      <a href={app.href} class="inline-flex items-center gap-2 text-slate-700 hover:text-indigo-600">
+                        <span>{app.name}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </a>
+                    ) : (
+                      <span>{app.name}</span>
+                    )}
                   </li>
                 ))}
               </ul>

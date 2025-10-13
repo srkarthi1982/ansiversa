@@ -10,6 +10,7 @@ import type { PricingStore } from '../alpineStores/pricing';
 import type { FeaturesStore } from '../alpineStores/features';
 import type { FaqStore } from '../alpineStores/faq';
 import type { ContactStore } from '../alpineStores/contact';
+import type { QuizStore } from '../alpineStores/quiz';
 
 declare module 'alpinejs' {
   namespace Alpine {
@@ -26,6 +27,7 @@ declare module 'alpinejs' {
       features: FeaturesStore;
       faq: FaqStore;
       contact: ContactStore;
+      quiz: QuizStore;
     }
   }
 }

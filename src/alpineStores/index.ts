@@ -10,3 +10,4 @@ import './pricing';
 import './features';
 import './faq';
 import './contact';
+import './quiz';

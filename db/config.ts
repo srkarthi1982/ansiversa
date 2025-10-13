@@ -48,6 +48,11 @@ const Platform = defineTable({
   columns: {
     id: column.number({ primaryKey: true, autoIncrement: true }),
     name: column.text(),
+    description: column.text(),
+    isActive: column.boolean({ default: true }),
+    icon: column.text(),
+    type: column.text({ optional: true }),
+    qCount: column.number({ default: 0 }),
   },
 });
 
