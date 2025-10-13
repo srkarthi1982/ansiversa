@@ -7,4 +7,6 @@ import './changePassword';
 import './verifyEmail';
 import './documentation';
 import './pricing';
-import './faqs';
+import './features';
+import './faq';
+import './contact';

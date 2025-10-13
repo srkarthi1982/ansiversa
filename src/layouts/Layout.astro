@@ -68,11 +68,11 @@ const username = sessionData?.user?.username ?? 'Account';
           <img src="/logo_full.svg" alt="Ansiversa Logo" class="rounded-lg" />
         </a>
         <nav class="hidden md:flex items-center gap-8 text-sm">
-          <a href="/#features" class="hover:text-indigo-600">Features</a>
-          <a href="/#solutions" class="hover:text-indigo-600">Solutions</a>
+          <a href="/features" class="hover:text-indigo-600">Features</a>
           <a href="/pricing" class="hover:text-indigo-600">Pricing</a>
           <a href="/documentation" class="hover:text-indigo-600">Docs</a>
-          <a href="/faqs" class="hover:text-indigo-600">FAQs</a>
+          <a href="/faq" class="hover:text-indigo-600">FAQ</a>
+          <a href="/contact" class="hover:text-indigo-600">Contact</a>
         </nav>
         <div class="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
@@ -133,11 +133,11 @@ const username = sessionData?.user?.username ?? 'Account';
       </div>
       <div x-show="open" x-transition.duration.200ms x-cloak class="md:hidden pb-4">
         <div class="flex flex-col gap-2 text-sm">
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/#features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/#solutions" class="px-3 py-2 rounded-lg hover:bg-slate-100">Solutions</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
           <a x-on:click="open=false; $dispatch('dropdown-close')" href="/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
           <a x-on:click="open=false; $dispatch('dropdown-close')" href="/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/faqs" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQs</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/faq" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQ</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/contact" class="px-3 py-2 rounded-lg hover:bg-slate-100">Contact</a>
           <div class="mt-4">
             {isLoggedIn ? (
               <Dropdown
@@ -206,15 +206,15 @@ const username = sessionData?.user?.username ?? 'Account';
       <div class="rounded-2xl border bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-500 p-8 text-white">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
-            <h3 class="text-2xl font-bold">Ready to build with Ansiversa?</h3>
-            <p class="mt-1 text-sm text-white/90">Create an account and deploy your first app in minutes.</p>
+            <h3 class="text-2xl font-bold">Ready to explore Ansiversa?</h3>
+            <p class="mt-1 text-sm text-white/90">Create an account to unlock curated mini-apps crafted by the Ansiversa team.</p>
           </div>
           <div class="flex gap-3">
             <Button href="/signup" variant="light" size="lg">
               Get started
             </Button>
-            <Button href="/documentation" variant="tinted" size="lg">
-              View docs
+            <Button href="/#mini-apps" variant="tinted" size="lg">
+              Discover mini-apps
             </Button>
           </div>
         </div>

@@ -1,341 +1,221 @@
 ---
 import Layout from "../layouts/Layout.astro";
+
+const mission =
+  "To empower users with next-generation web tools that are fast, useful, and beautifully designed — all accessible under one subscription.";
+
+const miniAppCategories = [
+  {
+    name: "Learning & Knowledge",
+    blurb: "Adaptive tools that keep study sessions sharp and personal.",
+    accent: "from-indigo-500 via-sky-500 to-purple-500",
+    apps: ["Quiz Institute", "FlashNote"],
+  },
+  {
+    name: "Career & Professional",
+    blurb: "Polish portfolios, job materials, and first impressions in minutes.",
+    accent: "from-purple-500 via-indigo-500 to-sky-500",
+    apps: [
+      "Resume Builder",
+      "Visiting Card Maker",
+      "Email & Cover Letter Polisher",
+      "Interview Coach",
+    ],
+  },
+  {
+    name: "Writing & Creativity",
+    blurb: "Unlock storytelling, poems, and tone-matched narratives with AI.",
+    accent: "from-sky-500 via-purple-500 to-indigo-500",
+    apps: ["StoryCrafter", "Poem Studio", "Language & Tone Assistant"],
+  },
+  {
+    name: "Utility & Developer",
+    blurb: "Snappy helpers that automate workflows for makers and teams.",
+    accent: "from-indigo-500 via-slate-500 to-purple-500",
+    apps: ["Snippet Generator"],
+  },
+  {
+    name: "Lifestyle & Well-being",
+    blurb: "Plan habits and wellness goals with gentle nudges and insights.",
+    accent: "from-emerald-500 via-sky-500 to-indigo-500",
+    apps: ["Wellness & Goal Planner"],
+  },
+  {
+    name: "Fun & Engagement",
+    blurb: "Bring playful experiences to every break and team meetup.",
+    accent: "from-purple-500 via-fuchsia-500 to-sky-500",
+    apps: ["Trivia Arena"],
+  },
+  {
+    name: "Shopping & Productivity",
+    blurb: "Stay savvy with purchases using real-time comparators.",
+    accent: "from-sky-500 via-indigo-500 to-emerald-500",
+    apps: ["Price Checker"],
+  },
+];
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    description: "Limited usage with access to essential templates.",
+  },
+  {
+    name: "Pro",
+    price: "$10 / month",
+    description: "Full access to every mini-app with priority updates.",
+  },
+  {
+    name: "Elite",
+    price: "$50 / year",
+    description: "All features, annual savings, and early access to launches.",
+  },
+];
 ---
 
 <Layout>
-
-  <!-- HERO -->
-  <section class="relative overflow-hidden bg-slate-950">
-    <div class="absolute inset-0 overflow-hidden">
-      <div class="absolute inset-y-0 left-1/2 w-[140%] -translate-x-1/2 bg-gradient-to-br from-indigo-500/60 via-sky-500/40 to-emerald-500/60 blur-3xl opacity-40"></div>
-      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_rgba(15,23,42,0.9))]"></div>
-      <div class="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950 via-slate-950/60 to-transparent"></div>
-      <svg class="absolute inset-0 h-full w-full opacity-10" viewBox="0 0 1440 1024" aria-hidden="true">
-        <defs>
-          <pattern id="grid" width="60" height="60" patternUnits="userSpaceOnUse">
-            <path d="M 60 0 L 0 0 0 60" fill="none" stroke="currentColor" stroke-width="0.4" />
-          </pattern>
-          <radialGradient id="glow" cx="50%" cy="50%" r="70%">
-            <stop offset="0%" stop-color="rgba(59,130,246,0.35)" />
-            <stop offset="40%" stop-color="rgba(56,189,248,0.15)" />
-            <stop offset="100%" stop-color="rgba(15,23,42,0)" />
-          </radialGradient>
-        </defs>
-        <rect fill="url(#grid)" width="1440" height="1024" />
-        <circle cx="380" cy="180" r="420" fill="url(#glow)" />
-        <circle cx="1120" cy="420" r="380" fill="url(#glow)" />
-      </svg>
-    </div>
-    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-12 lg:py-16">
-      <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] items-center">
-        <div class="text-white">
-          <div class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/5 px-3 py-1 text-xs font-medium uppercase tracking-wide text-white/80">
-            <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-            Curated apps for learners, creators & teams
-          </div>
-          <h1 class="mt-8 text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
-            Explore the <span class="text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-sky-300 to-emerald-200">Ansiversa</span> universe of curated apps
-          </h1>
-          <p class="mt-6 max-w-xl text-base sm:text-lg text-white/70">
-            Ansiversa is introducing a guided suite of experiences—Quiz, Language Lab, Creative Studio, and more—designed and maintained in-house so every release stays cohesive, secure, and accessible. We focus on delivering new capabilities rather than hosting third-party app submissions.
+  <main class="bg-slate-950 text-white">
+    <section class="relative isolate overflow-hidden">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-600/60 via-sky-500/40 to-purple-600/60 blur-3xl opacity-70"></div>
+      <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.14),_rgba(15,23,42,0.95))]"></div>
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 pb-16 pt-20 sm:px-6 lg:px-8 lg:flex-row lg:items-end">
+        <div class="flex-1">
+          <p class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-white/80">
+            Ansiversa
           </p>
-          <div class="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a href="/signup" class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-900 shadow-lg shadow-white/20 transition hover:-translate-y-0.5 hover:bg-slate-100">
-              Get product updates
-            </a>
-            <a href="#mission" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/20 px-6 py-3 text-sm font-semibold text-white/80 backdrop-blur transition hover:border-white/40">
-              Explore the vision
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
-                <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+          <h1 class="mt-6 text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
+            Advanced Next-Gen Software Innovation
+          </h1>
+          <p class="mt-6 max-w-2xl text-lg text-white/80">
+            {mission}
+          </p>
+          <div class="mt-10 flex flex-wrap gap-4">
+            <a
+              href="#mini-apps"
+              class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-xl shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100"
+            >
+              Browse mini-apps
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                aria-hidden="true"
+                focusable="false"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m8.25 4.5 7.5 7.5-7.5 7.5"
+                />
               </svg>
             </a>
-          </div>
-          <div class="mt-12 grid grid-cols-1 gap-6 text-xs text-white/70 sm:grid-cols-3">
-            <div class="space-y-2">
-              <p class="text-sm font-semibold text-white">Innovation</p>
-              <p>Future-ready UI, AI workflows, and modular updates released by our team.</p>
-            </div>
-            <div class="space-y-2">
-              <p class="text-sm font-semibold text-white">Versatility</p>
-              <p>One cohesive architecture powering learning, language, and creative experiences.</p>
-            </div>
-            <div class="space-y-2">
-              <p class="text-sm font-semibold text-white">Accessibility</p>
-              <p>Design with clarity so learners, creators, and teams can thrive.</p>
-            </div>
+            <a
+              href="/pricing"
+              class="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white/80 backdrop-blur transition hover:border-white/60 hover:text-white"
+            >
+              View pricing
+            </a>
           </div>
         </div>
-        <div class="relative">
-          <div class="absolute -inset-6 rounded-[32px] bg-gradient-to-br from-indigo-500/50 via-sky-400/40 to-emerald-400/40 blur-2xl opacity-60"></div>
-          <div class="relative rounded-[26px] border border-white/10 bg-white/5 p-6 shadow-2xl shadow-slate-900/50 backdrop-blur">
-            <div class="flex items-center justify-between text-xs text-white/60">
-              <span class="inline-flex items-center gap-2">
-                <span class="h-2 w-2 rounded-full bg-lime-400"></span>
-                Live Preview
-              </span>
-              <span>Astro Actions</span>
-            </div>
-            <div class="mt-6 space-y-4">
-              <div class="rounded-xl border border-white/10 bg-slate-950/60 p-4 shadow-inner">
-                <div class="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                  <span class="inline-flex h-1.5 w-1.5 rounded-full bg-indigo-400"></span>
-                  Quiz Institute
-                </div>
-                <p class="mt-3 text-lg font-semibold text-white">Adaptive learning journeys</p>
-                <p class="mt-2 text-sm text-white/60">Guide students from fundamentals to mastery with AI-curated paths.</p>
-              </div>
-              <div class="rounded-xl border border-white/10 bg-slate-950/60 p-4 shadow-inner">
-                <div class="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                  <span class="inline-flex h-1.5 w-1.5 rounded-full bg-sky-400"></span>
-                  Creative Studio
-                </div>
-                <p class="mt-3 text-lg font-semibold text-white">Human + AI collaboration</p>
-                <p class="mt-2 text-sm text-white/60">From concepts to polished media with co-creation and version history.</p>
-              </div>
-              <div class="rounded-xl border border-white/10 bg-slate-950/60 p-4 shadow-inner">
-                <div class="flex items-center gap-2 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                  <span class="inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400"></span>
-                  Language Lab
-                </div>
-                <p class="mt-3 text-lg font-semibold text-white">Immersive multilingual practice</p>
-                <p class="mt-2 text-sm text-white/60">Guided translations, conversations, and retention loops curated by our team.</p>
-              </div>
-            </div>
-            <div class="mt-8 flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 p-3 text-white/70">
-              <div>
-                <p class="text-sm font-semibold text-white">Mission: Advance next‑gen innovation</p>
-                <p class="text-xs">Connect education, creativity, and productivity inside one universe.</p>
-              </div>
-              <a href="#mission" aria-label="Read more about the Ansiversa mission" class="inline-flex h-10 w-10 items-center justify-center rounded-full border border-white/20 text-white hover:border-white">→</a>
-            </div>
+        <div class="w-full max-w-sm rounded-3xl border border-white/10 bg-white/10 p-6 shadow-2xl shadow-indigo-900/40 backdrop-blur">
+          <div class="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/60">
+            <span class="inline-flex items-center gap-2">
+              <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+              AI-powered
+            </span>
+            <span>Mini-app hub</span>
+          </div>
+          <div class="mt-6 space-y-3 text-sm text-white/80">
+            <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+              Curated experiences for learning, career growth, and daily creativity.
+            </p>
+            <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+              Built with Astro, Tailwind, and Alpine.js for speed and elegance.
+            </p>
+            <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+              Seamless subscription unlocks every tool across the ecosystem.
+            </p>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- TRUSTED BY & METRICS -->
-  <section aria-label="Trusted by" class="border-t border-white/10 bg-white py-12">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col items-center gap-6 text-center">
-        <p class="text-xs font-semibold uppercase tracking-[0.4em] text-slate-400">Trusted by teams leveraging modern stacks</p>
-        <div class="flex flex-wrap items-center justify-center gap-x-10 gap-y-4 text-sm font-medium text-slate-500">
-          <span>Astro</span>
-          <span>Tailwind CSS</span>
-          <span>Vercel</span>
-          <span>Stripe</span>
-          <span>OpenAI</span>
-        </div>
-        <div class="grid w-full max-w-4xl grid-cols-1 gap-4 sm:grid-cols-3">
-          <div class="rounded-2xl border border-slate-200/60 bg-white px-4 py-5 text-left shadow-soft">
-            <p class="text-2xl font-bold text-slate-900">50%</p>
-            <p class="mt-1 text-xs text-slate-500">Faster launch velocity using Astro islands + modular auth</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200/60 bg-white px-4 py-5 text-left shadow-soft">
-            <p class="text-2xl font-bold text-slate-900">3 verticals</p>
-            <p class="mt-1 text-xs text-slate-500">Education, creativity, and productivity powered by one architecture</p>
-          </div>
-          <div class="rounded-2xl border border-slate-200/60 bg-white px-4 py-5 text-left shadow-soft">
-            <p class="text-2xl font-bold text-slate-900">Global ready</p>
-            <p class="mt-1 text-xs text-slate-500">Optimized for scale on Vercel’s edge network & Astro Actions</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- MISSION -->
-  <section id="mission" class="py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-12 lg:grid-cols-[1.2fr_0.8fr] items-start">
-        <div>
-          <h2 class="text-3xl font-bold tracking-tight">A universe of intelligent software</h2>
-          <p class="mt-4 text-slate-600">
-            Ansiversa’s mission is to connect education, creativity, and productivity through modular apps that feel cohesive. Each surface supports rapid experimentation while staying accessible, scalable, and delightful on every device.
+    <section id="mini-apps" class="bg-slate-100 py-16 text-slate-950">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="text-center">
+          <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Explore the Ansiversa mini-apps</h2>
+          <p class="mt-3 text-base text-slate-600">
+            Every category is crafted in-house to stay cohesive, accessible, and fun to use.
           </p>
-          <p class="mt-4 text-slate-600">
-            From the Quiz Institute to the upcoming Creative Studio and Developer Hub, every pillar shares UI foundations, auth, billing, and AI automation so teams can focus on what makes their experience magical.
-          </p>
-          <div class="mt-8 flex flex-wrap gap-4">
-            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-soft">
-              <span class="h-2 w-2 rounded-full bg-indigo-500"></span> Astro-native islands
-            </div>
-            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-soft">
-              <span class="h-2 w-2 rounded-full bg-sky-500"></span> Tailwind + Alpine UI system
-            </div>
-            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 shadow-soft">
-              <span class="h-2 w-2 rounded-full bg-emerald-500"></span> Astro DB + Stripe ready
-            </div>
-          </div>
         </div>
-        <div class="card space-y-4">
-          <div>
-            <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide">What we deliver</p>
-            <p class="mt-2 text-2xl font-semibold text-slate-900">Polished experiences ready for your teams</p>
-            <p class="mt-3 text-sm text-slate-600">Our team maintains auth, billing, and AI layers so you can onboard to curated apps without managing custom deployments.</p>
-          </div>
-          <div class="grid gap-4 sm:grid-cols-2">
-            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-soft">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Accessibility</p>
-              <p class="mt-2 text-base font-semibold text-slate-900">Inclusive by default</p>
-              <p class="mt-1 text-sm text-slate-600">Responsive components, contrast-safe palettes, and keyboard-first navigation.</p>
-            </div>
-            <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-soft">
-              <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Scalability</p>
-              <p class="mt-2 text-base font-semibold text-slate-900">Grows with demand</p>
-              <p class="mt-1 text-sm text-slate-600">Serverless deployments with automated session & subscription handling.</p>
-            </div>
-          </div>
-          <a href="/platform" class="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-500">
-            Explore the platform
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </a>
+        <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+          {miniAppCategories.map((category) => (
+            <article class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-xl">
+              <div class={`absolute inset-x-6 top-0 h-1.5 bg-gradient-to-r ${category.accent} opacity-90`}></div>
+              <div class="mt-5 flex flex-col gap-3">
+                <h3 class="text-xl font-semibold text-slate-900">{category.name}</h3>
+                <p class="text-sm text-slate-600">{category.blurb}</p>
+              </div>
+              <ul class="mt-6 space-y-2 text-sm font-medium text-slate-700">
+                {category.apps.map((app) => (
+                  <li class="flex items-center gap-3 rounded-2xl bg-slate-50/80 px-3 py-2 transition group-hover:bg-slate-100">
+                    <span class={`inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-gradient-to-r ${category.accent}`}></span>
+                    {app}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- PRINCIPLES -->
-  <section id="principles" class="bg-slate-50 py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="max-w-3xl">
-        <h2 class="text-3xl font-bold tracking-tight">Core principles guiding every release</h2>
-        <p class="mt-3 text-slate-600">These pillars shape how Ansiversa evolves across products and domains.</p>
-      </div>
-      <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        <article class="card h-full">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
-            <span class="text-xl">✨</span>
+    <section class="relative overflow-hidden bg-slate-950 py-16">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-600/60 via-sky-500/40 to-purple-600/60 blur-3xl opacity-60"></div>
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-[34px] border border-white/10 bg-white/5 p-10 text-white shadow-2xl shadow-indigo-950/40 backdrop-blur">
+          <div class="text-center">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Subscriptions</p>
+            <h2 class="mt-4 text-3xl font-bold">Plans that scale with every creator</h2>
+            <p class="mt-3 text-base text-white/70">
+              Join for free or unlock the complete ecosystem with Pro or Elite tiers.
+            </p>
           </div>
-          <h3 class="mt-6 text-xl font-semibold">Innovation</h3>
-          <p class="mt-2 text-sm text-slate-600">Adopt future-ready tooling—Astro islands, edge rendering, and AI co-pilots.</p>
-        </article>
-        <article class="card h-full">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600">
-            <span class="text-xl">🔁</span>
+          <div class="mt-10 grid gap-6 md:grid-cols-3">
+            {plans.map((plan) => (
+              <div class="rounded-3xl border border-white/15 bg-white/10 p-6 text-left shadow-xl shadow-indigo-900/30 transition hover:-translate-y-1 hover:bg-white/15">
+                <p class="text-sm font-semibold uppercase tracking-wide text-white/70">{plan.name}</p>
+                <p class="mt-3 text-2xl font-bold text-white">{plan.price}</p>
+                <p class="mt-3 text-sm text-white/70">{plan.description}</p>
+              </div>
+            ))}
           </div>
-          <h3 class="mt-6 text-xl font-semibold">Versatility</h3>
-          <p class="mt-2 text-sm text-slate-600">Ship education platforms, creative suites, or developer tools using reusable blocks.</p>
-        </article>
-        <article class="card h-full">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600">
-            <span class="text-xl">♿️</span>
-          </div>
-          <h3 class="mt-6 text-xl font-semibold">Accessibility</h3>
-          <p class="mt-2 text-sm text-slate-600">Inclusive defaults, copy-ready dark/light palettes, and frictionless onboarding.</p>
-        </article>
-        <article class="card h-full">
-          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
-            <span class="text-xl">📈</span>
-          </div>
-          <h3 class="mt-6 text-xl font-semibold">Scalability</h3>
-          <p class="mt-2 text-sm text-slate-600">Database schemas, sessions, and billing flows engineered for growth.</p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- PLATFORM SHOWCASE -->
-  <section id="platform" class="py-20">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex flex-col gap-4 text-center">
-        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Ecosystem</p>
-        <h2 class="text-3xl font-bold tracking-tight">Launch new universes on a shared foundation</h2>
-        <p class="mx-auto max-w-2xl text-slate-600">Each sub-app inherits the same auth, payments, and UI DNA—so teams can explore new ideas without rebuilding the basics.</p>
-      </div>
-      <div class="mt-12 grid gap-6 lg:grid-cols-3">
-        <article class="card flex h-full flex-col justify-between bg-white">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Education</p>
-            <h3 class="mt-3 text-xl font-semibold">Quiz Institute</h3>
-            <p class="mt-2 text-sm text-slate-600">AI-powered quiz flow covering 100+ subjects with adaptive difficulty, real-time analytics, and progress tracking.</p>
-          </div>
-          <a href="https://quiz.ansiversa.com" class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">Visit quiz.ansiversa.com →</a>
-        </article>
-        <article class="card flex h-full flex-col justify-between bg-white">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Creativity</p>
-            <h3 class="mt-3 text-xl font-semibold">Creative Studio</h3>
-            <p class="mt-2 text-sm text-slate-600">Collaborative design, art, and storytelling tools blending human vision with AI generation and version history.</p>
-          </div>
-          <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-400">Launching soon</span>
-        </article>
-        <article class="card flex h-full flex-col justify-between bg-white">
-          <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-400">Developers</p>
-            <h3 class="mt-3 text-xl font-semibold">Developer Hub</h3>
-            <p class="mt-2 text-sm text-slate-600">APIs, SDKs, and automation templates so builders can wire Ansiversa capabilities into their own products.</p>
-          </div>
-          <span class="mt-6 inline-flex items-center gap-2 text-sm font-semibold text-slate-400">In roadmap</span>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- CAPABILITIES -->
-  <section id="features" class="bg-slate-950 py-20 text-white">
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="grid gap-16 lg:grid-cols-[0.9fr_1.1fr]">
-        <div>
-          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Platform capabilities</p>
-          <h2 class="mt-4 text-3xl font-bold tracking-tight text-white">Everything you need from prototype to scale</h2>
-          <p class="mt-4 text-white/70">Connect Astro Actions, Astro DB, Stripe, and OpenAI into cohesive flows. Ansiversa abstracts the plumbing—so your roadmap focuses on value.</p>
-          <div class="mt-8 grid gap-4 sm:grid-cols-2">
-            <div class="rounded-2xl border border-white/15 bg-white/5 p-5">
-              <h3 class="text-lg font-semibold text-white">Auth & Sessions</h3>
-              <p class="mt-2 text-sm text-white/70">Form actions, secure cookies, password hashing, and email journeys out of the box.</p>
-            </div>
-            <div class="rounded-2xl border border-white/15 bg-white/5 p-5">
-              <h3 class="text-lg font-semibold text-white">Billing & Plans</h3>
-              <p class="mt-2 text-sm text-white/70">Stripe integrations with checkout samples, webhook handling, and tier management.</p>
-            </div>
-            <div class="rounded-2xl border border-white/15 bg-white/5 p-5">
-              <h3 class="text-lg font-semibold text-white">AI Assistants</h3>
-              <p class="mt-2 text-sm text-white/70">OpenAI-driven helpers for content, tutoring, and creative exploration—kept server-side.</p>
-            </div>
-            <div class="rounded-2xl border border-white/15 bg-white/5 p-5">
-              <h3 class="text-lg font-semibold text-white">Design System</h3>
-              <p class="mt-2 text-sm text-white/70">Tailwind + Alpine components matched to global tokens for fast theming.</p>
-            </div>
-          </div>
-        </div>
-        <div class="space-y-6">
-          <div class="rounded-2xl border border-white/15 bg-white/10 p-6 shadow-2xl shadow-indigo-900/40 backdrop-blur">
-            <div class="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/60">
-              <span class="inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-              Automation blueprint
-            </div>
-            <ul class="mt-4 space-y-4 text-sm text-white/80">
-              <li class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-indigo-400"></span>
-                Server actions handle auth, password resets, and email delivery securely.
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-sky-400"></span>
-                Astro DB models map directly to tokens, sessions, and subscriptions.
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-emerald-400"></span>
-                Feature toggles let you ship AI assistants gradually across sub-apps.
-              </li>
-              <li class="flex items-start gap-3">
-                <span class="mt-1 inline-flex h-2 w-2 rounded-full bg-amber-400"></span>
-                Observability hooks connect to your analytics or data warehouse.
-              </li>
-            </ul>
-          </div>
-          <div class="rounded-2xl border border-white/10 bg-white/5 p-6">
-            <h3 class="text-lg font-semibold text-white">What’s coming next</h3>
-            <p class="mt-2 text-sm text-white/70">Language Institute, expanded Creative Studio tooling, and dashboards for cohort insights.</p>
-            <a href="/platform" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-white hover:text-indigo-200">
-              View roadmap →
+          <div class="mt-10 flex flex-wrap justify-center gap-4 text-sm font-semibold">
+            <a href="/signup" class="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
+              Create a free account
+            </a>
+            <a href="/pricing" class="inline-flex items-center justify-center rounded-full border border-white/30 px-6 py-3 text-white/80 backdrop-blur transition hover:border-white/60 hover:text-white">
+              Compare all features
             </a>
           </div>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
+    <footer class="border-t border-slate-800 bg-slate-950 py-10 text-sm text-white/70">
+      <div class="mx-auto flex max-w-5xl flex-col items-center justify-between gap-4 px-4 text-center sm:flex-row sm:text-left">
+        <div>
+          <p class="text-xs uppercase tracking-[0.35em] text-white/50">Stay connected</p>
+          <p class="mt-2 font-semibold text-white">Ansiversa — Innovation in every click.</p>
+        </div>
+        <div class="space-y-1">
+          <a href="https://www.ansiversa.com" class="block text-white transition hover:text-indigo-300">ansiversa.com</a>
+          <a href="mailto:contact@ansiversa.com" class="block text-white transition hover:text-indigo-300">contact@ansiversa.com</a>
+        </div>
+      </div>
+    </footer>
+  </main>
 </Layout>

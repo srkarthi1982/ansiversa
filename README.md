@@ -1,144 +1,110 @@
-# 🌌 Ansiversa — Advanced Next-Gen Software Innovation
+# 🌐 Ansiversa — Advanced Next-Gen Software Innovation
 
-**Ansiversa** is an ecosystem of innovative, modular web applications built to empower learners, creators, and developers with next-generation, versatile software experiences.  
-The name **“Ansiversa”** comes from **ANSI (Advanced Next-Gen Software Innovation)** + **Versa (Versatile)** — symbolizing adaptability, intelligence, and innovation across multiple domains.
+**Ansiversa** is an AI-powered ecosystem of mini-apps designed to make learning, career building, and everyday creativity faster, smarter, and more enjoyable.  
+From quizzes to resumes to flashcards — Ansiversa brings everything together in one intelligent platform.
 
 ---
 
 ## 🚀 Mission
 
-To create a unified digital universe of intelligent apps and tools — connecting education, creativity, and productivity — all under one flexible and scalable platform.
+To empower users with **next-generation web tools** that are fast, useful, and beautifully designed — all accessible under one subscription.
 
 ---
 
-## 🧩 Core Principles
+## 🧩 Current Mini-Apps
 
-- **Innovation** — Build next-gen web experiences using cutting-edge technologies.  
-- **Versatility** — Support multiple products and domains within one ecosystem.  
-- **Accessibility** — Prioritize speed, simplicity, and usability across devices.  
-- **Scalability** — Every app is modular, lightweight, and ready for expansion.  
+### 🎓 Learning & Knowledge
+- Quiz Institute  
+- FlashNote  
 
----
+### 💼 Career & Professional
+- Resume Builder  
+- Visiting Card Maker  
+- Email & Cover Letter Polisher  
+- Interview Coach  
 
-## 🏗️ Tech Stack
+### ✍️ Writing & Creativity
+- StoryCrafter  
+- Poem Studio  
+- Language & Tone Assistant  
 
-| Layer | Technology | Description |
-|-------|-------------|-------------|
-| **Frontend** | Astro.js | Lightning-fast static & server-rendered sites |
-| **UI Framework** | Tailwind CSS + Alpine.js | Modern, minimal, reactive UI components |
-| **Database** | Astro DB | Native, schema-defined database layer |
-| **Hosting** | Vercel | Serverless deployment & CDN-powered delivery |
-| **Auth & API** | Astro Actions + Middleware | Secure, serverless authentication & APIs |
-| **Payments** | Stripe | Subscription & payment integration |
-| **AI Integration** | OpenAI API | Smart content generation and automation |
+### ⚙️ Utility & Developer
+- Snippet Generator  
 
----
+### 🧘 Lifestyle & Well-being
+- Wellness & Goal Planner  
 
-## 🌐 Sub-Apps & Platforms
+### 🎮 Fun & Engagement
+- Trivia Arena  
 
-Ansiversa hosts multiple projects, each built with a shared architecture:
-
-| App | Subdomain | Description |
-|-----|------------|-------------|
-| **Quiz Institute** | quiz.ansiversa.com | AI-powered quiz and learning platform covering 100+ subjects |
-| **Language Institute** | (Coming soon) | Learn and test languages interactively |
-| **Creative Studio** | (Coming soon) | Design, art, and writing tools under one hub |
-| **Developer Hub** | (Future) | Tools and APIs for developers and builders |
+### 🛒 Shopping & Productivity
+- Price Checker  
 
 ---
 
-## 📚 Example: Quiz Institute
+## 💳 Subscription Plans
 
-The **Quiz Institute** is one of the first flagship apps under Ansiversa.  
-It provides a structured, gamified learning system that includes:
-
-- Multi-step quiz flow (Platform → Subject → Topic → Level → Quiz)  
-- Dynamic data loading from PostgreSQL/AstroDB  
-- Real-time result tracking and progress visualization  
-- Subscription-based premium access  
-- Modern UI powered by Alpine.js + Tailwind CSS  
+| Plan | Price | Access |
+|------|-------|---------|
+| Free | $0 | Limited usage, basic templates |
+| Pro | $10 / month | Full access to all mini-apps |
+| Elite | $50 / year | All features + early access to new apps |
 
 ---
 
-## ⚙️ Local Development
+## 🛠️ Tech Stack
 
-```bash
-# 1. Clone the repository
-git clone https://github.com/<your-username>/ansiversa.git
-cd ansiversa
-
-# 2. Install dependencies
-npm install
-
-# 3. Start the development server
-npm run dev
-
-# 4. Build for production
-npm run build
-```
-
-Then visit http://localhost:4321 to explore the site locally.
+- **Frontend:** Astro + Tailwind CSS + Alpine.js  
+- **Backend:** Astro SSR / Supabase / AstroDB  
+- **AI Engine:** OpenAI Codex / GPT-5 APIs  
+- **Hosting:** Vercel (ansiversa.com)  
 
 ---
 
-## 🧠 Folder Structure
+## 📁 Folder Structure (Simplified)
 
 ```
-ansiversa/
-├── public/              # Static assets
-├── src/
-│   ├── layouts/         # Shared Astro layouts
-│   ├── pages/           # Main and sub-app pages
-│   ├── components/      # UI components
-│   ├── db/              # Astro DB schemas and seed data
-│   └── actions/         # Auth, API, and server actions
-├── astro.config.mjs     # Astro configuration
-├── tailwind.config.js   # Tailwind configuration
-└── package.json
+src/
+  pages/
+    quiz/
+    resume/
+    flashnote/
+    visiting-card/
+    email/
+    interview/
+    story/
+    poem/
+    tone/
+    snippets/
+    wellness/
+    trivia/
+    price/
 ```
 
 ---
 
-## 🔒 Authentication Features
+## 📅 Development Roadmap (Phase 1)
 
-Ansiversa includes a fully functional auth system using Astro Actions:
-- User registration & login  
-- Forgot & change password  
-- JWT-based session middleware  
-- Profile management  
-
-Data is securely stored in Astro DB, with password hashing and validation.
+- ✅ Quiz Institute — Live  
+- 🚧 Resume Builder — In progress  
+- ⏳ FlashNote — Next to build  
+- ⏳ Visiting Card Maker — Upcoming  
+- ⏳ Email & Cover Letter Polisher — Q2 2026
 
 ---
 
-## 💳 Subscription System
+## 🤝 Contributing
 
-- Built on Stripe for real-time payment and subscription management  
-- Handles premium tiers for apps like Quiz Institute  
-- API-based billing and webhook validation integrated with Astro Actions  
-
----
-
-## 🧬 Future Vision
-
-- 🪐 Launch Language Institute and Creative Studio  
-- ⚙️ Introduce AI-generated content, dynamic quiz creation, and interactive learning  
-- 📈 Develop analytics dashboards and progress insights  
-- 🧭 Expand into developer-facing APIs and enterprise solutions  
+We’re currently building the Ansiversa core system.  
+If you’d like to collaborate or suggest new mini-apps, feel free to reach out.
 
 ---
 
-## 🧑‍💻 Author
+## 📧 Contact
 
-**Zach**  
-Creator of **Ansiversa** — building the future of web experiences.
-
-🌐 https://www.ansiversa.com  
-📩 hello@ansiversa.com (example placeholder)
+**Website:** [https://www.ansiversa.com](https://www.ansiversa.com)  
+**Email:** contact@ansiversa.com  
 
 ---
 
-## 🪄 License
-
-This project is licensed under the **MIT License**.  
-You’re free to use, modify, and build upon it — with proper credit to **Ansiversa**.
+> _Ansiversa — Innovation in every click._

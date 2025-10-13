@@ -1,0 +1,70 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout>
+  <section class="bg-slate-950 py-10 text-white">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">FAQ</p>
+      <h1 class="mt-4 text-4xl font-black tracking-tight">Answers for curious Ansiversa explorers</h1>
+      <p class="mt-4 text-base text-white/70">
+        Have questions about memberships, mini-app access, or upcoming releases? Here are the quick answers before you dive in.
+      </p>
+    </div>
+  </section>
+
+  <section class="bg-white py-16">
+    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+      <div class="mt-10 divide-y rounded-2xl border border-slate-200 bg-white shadow-soft">
+        <details class="group p-6" open>
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">Do I need to install anything to start using Ansiversa?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Nope. Ansiversa runs entirely in the browser. Sign in from any modern device and access the curated mini-apps instantly—no downloads required.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">Can I submit or host my own app inside Ansiversa?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Not right now. Every experience inside Ansiversa is crafted and maintained by our in-house team to ensure quality, cohesion, and security.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">What’s included with Free, Pro, and Elite memberships?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Free gives you essential templates and limited sessions with flagship apps. Pro unlocks the full catalog plus advanced AI helpers. Elite offers annual savings, early access to new releases, and exclusive content drops.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">How often do you launch new mini-apps or updates?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            We iterate every few weeks, shipping new features, templates, and entire mini-apps based on community feedback. Elite members can preview releases before they go public.
+          </p>
+        </details>
+        <details class="group p-6">
+          <summary class="flex cursor-pointer list-none items-center justify-between text-left">
+            <span class="text-base font-semibold text-slate-900">Where can I get help if I run into a problem?</span>
+            <span class="transition group-open:rotate-180" aria-hidden="true">⌄</span>
+          </summary>
+          <p class="mt-3 text-sm text-slate-600">
+            Visit the documentation for walkthroughs, check the in-app help center, or email us directly. Pro and Elite members receive priority assistance from the Ansiversa team.
+          </p>
+        </details>
+      </div>
+      <p class="mt-8 text-center text-sm text-slate-500">
+        Need something else? Email us at <a class="font-medium text-indigo-600 hover:text-indigo-500" href="mailto:contact@ansiversa.com">contact@ansiversa.com</a>.
+      </p>
+    </div>
+  </section>
+</Layout>

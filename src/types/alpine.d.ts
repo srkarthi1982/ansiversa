@@ -7,7 +7,9 @@ import type { ChangePasswordStore } from '../alpineStores/changePassword';
 import type { VerifyEmailStore } from '../alpineStores/verifyEmail';
 import type { DocumentationStore } from '../alpineStores/documentation';
 import type { PricingStore } from '../alpineStores/pricing';
-import type { FaqsStore } from '../alpineStores/faqs';
+import type { FeaturesStore } from '../alpineStores/features';
+import type { FaqStore } from '../alpineStores/faq';
+import type { ContactStore } from '../alpineStores/contact';
 
 declare module 'alpinejs' {
   namespace Alpine {
@@ -21,7 +23,9 @@ declare module 'alpinejs' {
       verifyEmail: VerifyEmailStore;
       documentation: DocumentationStore;
       pricing: PricingStore;
-      faqs: FaqsStore;
+      features: FeaturesStore;
+      faq: FaqStore;
+      contact: ContactStore;
     }
   }
 }
