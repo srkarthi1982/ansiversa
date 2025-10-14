@@ -1,5 +1,6 @@
 import { db, Session, User, eq } from 'astro:db';
-import { createHash } from 'node:crypto';
+
+const { createHash } = await import('node:crypto');
 
 type MaybeCookies = {
   get(name: string): { value?: string } | undefined;

@@ -1,6 +1,6 @@
 // src/middleware.ts
 import type { MiddlewareHandler } from 'astro';
-import { SESSION_COOKIE_NAME, findActiveSessionByToken } from './utils/session';
+import { SESSION_COOKIE_NAME, findActiveSessionByToken } from './utils/session.server';
 
 export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redirect }, next) => {
   if (url.toString().includes('/api/') || url.toString().includes('/_actions/')) return next();

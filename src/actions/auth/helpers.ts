@@ -1,7 +1,8 @@
 import type { AstroCookies } from 'astro';
 import { db, User, Session, EmailVerificationToken, eq, or } from 'astro:db';
-import { randomUUID, randomBytes, scryptSync, timingSafeEqual } from 'node:crypto';
-import { deleteSessionByToken, hashSessionToken, SESSION_COOKIE_NAME } from '../../utils/session';
+
+const { randomUUID, randomBytes, scryptSync, timingSafeEqual } = await import('node:crypto');
+import { deleteSessionByToken, hashSessionToken, SESSION_COOKIE_NAME } from '../../utils/session.server';
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24;
 const SESSION_TTL_REMEMBER_SECONDS = SESSION_TTL_SECONDS * 30;
@@ -78,6 +79,8 @@ export async function clearSession(ctx: { cookies: AstroCookies }) {
   }
   ctx.cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
 }
+
+export { randomUUID, randomBytes };
 
 export async function createEmailVerificationToken(userId: string) {
   // Remove any existing unused tokens for this user

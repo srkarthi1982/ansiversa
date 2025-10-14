@@ -1,10 +1,11 @@
 ---
 import '../styles/global.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
 import { actions } from 'astro:actions';
 import { ClientRouter } from 'astro:transitions';
 import Dropdown from '../components/Dropdown.astro';
 import Button from '../components/Button.astro';
-import { getSessionWithUser } from '../utils/session';
+import { getSessionWithUser } from '../utils/session.server';
 import Loader from '../components/Loader.astro';
 const sessionData = await getSessionWithUser(Astro.cookies);
 const isLoggedIn = Boolean(sessionData);
@@ -21,33 +22,17 @@ const username = sessionData?.user?.username ?? 'Account';
 		<title>Ansiversa — Advanced Next‑Gen Software Innovation</title>
 		<meta name="description" content="Ansiversa builds versatile, next‑gen software products and platforms." />
 		<ClientRouter />
-		<link rel="icon" href="/favicon/favicon.ico">
+		<link rel="icon" href="/favicon/favicon.ico" />
     <script>import '../alpineStores/index.ts';</script>
     <script type="module" is:inline>
-      
-
-      const slugToStoreName = (pathname) => {
-        if (!pathname || pathname === '/') return 'home';
-
-        const segments = pathname.split('/').filter(Boolean);
-        if (segments.length === 0) return 'home';
-
-        const slug = segments[segments.length - 1];
-        return slug.replace(/-([a-z])/g, (_, char) => char.toUpperCase());
-      };
-
-      const getStore = (name) => {
-        try {
-          return Alpine.store(name);
-        } catch {
-          return undefined;
-        }
-      };
-
+      const isStoreExists = name => typeof Alpine?.store(name) !== 'undefined';
       function onPreparation(location) {
-        const storeName = slugToStoreName(location?.pathname ?? '/');
-        const store = storeName ? getStore(storeName) : undefined;
-        store?.onInit?.();
+        if(location.pathname === '/'){
+					Alpine.store('home')?.onInit();
+					return;
+				}
+				const name = location.pathname.split('/').findLast(x => x);
+				if(isStoreExists(name)) Alpine.store(name)?.onInit(location);
       }
 
       document.addEventListener('astro:before-preparation', (event) => onPreparation(event.to));

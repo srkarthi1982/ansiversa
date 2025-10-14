@@ -1,9 +1,8 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { db, PasswordResetToken, User, eq } from 'astro:db';
-import { randomBytes } from 'node:crypto';
-import { findUserByEmail, hashPassword } from './helpers';
-import { sendTemporaryPasswordEmail } from '../../utils/email';
+import { findUserByEmail, hashPassword, randomBytes } from './helpers';
+import { sendTemporaryPasswordEmail } from '../../utils/email.server';
 
 function generateTemporaryPassword(length = 12) {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';

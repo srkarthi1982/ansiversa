@@ -1,8 +1,8 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
 import { db, User } from 'astro:db';
-import { randomUUID } from 'node:crypto';
 import {
+  randomUUID,
   createSession,
   createEmailVerificationToken,
   findUserByEmail,
@@ -10,7 +10,7 @@ import {
   hashPassword,
   toBool,
 } from './helpers';
-import { sendVerificationEmail } from '../../utils/email';
+import { sendVerificationEmail } from '../../utils/email.server';
 
 export const register = defineAction({
   accept: 'form',
