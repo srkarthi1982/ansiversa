@@ -4,48 +4,33 @@ import Modal from "../../components/Modal.astro";
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section class="bg-slate-950 py-10 text-white">
-      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
-          Quiz Institute
-        </h1>
-        <p class="mt-4 text-base text-white/70">
-          Build adaptive assessments, track progress, and unlock AI-crafted question banks—all curated by the Ansiversa team.
-        </p>
-      </div>
-    </section>
-
-    <section class="py-16" x-data="Alpine.store('quiz')">
+    <section class="py-4" x-data="{ quiz: $store.quiz }">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">
-              Platform Directory
-            </p>
             <h2 class="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Explore every quiz platform
+              Platforms
             </h2>
-            <p class="mt-2 text-sm text-slate-600">
-              Compare availability, categories, and question counts at a glance.
-            </p>
           </div>
           <div class="flex flex-wrap items-center gap-3">
             <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
-              <span class="text-slate-400">Total</span>
-              <span class="ml-2 text-slate-900" x-text="Intl.NumberFormat().format(totalItems)"></span>
-              <span class="ml-1 text-slate-500">platforms</span>
+              <span class="text-slate-400">Total:</span>
+              <span class="ml-2 text-slate-900" x-text="Intl.NumberFormat().format(quiz.totalItems)"></span>
             </div>
-            <template x-if="totalItems > 0">
+            <template x-if="quiz.totalItems > 0">
               <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
                 <span class="text-slate-400">Showing</span>
-                <span class="ml-2 text-slate-900" x-text="`${Intl.NumberFormat().format((page - 1) * pageSize + 1)}-${Intl.NumberFormat().format(Math.min(page * pageSize, totalItems))}`"></span>
+                <span
+                  class="ml-2 text-slate-900"
+                  x-text="`${Intl.NumberFormat().format((quiz.page - 1) * quiz.pageSize + 1)}-${Intl.NumberFormat().format(Math.min(quiz.page * quiz.pageSize, quiz.totalItems))}`"
+                ></span>
               </div>
             </template>
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
-              x-on:click="openCreateModal()"
-              x-bind:disabled="loading || mutating"
+              x-on:click="quiz.openCreateModal()"
+              x-bind:disabled="quiz.loading || quiz.mutating"
             >
               <i class="fas fa-plus text-sm"></i>
               Add platform
@@ -53,8 +38,8 @@ import Modal from "../../components/Modal.astro";
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="loadPlatforms()"
-              x-bind:disabled="loading || mutating"
+              x-on:click="quiz.loadPlatforms()"
+              x-bind:disabled="quiz.loading || quiz.mutating"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.181a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.181" />
@@ -66,22 +51,22 @@ import Modal from "../../components/Modal.astro";
 
         <Modal
           size="lg"
-          x-show="showCreateModal"
-          x-on:keydown.escape.window="closeCreateModal()"
-          x-on:modal-close="closeCreateModal()"
+          x-show="quiz.showCreateModal"
+          x-on:keydown.escape.window="quiz.closeCreateModal()"
+          x-on:modal-close="quiz.closeCreateModal()"
         >
           <template slot="title">
             <h2 class="text-lg font-semibold text-slate-900">Add a new platform</h2>
           </template>
-          <form id="create-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="createPlatform()">
+          <form id="create-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="quiz.createPlatform()">
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Name</span>
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="Platform name"
-                x-model.trim="newPlatform.name"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.newPlatform.name"
+                x-bind:disabled="quiz.mutating"
                 required
               />
             </label>
@@ -91,8 +76,8 @@ import Modal from "../../components/Modal.astro";
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="e.g. fas fa-rocket"
-                x-model.trim="newPlatform.icon"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.newPlatform.icon"
+                x-bind:disabled="quiz.mutating"
               />
             </label>
             <label class="sm:col-span-2 flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -100,8 +85,8 @@ import Modal from "../../components/Modal.astro";
               <textarea
                 class="min-h-[96px] rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="Short summary that appears on the card"
-                x-model.trim="newPlatform.description"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.newPlatform.description"
+                x-bind:disabled="quiz.mutating"
               ></textarea>
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -110,8 +95,8 @@ import Modal from "../../components/Modal.astro";
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="Optional category"
-                x-model.trim="newPlatform.type"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.newPlatform.type"
+                x-bind:disabled="quiz.mutating"
               />
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -121,16 +106,16 @@ import Modal from "../../components/Modal.astro";
                 min="0"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="0"
-                x-model.number="newPlatform.qCount"
-                x-bind:disabled="mutating"
+                x-model.number="quiz.newPlatform.qCount"
+                x-bind:disabled="quiz.mutating"
               />
             </label>
             <label class="sm:col-span-2 inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
               <input
                 type="checkbox"
                 class="h-4 w-4 rounded border border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:cursor-not-allowed"
-                x-model="newPlatform.isActive"
-                x-bind:disabled="mutating"
+                x-model="quiz.newPlatform.isActive"
+                x-bind:disabled="quiz.mutating"
               />
               <span>Platform is active</span>
             </label>
@@ -139,8 +124,8 @@ import Modal from "../../components/Modal.astro";
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="closeCreateModal()"
-              x-bind:disabled="mutating"
+              x-on:click="quiz.closeCreateModal()"
+              x-bind:disabled="quiz.mutating"
             >
               Cancel
             </button>
@@ -148,7 +133,7 @@ import Modal from "../../components/Modal.astro";
               type="submit"
               form="create-platform-form"
               class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
-              x-bind:disabled="mutating"
+              x-bind:disabled="quiz.mutating"
             >
               <i class="fas fa-save text-sm"></i>
               Save platform
@@ -158,9 +143,9 @@ import Modal from "../../components/Modal.astro";
 
         <Modal
           size="lg"
-          x-show="showEditModal"
-          x-on:keydown.escape.window="closeEditModal()"
-          x-on:modal-close="closeEditModal()"
+          x-show="quiz.showEditModal"
+          x-on:keydown.escape.window="quiz.closeEditModal()"
+          x-on:modal-close="quiz.closeEditModal()"
         >
           <template slot="title">
             <div class="flex items-center justify-between gap-3">
@@ -169,18 +154,18 @@ import Modal from "../../components/Modal.astro";
                 class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
               >
                 <span>ID</span>
-                <span class="text-slate-900" x-text="editingId ?? ''"></span>
+                <span class="text-slate-900" x-text="quiz.editingId ?? ''"></span>
               </span>
             </div>
           </template>
-          <form id="edit-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="saveEdit()">
+          <form id="edit-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="quiz.saveEdit()">
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Name</span>
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="editPlatform.name"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.editPlatform.name"
+                x-bind:disabled="quiz.mutating"
                 required
               />
             </label>
@@ -189,16 +174,16 @@ import Modal from "../../components/Modal.astro";
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="editPlatform.icon"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.editPlatform.icon"
+                x-bind:disabled="quiz.mutating"
               />
             </label>
             <label class="sm:col-span-2 flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Description</span>
               <textarea
                 class="min-h-[96px] rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="editPlatform.description"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.editPlatform.description"
+                x-bind:disabled="quiz.mutating"
               ></textarea>
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -206,8 +191,8 @@ import Modal from "../../components/Modal.astro";
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="editPlatform.type"
-                x-bind:disabled="mutating"
+                x-model.trim="quiz.editPlatform.type"
+                x-bind:disabled="quiz.mutating"
               />
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -216,16 +201,16 @@ import Modal from "../../components/Modal.astro";
                 type="number"
                 min="0"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.number="editPlatform.qCount"
-                x-bind:disabled="mutating"
+                x-model.number="quiz.editPlatform.qCount"
+                x-bind:disabled="quiz.mutating"
               />
             </label>
             <label class="sm:col-span-2 inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
               <input
                 type="checkbox"
                 class="h-4 w-4 rounded border border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:cursor-not-allowed"
-                x-model="editPlatform.isActive"
-                x-bind:disabled="mutating"
+                x-model="quiz.editPlatform.isActive"
+                x-bind:disabled="quiz.mutating"
               />
               <span>Platform is active</span>
             </label>
@@ -234,8 +219,8 @@ import Modal from "../../components/Modal.astro";
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="closeEditModal()"
-              x-bind:disabled="mutating"
+              x-on:click="quiz.closeEditModal()"
+              x-bind:disabled="quiz.mutating"
             >
               Cancel
             </button>
@@ -243,7 +228,7 @@ import Modal from "../../components/Modal.astro";
               type="submit"
               form="edit-platform-form"
               class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
-              x-bind:disabled="mutating"
+              x-bind:disabled="quiz.mutating"
             >
               <i class="fas fa-save text-sm"></i>
               Save changes
@@ -252,104 +237,195 @@ import Modal from "../../components/Modal.astro";
         </Modal>
 
         <div class="mt-6 space-y-4">
-          <template x-if="error">
-            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700" x-text="error"></div>
+          <template x-if="quiz.error">
+            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700" x-text="quiz.error"></div>
           </template>
-          <template x-if="!loading && !error && platforms.length === 0">
+          <template x-if="!quiz.loading && !quiz.error && quiz.totalItems === 0 && !quiz.hasActiveFilters">
             <div class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center text-sm font-medium text-slate-500">
               No platforms available yet.
             </div>
           </template>
-        </div>
-
-        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" x-show="platforms.length > 0" x-transition.opacity x-cloak>
-          <template x-for="platform in platforms" :key="platform.id">
-            <article class="flex h-full flex-col rounded-2xl border border-slate-200 bg-white p-6 shadow-[0_6px_18px_-12px_rgba(15,23,42,0.35)] transition hover:-translate-y-1 hover:shadow-[0_24px_36px_-18px_rgba(15,23,42,0.35)]">
-              <div class="flex h-full flex-col">
-                <div class="flex items-start justify-between gap-4">
-                  <div>
-                    <h3 class="text-lg font-semibold text-slate-900" x-text="platform.name"></h3>
-                    <p class="mt-2 text-sm text-slate-600" x-text="platform.description || 'No description provided.'"></p>
-                  </div>
-                    <div class="flex flex-col items-end gap-3">
-                      <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                        <template x-if="(platform.icon || '').trim() !== ''">
-                          <i class="fas text-xl" :class="platform.icon"></i>
-                        </template>
-                        <template x-if="!(platform.icon || '').trim()">
-                          <i class="fas fa-times text-xl"></i>
-                        </template>
-                      </div>
-                      <div class="flex items-center gap-2">
-                        <button
-                          type="button"
-                      class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-                      x-on:click="openEditModal(platform)"
-                      x-bind:disabled="loading || mutating"
-                    >
-                      Edit
-                    </button>
-                    <button
-                          type="button"
-                          class="inline-flex items-center gap-2 rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:border-red-300 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-                          x-on:click="deletePlatform(platform.id)"
-                          x-bind:disabled="loading || mutating"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="mt-6 flex flex-wrap items-center gap-3 text-xs font-semibold">
-                    <span
-                      class="inline-flex items-center gap-2 rounded-full border px-3 py-1"
-                      :class="platform.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
-                    >
-                      <span class="h-2 w-2 rounded-full" :class="platform.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
-                      <span x-text="platform.isActive ? 'Active' : 'Inactive'"></span>
-                    </span>
-                    <span
-                      class="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-sky-600"
-                      x-text="platform.type ? `Type ${platform.type}` : 'Uncategorized'"
-                    ></span>
-                  </div>
-                  <div class="mt-6 flex flex-wrap items-center gap-4 text-xs text-slate-500">
-                    <div class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 font-semibold text-slate-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5h-.75A2.25 2.25 0 0 0 5.25 6.75v12a.75.75 0 0 0 .75.75h12a.75.75 0 0 0 .75-.75v-12a2.25 2.25 0 0 0-2.25-2.25H15" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75v1.5M15 3.75v1.5M5.25 9h13.5" />
-                      </svg>
-                      <span x-text="`${new Intl.NumberFormat().format(platform.qCount ?? 0)} questions`"></span>
-                    </div>
-                    <div class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 font-semibold text-slate-700">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m6-6H6" />
-                      </svg>
-                      <span x-text="`ID ${platform.id}`"></span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </article>
+          <template x-if="!quiz.loading && !quiz.error && quiz.totalItems === 0 && quiz.hasActiveFilters">
+            <div class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center text-sm font-medium text-slate-500">
+              No platforms match the current filters.
+            </div>
           </template>
         </div>
-        <template x-if="totalPages > 1">
+
+        <div class="mt-10" x-show="quiz.platforms.length > 0" x-transition.opacity x-cloak>
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_6px_18px_-12px_rgba(15,23,42,0.35)]">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th scope="col" class="px-4 py-3">Platform</th>
+                    <th scope="col" class="px-4 py-3">Description</th>
+                    <th scope="col" class="px-4 py-3">Type</th>
+                    <th scope="col" class="px-4 py-3 text-right">Questions</th>
+                    <th scope="col" class="px-4 py-3">Status</th>
+                    <th scope="col" class="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                  <tr class="bg-white text-xs text-slate-600">
+                    <th class="px-4 pb-3 pt-2">
+                      <input
+                        type="text"
+                        placeholder="Filter name"
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model.trim="quiz.filters.name"
+                        x-on:input.debounce.400ms="quiz.onFilterChange()"
+                      />
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <input
+                        type="text"
+                        placeholder="Filter description"
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model.trim="quiz.filters.description"
+                        x-on:input.debounce.400ms="quiz.onFilterChange()"
+                      />
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <input
+                        type="text"
+                        placeholder="Filter type"
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model.trim="quiz.filters.type"
+                        x-on:input.debounce.400ms="quiz.onFilterChange()"
+                      />
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <div class="flex items-center justify-end gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Min"
+                          class="w-20 rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          x-model="quiz.filters.minQuestions"
+                          x-on:input.debounce.400ms="quiz.onFilterChange()"
+                        />
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Max"
+                          class="w-20 rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          x-model="quiz.filters.maxQuestions"
+                          x-on:input.debounce.400ms="quiz.onFilterChange()"
+                        />
+                      </div>
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <select
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model="quiz.filters.status"
+                        x-on:change="quiz.onFilterChange()"
+                      >
+                        <option value="all">All</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </th>
+                    <th class="px-4 pb-3 pt-2 text-right">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed"
+                    x-on:click="quiz.clearFilters()"
+                  >
+                    Clear
+                  </button>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-200 text-sm text-slate-700">
+              <template x-for="platform in quiz.platforms" :key="platform.id">
+                    <tr class="transition hover:bg-slate-50">
+                      <td class="px-4 py-4">
+                        <div class="flex items-center gap-3">
+                          <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+                            <template x-if="(platform.icon || '').trim() !== ''">
+                              <i class="fas text-lg" :class="platform.icon"></i>
+                            </template>
+                            <template x-if="!(platform.icon || '').trim()">
+                              <i class="fas fa-times text-lg"></i>
+                            </template>
+                          </div>
+                          <div class="flex flex-col">
+                            <span class="font-semibold text-slate-900" x-text="platform.name"></span>
+                            <span class="text-xs text-slate-500" x-text="`ID ${platform.id}`"></span>
+                          </div>
+                        </div>
+                      </td>
+                      <td class="px-4 py-4 align-top">
+                        <p class="max-w-xs text-sm text-slate-600" x-text="platform.description || 'No description provided.'"></p>
+                      </td>
+                      <td class="px-4 py-4 align-top">
+                        <span
+                          class="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600"
+                          x-text="platform.type ? `Type ${platform.type}` : 'Uncategorized'"
+                        ></span>
+                      </td>
+                      <td class="px-4 py-4 text-right align-top">
+                        <span class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5h-.75A2.25 2.25 0 0 0 5.25 6.75v12a.75.75 0 0 0 .75.75h12a.75.75 0 0 0 .75-.75v-12a2.25 2.25 0 0 0-2.25-2.25H15" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75v1.5M15 3.75v1.5M5.25 9h13.5" />
+                          </svg>
+                          <span x-text="`${new Intl.NumberFormat().format(platform.qCount ?? 0)} questions`"></span>
+                        </span>
+                      </td>
+                      <td class="px-4 py-4 align-top">
+                        <span
+                          class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                          :class="platform.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
+                        >
+                          <span class="h-2 w-2 rounded-full" :class="platform.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                        </span>
+                      </td>
+                      <td class="px-4 py-4 text-right align-top">
+                        <div class="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                            x-on:click="quiz.openEditModal(platform)"
+                            x-bind:disabled="quiz.loading || quiz.mutating"
+                            aria-label="Edit platform"
+                          >
+                            <i class="fas fa-pen text-sm"></i>
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:border-red-300 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            x-on:click="quiz.deletePlatform(platform.id)"
+                            x-bind:disabled="quiz.loading || quiz.mutating"
+                            aria-label="Delete platform"
+                          >
+                            <i class="fas fa-trash text-sm"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <template x-if="quiz.totalPages > 1">
           <nav class="mt-8 flex items-center justify-center gap-2" aria-label="Pagination">
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="prevPage()"
-              x-bind:disabled="loading || page === 1"
+              x-on:click="quiz.prevPage()"
+              x-bind:disabled="quiz.loading || quiz.page === 1"
             >
               Prev
             </button>
-            <template x-for="pageNumber in pageNumbers" :key="`page-${pageNumber}`">
+            <template x-for="pageNumber in quiz.pageNumbers" :key="`page-${pageNumber}`">
               <button
                 type="button"
                 class="inline-flex h-9 w-9 items-center justify-center rounded-full border text-xs font-semibold transition"
-                x-on:click="setPage(pageNumber)"
-                x-bind:disabled="loading"
-                :class="pageNumber === page ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-800'"
+                x-on:click="quiz.setPage(pageNumber)"
+                x-bind:disabled="quiz.loading"
+                :class="pageNumber === quiz.page ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-800'"
               >
                 <span x-text="pageNumber"></span>
               </button>
@@ -357,8 +433,8 @@ import Modal from "../../components/Modal.astro";
             <button
               type="button"
               class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="nextPage()"
-              x-bind:disabled="loading || page === totalPages"
+              x-on:click="quiz.nextPage()"
+              x-bind:disabled="quiz.loading || quiz.page === quiz.totalPages"
             >
               Next
             </button>

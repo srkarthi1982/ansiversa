@@ -20,6 +20,24 @@ type PlatformForm = {
   isActive: boolean;
 };
 
+type PlatformFilters = {
+  name: string;
+  description: string;
+  type: string;
+  minQuestions: string;
+  maxQuestions: string;
+  status: 'all' | 'active' | 'inactive';
+};
+
+type PlatformFiltersPayload = {
+  name?: string;
+  description?: string;
+  type?: string;
+  minQuestions?: number;
+  maxQuestions?: number;
+  status?: 'active' | 'inactive';
+};
+
 class QuizStoreImpl {
   platforms: PlatformRecord[] = [];
   loading = false;
@@ -33,10 +51,13 @@ class QuizStoreImpl {
   editingId: number | null = null;
   showCreateModal = false;
   showEditModal = false;
+  filters: PlatformFilters;
+  private filterDebounce: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.newPlatform = this.createDefaultForm();
     this.editPlatform = this.createDefaultForm();
+    this.filters = this.createDefaultFilters();
   }
 
   get totalPages(): number {
@@ -47,8 +68,12 @@ class QuizStoreImpl {
     return Array.from({ length: this.totalPages }, (_, index) => index + 1);
   }
 
+  get hasActiveFilters(): boolean {
+    return Object.keys(this.buildFiltersPayload()).length > 0;
+  }
+
   async onInit(): Promise<void> {
-    await this.loadPlatforms();
+    await this.loadPlatforms(1);
   }
 
   async loadPlatforms(page = this.page): Promise<void> {
@@ -56,9 +81,11 @@ class QuizStoreImpl {
     this.error = null;
 
     try {
+      const filtersPayload = this.buildFiltersPayload();
       const { data, error } = await actions.quiz.fetchPlatforms({
         page,
         pageSize: this.pageSize,
+        filters: filtersPayload,
       });
       if (error) {
         throw error;
@@ -71,12 +98,6 @@ class QuizStoreImpl {
       if (this.totalItems === 0) {
         this.page = 1;
       }
-      console.log('platforms', {
-        page: this.page,
-        pageSize: this.pageSize,
-        totalItems: this.totalItems,
-        platforms: this.platforms,
-      });
     } catch (err) {
       console.error('Failed to load quiz platforms', err);
       this.error = err instanceof Error ? err.message : 'Unable to load platforms.';
@@ -107,6 +128,27 @@ class QuizStoreImpl {
   async prevPage(): Promise<void> {
     if (this.page <= 1) return;
     await this.setPage(this.page - 1);
+  }
+
+  onFilterChange(): void {
+    if (this.filterDebounce) {
+      clearTimeout(this.filterDebounce);
+    }
+    this.filterDebounce = setTimeout(() => {
+      this.filterDebounce = null;
+      this.page = 1;
+      void this.loadPlatforms(1);
+    }, 400);
+  }
+
+  clearFilters(): void {
+    if (this.filterDebounce) {
+      clearTimeout(this.filterDebounce);
+      this.filterDebounce = null;
+    }
+    this.filters = this.createDefaultFilters();
+    this.page = 1;
+    void this.loadPlatforms(1);
   }
 
   openCreateModal(): void {
@@ -261,6 +303,17 @@ class QuizStoreImpl {
     };
   }
 
+  private createDefaultFilters(): PlatformFilters {
+    return {
+      name: '',
+      description: '',
+      type: '',
+      minQuestions: '',
+      maxQuestions: '',
+      status: 'all',
+    };
+  }
+
   private buildPayload(form: PlatformForm) {
     const qCountValue = Number.isFinite(form.qCount) ? Math.round(form.qCount) : 0;
     const name = form.name.trim();
@@ -272,6 +325,56 @@ class QuizStoreImpl {
       qCount: Math.max(0, qCountValue),
       isActive: !!form.isActive,
     };
+  }
+
+  private buildFiltersPayload(): PlatformFiltersPayload {
+    const payload: PlatformFiltersPayload = {};
+    const name = this.filters.name.trim();
+    if (name) {
+      payload.name = name;
+    }
+
+    const description = this.filters.description.trim();
+    if (description) {
+      payload.description = description;
+    }
+
+    const type = this.filters.type.trim();
+    if (type) {
+      payload.type = type;
+    }
+
+    const minRaw = this.filters.minQuestions.trim();
+    if (minRaw !== '') {
+      const minValue = Number(minRaw);
+      if (!Number.isNaN(minValue)) {
+        payload.minQuestions = Math.max(0, Math.floor(minValue));
+      }
+    }
+
+    const maxRaw = this.filters.maxQuestions.trim();
+    if (maxRaw !== '') {
+      const maxValue = Number(maxRaw);
+      if (!Number.isNaN(maxValue)) {
+        payload.maxQuestions = Math.max(0, Math.floor(maxValue));
+      }
+    }
+
+    if (
+      payload.minQuestions !== undefined &&
+      payload.maxQuestions !== undefined &&
+      payload.maxQuestions < payload.minQuestions
+    ) {
+      const originalMin = payload.minQuestions;
+      payload.minQuestions = payload.maxQuestions;
+      payload.maxQuestions = originalMin;
+    }
+
+    if (this.filters.status !== 'all') {
+      payload.status = this.filters.status;
+    }
+
+    return payload;
   }
 }
 

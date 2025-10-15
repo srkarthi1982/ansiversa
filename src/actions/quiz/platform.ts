@@ -1,6 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { count, eq } from 'drizzle-orm';
+import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
+import type { SQL } from 'drizzle-orm';
 import { db, Platform } from 'astro:db';
 
 type PlatformRow = typeof Platform.$inferSelect;
@@ -24,6 +25,17 @@ const platformPayloadSchema = z.object({
   qCount: z.number().int().min(0).optional(),
 });
 
+const platformFiltersSchema = z.object({
+  name: z.string().optional(),
+  description: z.string().optional(),
+  type: z.string().optional(),
+  minQuestions: z.number().int().min(0).optional(),
+  maxQuestions: z.number().int().min(0).optional(),
+  status: z.enum(['all', 'active', 'inactive']).optional(),
+});
+
+type PlatformFiltersInput = z.infer<typeof platformFiltersSchema>;
+
 const normalizeInput = (input: z.infer<typeof platformPayloadSchema>) => {
   const name = input.name.trim();
   if (!name) {
@@ -41,13 +53,77 @@ const normalizeInput = (input: z.infer<typeof platformPayloadSchema>) => {
   return { name, description, icon, type: type || null, qCount, isActive };
 };
 
+const normalizeFilters = (filters?: PlatformFiltersInput) => {
+  const safe = filters ?? {};
+  const name = safe.name?.trim() ?? '';
+  const description = safe.description?.trim() ?? '';
+  const type = safe.type?.trim() ?? '';
+  const hasMin = typeof safe.minQuestions === 'number' && Number.isFinite(safe.minQuestions);
+  const hasMax = typeof safe.maxQuestions === 'number' && Number.isFinite(safe.maxQuestions);
+  let minQuestions = hasMin ? Math.max(0, Math.floor(safe.minQuestions)) : null;
+  let maxQuestions = hasMax ? Math.max(0, Math.floor(safe.maxQuestions)) : null;
+
+  if (minQuestions !== null && maxQuestions !== null && maxQuestions < minQuestions) {
+    const swappedMin = minQuestions;
+    minQuestions = maxQuestions;
+    maxQuestions = swappedMin;
+  }
+
+  const status = safe.status ?? 'all';
+
+  return {
+    name,
+    description,
+    type,
+    minQuestions,
+    maxQuestions,
+    status,
+  };
+};
+
 export const fetchPlatforms = defineAction({
   input: z.object({
     page: z.number().int().min(1).default(1),
     pageSize: z.number().int().min(1).max(48).default(6),
+    filters: platformFiltersSchema.optional(),
   }),
-  async handler({ page, pageSize }) {
-    const totalResult = await db.select({ value: count() }).from(Platform);
+  async handler({ page, pageSize, filters }) {
+    const normalizedFilters = normalizeFilters(filters);
+    const conditions: SQL[] = [];
+
+    if (normalizedFilters.name) {
+      conditions.push(sql`lower(${Platform.name}) LIKE ${`%${normalizedFilters.name.toLowerCase()}%`}`);
+    }
+
+    if (normalizedFilters.description) {
+      conditions.push(sql`lower(${Platform.description}) LIKE ${`%${normalizedFilters.description.toLowerCase()}%`}`);
+    }
+
+    if (normalizedFilters.type) {
+      conditions.push(sql`lower(coalesce(${Platform.type}, '')) LIKE ${`%${normalizedFilters.type.toLowerCase()}%`}`);
+    }
+
+    if (normalizedFilters.minQuestions !== null) {
+      conditions.push(gte(Platform.qCount, normalizedFilters.minQuestions));
+    }
+
+    if (normalizedFilters.maxQuestions !== null) {
+      conditions.push(lte(Platform.qCount, normalizedFilters.maxQuestions));
+    }
+
+    if (normalizedFilters.status === 'active') {
+      conditions.push(eq(Platform.isActive, true));
+    } else if (normalizedFilters.status === 'inactive') {
+      conditions.push(eq(Platform.isActive, false));
+    }
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+
+    let totalQuery = db.select({ value: count() }).from(Platform);
+    if (whereClause) {
+      totalQuery = totalQuery.where(whereClause);
+    }
+    const totalResult = await totalQuery;
     const total = totalResult[0]?.value ?? 0;
 
     const safePageSize = pageSize;
@@ -56,9 +132,11 @@ export const fetchPlatforms = defineAction({
     const currentPage = Math.min(Math.max(page, 1), maxPage);
     const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
 
-    const platforms = await db
-      .select()
-      .from(Platform)
+    let query = db.select().from(Platform);
+    if (whereClause) {
+      query = query.where(whereClause);
+    }
+    const platforms = await query
       .orderBy((row) => row.id)
       .limit(safePageSize)
       .offset(offset);
