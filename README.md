@@ -1,44 +1,128 @@
-# 🌐 Ansiversa — Advanced Next-Gen Software Innovation
+# 🌐 Ansiversa — The AI Universe of 100 Mini Apps
 
-**Ansiversa** is an AI-powered ecosystem of mini-apps designed to make learning, career building, and everyday creativity faster, smarter, and more enjoyable.  
-From quizzes to resumes to flashcards — Ansiversa brings everything together in one intelligent platform.
-
----
-
-## 🚀 Mission
-
-To empower users with **next-generation web tools** that are fast, useful, and beautifully designed — all accessible under one subscription.
+**Ansiversa** is an AI-powered ecosystem of 100 web-based mini-apps designed to make learning, creativity, productivity, and daily life smarter and more engaging. Each app is built with speed, simplicity, and purpose — unified under one subscription platform.
 
 ---
 
-## 🧩 Current Mini-Apps
+## 🚀 Vision
+
+To make **Ansiversa** the most popular and useful website in history — a single home for learning, career, creativity, productivity, wellness, and fun.
+
+---
+
+## 🧠 Categories & Apps
 
 ### 🎓 Learning & Knowledge
-- Quiz Institute  
-- FlashNote  
+1. Quiz Institute
+2. FlashNote
+3. Research Assistant
+4. AI Notes Summarizer
+5. Concept Explainer
+6. Study Planner
+7. Course Tracker
+8. Dictionary+
+9. Knowledge Duel
+10. Fact Generator
+11. Formula Finder
+12. Language Flashcards
+13. Exam Simulator
+14. EduPrompt
+15. Lesson Builder
+16. Study Timer
+17. Memory Trainer
+18. Daily Word Challenge
+19. Smart Textbook Scanner
+20. Homework Helper
 
 ### 💼 Career & Professional
-- Resume Builder  
-- Visiting Card Maker  
-- Email & Cover Letter Polisher  
-- Interview Coach  
+21. Resume Builder
+22. Cover Letter Writer
+23. Visiting Card Maker
+24. Interview Coach
+25. Job Description Analyzer
+26. Portfolio Creator
+27. Meeting Minutes AI
+28. Email Polisher
+29. Proposal Writer
+30. Invoice & Receipt Maker
+31. Contract Generator
+32. Presentation Designer
+33. Career Planner
+34. LinkedIn Bio Optimizer
+35. Client Feedback Analyzer
 
 ### ✍️ Writing & Creativity
-- StoryCrafter  
-- Poem Studio  
-- Language & Tone Assistant  
+36. StoryCrafter
+37. Poem Studio
+38. Song Lyric Maker
+39. Ad Copy Assistant
+40. Book Summary Generator
+41. Blog Writer
+42. Social Caption Generator
+43. Script Formatter
+44. Creative Title Maker
+45. Quote Forge
+46. AI Meme Creator
+47. Prompt Builder
+48. Speech Writer
+49. Novel Outliner
+50. Comic Storyboarder
+51. Fanfic Generator
+52. Email Newsletter Writer
+53. AI Translator & Tone Fixer
+54. Rephrase & Paraphraser
+55. Grammar Fixer
 
-### ⚙️ Utility & Developer
-- Snippet Generator  
+### ⚙️ Utility & Productivity
+56. Snippet Generator
+57. File Converter
+58. Image Background Remover
+59. Unit & Currency Converter
+60. Price Checker
+61. QR Code Creator
+62. Clipboard Manager
+63. File Compressor
+64. Text-to-Speech Converter
+65. Speech-to-Text Converter
+66. Screenshot Editor
+67. Color Palette Generator
+68. Password Generator
+69. API Tester
+70. JSON Formatter
+71. Markdown Editor
+72. Time Zone Scheduler
+73. Browser PDF Reader
+74. Clipboard Translator
+75. Quick Notepad
 
-### 🧘 Lifestyle & Well-being
-- Wellness & Goal Planner  
+### 🧘 Lifestyle & Well-Being
+76. Wellness & Goal Planner
+77. Event Planner
+78. Meal Planner
+79. Fitness Tracker
+80. Mood Journal
+81. Meditation Script Maker
+82. Sleep Routine Designer
+83. Affirmation Generator
+84. Expense Tracker
+85. Shopping List AI
+86. Travel Itinerary Builder
+87. Recipe Generator
+88. Pet Care Planner
+89. Language Learning Buddy
+90. Eco Habit Tracker
 
 ### 🎮 Fun & Engagement
-- Trivia Arena  
-
-### 🛒 Shopping & Productivity
-- Price Checker  
+91. Trivia Arena
+92. Riddle Maker
+93. Puzzle Zone
+94. Would You Rather
+95. Guess the Emoji
+96. AI Character Chat
+97. Personality Quiz
+98. Fortune Teller
+99. Horoscope AI
+100. Daily Challenge
 
 ---
 
@@ -46,9 +130,9 @@ To empower users with **next-generation web tools** that are fast, useful, and b
 
 | Plan | Price | Access |
 |------|-------|---------|
-| Free | $0 | Limited usage, basic templates |
-| Pro | $10 / month | Full access to all mini-apps |
-| Elite | $50 / year | All features + early access to new apps |
+| Free | $0 | Basic access to limited apps |
+| Pro | $10 / month | Unlimited access to all apps |
+| Elite | $50 / year | All apps + early beta access + rewards |
 
 ---
 
@@ -57,7 +141,7 @@ To empower users with **next-generation web tools** that are fast, useful, and b
 - **Frontend:** Astro + Tailwind CSS + Alpine.js  
 - **Backend:** Astro SSR / Supabase / AstroDB  
 - **AI Engine:** OpenAI Codex / GPT-5 APIs  
-- **Hosting:** Vercel (ansiversa.com)  
+- **Hosting:** Vercel  
 
 ---
 
@@ -79,24 +163,16 @@ src/
     wellness/
     trivia/
     price/
+    ...
 ```
 
 ---
 
-## 📅 Development Roadmap (Phase 1)
+## 📅 Roadmap Summary
 
-- ✅ Quiz Institute — Live  
-- 🚧 Resume Builder — In progress  
-- ⏳ FlashNote — Next to build  
-- ⏳ Visiting Card Maker — Upcoming  
-- ⏳ Email & Cover Letter Polisher — Q2 2026
-
----
-
-## 🤝 Contributing
-
-We’re currently building the Ansiversa core system.  
-If you’d like to collaborate or suggest new mini-apps, feel free to reach out.
+**Phase 1:**  Quiz Institute · Resume Builder · FlashNote · Visiting Card Maker · Email Polisher  
+**Phase 2:**  Interview Coach · Price Checker · Poem Studio · StoryCrafter  
+**Phase 3:**  Lifestyle, Utility, and Fun apps to reach 100 total by 2030.
 
 ---
 
@@ -107,4 +183,4 @@ If you’d like to collaborate or suggest new mini-apps, feel free to reach out.
 
 ---
 
-> _Ansiversa — Innovation in every click._
+> _Ansiversa — Innovation in Every Click._
