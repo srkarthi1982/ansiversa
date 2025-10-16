@@ -1,36 +1,140 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+
+const highlights = [
+  {
+    title: "Curated subjects",
+    description: "Quickly dive into subjects that are ready to challenge your knowledge, from coding concepts to general trivia.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Progressive difficulty",
+    description: "Each platform is designed to scale with you, introducing harder questions as you improve.",
+    icon: "fas fa-chart-line",
+  },
+  {
+    title: "Instant feedback",
+    description: "Learn as you go with immediate feedback that helps reinforce the correct answer right away.",
+    icon: "fas fa-bolt",
+  },
+];
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section class="py-16">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 space-y-6">
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="text-center lg:text-left space-y-6">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-star text-xs"></i>
+              New quiz experiences
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Discover quiz platforms that make learning feel effortless
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Explore a growing collection of interactive quizzes tailored for different learning journeys. Whether you are brushing up on fundamentals or mastering advanced topics, start with a platform that matches your pace.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <a
+                href="#platforms"
+                class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
+              >
+                <i class="fas fa-play text-xs"></i>
+                Get started
+              </a>
+              <a
+                href="/quiz/admin"
+                class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+              >
+                <i class="fas fa-sliders-h text-xs"></i>
+                Admin dashboard
+              </a>
+            </div>
+          </div>
+          <div class="flex items-center justify-center">
+            <div class="grid w-full max-w-md gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-lg">
+              <h2 class="text-lg font-semibold text-slate-900">What you can expect</h2>
+              <ul class="grid gap-4">
+                {highlights.map((item) => (
+                  <li class="flex items-start gap-3 rounded-2xl bg-slate-50 p-4">
+                    <span class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                      <i class={`${item.icon} text-sm`}></i>
+                    </span>
+                    <div class="space-y-1">
+                      <p class="text-sm font-semibold text-slate-900">{item.title}</p>
+                      <p class="text-sm text-slate-600">{item.description}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="platforms" class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-10">
         <header class="space-y-3 text-center">
-          <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Quiz Platforms</h1>
+          <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Featured quiz platforms</h2>
           <p class="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg">
-            Explore interactive quizzes tailored for different learning journeys. Our catalogue keeps growing as new platforms are crafted.
+            Pick a platform to begin your journey. Each one focuses on a specific topic with tailored question banks and curated learning paths.
           </p>
         </header>
-        <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-10">
-          <h2 class="text-xl font-semibold text-slate-900">Looking to manage platforms?</h2>
-          <p class="mt-2 text-sm text-slate-600">
-            Head over to the admin dashboard to add new quiz experiences, update descriptions, and keep your catalogue organised.
-          </p>
-          <div class="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <a
-              href="/quiz/admin/platform"
-              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-            >
-              <i class="fas fa-sliders-h text-sm"></i>
-              Manage platforms
-            </a>
-            <a
-              href="/quiz"
-              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-5 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
-            >
-              Browse quizzes
-            </a>
-          </div>
+
+        <div
+          class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+          x-data="() => ({ quiz: $store.quiz })"
+          x-init="quiz.loadPlatforms(1)"
+        >
+          <template x-if="quiz.loading">
+            <div class="sm:col-span-2 lg:col-span-3 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <template x-for="index in 3" :key="index">
+                <div class="h-full rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <div class="h-10 w-10 rounded-full bg-slate-200"></div>
+                  <div class="mt-4 h-4 w-3/4 rounded bg-slate-200"></div>
+                  <div class="mt-3 h-3 w-full rounded bg-slate-100"></div>
+                  <div class="mt-2 h-3 w-5/6 rounded bg-slate-100"></div>
+                  <div class="mt-6 h-9 w-32 rounded-full bg-slate-200"></div>
+                </div>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="!quiz.loading && quiz.platforms.filter((item) => item.isActive).length === 0">
+            <div class="sm:col-span-2 lg:col-span-3 rounded-2xl border border-dashed border-slate-200 bg-white p-10 text-center">
+              <h3 class="text-lg font-semibold text-slate-900">No active platforms yet</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Once the admin publishes platforms, they will appear here for learners to explore.
+              </p>
+            </div>
+          </template>
+
+          <template x-for="platform in quiz.platforms.filter((item) => item.isActive)" :key="platform.id">
+            <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+              <div class="space-y-4">
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                  <i class="text-lg" x-bind:class="platform.icon || 'fas fa-rocket'"></i>
+                </span>
+                <div class="space-y-2">
+                  <h3 class="text-xl font-semibold text-slate-900" x-text="platform.name"></h3>
+                  <p class="text-sm text-slate-600" x-text="platform.description || 'Stay tuned for more details about this platform.'"></p>
+                </div>
+              </div>
+              <div class="mt-6 flex items-center justify-between text-xs font-semibold text-slate-500">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-slate-700">
+                  <i class="fas fa-layer-group text-[11px]"></i>
+                  <span x-text="platform.type || 'General'"></span>
+                </span>
+                <span class="inline-flex items-center gap-2">
+                  <i class="fas fa-question-circle text-[11px]"></i>
+                  <span x-text="`${platform.qCount ?? 0} questions`"></span>
+                </span>
+              </div>
+            </article>
+          </template>
         </div>
       </div>
     </section>
