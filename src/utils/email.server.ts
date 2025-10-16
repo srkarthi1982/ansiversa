@@ -28,7 +28,9 @@ async function getTransporter() {
 
   if (!transporterPromise) {
     transporterPromise = nodemailer.createTransport({
-      service: 'gmail',
+        host: "smtp.gmail.com",
+        port: 465,           // or 587 with secure: false
+        secure: true,
       auth: {
         user: FROM_EMAIL,
         pass: GMAIL_PASSWORD,
