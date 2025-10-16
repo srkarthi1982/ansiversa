@@ -7,6 +7,7 @@ const User = defineTable({
     username: column.text({ unique: true }),
     email: column.text({ unique: true }),
     passwordHash: column.text(),
+    plan: column.text({ default: 'free' }),
     emailVerifiedAt: column.date({ optional: true }),
     createdAt: column.date({ default: NOW }),
   },
@@ -66,6 +67,31 @@ const Subject = defineTable({
   },
 });
 
+const Resume = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    title: column.text(),
+    templateKey: column.text({ default: 'modern' }),
+    locale: column.text({ default: 'en' }),
+    status: column.text({ default: 'draft' }),
+    data: column.json(),
+    lastSavedAt: column.date({ optional: true }),
+    createdAt: column.date({ default: NOW }),
+    isDefault: column.boolean({ default: false }),
+  },
+});
+
+const ResumeExport = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    resumeId: column.text({ references: () => Resume.columns.id }),
+    format: column.text(),
+    filePath: column.text(),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
 export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
@@ -73,6 +99,8 @@ export default defineDb({
     EmailVerificationToken,
     Session,
     Platform,
-    Subject
+    Subject,
+    Resume,
+    ResumeExport,
   },
 });

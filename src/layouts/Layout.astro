@@ -28,11 +28,19 @@ const username = sessionData?.user?.username ?? 'Account';
       const isStoreExists = name => typeof Alpine?.store(name) !== 'undefined';
       function onPreparation(location) {
         if(location.pathname === '/'){
-					Alpine.store('home')?.onInit();
+          const homeStore = Alpine.store('home');
+          if (homeStore && typeof homeStore.onInit === 'function') {
+            homeStore.onInit();
+          }
 					return;
 				}
 				const name = location.pathname.split('/').findLast(x => x);
-				if(isStoreExists(name)) Alpine.store(name)?.onInit(location);
+        if(isStoreExists(name)) {
+          const store = Alpine.store(name);
+          if (store && typeof store.onInit === 'function') {
+            store.onInit(location);
+          }
+        }
       }
 
       document.addEventListener('astro:before-preparation', (event) => onPreparation(event.to));

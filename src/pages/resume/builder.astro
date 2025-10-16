@@ -1,0 +1,636 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+const resumeId = Astro.url.searchParams.get('id') ?? '';
+const resumeIdAttr = resumeId ?? '';
+---
+<Layout>
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#resume-builder-main">
+    Skip to content
+  </a>
+  <main
+    id="resume-builder-main"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ resume: $store.resume })"
+    x-init="resume.initBuilder({ id: $el.dataset.resumeId || null })"
+    data-resume-id={resumeIdAttr}
+  >
+    <section class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-wrap items-center gap-4 px-4 py-6 sm:px-6 lg:max-w-6xl lg:px-8">
+        <a href="/resume" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900">
+          <i class="fas fa-arrow-left text-xs"></i>
+          Back to resumes
+        </a>
+        <div class="ml-0 flex flex-1 flex-wrap items-center gap-3 sm:ml-6">
+          <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl" x-text="resume.builderState.title || 'Untitled resume'"></h1>
+          <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+            <i class="fas fa-layer-group text-[11px]"></i>
+            <span class="capitalize" x-text="resume.builderState.templateKey"></span>
+          </span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            @click.prevent="resume.openTemplateGallery()"
+          >
+            <i class="fas fa-layer-group text-xs"></i>
+            Templates
+          </button>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            @click.prevent="resume.saveNow()"
+          >
+            <i class="fas fa-save text-xs"></i>
+            Save
+          </button>
+          <div class="relative" x-data="{ open: false }">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              @click="open = !open"
+              :aria-expanded="open"
+              aria-haspopup="true"
+            >
+              <i class="fas fa-file-export text-xs"></i>
+              Export
+              <i class="fas fa-chevron-down text-[10px]"></i>
+            </button>
+            <div
+              class="absolute right-0 z-20 mt-2 w-48 rounded-2xl border border-slate-200 bg-white py-2 text-sm shadow-lg focus:outline-none"
+              x-show="open"
+              x-transition
+              @click.away="open = false"
+              role="menu"
+            >
+              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('pdf'); open = false;">
+                <i class="fas fa-file-pdf text-xs text-rose-500"></i>
+                PDF
+              </button>
+              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('docx'); open = false;">
+                <i class="fas fa-file-word text-xs text-indigo-500"></i>
+                DOCX
+              </button>
+              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('md'); open = false;">
+                <i class="fas fa-file-alt text-xs text-emerald-500"></i>
+                Markdown
+              </button>
+              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('html'); open = false;">
+                <i class="fas fa-code text-xs text-amber-500"></i>
+                HTML
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10">
+      <div class="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,400px)] lg:px-8">
+        <div class="space-y-8">
+          <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-4">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Structure</h2>
+                <p class="text-sm text-slate-600">Switch templates or adjust locale to tailor your resume.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+                  <span class="sr-only">Locale</span>
+                  <i class="fas fa-language text-xs"></i>
+                  <select
+                    class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                    x-model="resume.builderState.locale"
+                    @change="resume.markUnsaved()"
+                  >
+                    <option value="en">English</option>
+                    <option value="ar">Arabic</option>
+                    <option value="ta">Tamil</option>
+                  </select>
+                </label>
+                <div class="inline-flex rounded-full border border-slate-200 bg-white p-1 shadow-sm" role="group" aria-label="Template selection">
+                  <template x-for="template in resume.templates" :key="template.key">
+                    <button
+                      type="button"
+                      class="relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                      :class="resume.builderState.templateKey === template.key ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 hover:bg-slate-100'"
+                      @click.prevent="resume.setTemplate(template.key)"
+                    >
+                      <i :class="template.icon" class="text-[11px]"></i>
+                      <span class="hidden sm:inline" x-text="template.label"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </header>
+            <div class="divide-y divide-slate-100">
+              <details class="group" :open="resume.isSectionOpen('basics')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="resume.toggleSection('basics')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-id-card text-xs text-indigo-500"></i>
+                    Basics
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Full name
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Karthik Ramalingam"
+                        x-model="resume.builderState.data.basics.fullName"
+                        @input="resume.syncTitleWithName()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Title
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Senior Full-Stack Engineer"
+                        x-model="resume.builderState.data.basics.title"
+                        @input="resume.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Email
+                      <input
+                        type="email"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="hello@example.com"
+                        x-model="resume.builderState.data.basics.email"
+                        @input="resume.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Phone
+                      <input
+                        type="tel"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="+971 50 000 0000"
+                        x-model="resume.builderState.data.basics.phone"
+                        @input="resume.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Location
+                    <input
+                      type="text"
+                      class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="Dubai, UAE"
+                      x-model="resume.builderState.data.basics.location"
+                      @input="resume.markUnsaved()"
+                    />
+                  </label>
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Summary
+                    <textarea
+                      rows="4"
+                      class="rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="Highlight your achievements and expertise..."
+                      x-model="resume.builderState.data.summary"
+                      @input="resume.markUnsaved()"
+                    ></textarea>
+                    <div class="flex items-center justify-between text-xs text-slate-500">
+                      <span x-text="`${resume.builderState.data.summary?.length ?? 0}/1200 characters`"></span>
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                        @click.prevent="resume.requestAiImprove('summary')"
+                      >
+                        <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
+                        AI improve
+                      </button>
+                    </div>
+                  </label>
+                </div>
+              </details>
+
+              <details class="group" :open="resume.isSectionOpen('experience')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="resume.toggleSection('experience')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-briefcase text-xs text-indigo-500"></i>
+                    Experience
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-6 px-6 pb-6 pt-2">
+                  <template x-for="(item, index) in resume.builderState.data.experience" :key="item.id || index">
+                    <article class="rounded-2xl border border-slate-200 p-4 shadow-sm">
+                      <div class="flex items-start justify-between gap-3">
+                        <h3 class="text-sm font-semibold text-slate-900" x-text="item.position || `Experience #${index + 1}`"></h3>
+                        <div class="flex items-center gap-2">
+                          <button
+                            type="button"
+                            class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                            @click.prevent="resume.requestAiImprove('experience', index)"
+                          >
+                            <i class="fas fa-wand-magic-sparkles text-[9px]"></i>
+                            Improve
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                            @click.prevent="resume.removeExperience(index)"
+                            :aria-label="`Remove experience ${index + 1}`"
+                          >
+                            <i class="fas fa-trash text-[10px]"></i>
+                          </button>
+                        </div>
+                      </div>
+                      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          Company
+                          <input
+                            type="text"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            placeholder="Ansiversa"
+                            x-model="item.company"
+                            @input="resume.markUnsaved()"
+                          />
+                        </label>
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          Position
+                          <input
+                            type="text"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            placeholder="Lead Engineer"
+                            x-model="item.position"
+                            @input="resume.markUnsaved()"
+                          />
+                        </label>
+                      </div>
+                      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          Start date
+                          <input
+                            type="month"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            x-model="item.start"
+                            @change="resume.markUnsaved()"
+                          />
+                        </label>
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          End date
+                          <input
+                            type="month"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            :disabled="item.current"
+                            x-model="item.end"
+                            @change="resume.markUnsaved()"
+                          />
+                        </label>
+                      </div>
+                      <label class="mt-4 flex items-center gap-2 text-xs font-semibold text-slate-600">
+                        <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" x-model="item.current" @change="resume.markUnsaved(); if (item.current) item.end = null;" />
+                        Current role
+                      </label>
+                      <label class="mt-4 flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                        Highlights
+                        <textarea
+                          rows="3"
+                          class="rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Start each bullet with an action verb, quantify impact…"
+                          x-model="item.description"
+                          @input="resume.markUnsaved()"
+                        ></textarea>
+                        <span class="text-[11px] text-slate-500" x-text="`${item.description?.length ?? 0}/220 characters`"></span>
+                      </label>
+                    </article>
+                  </template>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full border border-dashed border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    @click.prevent="resume.addExperience()"
+                  >
+                    <i class="fas fa-plus text-xs"></i>
+                    Add experience
+                  </button>
+                </div>
+              </details>
+
+              <details class="group" :open="resume.isSectionOpen('education')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="resume.toggleSection('education')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-user-graduate text-xs text-indigo-500"></i>
+                    Education
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-6 px-6 pb-6 pt-2">
+                  <template x-for="(item, index) in resume.builderState.data.education" :key="item.id || index">
+                    <article class="rounded-2xl border border-slate-200 p-4 shadow-sm">
+                      <div class="flex items-start justify-between gap-3">
+                        <h3 class="text-sm font-semibold text-slate-900" x-text="item.school || `Education #${index + 1}`"></h3>
+                        <button
+                          type="button"
+                          class="inline-flex items-center justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                          @click.prevent="resume.removeEducation(index)"
+                          :aria-label="`Remove education ${index + 1}`"
+                        >
+                          <i class="fas fa-trash text-[10px]"></i>
+                        </button>
+                      </div>
+                      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          School
+                          <input
+                            type="text"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            placeholder="Indian Institute of Technology"
+                            x-model="item.school"
+                            @input="resume.markUnsaved()"
+                          />
+                        </label>
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          Degree
+                          <input
+                            type="text"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            placeholder="B.Tech Computer Science"
+                            x-model="item.degree"
+                            @input="resume.markUnsaved()"
+                          />
+                        </label>
+                      </div>
+                      <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          Start year
+                          <input
+                            type="month"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            x-model="item.start"
+                            @change="resume.markUnsaved()"
+                          />
+                        </label>
+                        <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                          End year
+                          <input
+                            type="month"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                            x-model="item.end"
+                            @change="resume.markUnsaved()"
+                          />
+                        </label>
+                      </div>
+                      <label class="mt-4 flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                        Highlights
+                        <textarea
+                          rows="3"
+                          class="rounded-2xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Relevant coursework, GPA, activities..."
+                          x-model="item.description"
+                          @input="resume.markUnsaved()"
+                        ></textarea>
+                      </label>
+                    </article>
+                  </template>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full border border-dashed border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    @click.prevent="resume.addEducation()"
+                  >
+                    <i class="fas fa-plus text-xs"></i>
+                    Add education
+                  </button>
+                </div>
+              </details>
+
+              <details class="group" :open="resume.isSectionOpen('skills')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="resume.toggleSection('skills')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-list-check text-xs text-indigo-500"></i>
+                    Skills
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-6 px-6 pb-6 pt-2">
+                  <div class="rounded-2xl border border-slate-200 p-4 shadow-sm">
+                    <label class="flex flex-col gap-2 text-sm font-semibold text-slate-700">
+                      Add skill
+                      <div class="flex flex-wrap items-center gap-3">
+                        <input
+                          type="text"
+                          x-model="resume.skillDraft.name"
+                          class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="TypeScript"
+                          @keydown.enter.prevent="resume.addSkill()"
+                        />
+                        <select
+                          x-model="resume.skillDraft.level"
+                          class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
+                          <option value="beginner">Beginner</option>
+                          <option value="intermediate">Intermediate</option>
+                          <option value="advanced">Advanced</option>
+                          <option value="expert">Expert</option>
+                        </select>
+                        <button
+                          type="button"
+                          class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                          @click.prevent="resume.addSkill()"
+                        >
+                          <i class="fas fa-plus text-xs"></i>
+                          Add
+                        </button>
+                      </div>
+                    </label>
+                    <p class="mt-2 text-xs text-slate-500">Up to 30 skills. Use AI assist to standardize and merge duplicates.</p>
+                    <button
+                      type="button"
+                      class="mt-3 inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                      @click.prevent="resume.requestAiImprove('skills')"
+                    >
+                      <i class="fas fa-wand-magic-sparkles text-[9px]"></i>
+                      AI standardize
+                    </button>
+                  </div>
+                  <div class="flex flex-wrap gap-2">
+                    <template x-for="(skill, index) in resume.builderState.data.skills" :key="`${skill.name}-${index}`">
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                        <span x-text="`${skill.name} · ${resume.formatSkillLevel(skill.level)}`"></span>
+                        <button
+                          type="button"
+                          class="text-slate-500 hover:text-slate-900 focus:outline-none focus-visible:text-red-600"
+                          @click.prevent="resume.removeSkill(index)"
+                          :aria-label="`Remove skill ${skill.name}`"
+                        >
+                          <i class="fas fa-times text-[10px]"></i>
+                        </button>
+                      </span>
+                    </template>
+                    <template x-if="resume.builderState.data.skills.length === 0">
+                      <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-500">No skills yet</span>
+                    </template>
+                  </div>
+                </div>
+              </details>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Links & extras</h2>
+                <p class="text-sm text-slate-600">Add projects, certificates, or portfolio URLs.</p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                @click.prevent="resume.addLink()"
+              >
+                <i class="fas fa-plus text-[10px]"></i>
+                Add link
+              </button>
+            </header>
+            <div class="mt-4 space-y-4">
+              <template x-for="(item, index) in resume.builderState.data.links" :key="item.id || index">
+                <div class="rounded-2xl border border-dashed border-slate-200 p-4">
+                  <div class="flex items-center justify-between gap-3">
+                    <h3 class="text-sm font-semibold text-slate-900" x-text="item.label || 'Link'"></h3>
+                    <button
+                      type="button"
+                      class="inline-flex items-center justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                      @click.prevent="resume.removeLink(index)"
+                      :aria-label="`Remove link ${index + 1}`"
+                    >
+                      <i class="fas fa-trash text-[10px]"></i>
+                    </button>
+                  </div>
+                  <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                      Label
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Portfolio"
+                        x-model="item.label"
+                        @input="resume.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                      URL
+                      <input
+                        type="url"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="https://"
+                        x-model="item.url"
+                        @input="resume.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                </div>
+              </template>
+              <template x-if="resume.builderState.data.links.length === 0">
+                <p class="text-sm text-slate-500">Add links to portfolios, GitHub, personal websites, or social profiles.</p>
+              </template>
+            </div>
+          </div>
+        </div>
+
+        <aside class="sticky top-20 self-start rounded-3xl border border-slate-200 bg-white shadow-lg">
+          <header class="flex items-center justify-between gap-3 border-b border-slate-100 px-6 py-4">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Live preview</p>
+              <h2 class="text-lg font-semibold text-slate-900">Template</h2>
+            </div>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              @click.prevent="resume.openTemplateGallery()"
+            >
+              <i class="fas fa-display text-[10px]"></i>
+              Preview all
+            </button>
+          </header>
+          <div class="grid gap-4 px-6 py-5 text-sm text-slate-700">
+            <div class="space-y-2 text-center">
+              <h3 class="text-xl font-bold text-slate-900" x-text="resume.builderState.data.basics.fullName || 'Your name'"></h3>
+              <p class="text-sm font-medium uppercase tracking-wide text-slate-500" x-text="resume.builderState.data.basics.title || 'Role'"></p>
+              <p class="text-xs text-slate-500" x-text="resume.formatContactLine(resume.builderState.data.basics)"></p>
+            </div>
+            <template x-if="resume.builderState.data.summary">
+              <section class="space-y-2">
+                <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Summary</h4>
+                <p class="text-sm leading-relaxed text-slate-700" x-text="resume.builderState.data.summary"></p>
+              </section>
+            </template>
+            <template x-if="resume.builderState.data.experience.length > 0">
+              <section class="space-y-3">
+                <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Experience</h4>
+                <template x-for="(item, index) in resume.builderState.data.experience" :key="`preview-exp-${index}`">
+                  <article class="space-y-1">
+                    <p class="text-sm font-semibold text-slate-900" x-text="item.position || 'Role'"></p>
+                    <p class="text-xs font-medium text-slate-600" x-text="resume.formatExperienceMeta(item)"></p>
+                    <p class="text-xs leading-relaxed text-slate-600" x-text="item.description"></p>
+                  </article>
+                </template>
+              </section>
+            </template>
+            <template x-if="resume.builderState.data.skills.length > 0">
+              <section class="space-y-2">
+                <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Skills</h4>
+                <div class="flex flex-wrap gap-2">
+                  <template x-for="(skill, index) in resume.builderState.data.skills" :key="`preview-skill-${index}`">
+                    <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                      <span x-text="skill.name"></span>
+                      <span class="text-[10px] uppercase text-slate-500" x-text="resume.formatSkillLevel(skill.level)"></span>
+                    </span>
+                  </template>
+                </div>
+              </section>
+            </template>
+            <template x-if="resume.builderState.data.education.length > 0">
+              <section class="space-y-2">
+                <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Education</h4>
+                <template x-for="(item, index) in resume.builderState.data.education" :key="`preview-edu-${index}`">
+                  <article class="space-y-1">
+                    <p class="text-sm font-semibold text-slate-900" x-text="item.school || 'Institution'"></p>
+                    <p class="text-xs font-medium text-slate-600" x-text="resume.formatEducationMeta(item)"></p>
+                    <p class="text-xs leading-relaxed text-slate-600" x-text="item.description"></p>
+                  </article>
+                </template>
+              </section>
+            </template>
+            <template x-if="resume.builderState.data.links.length > 0">
+              <section class="space-y-2">
+                <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Links</h4>
+                <ul class="space-y-1 text-xs text-indigo-600">
+                  <template x-for="(item, index) in resume.builderState.data.links" :key="`preview-link-${index}`">
+                    <li>
+                      <a class="hover:underline" :href="item.url" x-text="item.label || item.url" target="_blank" rel="noopener noreferrer"></a>
+                    </li>
+                  </template>
+                </ul>
+              </section>
+            </template>
+          </div>
+          <footer class="rounded-b-3xl border-t border-slate-100 bg-slate-50 px-6 py-4">
+            <p class="flex items-center justify-between text-xs font-semibold text-slate-600">
+              <span>Autosave</span>
+              <span x-text="resume.builderState.autosaveLabel || 'Idle'"></span>
+            </p>
+          </footer>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>
