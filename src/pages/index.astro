@@ -2,62 +2,150 @@
 import Layout from "../layouts/Layout.astro";
 
 const mission =
-  "To empower users with next-generation web tools that are fast, useful, and beautifully designed — all accessible under one subscription.";
+  "Ansiversa is an AI-powered universe of 100 web-based mini-apps engineered for learning, creativity, productivity, and everyday life — all unified under one subscription.";
 
 const miniAppCategories = [
   {
     name: "Learning & Knowledge",
-    blurb: "Adaptive tools that keep study sessions sharp and personal.",
+    blurb: "Adaptive study tools for students, teachers, and lifelong learners.",
     accent: "from-indigo-500 via-sky-500 to-purple-500",
     apps: [
       { name: "Quiz Institute", href: "/quiz" },
       { name: "FlashNote" },
+      { name: "Research Assistant" },
+      { name: "AI Notes Summarizer" },
+      { name: "Concept Explainer" },
+      { name: "Study Planner" },
+      { name: "Course Tracker" },
+      { name: "Dictionary+" },
+      { name: "Knowledge Duel" },
+      { name: "Fact Generator" },
+      { name: "Formula Finder" },
+      { name: "Language Flashcards" },
+      { name: "Exam Simulator" },
+      { name: "EduPrompt" },
+      { name: "Lesson Builder" },
+      { name: "Study Timer" },
+      { name: "Memory Trainer" },
+      { name: "Daily Word Challenge" },
+      { name: "Smart Textbook Scanner" },
+      { name: "Homework Helper" },
     ],
   },
   {
     name: "Career & Professional",
-    blurb: "Polish portfolios, job materials, and first impressions in minutes.",
+    blurb: "Polish portfolios, communications, and meetings in minutes.",
     accent: "from-purple-500 via-indigo-500 to-sky-500",
     apps: [
       { name: "Resume Builder" },
+      { name: "Cover Letter Writer" },
       { name: "Visiting Card Maker" },
-      { name: "Email & Cover Letter Polisher" },
       { name: "Interview Coach" },
+      { name: "Job Description Analyzer" },
+      { name: "Portfolio Creator" },
+      { name: "Meeting Minutes AI" },
+      { name: "Email Polisher" },
+      { name: "Proposal Writer" },
+      { name: "Invoice & Receipt Maker" },
+      { name: "Contract Generator" },
+      { name: "Presentation Designer" },
+      { name: "Career Planner" },
+      { name: "LinkedIn Bio Optimizer" },
+      { name: "Client Feedback Analyzer" },
     ],
   },
   {
     name: "Writing & Creativity",
-    blurb: "Unlock storytelling, poems, and tone-matched narratives with AI.",
+    blurb: "Unlock storytelling, marketing copy, and artistic expression.",
     accent: "from-sky-500 via-purple-500 to-indigo-500",
     apps: [
       { name: "StoryCrafter" },
       { name: "Poem Studio" },
-      { name: "Language & Tone Assistant" },
+      { name: "Song Lyric Maker" },
+      { name: "Ad Copy Assistant" },
+      { name: "Book Summary Generator" },
+      { name: "Blog Writer" },
+      { name: "Social Caption Generator" },
+      { name: "Script Formatter" },
+      { name: "Creative Title Maker" },
+      { name: "Quote Forge" },
+      { name: "AI Meme Creator" },
+      { name: "Prompt Builder" },
+      { name: "Speech Writer" },
+      { name: "Novel Outliner" },
+      { name: "Comic Storyboarder" },
+      { name: "Fanfic Generator" },
+      { name: "Email Newsletter Writer" },
+      { name: "AI Translator & Tone Fixer" },
+      { name: "Rephrase & Paraphraser" },
+      { name: "Grammar Fixer" },
     ],
   },
   {
-    name: "Utility & Developer",
+    name: "Utility & Productivity",
     blurb: "Snappy helpers that automate workflows for makers and teams.",
     accent: "from-indigo-500 via-slate-500 to-purple-500",
-    apps: [{ name: "Snippet Generator" }],
+    apps: [
+      { name: "Snippet Generator" },
+      { name: "File Converter" },
+      { name: "Image Background Remover" },
+      { name: "Unit & Currency Converter" },
+      { name: "Price Checker" },
+      { name: "QR Code Creator" },
+      { name: "Clipboard Manager" },
+      { name: "File Compressor" },
+      { name: "Text-to-Speech Converter" },
+      { name: "Speech-to-Text Converter" },
+      { name: "Screenshot Editor" },
+      { name: "Color Palette Generator" },
+      { name: "Password Generator" },
+      { name: "API Tester" },
+      { name: "JSON Formatter" },
+      { name: "Markdown Editor" },
+      { name: "Time Zone Scheduler" },
+      { name: "Browser PDF Reader" },
+      { name: "Clipboard Translator" },
+      { name: "Quick Notepad" },
+    ],
   },
   {
-    name: "Lifestyle & Well-being",
-    blurb: "Plan habits and wellness goals with gentle nudges and insights.",
+    name: "Lifestyle & Well-Being",
+    blurb: "Plan habits, health, travel, and personal growth with gentle insights.",
     accent: "from-emerald-500 via-sky-500 to-indigo-500",
-    apps: [{ name: "Wellness & Goal Planner" }],
+    apps: [
+      { name: "Wellness & Goal Planner" },
+      { name: "Event Planner" },
+      { name: "Meal Planner" },
+      { name: "Fitness Tracker" },
+      { name: "Mood Journal" },
+      { name: "Meditation Script Maker" },
+      { name: "Sleep Routine Designer" },
+      { name: "Affirmation Generator" },
+      { name: "Expense Tracker" },
+      { name: "Shopping List AI" },
+      { name: "Travel Itinerary Builder" },
+      { name: "Recipe Generator" },
+      { name: "Pet Care Planner" },
+      { name: "Language Learning Buddy" },
+      { name: "Eco Habit Tracker" },
+    ],
   },
   {
     name: "Fun & Engagement",
-    blurb: "Bring playful experiences to every break and team meetup.",
+    blurb: "Bring playful experiences to every break, classroom, or meetup.",
     accent: "from-purple-500 via-fuchsia-500 to-sky-500",
-    apps: [{ name: "Trivia Arena" }],
-  },
-  {
-    name: "Shopping & Productivity",
-    blurb: "Stay savvy with purchases using real-time comparators.",
-    accent: "from-sky-500 via-indigo-500 to-emerald-500",
-    apps: [{ name: "Price Checker" }],
+    apps: [
+      { name: "Trivia Arena" },
+      { name: "Riddle Maker" },
+      { name: "Puzzle Zone" },
+      { name: "Would You Rather" },
+      { name: "Guess the Emoji" },
+      { name: "AI Character Chat" },
+      { name: "Personality Quiz" },
+      { name: "Fortune Teller" },
+      { name: "Horoscope AI" },
+      { name: "Daily Challenge" },
+    ],
   },
 ];
 
@@ -91,11 +179,9 @@ const plans = [
             Ansiversa
           </p>
           <h1 class="mt-6 text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
-            Advanced Next-Gen Software Innovation
+            Ansiversa — The AI Universe of 100 Mini Apps
           </h1>
-          <p class="mt-6 max-w-2xl text-lg text-white/80">
-            {mission}
-          </p>
+          <p class="mt-6 max-w-2xl text-lg text-white/80">{mission}</p>
           <div class="mt-10 flex flex-wrap gap-4">
             <a
               href="#mini-apps"
@@ -137,13 +223,13 @@ const plans = [
           </div>
           <div class="mt-6 space-y-3 text-sm text-white/80">
             <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
-              Curated experiences for learning, career growth, and daily creativity.
+              100 mini-apps for study, career, creativity, productivity, lifestyle, and fun.
             </p>
             <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
-              Built with Astro, Tailwind, and Alpine.js for speed and elegance.
+              Built with Astro, Tailwind, and Alpine.js to stay lightning-fast and reliable.
             </p>
             <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
-              Seamless subscription unlocks every tool across the ecosystem.
+              One subscription keeps the entire ecosystem updated and in sync.
             </p>
           </div>
         </div>
@@ -155,7 +241,7 @@ const plans = [
         <div class="text-center">
           <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Explore the Ansiversa mini-apps</h2>
           <p class="mt-3 text-base text-slate-600">
-            Every category is crafted in-house to stay cohesive, accessible, and fun to use.
+            Browse 100 focused tools spanning learning, career, creativity, productivity, wellness, and play — all crafted in-house for cohesion and speed.
           </p>
         </div>
         <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
