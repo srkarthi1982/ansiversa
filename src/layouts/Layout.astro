@@ -26,15 +26,22 @@ const username = sessionData?.user?.username ?? 'Account';
     <script>import '../alpineStores/index.ts';</script>
     <script type="module" is:inline>
       const isStoreExists = name => typeof Alpine?.store(name) !== 'undefined';
+      const resolveStoreName = (pathname) => {
+        const segments = pathname.split('/').filter(Boolean);
+        if (segments.includes('resume-builder')) {
+          return 'resume';
+        }
+        return segments.at(-1) ?? '';
+      };
       function onPreparation(location) {
         if(location.pathname === '/'){
           const homeStore = Alpine.store('home');
           if (homeStore && typeof homeStore.onInit === 'function') {
             homeStore.onInit();
           }
-					return;
-				}
-				const name = location.pathname.split('/').findLast(x => x);
+          return;
+        }
+        const name = resolveStoreName(location.pathname);
         if(isStoreExists(name)) {
           const store = Alpine.store(name);
           if (store && typeof store.onInit === 'function') {

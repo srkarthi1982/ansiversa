@@ -1,10 +1,6 @@
 import Alpine from 'alpinejs';
-import {
-  createBlankResumeDocument,
-  createEmptyResumeData,
-  resumeTemplateKeys,
-  skillLevels,
-} from '../../lib/resume/schema';
+import { actions } from 'astro:actions';
+import { createEmptyResumeData, resumeTemplateKeys, skillLevels } from '../../lib/resume/schema';
 import type {
   ResumeData,
   ResumeDocument,
@@ -35,14 +31,7 @@ const templateOptions: Array<{ key: TemplateKey; label: string; icon: string; pl
   { key: 'creative', label: 'Creative', icon: 'fas fa-palette', plan: 'pro' },
 ];
 
-const toISOString = (value?: string | null) => {
-  if (!value) return new Date().toISOString();
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return new Date().toISOString();
-  }
-  return date.toISOString();
-};
+const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const describeSummary = (data: ResumeData) => {
   const segments: string[] = [];
@@ -107,6 +96,32 @@ class ResumeStoreImpl {
   private builderAutosaveTimer: AutosaveTimer = null;
   private sectionsOpen = new Set(['basics', 'experience', 'education', 'skills']);
 
+  private normalizeResume(input: any): ResumeListItem {
+    const baseData = input?.data ?? createEmptyResumeData();
+    return {
+      id: String(input?.id ?? crypto.randomUUID()),
+      userId: String(input?.userId ?? ''),
+      title: (input?.title ?? 'Untitled resume').trim() || 'Untitled resume',
+      templateKey: (input?.templateKey ?? 'modern') as TemplateKey,
+      locale: (input?.locale ?? 'en') as 'en' | 'ar' | 'ta',
+      status: (input?.status ?? 'draft') as 'draft' | 'final',
+      data: clone(baseData),
+      lastSavedAt: input?.lastSavedAt ?? new Date().toISOString(),
+      createdAt: input?.createdAt ?? new Date().toISOString(),
+      isDefault: Boolean(input?.isDefault),
+    };
+  }
+
+  private upsertResume(item: ResumeListItem): void {
+    const index = this.state.resumes.findIndex((resume) => resume.id === item.id);
+    if (index === -1) {
+      this.state.resumes.unshift(item);
+    } else {
+      this.state.resumes.splice(index, 1, item);
+    }
+    this.applyFilters();
+  }
+
   initList(): void {
     if (this.state.loading) return;
     void this.loadList();
@@ -122,94 +137,18 @@ class ResumeStoreImpl {
     this.state.loading = true;
     loaderStore()?.show?.();
     try {
-      // Placeholder: use static data until backend is wired.
-      const seed = [
-        createBlankResumeDocument({
-          id: crypto.randomUUID(),
-          userId: 'demo-user',
-          title: 'Senior Product Designer',
-          templateKey: 'modern',
-          data: {
-            ...createEmptyResumeData(),
-            basics: {
-              fullName: 'Alex Morgan',
-              title: 'Senior Product Designer',
-              email: 'alex@example.com',
-              phone: '+971 50 000 0000',
-              location: 'Dubai, UAE',
-            },
-            summary: 'Design leader with 8+ years crafting digital products for global teams.',
-            experience: [
-              {
-                id: crypto.randomUUID(),
-                company: 'Ansiversa',
-                position: 'Lead Product Designer',
-                start: '2021-06',
-                end: null,
-                current: true,
-                description: 'Led redesign of AI resume tools, improving conversions by 28%.',
-              },
-            ],
-            skills: [
-              { name: 'UX Strategy', level: 'expert' },
-              { name: 'Design Systems', level: 'advanced' },
-            ],
-          },
-        }),
-        createBlankResumeDocument({
-          id: crypto.randomUUID(),
-          userId: 'demo-user',
-          title: 'Software Engineer — 2025',
-          templateKey: 'minimal',
-          isDefault: true,
-          data: {
-            ...createEmptyResumeData(),
-            basics: {
-              fullName: 'Karthik Ramalingam',
-              title: 'Senior Full-Stack Engineer',
-              email: 'karthik@example.com',
-              phone: '+971 50 123 4567',
-              location: 'Chennai, India',
-            },
-            summary: 'Full-stack engineer driving platform growth with scalable infrastructure and AI experiences.',
-            experience: [
-              {
-                id: crypto.randomUUID(),
-                company: 'Ansiversa',
-                position: 'Senior Full-Stack Engineer',
-                start: '2020-04',
-                end: null,
-                current: true,
-                description: 'Architected quiz and resume mini-apps with Alpine & Astro SSR.',
-              },
-            ],
-            education: [
-              {
-                id: crypto.randomUUID(),
-                school: 'Anna University',
-                degree: 'B.E. Computer Science',
-                start: '2012-08',
-                end: '2016-05',
-                description: 'Graduated with First Class Distinction.',
-              },
-            ],
-            skills: [
-              { name: 'TypeScript', level: 'expert' },
-              { name: 'Astro', level: 'advanced' },
-              { name: 'Node.js', level: 'advanced' },
-            ],
-          },
-        }),
-      ];
-
-      const withTimestamps: ResumeListItem[] = seed.map((doc, index) => ({
-        ...doc,
-        lastSavedAt: toISOString(new Date(Date.now() - index * 1000 * 60 * 60).toISOString()),
-      }));
-
-      this.state.resumes = withTimestamps;
+      const { data, error } = await actions.resume.list({});
+      if (error) {
+        throw error;
+      }
+      const items = Array.isArray(data?.items) ? data!.items : [];
+      this.state.resumes = items.map((item) => this.normalizeResume(item));
       this.applyFilters();
-      this.state.lastSavedLabel = withTimestamps[0]?.lastSavedAt ?? null;
+      this.state.lastSavedLabel = this.state.resumes[0]?.lastSavedAt ?? null;
+    } catch (error) {
+      console.error('Unable to load resumes', error);
+      this.state.resumes = [];
+      this.state.filteredResumes = [];
     } finally {
       this.state.loading = false;
       loaderStore()?.hide?.();
@@ -269,26 +208,13 @@ class ResumeStoreImpl {
   async createDraft(): Promise<void> {
     loaderStore()?.show?.();
     try {
-      const response = await fetch('/resume/api/create', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ templateKey: 'modern' }),
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to create resume (${response.status})`);
+      const { data, error } = await actions.resume.create({});
+      if (error) {
+        throw error;
       }
-      const data = (await response.json()) as { id: string; title?: string; templateKey?: TemplateKey };
-      this.state.resumes.unshift(
-        createBlankResumeDocument({
-          id: data.id,
-          userId: 'demo-user',
-          title: data.title ?? 'Untitled resume',
-          templateKey: data.templateKey ?? 'modern',
-        }),
-      );
-      this.state.resumes[0].lastSavedAt = new Date().toISOString();
-      this.applyFilters();
-      window.location.assign(`/resume/builder?id=${data.id}`);
+      const resume = this.normalizeResume(data?.resume);
+      this.upsertResume(resume);
+      window.location.assign(`/resume-builder/builder?id=${resume.id}`);
     } catch (error) {
       console.error('Unable to create resume', error);
       window.alert('Unable to create resume. Please try again.');
@@ -299,28 +225,12 @@ class ResumeStoreImpl {
 
   async duplicate(id: string): Promise<void> {
     try {
-      const source = this.state.resumes.find((item) => item.id === id);
-      if (!source) {
-        throw new Error('Resume not found');
+      const { data, error } = await actions.resume.duplicate({ id });
+      if (error) {
+        throw error;
       }
-      const response = await fetch('/resume/api/duplicate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, title: source.title }),
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to duplicate resume (${response.status})`);
-      }
-      const data = (await response.json()) as { id: string; title: string };
-      const clone: ResumeListItem = {
-        ...source,
-        id: data.id,
-        title: data.title,
-        lastSavedAt: new Date().toISOString(),
-        isDefault: false,
-      };
-      this.state.resumes.unshift(clone);
-      this.applyFilters();
+      const cloneResume = this.normalizeResume(data?.resume);
+      this.upsertResume(cloneResume);
     } catch (error) {
       console.error('Unable to duplicate resume', error);
       window.alert('Unable to duplicate resume right now.');
@@ -331,13 +241,9 @@ class ResumeStoreImpl {
     const confirmDelete = window.confirm('Are you sure you want to delete this resume?');
     if (!confirmDelete) return;
     try {
-      const response = await fetch('/resume/api/delete', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id }),
-      });
-      if (!response.ok) {
-        throw new Error(`Failed to delete (${response.status})`);
+      const { error } = await actions.resume.delete({ id });
+      if (error) {
+        throw error;
       }
       this.state.resumes = this.state.resumes.filter((item) => item.id !== id);
       this.applyFilters();
@@ -347,13 +253,21 @@ class ResumeStoreImpl {
     }
   }
 
-  toggleDefault(id: string): void {
-    const updated = this.state.resumes.map((resume) => ({
-      ...resume,
-      isDefault: resume.id === id ? !resume.isDefault : false,
-    }));
-    this.state.resumes = updated;
-    this.applyFilters();
+  async toggleDefault(id: string): Promise<void> {
+    try {
+      const { error } = await actions.resume.setDefault({ id });
+      if (error) {
+        throw error;
+      }
+      this.state.resumes = this.state.resumes.map((resume) => ({
+        ...resume,
+        isDefault: resume.id === id,
+      }));
+      this.applyFilters();
+    } catch (error) {
+      console.error('Unable to update default resume', error);
+      window.alert('Unable to update default resume right now.');
+    }
   }
 
   async initBuilder({ id }: BuilderInitInput = {}): Promise<void> {
@@ -361,18 +275,31 @@ class ResumeStoreImpl {
     this.builderState.loading = true;
     loaderStore()?.show?.();
     try {
-      let target: ResumeListItem | undefined;
-      if (id) {
-        target = this.state.resumes.find((item) => item.id === id);
+      if (this.state.resumes.length === 0 && !this.state.loading) {
+        await this.loadList();
+        loaderStore()?.show?.();
       }
+      let target: ResumeListItem | undefined = id
+        ? this.state.resumes.find((item) => item.id === id)
+        : undefined;
+
+      if (!target && id) {
+        const { data, error } = await actions.resume.get({ id });
+        if (error) {
+          throw error;
+        }
+        target = this.normalizeResume(data?.resume);
+        this.upsertResume(target);
+      }
+
       if (!target) {
-        const created = createBlankResumeDocument({
-          id: id ?? crypto.randomUUID(),
-          userId: 'demo-user',
-        });
-        target = { ...created, lastSavedAt: created.lastSavedAt ?? new Date().toISOString() };
-        this.state.resumes.unshift(target);
-        this.applyFilters();
+        const { data, error } = await actions.resume.create({});
+        if (error) {
+          throw error;
+        }
+        target = this.normalizeResume(data?.resume);
+        this.upsertResume(target);
+        window.history.replaceState({}, '', `/resume-builder/builder?id=${target.id}`);
       }
 
       this.builderState = {
@@ -381,14 +308,17 @@ class ResumeStoreImpl {
         templateKey: target.templateKey,
         locale: target.locale,
         status: target.status,
-        data: JSON.parse(JSON.stringify(target.data)) as ResumeData,
+        data: clone(target.data),
         autosaveLabel: null,
         loading: false,
       };
 
       this.state.hasUnsavedChanges = false;
-      this.state.lastSavedLabel = target.lastSavedAt;
+      this.state.lastSavedLabel = target.lastSavedAt ?? null;
       this.sectionsOpen = new Set(['basics', 'experience', 'education', 'skills']);
+    } catch (error) {
+      console.error('Unable to load resume', error);
+      window.alert('Unable to load resume right now.');
     } finally {
       this.builderState.loading = false;
       loaderStore()?.hide?.();
@@ -419,42 +349,23 @@ class ResumeStoreImpl {
 
     try {
       this.builderState.autosaveLabel = autosave ? 'Autosaving…' : 'Saving…';
-      const payload = {
+      const { data, error } = await actions.resume.save({
         id: this.builderState.id,
-        data: this.builderState.data,
+        title: this.builderState.title,
         templateKey: this.builderState.templateKey,
         locale: this.builderState.locale,
-        autosave,
-      };
-
-      const response = await fetch('/resume/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
+        data: clone(this.builderState.data),
       });
-      if (!response.ok) {
-        throw new Error(`Failed to save resume (${response.status})`);
+      if (error) {
+        throw error;
       }
-
-      const data = (await response.json()) as { savedAt: string };
-      const savedAt = data.savedAt ?? new Date().toISOString();
+      const resume = this.normalizeResume(data?.resume);
+      const savedAt = resume.lastSavedAt ?? new Date().toISOString();
       this.builderState.autosaveLabel = autosave ? 'Autosaved just now' : 'Saved';
       this.state.lastSavedLabel = savedAt;
       this.state.hasUnsavedChanges = false;
-
-      const index = this.state.resumes.findIndex((item) => item.id === this.builderState.id);
-      if (index !== -1) {
-        const updated: ResumeListItem = {
-          ...this.state.resumes[index],
-          title: this.builderState.title,
-          templateKey: this.builderState.templateKey,
-          locale: this.builderState.locale,
-          data: JSON.parse(JSON.stringify(this.builderState.data)),
-          lastSavedAt: savedAt,
-        };
-        this.state.resumes.splice(index, 1, updated);
-        this.applyFilters();
-      }
+      this.builderState.data = clone(resume.data);
+      this.upsertResume(resume);
     } catch (error) {
       console.error('Unable to save resume', error);
       this.builderState.autosaveLabel = 'Save failed';
@@ -480,7 +391,7 @@ class ResumeStoreImpl {
   }
 
   openTemplateGallery(): void {
-    window.location.assign('/resume/templates');
+    window.location.assign('/resume-builder/templates');
   }
 
   selectTemplateFromGallery(template?: string | null): void {
@@ -490,7 +401,7 @@ class ResumeStoreImpl {
       return;
     }
     this.setTemplate(template as TemplateKey);
-    window.location.assign('/resume/builder');
+    window.location.assign('/resume-builder/builder');
   }
 
   previewTemplate(template?: string | null): void {
@@ -666,24 +577,20 @@ class ResumeStoreImpl {
       } else if (section === 'skills') {
         text = this.builderState.data.skills.map((skill) => skill.name).join(', ');
       }
-      const response = await fetch('/resume/api/ai-improve', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text, tone: 'professional' }),
-      });
-      if (!response.ok) {
-        throw new Error(`AI improve failed (${response.status})`);
+      const { data, error } = await actions.resume.aiImprove({ text, tone: 'professional' });
+      if (error) {
+        throw error;
       }
-      const data = (await response.json()) as { suggestion: string };
+      const suggestion = data?.suggestion ?? '';
       if (section === 'summary') {
-        this.builderState.data.summary = data.suggestion;
+        this.builderState.data.summary = suggestion;
       } else if (section === 'experience' && typeof index === 'number') {
         const target = this.builderState.data.experience[index];
         if (target) {
-          target.description = data.suggestion;
+          target.description = suggestion;
         }
       } else if (section === 'skills') {
-        const suggestions = data.suggestion.split(',').map((value) => value.trim()).filter(Boolean);
+        const suggestions = suggestion.split(',').map((value) => value.trim()).filter(Boolean);
         suggestions.slice(0, 30).forEach((name) => {
           if (!this.builderState.data.skills.some((skill) => skill.name.toLowerCase() === name.toLowerCase())) {
             this.builderState.data.skills.push({ name, level: 'intermediate' });
@@ -700,20 +607,15 @@ class ResumeStoreImpl {
   async requestExport(format: 'pdf' | 'docx' | 'md' | 'html'): Promise<void> {
     if (!this.builderState.id) return;
     try {
-      const response = await fetch('/resume/api/export', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: this.builderState.id,
-          format,
-          templateKey: this.builderState.templateKey,
-        }),
+      const { data, error } = await actions.resume.export({
+        id: this.builderState.id,
+        format,
+        templateKey: this.builderState.templateKey,
       });
-      if (!response.ok) {
-        throw new Error(`Export failed (${response.status})`);
+      if (error) {
+        throw error;
       }
-      const data = (await response.json()) as { filePath?: string; message?: string };
-      window.alert(data.message ?? `Export ready: ${data.filePath ?? 'TBD'}`);
+      window.alert(data?.message ?? `Export ready: ${data?.filePath ?? 'TBD'}`);
     } catch (error) {
       console.error('Unable to export resume', error);
       window.alert('Unable to export resume right now.');
