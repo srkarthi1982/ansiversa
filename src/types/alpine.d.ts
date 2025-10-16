@@ -11,6 +11,7 @@ import type { FeaturesStore } from '../alpineStores/features';
 import type { FaqStore } from '../alpineStores/faq';
 import type { ContactStore } from '../alpineStores/contact';
 import type { QuizStore } from '../alpineStores/quiz';
+import type { SubjectsStore } from '../alpineStores/subjects';
 
 declare module 'alpinejs' {
   namespace Alpine {
@@ -28,6 +29,7 @@ declare module 'alpinejs' {
       faq: FaqStore;
       contact: ContactStore;
       quiz: QuizStore;
+      subjects: SubjectsStore;
     }
   }
 }

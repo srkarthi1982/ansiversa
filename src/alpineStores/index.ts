@@ -11,5 +11,6 @@ import './features';
 import './faq';
 import './contact';
 import './quiz';
+import './subjects';
 import './admin';
 import './miniApps';
