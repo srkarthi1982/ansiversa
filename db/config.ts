@@ -56,12 +56,23 @@ const Platform = defineTable({
   },
 });
 
+const Subject = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    platformId: column.number({ references: () => Platform.columns.id }),
+    name: column.text(),
+    isActive: column.boolean({ default: true }),
+    qCount: column.number({ default: 0 }),
+  },
+});
+
 export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
     PasswordResetToken,  // ← same here
     EmailVerificationToken,
     Session,
-    Platform
+    Platform,
+    Subject
   },
 });

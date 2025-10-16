@@ -1,0 +1,393 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Modal from "../../../components/Modal.astro";
+---
+<Layout>
+  <main class="bg-slate-50 min-h-screen">
+    <section class="py-4" x-data="{ subjects: $store.subjects }">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Subjects
+            </h2>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
+              <span class="text-slate-400">Total:</span>
+              <span class="ml-2 text-slate-900" x-text="Intl.NumberFormat().format(subjects.totalItems)"></span>
+            </div>
+            <template x-if="subjects.totalItems > 0">
+              <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
+                <span class="text-slate-400">Showing</span>
+                <span
+                  class="ml-2 text-slate-900"
+                  x-text="`${Intl.NumberFormat().format((subjects.page - 1) * subjects.pageSize + 1)}-${Intl.NumberFormat().format(Math.min(subjects.page * subjects.pageSize, subjects.totalItems))}`"
+                ></span>
+              </div>
+            </template>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
+              x-on:click="subjects.openCreateModal()"
+              x-bind:disabled="subjects.loading || subjects.mutating"
+            >
+              <i class="fas fa-plus text-sm"></i>
+              Add subject
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              x-on:click="subjects.loadSubjects()"
+              x-bind:disabled="subjects.loading || subjects.mutating"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.181a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.181" />
+              </svg>
+              Refresh
+            </button>
+          </div>
+        </div>
+
+        <Modal
+          size="md"
+          x-show="subjects.showCreateModal"
+          x-on:keydown.escape.window="subjects.closeCreateModal()"
+          x-on:modal-close="subjects.closeCreateModal()"
+        >
+          <template slot="title">
+            <h2 class="text-lg font-semibold text-slate-900">Add a new subject</h2>
+          </template>
+          <form id="create-subject-form" class="grid gap-4" x-on:submit.prevent="subjects.createSubject()">
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Platform ID</span>
+              <input
+                type="text"
+                inputmode="numeric"
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                placeholder="Enter platform ID"
+                x-model.trim="subjects.newSubject.platformId"
+                x-bind:disabled="subjects.mutating"
+                required
+              />
+            </label>
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Name</span>
+              <input
+                type="text"
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                placeholder="Subject name"
+                x-model.trim="subjects.newSubject.name"
+                x-bind:disabled="subjects.mutating"
+                required
+              />
+            </label>
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Question count</span>
+              <input
+                type="number"
+                min="0"
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                placeholder="0"
+                x-model.number="subjects.newSubject.qCount"
+                x-bind:disabled="subjects.mutating"
+              />
+            </label>
+            <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+              <input
+                type="checkbox"
+                class="h-4 w-4 rounded border border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:cursor-not-allowed"
+                x-model="subjects.newSubject.isActive"
+                x-bind:disabled="subjects.mutating"
+              />
+              <span>Subject is active</span>
+            </label>
+          </form>
+          <div slot="footer" class="flex w-full items-center justify-end gap-3">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              x-on:click="subjects.closeCreateModal()"
+              x-bind:disabled="subjects.mutating"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="create-subject-form"
+              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
+              x-bind:disabled="subjects.mutating"
+            >
+              <i class="fas fa-save text-sm"></i>
+              Save subject
+            </button>
+          </div>
+        </Modal>
+
+        <Modal
+          size="md"
+          x-show="subjects.showEditModal"
+          x-on:keydown.escape.window="subjects.closeEditModal()"
+          x-on:modal-close="subjects.closeEditModal()"
+        >
+          <template slot="title">
+            <div class="flex items-center justify-between gap-3">
+              <h2 class="text-lg font-semibold text-slate-900">Update subject</h2>
+              <span
+                class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
+              >
+                <span>ID</span>
+                <span class="text-slate-900" x-text="subjects.editingId ?? ''"></span>
+              </span>
+            </div>
+          </template>
+          <form id="edit-subject-form" class="grid gap-4" x-on:submit.prevent="subjects.saveEdit()">
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Platform ID</span>
+              <input
+                type="text"
+                inputmode="numeric"
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model.trim="subjects.editSubject.platformId"
+                x-bind:disabled="subjects.mutating"
+                required
+              />
+            </label>
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Name</span>
+              <input
+                type="text"
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model.trim="subjects.editSubject.name"
+                x-bind:disabled="subjects.mutating"
+                required
+              />
+            </label>
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Question count</span>
+              <input
+                type="number"
+                min="0"
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model.number="subjects.editSubject.qCount"
+                x-bind:disabled="subjects.mutating"
+              />
+            </label>
+            <label class="inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
+              <input
+                type="checkbox"
+                class="h-4 w-4 rounded border border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:cursor-not-allowed"
+                x-model="subjects.editSubject.isActive"
+                x-bind:disabled="subjects.mutating"
+              />
+              <span>Subject is active</span>
+            </label>
+          </form>
+          <div slot="footer" class="flex w-full items-center justify-end gap-3">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              x-on:click="subjects.closeEditModal()"
+              x-bind:disabled="subjects.mutating"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              form="edit-subject-form"
+              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
+              x-bind:disabled="subjects.mutating"
+            >
+              <i class="fas fa-save text-sm"></i>
+              Save changes
+            </button>
+          </div>
+        </Modal>
+
+        <div class="mt-8 space-y-3">
+          <template x-if="subjects.error">
+            <div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm font-medium text-red-700" x-text="subjects.error"></div>
+          </template>
+          <template x-if="!subjects.loading && !subjects.error && subjects.totalItems === 0 && !subjects.hasActiveFilters">
+            <div class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center text-sm font-medium text-slate-500">
+              No subjects available yet.
+            </div>
+          </template>
+          <template x-if="!subjects.loading && !subjects.error && subjects.totalItems === 0 && subjects.hasActiveFilters">
+            <div class="rounded-xl border border-slate-200 bg-white px-6 py-12 text-center text-sm font-medium text-slate-500">
+              No subjects match the current filters.
+            </div>
+          </template>
+        </div>
+
+        <div class="mt-10" x-show="subjects.subjects.length > 0" x-transition.opacity x-cloak>
+          <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_6px_18px_-12px_rgba(15,23,42,0.35)]">
+            <div class="overflow-x-auto">
+              <table class="min-w-full divide-y divide-slate-200">
+                <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th scope="col" class="px-4 py-3">Subject</th>
+                    <th scope="col" class="px-4 py-3">Platform</th>
+                    <th scope="col" class="px-4 py-3 text-right">Questions</th>
+                    <th scope="col" class="px-4 py-3">Status</th>
+                    <th scope="col" class="px-4 py-3 text-right">Actions</th>
+                  </tr>
+                  <tr class="bg-white text-xs text-slate-600">
+                    <th class="px-4 pb-3 pt-2">
+                      <input
+                        type="text"
+                        placeholder="Filter name"
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model.trim="subjects.filters.name"
+                        x-on:input.debounce.400ms="subjects.onFilterChange()"
+                      />
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <input
+                        type="text"
+                        inputmode="numeric"
+                        placeholder="Platform ID"
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model.trim="subjects.filters.platformId"
+                        x-on:input.debounce.400ms="subjects.onFilterChange()"
+                      />
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <div class="flex items-center justify-end gap-2">
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Min"
+                          class="w-20 rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          x-model="subjects.filters.minQuestions"
+                          x-on:input.debounce.400ms="subjects.onFilterChange()"
+                        />
+                        <input
+                          type="number"
+                          min="0"
+                          placeholder="Max"
+                          class="w-20 rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          x-model="subjects.filters.maxQuestions"
+                          x-on:input.debounce.400ms="subjects.onFilterChange()"
+                        />
+                      </div>
+                    </th>
+                    <th class="px-4 pb-3 pt-2">
+                      <select
+                        class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model="subjects.filters.status"
+                        x-on:change="subjects.onFilterChange()"
+                      >
+                        <option value="all">All</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                      </select>
+                    </th>
+                    <th class="px-4 pb-3 pt-2 text-right">
+                      <button
+                        type="button"
+                        class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed"
+                        x-on:click="subjects.clearFilters()"
+                      >
+                        Clear
+                      </button>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-200 text-sm text-slate-700">
+                  <template x-for="subject in subjects.subjects" :key="subject.id">
+                    <tr class="transition hover:bg-slate-50">
+                      <td class="px-4 py-4">
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-900" x-text="subject.name"></span>
+                          <span class="text-xs text-slate-500" x-text="`ID: ${subject.id}`"></span>
+                        </div>
+                      </td>
+                      <td class="px-4 py-4">
+                        <div class="flex flex-col">
+                          <span class="font-medium text-slate-800" x-text="subject.platformName || 'Unassigned platform'"></span>
+                          <span class="text-xs text-slate-500" x-text="`Platform ID: ${subject.platformId}`"></span>
+                        </div>
+                      </td>
+                      <td class="px-4 py-4 text-right">
+                        <span class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5h-.75A2.25 2.25 0 0 0 5.25 6.75v12a.75.75 0 0 0 .75.75h12a.75.75 0 0 0 .75-.75v-12a2.25 2.25 0 0 0-2.25-2.25H15" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75v1.5M15 3.75v1.5M5.25 9h13.5" />
+                          </svg>
+                          <span x-text="`${new Intl.NumberFormat().format(subject.qCount ?? 0)} questions`"></span>
+                        </span>
+                      </td>
+                      <td class="px-4 py-4">
+                        <span
+                          class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                          :class="subject.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
+                        >
+                          <span class="h-2 w-2 rounded-full" :class="subject.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                          <span x-text="subject.isActive ? 'Active' : 'Inactive'"></span>
+                        </span>
+                      </td>
+                      <td class="px-4 py-4 text-right">
+                        <div class="flex justify-end gap-2">
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+                            x-on:click="subjects.openEditModal(subject)"
+                            x-bind:disabled="subjects.loading || subjects.mutating"
+                            aria-label="Edit subject"
+                          >
+                            <i class="fas fa-pen text-sm"></i>
+                          </button>
+                          <button
+                            type="button"
+                            class="inline-flex items-center justify-center rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:border-red-300 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            x-on:click="subjects.deleteSubject(subject.id)"
+                            x-bind:disabled="subjects.loading || subjects.mutating"
+                            aria-label="Delete subject"
+                          >
+                            <i class="fas fa-trash text-sm"></i>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <template x-if="subjects.totalPages > 1">
+          <nav class="mt-8 flex items-center justify-center gap-2" aria-label="Pagination">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              x-on:click="subjects.prevPage()"
+              x-bind:disabled="subjects.loading || subjects.page === 1"
+            >
+              Prev
+            </button>
+            <template x-for="pageNumber in subjects.pageNumbers" :key="`page-${pageNumber}`">
+              <button
+                type="button"
+                class="inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
+                x-text="pageNumber"
+                x-on:click="subjects.setPage(pageNumber)"
+                x-bind:disabled="subjects.loading"
+                :class="pageNumber === subjects.page ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-800'"
+              ></button>
+            </template>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+              x-on:click="subjects.nextPage()"
+              x-bind:disabled="subjects.loading || subjects.page === subjects.totalPages"
+            >
+              Next
+            </button>
+          </nav>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>
