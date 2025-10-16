@@ -1,8 +1,8 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
-import type { SQL } from 'drizzle-orm';
-import { db, Platform } from 'astro:db';
+import { db, Platform, and, count, eq, gte, lte, sql } from 'astro:db';
+
+type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
 type PlatformRow = typeof Platform.$inferSelect;
 
@@ -89,7 +89,7 @@ export const fetchPlatforms = defineAction({
   }),
   async handler({ page, pageSize, filters }) {
     const normalizedFilters = normalizeFilters(filters);
-    const conditions: SQL[] = [];
+    const conditions: SqlCondition[] = [];
 
     if (normalizedFilters.name) {
       conditions.push(sql`lower(${Platform.name}) LIKE ${`%${normalizedFilters.name.toLowerCase()}%`}`);
