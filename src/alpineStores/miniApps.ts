@@ -1,0 +1,122 @@
+import Alpine from 'alpinejs';
+
+const miniApps = [
+  { slug: 'ad-copy-assistant', name: 'Ad Copy Assistant' },
+  { slug: 'affirmation-generator', name: 'Affirmation Generator' },
+  { slug: 'ai-character-chat', name: 'AI Character Chat' },
+  { slug: 'ai-meme-creator', name: 'AI Meme Creator' },
+  { slug: 'ai-notes-summarizer', name: 'AI Notes Summarizer' },
+  { slug: 'ai-translator-and-tone-fixer', name: 'AI Translator & Tone Fixer' },
+  { slug: 'api-tester', name: 'API Tester' },
+  { slug: 'blog-writer', name: 'Blog Writer' },
+  { slug: 'book-summary-generator', name: 'Book Summary Generator' },
+  { slug: 'browser-pdf-reader', name: 'Browser PDF Reader' },
+  { slug: 'career-planner', name: 'Career Planner' },
+  { slug: 'client-feedback-analyzer', name: 'Client Feedback Analyzer' },
+  { slug: 'clipboard-manager', name: 'Clipboard Manager' },
+  { slug: 'clipboard-translator', name: 'Clipboard Translator' },
+  { slug: 'color-palette-generator', name: 'Color Palette Generator' },
+  { slug: 'comic-storyboarder', name: 'Comic Storyboarder' },
+  { slug: 'concept-explainer', name: 'Concept Explainer' },
+  { slug: 'contract-generator', name: 'Contract Generator' },
+  { slug: 'course-tracker', name: 'Course Tracker' },
+  { slug: 'cover-letter-writer', name: 'Cover Letter Writer' },
+  { slug: 'creative-title-maker', name: 'Creative Title Maker' },
+  { slug: 'daily-challenge', name: 'Daily Challenge' },
+  { slug: 'daily-word-challenge', name: 'Daily Word Challenge' },
+  { slug: 'dictionary-plus', name: 'Dictionary+' },
+  { slug: 'eco-habit-tracker', name: 'Eco Habit Tracker' },
+  { slug: 'eduprompt', name: 'EduPrompt' },
+  { slug: 'email-newsletter-writer', name: 'Email Newsletter Writer' },
+  { slug: 'email-polisher', name: 'Email Polisher' },
+  { slug: 'event-planner', name: 'Event Planner' },
+  { slug: 'exam-simulator', name: 'Exam Simulator' },
+  { slug: 'expense-tracker', name: 'Expense Tracker' },
+  { slug: 'fact-generator', name: 'Fact Generator' },
+  { slug: 'fanfic-generator', name: 'Fanfic Generator' },
+  { slug: 'file-compressor', name: 'File Compressor' },
+  { slug: 'file-converter', name: 'File Converter' },
+  { slug: 'fitness-tracker', name: 'Fitness Tracker' },
+  { slug: 'flashnote', name: 'FlashNote' },
+  { slug: 'formula-finder', name: 'Formula Finder' },
+  { slug: 'fortune-teller', name: 'Fortune Teller' },
+  { slug: 'grammar-fixer', name: 'Grammar Fixer' },
+  { slug: 'guess-the-emoji', name: 'Guess the Emoji' },
+  { slug: 'homework-helper', name: 'Homework Helper' },
+  { slug: 'horoscope-ai', name: 'Horoscope AI' },
+  { slug: 'image-background-remover', name: 'Image Background Remover' },
+  { slug: 'interview-coach', name: 'Interview Coach' },
+  { slug: 'invoice-and-receipt-maker', name: 'Invoice & Receipt Maker' },
+  { slug: 'job-description-analyzer', name: 'Job Description Analyzer' },
+  { slug: 'json-formatter', name: 'JSON Formatter' },
+  { slug: 'knowledge-duel', name: 'Knowledge Duel' },
+  { slug: 'language-flashcards', name: 'Language Flashcards' },
+  { slug: 'language-learning-buddy', name: 'Language Learning Buddy' },
+  { slug: 'lesson-builder', name: 'Lesson Builder' },
+  { slug: 'linkedin-bio-optimizer', name: 'LinkedIn Bio Optimizer' },
+  { slug: 'markdown-editor', name: 'Markdown Editor' },
+  { slug: 'meal-planner', name: 'Meal Planner' },
+  { slug: 'meditation-script-maker', name: 'Meditation Script Maker' },
+  { slug: 'meeting-minutes-ai', name: 'Meeting Minutes AI' },
+  { slug: 'memory-trainer', name: 'Memory Trainer' },
+  { slug: 'mood-journal', name: 'Mood Journal' },
+  { slug: 'novel-outliner', name: 'Novel Outliner' },
+  { slug: 'password-generator', name: 'Password Generator' },
+  { slug: 'personality-quiz', name: 'Personality Quiz' },
+  { slug: 'pet-care-planner', name: 'Pet Care Planner' },
+  { slug: 'poem-studio', name: 'Poem Studio' },
+  { slug: 'portfolio-creator', name: 'Portfolio Creator' },
+  { slug: 'presentation-designer', name: 'Presentation Designer' },
+  { slug: 'price-checker', name: 'Price Checker' },
+  { slug: 'prompt-builder', name: 'Prompt Builder' },
+  { slug: 'proposal-writer', name: 'Proposal Writer' },
+  { slug: 'puzzle-zone', name: 'Puzzle Zone' },
+  { slug: 'qr-code-creator', name: 'QR Code Creator' },
+  { slug: 'quick-notepad', name: 'Quick Notepad' },
+  { slug: 'quote-forge', name: 'Quote Forge' },
+  { slug: 'recipe-generator', name: 'Recipe Generator' },
+  { slug: 'rephrase-and-paraphraser', name: 'Rephrase & Paraphraser' },
+  { slug: 'research-assistant', name: 'Research Assistant' },
+  { slug: 'resume-builder', name: 'Resume Builder' },
+  { slug: 'riddle-maker', name: 'Riddle Maker' },
+  { slug: 'screenshot-editor', name: 'Screenshot Editor' },
+  { slug: 'script-formatter', name: 'Script Formatter' },
+  { slug: 'shopping-list-ai', name: 'Shopping List AI' },
+  { slug: 'sleep-routine-designer', name: 'Sleep Routine Designer' },
+  { slug: 'smart-textbook-scanner', name: 'Smart Textbook Scanner' },
+  { slug: 'snippet-generator', name: 'Snippet Generator' },
+  { slug: 'social-caption-generator', name: 'Social Caption Generator' },
+  { slug: 'song-lyric-maker', name: 'Song Lyric Maker' },
+  { slug: 'speech-to-text-converter', name: 'Speech-to-Text Converter' },
+  { slug: 'speech-writer', name: 'Speech Writer' },
+  { slug: 'storycrafter', name: 'StoryCrafter' },
+  { slug: 'study-planner', name: 'Study Planner' },
+  { slug: 'study-timer', name: 'Study Timer' },
+  { slug: 'text-to-speech-converter', name: 'Text-to-Speech Converter' },
+  { slug: 'time-zone-scheduler', name: 'Time Zone Scheduler' },
+  { slug: 'travel-itinerary-builder', name: 'Travel Itinerary Builder' },
+  { slug: 'trivia-arena', name: 'Trivia Arena' },
+  { slug: 'unit-and-currency-converter', name: 'Unit & Currency Converter' },
+  { slug: 'visiting-card-maker', name: 'Visiting Card Maker' },
+  { slug: 'wellness-and-goal-planner', name: 'Wellness & Goal Planner' },
+  { slug: 'would-you-rather', name: 'Would You Rather' },
+];
+
+type LoaderLike = { show?: () => void; hide?: () => void };
+
+class DefaultMiniAppStore {
+  onInit(): void {
+    const loader = Alpine.store('loader') as LoaderLike | undefined;
+    loader?.show?.();
+    setTimeout(() => loader?.hide?.(), 300);
+  }
+}
+
+miniApps.forEach((app) => {
+  if (!Alpine.store(app.slug)) {
+    Alpine.store(app.slug, new DefaultMiniAppStore());
+  }
+});
+
+export type MiniAppStore = DefaultMiniAppStore;
+export type MiniAppDefinition = (typeof miniApps)[number];
