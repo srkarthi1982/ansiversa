@@ -311,7 +311,10 @@ const serializeAttributes = (attributes?: Record<string, string>) => attributes 
               const inputType = filter.type === "number" ? "number" : "text";
               const inputClass =
                 "w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200";
-              const modelModifier = filter.type === "text" ? ".trim" : "";
+              const modelAttrName = filter.type === "text" ? "x-model.trim" : "x-model";
+              const modelAttr = {
+                [modelAttrName]: `${filtersVar}.${filter.key}`,
+              };
               const attrs = serializeAttributes(filter.attributes);
 
               return (
@@ -320,7 +323,7 @@ const serializeAttributes = (attributes?: Record<string, string>) => attributes 
                     type={inputType}
                     placeholder={filter.placeholder ?? ""}
                     class={inputClass}
-                    x-model={`${filtersVar}.${filter.key}${modelModifier}`}
+                    {...modelAttr}
                     x-on:input={`${onFilterChange}()`}
                     {...attrs}
                   />
