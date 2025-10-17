@@ -1,0 +1,179 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/Button.astro";
+import Dropdown from "../components/Dropdown.astro";
+import Modal from "../components/Modal.astro";
+import Password from "../components/Password.astro";
+import Textbox from "../components/Textbox.astro";
+---
+<Layout>
+  <main class="bg-slate-950 text-white">
+    <section class="py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Design System</p>
+        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">Ansiversa component catalog</h1>
+        <p class="mt-4 text-base text-white/70">
+          A reference playground showcasing every shared UI building block used across our product. Reuse these
+          components to keep upcoming features consistent and fast to ship.
+        </p>
+      </div>
+    </section>
+
+    <section class="rounded-t-[44px] bg-white py-16 text-slate-900">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="space-y-16">
+          <article id="component-button" class="space-y-6">
+            <div class="space-y-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Component</p>
+              <h2 class="text-3xl font-bold tracking-tight">Button</h2>
+              <p class="text-sm text-slate-600">
+                Primary call-to-action button with size and variant controls for inline links or form submits.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <Button variant="primary">Primary</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="light">Light</Button>
+              <Button variant="tinted">Tinted</Button>
+              <Button size="lg">Large</Button>
+              <Button size="sm">Small</Button>
+            </div>
+          </article>
+
+          <div class="border-t border-slate-200"></div>
+
+          <article id="component-dropdown" class="space-y-6">
+            <div class="space-y-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Component</p>
+              <h2 class="text-3xl font-bold tracking-tight">Dropdown</h2>
+              <p class="text-sm text-slate-600">
+                Accessible Alpine-powered dropdown with configurable alignment and custom trigger slots.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-6">
+              <Dropdown triggerClass="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900" panelWidthClass="w-56">
+                <span slot="trigger">Team shortcuts</span>
+                <a class="block px-4 py-2 text-slate-600 hover:bg-slate-100" href="#">Profile</a>
+                <a class="block px-4 py-2 text-slate-600 hover:bg-slate-100" href="#">Settings</a>
+                <button type="button" class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100">
+                  Sign out
+                </button>
+              </Dropdown>
+              <Dropdown align="stretch" triggerClass="inline-flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900" panelClass="top-12" panelWidthClass="w-full" wrapperClass="w-64">
+                <span slot="trigger" class="flex w-full items-center justify-between gap-3">
+                  <span class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/10 text-indigo-600">AI</span>
+                    Automation
+                  </span>
+                  <svg class="h-4 w-4 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
+                  </svg>
+                </span>
+                <div class="px-4 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Categories</div>
+                <button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-slate-600 hover:bg-slate-100">
+                  <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+                  Launch ready
+                </button>
+                <button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-slate-600 hover:bg-slate-100">
+                  <span class="h-2 w-2 rounded-full bg-indigo-400"></span>
+                  Needs review
+                </button>
+                <button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-slate-600 hover:bg-slate-100">
+                  <span class="h-2 w-2 rounded-full bg-amber-400"></span>
+                  Backlog ideas
+                </button>
+              </Dropdown>
+            </div>
+          </article>
+
+          <div class="border-t border-slate-200"></div>
+
+          <article id="component-modal" class="space-y-6" x-data="{ open: false }" x-on:modal-close.window="open = false">
+            <div class="space-y-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Component</p>
+              <h2 class="text-3xl font-bold tracking-tight">Modal</h2>
+              <p class="text-sm text-slate-600">
+                Layered dialog container with slots for title and footer actions. Wrap with Alpine state to toggle visibility.
+              </p>
+            </div>
+            <div class="space-y-3">
+              <Button variant="secondary" x-on:click="open = true">Launch modal</Button>
+              <p class="text-xs text-slate-500">
+                Tip: listen for the <code class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700">modal-close</code>
+                event to update Alpine state.
+              </p>
+            </div>
+            <template x-if="open">
+              <Modal
+                size="md"
+                x-on:keydown.escape.window="open = false"
+                x-on:modal-close="open = false"
+              >
+                <template slot="title">
+                  <h3 class="text-lg font-semibold text-slate-900">Save component preset</h3>
+                </template>
+                <div class="space-y-4 text-sm text-slate-600">
+                  <p>
+                    Use modals for focused flows that need confirmation or additional context. Keep copy short and pair with
+                    primary and secondary actions.
+                  </p>
+                  <Textbox label="Preset name" placeholder="e.g. Marketing CTA" />
+                </div>
+                <div slot="footer" class="flex w-full items-center justify-end gap-3">
+                  <Button variant="outline" x-on:click="open = false">Cancel</Button>
+                  <Button x-on:click="open = false">Save preset</Button>
+                </div>
+              </Modal>
+            </template>
+          </article>
+
+          <div class="border-t border-slate-200"></div>
+
+          <article id="component-forms" class="space-y-6">
+            <div class="space-y-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Component</p>
+              <h2 class="text-3xl font-bold tracking-tight">Textbox &amp; Password</h2>
+              <p class="text-sm text-slate-600">
+                Paired inputs with consistent spacing, labeling, and focus states for authentication or data capture flows.
+              </p>
+            </div>
+            <form class="grid gap-6 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <Textbox label="Full name" placeholder="Jane Doe" />
+              <Textbox label="Work email" type="email" placeholder="jane@ansiversa.com" />
+              <Password label="Create password" placeholder="At least 6 characters" toggleLabel="password" />
+              <div class="flex items-center justify-end gap-3">
+                <Button variant="outline">Cancel</Button>
+                <Button type="submit">Create account</Button>
+              </div>
+            </form>
+          </article>
+
+          <div class="border-t border-slate-200"></div>
+
+          <article id="component-loader" class="space-y-6" x-data="{ trigger() { $store.loader.show(); setTimeout(() => $store.loader.hide(), 1200); } }">
+            <div class="space-y-2">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Component</p>
+              <h2 class="text-3xl font-bold tracking-tight">Loader</h2>
+              <p class="text-sm text-slate-600">
+                Global loading indicator that appears at the top of the viewport. Trigger through the shared Alpine store for
+                async workflows.
+              </p>
+            </div>
+            <div class="flex flex-col gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
+              <p>Click the button to toggle the loader and preview the animated bar + toast feedback.</p>
+              <div class="flex flex-wrap gap-3">
+                <Button x-on:click="trigger()">Show loader</Button>
+              </div>
+              <p class="text-xs text-slate-500">
+                Implementation: <code class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700">$store.loader.show()</code>
+                and <code class="rounded bg-slate-100 px-1.5 py-0.5 text-[10px] font-semibold text-slate-700">$store.loader.hide()</code>.
+              </p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
