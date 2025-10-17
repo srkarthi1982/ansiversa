@@ -186,25 +186,26 @@ const buildPdfDocument = (pages: string[]): Uint8Array => {
   objects[pagesId] = `<< /Type /Pages /Kids [${pageIds.map((id) => `${id} 0 R`).join(' ')}] /Count ${pageIds.length} >>`;
   objects[catalogId] = `<< /Type /Catalog /Pages ${pagesId} 0 R >>`;
 
+  const header = '%PDF-1.4\n';
+  const headerLength = Buffer.byteLength(header, 'utf8');
+
   let body = '';
   const offsets: number[] = [0];
   let offset = 0;
 
   for (let id = 1; id <= currentId; id += 1) {
     const object = `${id} 0 obj\n${objects[id]}\nendobj\n`;
-    offsets.push(offset);
+    offsets.push(headerLength + offset);
     body += object;
     offset += Buffer.byteLength(object, 'utf8');
   }
 
-  const header = '%PDF-1.4\n';
-  const headerLength = Buffer.byteLength(header, 'utf8');
-  const xrefOffset = Buffer.byteLength(header + body, 'utf8');
+  const xrefOffset = headerLength + Buffer.byteLength(body, 'utf8');
 
   let xref = `xref\n0 ${currentId + 1}\n`;
   xref += '0000000000 65535 f \n';
   for (let id = 1; id <= currentId; id += 1) {
-    const position = String(headerLength + offsets[id]).padStart(10, '0');
+    const position = String(offsets[id]).padStart(10, '0');
     xref += `${position} 00000 n \n`;
   }
 
