@@ -1,4 +1,4 @@
-import { defineAction } from 'astro:actions';
+import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
 import { db, Resume, eq } from 'astro:db';
 import {
@@ -27,7 +27,8 @@ export const save = defineAction({
   }),
   async handler({ id, title, templateKey, locale, status, data, setDefault }, ctx) {
     const user = await requireUser(ctx);
-    await findResumeOrThrow(id, user.id);
+    const plan = (user.plan as 'free' | 'pro' | 'elite' | undefined) ?? 'free';
+    const resume = await findResumeOrThrow(id, user.id);
 
     const updates: Partial<typeof Resume.$inferInsert> = {
       lastSavedAt: new Date(),
@@ -37,6 +38,12 @@ export const save = defineAction({
       updates.title = title.trim() || 'Untitled resume';
     }
     if (templateKey) {
+      if (plan === 'free' && templateKey !== 'modern') {
+        throw new ActionError({
+          code: 'FORBIDDEN',
+          message: 'Upgrade to Pro to use premium templates.',
+        });
+      }
       updates.templateKey = templateKey;
     }
     if (locale) {
@@ -47,6 +54,10 @@ export const save = defineAction({
     }
     if (data) {
       updates.data = ResumeDataSchema.parse(data);
+    }
+
+    if (plan === 'free' && (resume.templateKey ?? 'modern') !== 'modern') {
+      updates.templateKey = 'modern';
     }
 
     if (Object.keys(updates).length > 0) {

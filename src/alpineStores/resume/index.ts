@@ -10,6 +10,8 @@ import type {
   ResumeLink,
 } from '../../lib/resume/schema';
 
+type Plan = 'free' | 'pro' | 'elite';
+
 type TemplateKey = (typeof resumeTemplateKeys)[number];
 type SkillLevel = (typeof skillLevels)[number];
 
@@ -56,12 +58,14 @@ class ResumeStoreImpl {
     lastSavedLabel: string | null;
     resumes: ResumeListItem[];
     filteredResumes: ResumeListItem[];
+    plan: Plan;
   } = {
     loading: false,
     hasUnsavedChanges: false,
     lastSavedLabel: null,
     resumes: [],
     filteredResumes: [],
+    plan: 'free',
   };
 
   filters = {
@@ -95,6 +99,14 @@ class ResumeStoreImpl {
 
   private builderAutosaveTimer: AutosaveTimer = null;
   private sectionsOpen = new Set(['basics', 'experience', 'education', 'skills']);
+
+  get plan(): Plan {
+    return this.state.plan;
+  }
+
+  get isFreePlan(): boolean {
+    return this.plan === 'free';
+  }
 
   private normalizeResume(input: any): ResumeListItem {
     const baseData = input?.data ?? createEmptyResumeData();
@@ -142,6 +154,8 @@ class ResumeStoreImpl {
         throw error;
       }
       const items = Array.isArray(data?.items) ? data!.items : [];
+      const plan = (data?.plan as Plan | undefined) ?? 'free';
+      this.state.plan = plan;
       this.state.resumes = items.map((item) => this.normalizeResume(item));
       this.applyFilters();
       this.state.lastSavedLabel = this.state.resumes[0]?.lastSavedAt ?? null;
@@ -206,6 +220,10 @@ class ResumeStoreImpl {
   }
 
   async createDraft(): Promise<void> {
+    if (this.isFreePlan && this.state.resumes.length >= 1) {
+      this.openPlanUpsell();
+      return;
+    }
     loaderStore()?.show?.();
     try {
       const { data, error } = await actions.resume.create({});
@@ -217,13 +235,17 @@ class ResumeStoreImpl {
       window.location.assign(`/resume-builder/builder?id=${resume.id}`);
     } catch (error) {
       console.error('Unable to create resume', error);
-      window.alert('Unable to create resume. Please try again.');
+      window.alert(this.toErrorMessage(error, 'Unable to create resume. Please try again.'));
     } finally {
       loaderStore()?.hide?.();
     }
   }
 
   async duplicate(id: string): Promise<void> {
+    if (this.isFreePlan) {
+      this.openPlanUpsell();
+      return;
+    }
     try {
       const { data, error } = await actions.resume.duplicate({ id });
       if (error) {
@@ -233,7 +255,7 @@ class ResumeStoreImpl {
       this.upsertResume(cloneResume);
     } catch (error) {
       console.error('Unable to duplicate resume', error);
-      window.alert('Unable to duplicate resume right now.');
+      window.alert(this.toErrorMessage(error, 'Unable to duplicate resume right now.'));
     }
   }
 
@@ -283,6 +305,8 @@ class ResumeStoreImpl {
         ? this.state.resumes.find((item) => item.id === id)
         : undefined;
 
+      const shouldReplaceUrl = !id;
+
       if (!target && id) {
         const { data, error } = await actions.resume.get({ id });
         if (error) {
@@ -293,12 +317,19 @@ class ResumeStoreImpl {
       }
 
       if (!target) {
-        const { data, error } = await actions.resume.create({});
-        if (error) {
-          throw error;
+        if (this.isFreePlan && this.state.resumes.length > 0) {
+          target = this.state.resumes[0];
+        } else {
+          const { data, error } = await actions.resume.create({});
+          if (error) {
+            throw error;
+          }
+          target = this.normalizeResume(data?.resume);
+          this.upsertResume(target);
         }
-        target = this.normalizeResume(data?.resume);
-        this.upsertResume(target);
+      }
+
+      if (target && shouldReplaceUrl) {
         window.history.replaceState({}, '', `/resume-builder/builder?id=${target.id}`);
       }
 
@@ -318,7 +349,7 @@ class ResumeStoreImpl {
       this.sectionsOpen = new Set(['basics', 'experience', 'education', 'skills']);
     } catch (error) {
       console.error('Unable to load resume', error);
-      window.alert('Unable to load resume right now.');
+      window.alert(this.toErrorMessage(error, 'Unable to load resume right now.'));
     } finally {
       this.builderState.loading = false;
       loaderStore()?.hide?.();
@@ -386,6 +417,10 @@ class ResumeStoreImpl {
   }
 
   setTemplate(template: TemplateKey): void {
+    if (!this.canUseTemplate(template)) {
+      this.openPlanUpsell();
+      return;
+    }
     this.builderState.templateKey = template;
     this.markUnsaved();
   }
@@ -400,6 +435,10 @@ class ResumeStoreImpl {
       window.alert('Template not available.');
       return;
     }
+    if (!this.canUseTemplate(template as TemplateKey)) {
+      this.openPlanUpsell();
+      return;
+    }
     this.setTemplate(template as TemplateKey);
     window.location.assign('/resume-builder/builder');
   }
@@ -410,7 +449,7 @@ class ResumeStoreImpl {
   }
 
   openPlanUpsell(): void {
-    window.alert('Plan comparison coming soon.');
+    window.alert('Upgrade to Pro to unlock premium templates and unlimited resumes.');
   }
 
   isSectionOpen(section: string): boolean {
@@ -615,11 +654,62 @@ class ResumeStoreImpl {
       if (error) {
         throw error;
       }
-      window.alert(data?.message ?? `Export ready: ${data?.filePath ?? 'TBD'}`);
+      const file = (data?.file ?? null) as
+        | { filename: string; mimeType: string; data: string; size?: number }
+        | null;
+      if (file && file.data && file.mimeType && file.filename) {
+        this.triggerDownload(file);
+        window.alert(data?.message ?? `Download started: ${file.filename}`);
+      } else {
+        window.alert(data?.message ?? 'Export generated.');
+      }
     } catch (error) {
       console.error('Unable to export resume', error);
-      window.alert('Unable to export resume right now.');
+      window.alert(this.toErrorMessage(error, 'Unable to export resume right now.'));
     }
+  }
+
+  private triggerDownload(file: { filename: string; mimeType: string; data: string }): void {
+    try {
+      const binaryString = atob(file.data);
+      const bytes = new Uint8Array(binaryString.length);
+      for (let index = 0; index < binaryString.length; index += 1) {
+        bytes[index] = binaryString.charCodeAt(index);
+      }
+      const blob = new Blob([bytes], { type: file.mimeType });
+      const url = URL.createObjectURL(blob);
+      const anchor = document.createElement('a');
+      anchor.href = url;
+      anchor.download = file.filename;
+      anchor.rel = 'noopener';
+      anchor.style.display = 'none';
+      document.body.appendChild(anchor);
+      anchor.click();
+      setTimeout(() => {
+        document.body.removeChild(anchor);
+        URL.revokeObjectURL(url);
+      }, 0);
+    } catch (error) {
+      console.error('Download failed', error);
+      window.alert('Export generated, but download could not be started.');
+    }
+  }
+
+  canUseTemplate(template: TemplateKey): boolean {
+    if (this.isFreePlan) {
+      return template === 'modern';
+    }
+    return true;
+  }
+
+  private toErrorMessage(error: unknown, fallback: string): string {
+    if (error && typeof error === 'object' && 'message' in error) {
+      const message = (error as { message?: unknown }).message;
+      if (typeof message === 'string' && message.trim().length > 0) {
+        return message;
+      }
+    }
+    return fallback;
   }
 }
 

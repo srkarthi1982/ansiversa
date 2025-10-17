@@ -1,4 +1,4 @@
-import { defineAction } from 'astro:actions';
+import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
 import { db, Resume, eq } from 'astro:db';
 import {
@@ -14,6 +14,14 @@ export const duplicate = defineAction({
   }),
   async handler({ id }, ctx) {
     const user = await requireUser(ctx);
+    const plan = (user.plan as 'free' | 'pro' | 'elite' | undefined) ?? 'free';
+    if (plan === 'free') {
+      throw new ActionError({
+        code: 'FORBIDDEN',
+        message: 'Upgrade to Pro to duplicate resumes.',
+      });
+    }
+
     const resume = await findResumeOrThrow(id, user.id);
     const now = new Date();
     const cloneId = crypto.randomUUID();

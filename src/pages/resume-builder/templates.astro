@@ -136,6 +136,12 @@ const templates = [
                     </span>
                   )}
                 </div>
+                <p
+                  class="text-xs font-semibold text-rose-500"
+                  x-show="template.pro && resume.isFreePlan"
+                >
+                  Upgrade to Pro to use this template.
+                </p>
                 <div class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-xs text-slate-600">
                   <p class="font-semibold uppercase tracking-wide text-slate-500">Preview outline</p>
                   <ul class="space-y-2">
@@ -157,6 +163,7 @@ const templates = [
                   <Button
                     type="button"
                     data-template={template.key}
+                    :disabled="!resume.canUseTemplate(template.key)"
                     @click.prevent="resume.selectTemplateFromGallery($el.dataset.template)"
                   >
                     <i class="fas fa-check text-xs"></i>
