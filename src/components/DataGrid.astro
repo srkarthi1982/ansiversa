@@ -1,0 +1,414 @@
+---
+type Align = "left" | "center" | "right";
+
+type BaseFilter = {
+  placeholder?: string;
+  debounceMs?: number;
+  attributes?: Record<string, string>;
+};
+
+type TextFilter = BaseFilter & {
+  type: "text";
+  key: string;
+};
+
+type NumberFilter = BaseFilter & {
+  type: "number";
+  key: string;
+  min?: number;
+  max?: number;
+};
+
+type NumberRangeFilter = {
+  type: "number-range";
+  minKey: string;
+  maxKey: string;
+  minPlaceholder?: string;
+  maxPlaceholder?: string;
+  minAttributes?: Record<string, string>;
+  maxAttributes?: Record<string, string>;
+  debounceMs?: number;
+};
+
+type SelectFilter = {
+  type: "select";
+  key: string;
+  options: { label: string; value: string }[];
+  placeholder?: string;
+};
+
+type ButtonFilter = {
+  type: "button";
+  label: string;
+  onClick: string;
+  variant?: "neutral" | "danger";
+};
+
+type ColumnFilter = TextFilter | NumberFilter | NumberRangeFilter | SelectFilter | ButtonFilter;
+
+type ColumnDefinition = {
+  key: string;
+  label: string;
+  sortable?: boolean;
+  sortKey?: string;
+  align?: Align;
+  headerClass?: string;
+  widthClass?: string;
+  filter?: ColumnFilter;
+};
+
+type DataGridProps = {
+  id?: string;
+  columns: ColumnDefinition[];
+  rowsVar: string;
+  loadingVar: string;
+  errorVar?: string;
+  hasFiltersVar?: string;
+  filtersVar?: string;
+  sortStateVar?: string;
+  onSort?: string;
+  onFilterChange?: string;
+  onPageSizeChange?: string;
+  onPrevPage?: string;
+  onNextPage?: string;
+  onSetPage?: string;
+  pageSizeVar?: string;
+  pageSizeOptions?: number[];
+  pageSizeLabel?: string;
+  pageVar?: string;
+  pageNumbersVar?: string;
+  totalVar?: string;
+  totalPagesVar?: string;
+  emptyMessage?: string;
+  filteredEmptyMessage?: string;
+  loadingMessage?: string;
+};
+
+const {
+  id,
+  columns,
+  rowsVar,
+  loadingVar,
+  errorVar,
+  hasFiltersVar,
+  filtersVar,
+  sortStateVar,
+  onSort,
+  onFilterChange,
+  onPageSizeChange,
+  onPrevPage,
+  onNextPage,
+  onSetPage,
+  pageSizeVar,
+  pageSizeOptions = [10, 20, 30],
+  pageSizeLabel = "Rows per page",
+  pageVar,
+  pageNumbersVar,
+  totalVar,
+  totalPagesVar,
+  emptyMessage = "No records available yet.",
+  filteredEmptyMessage = "No records match the current filters.",
+  loadingMessage = "Loading records...",
+}: DataGridProps = Astro.props;
+
+const hasFilters = columns.some((column) => column.filter);
+
+const alignClass = (align: Align | undefined, base = "text-left") => {
+  if (align === "center") return "text-center";
+  if (align === "right") return "text-right";
+  return base;
+};
+
+const justifyClass = (align: Align | undefined) => {
+  if (align === "center") return "justify-center";
+  if (align === "right") return "justify-end";
+  return "justify-start";
+};
+
+const getSortKey = (column: ColumnDefinition) => column.sortKey ?? column.key;
+
+const serializeAttributes = (attributes?: Record<string, string>) => attributes ?? {};
+---
+<div
+  id={id}
+  class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-[0_6px_18px_-12px_rgba(15,23,42,0.35)]"
+>
+  <div class="border-b border-slate-200 px-4 py-4 sm:px-6">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div class="space-y-1">
+        <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-slate-500">Total records</p>
+        <p class="text-xl font-semibold text-slate-900">
+          <span x-text={totalVar ? `Intl.NumberFormat().format(${totalVar} ?? 0)` : "'0'"}></span>
+        </p>
+        {pageVar && pageSizeVar && totalVar && (
+          <p class="text-xs text-slate-500">
+            <template x-if={`${totalVar} > 0`}>
+              <span
+                x-text={`Intl.NumberFormat().format((${pageVar} - 1) * ${pageSizeVar} + 1) + ' - ' + Intl.NumberFormat().format(Math.min(${pageVar} * ${pageSizeVar}, ${totalVar}))`}
+              ></span>
+            </template>
+            <template x-if={`${totalVar} === 0`}>
+              <span>0</span>
+            </template>
+          </p>
+        )}
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <slot name="headerActions" />
+        {pageSizeVar && onPageSizeChange && (
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-slate-500">
+            <span>{pageSizeLabel}</span>
+            <select
+              class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              x-bind:disabled={`${loadingVar}`}
+              x-bind:value={`${pageSizeVar}`}
+              x-on:change={`${onPageSizeChange}(Number($event.target.value))`}
+            >
+              {pageSizeOptions.map((size) => (
+                <option value={size}>{size}</option>
+              ))}
+            </select>
+          </label>
+        )}
+      </div>
+    </div>
+    {errorVar && (
+      <template x-if={errorVar}>
+        <div class="mt-3 rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-600" x-text={errorVar}></div>
+      </template>
+    )}
+  </div>
+  <div class="overflow-x-auto">
+    <table class="min-w-full divide-y divide-slate-200">
+      <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <tr>
+          {columns.map((column) => {
+            const headerClasses = ["px-4 py-3", alignClass(column.align), column.headerClass ?? "", column.widthClass ?? ""]
+              .filter(Boolean)
+              .join(" ");
+            if (column.sortable && onSort && sortStateVar) {
+              const sortKey = getSortKey(column);
+              return (
+                <th scope="col" class={headerClasses}>
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500 transition hover:text-slate-700"
+                    x-on:click={`${onSort}('${sortKey}')`}
+                    x-bind:disabled={`${loadingVar}`}
+                  >
+                    <span>{column.label}</span>
+                    <span class="flex flex-col text-[10px] leading-[10px] text-slate-400">
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="h-2.5 w-2.5"
+                        x-bind:class={`{ 'text-indigo-600': ${sortStateVar} && ${sortStateVar}.column === '${sortKey}' && ${sortStateVar}.direction === 'asc' }`}
+                      >
+                        <path d="M18 15l-6-6-6 6"></path>
+                      </svg>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        stroke-width="2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        class="h-2.5 w-2.5"
+                        x-bind:class={`{ 'text-indigo-600': ${sortStateVar} && ${sortStateVar}.column === '${sortKey}' && ${sortStateVar}.direction === 'desc' }`}
+                      >
+                        <path d="M6 9l6 6 6-6"></path>
+                      </svg>
+                    </span>
+                  </button>
+                </th>
+              );
+            }
+
+            return <th scope="col" class={headerClasses}>{column.label}</th>;
+          })}
+        </tr>
+        {hasFilters && filtersVar && onFilterChange && (
+          <tr class="bg-white text-xs text-slate-600">
+            {columns.map((column) => {
+              const filter = column.filter;
+              const cellClasses = ["px-4 pb-3 pt-2", alignClass(column.align), column.widthClass ?? ""].filter(Boolean).join(" ");
+              if (!filter) {
+                return <th class={cellClasses}></th>;
+              }
+
+              if (filter.type === "button") {
+                const variant = filter.variant ?? "neutral";
+                const baseClass =
+                  "inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60";
+                const variantClass =
+                  variant === "danger"
+                    ? "border-red-200 text-red-600 hover:border-red-300 hover:text-red-700"
+                    : "border-slate-200 text-slate-600 hover:border-slate-300 hover:text-slate-800";
+                return (
+                  <th class={`${cellClasses} ${alignClass(column.align)}`}>
+                    <div class={`flex ${justifyClass(column.align)}`}>
+                      <button
+                        type="button"
+                        class={`${baseClass} ${variantClass}`}
+                        x-on:click={filter.onClick}
+                        x-bind:disabled={`${loadingVar}`}
+                      >
+                        {filter.label}
+                      </button>
+                    </div>
+                  </th>
+                );
+              }
+
+              if (filter.type === "number-range") {
+                return (
+                  <th class={`${cellClasses} ${alignClass(column.align)}`}>
+                    <div class={`flex items-center gap-2 ${justifyClass(column.align)}`}>
+                      <input
+                        type="number"
+                        placeholder={filter.minPlaceholder ?? "Min"}
+                        class="w-20 rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model={`${filtersVar}.${filter.minKey}`}
+                        x-on:input={`${onFilterChange}()`}
+                        {...serializeAttributes(filter.minAttributes)}
+                      />
+                      <input
+                        type="number"
+                        placeholder={filter.maxPlaceholder ?? "Max"}
+                        class="w-20 rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        x-model={`${filtersVar}.${filter.maxKey}`}
+                        x-on:input={`${onFilterChange}()`}
+                        {...serializeAttributes(filter.maxAttributes)}
+                      />
+                    </div>
+                  </th>
+                );
+              }
+
+              if (filter.type === "select") {
+                return (
+                  <th class={`${cellClasses} ${alignClass(column.align)}`}>
+                    <select
+                      class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      x-model={`${filtersVar}.${filter.key}`}
+                      x-on:change={`${onFilterChange}()`}
+                    >
+                      {filter.placeholder && <option value="">{filter.placeholder}</option>}
+                      {filter.options.map((option) => (
+                        <option value={option.value}>{option.label}</option>
+                      ))}
+                    </select>
+                  </th>
+                );
+              }
+
+              const inputType = filter.type === "number" ? "number" : "text";
+              const inputClass =
+                "w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200";
+              const modelModifier = filter.type === "text" ? ".trim" : "";
+              const attrs = serializeAttributes(filter.attributes);
+
+              return (
+                <th class={`${cellClasses} ${alignClass(column.align)}`}>
+                  <input
+                    type={inputType}
+                    placeholder={filter.placeholder ?? ""}
+                    class={inputClass}
+                    x-model={`${filtersVar}.${filter.key}${modelModifier}`}
+                    x-on:input={`${onFilterChange}()`}
+                    {...attrs}
+                  />
+                </th>
+              );
+            })}
+          </tr>
+        )}
+      </thead>
+      <tbody class="divide-y divide-slate-200 text-sm text-slate-700">
+        <template x-if={loadingVar}>
+          <tr>
+            <td class="px-4 py-6" colspan={columns.length}>
+              <div class="flex items-center gap-3 text-sm font-medium text-slate-500">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-5 w-5 animate-spin text-indigo-500"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                >
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 12a8 8 0 0 1 8-8" />
+                </svg>
+                <span>{loadingMessage}</span>
+              </div>
+            </td>
+          </tr>
+        </template>
+        <slot name="body" />
+        {hasFiltersVar ? (
+          <tr x-show={`!${loadingVar} && ${rowsVar}.length === 0 && ${hasFiltersVar}`} x-cloak>
+            <td class="px-4 py-6 text-center text-sm font-medium text-slate-500" colspan={columns.length}>
+              {filteredEmptyMessage}
+            </td>
+          </tr>
+        ) : (
+          <tr x-show={`!${loadingVar} && ${rowsVar}.length === 0`} x-cloak>
+            <td class="px-4 py-6 text-center text-sm font-medium text-slate-500" colspan={columns.length}>
+              {emptyMessage}
+            </td>
+          </tr>
+        )}
+        {hasFiltersVar && (
+          <tr x-show={`!${loadingVar} && ${rowsVar}.length === 0 && !${hasFiltersVar}`} x-cloak>
+            <td class="px-4 py-6 text-center text-sm font-medium text-slate-500" colspan={columns.length}>
+              {emptyMessage}
+            </td>
+          </tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  {pageVar && totalPagesVar && pageNumbersVar && onPrevPage && onNextPage && onSetPage && (
+    <div class="border-t border-slate-200 px-4 py-4 sm:px-6">
+      <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <p class="text-xs font-medium text-slate-500">
+          <span x-text={`'Page ' + (${pageVar} ?? 1) + ' of ' + (${totalPagesVar} ?? 1)`}></span>
+        </p>
+        <div class="flex flex-wrap items-center gap-2" x-cloak>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            x-on:click={`${onPrevPage}()`}
+            x-bind:disabled={`${loadingVar} || (${pageVar} ?? 1) <= 1`}
+          >
+            Prev
+          </button>
+          <template x-for={`pageNumber in ${pageNumbersVar}`} :key="`page-${pageNumber}`">
+            <button
+              type="button"
+              class="inline-flex items-center justify-center rounded-full border px-3 py-1 text-xs font-semibold transition disabled:cursor-not-allowed disabled:opacity-60"
+              x-text="pageNumber"
+              x-on:click={`${onSetPage}(pageNumber)`}
+              x-bind:disabled={`${loadingVar}`}
+              :class={`pageNumber === ${pageVar} ? 'border-indigo-600 bg-indigo-600 text-white' : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300 hover:text-slate-800'`}
+            ></button>
+          </template>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
+            x-on:click={`${onNextPage}()`}
+            x-bind:disabled={`${loadingVar} || (${totalPagesVar} ?? 1) === 0 || (${pageVar} ?? 1) >= (${totalPagesVar} ?? 1)`}
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    </div>
+  )}
+</div>

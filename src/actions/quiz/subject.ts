@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Subject, Platform, and, count, eq, gte, lte, sql } from 'astro:db';
+import { db, Subject, Platform, and, asc, count, desc, eq, gte, lte, sql } from 'astro:db';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -31,6 +31,13 @@ const subjectFiltersSchema = z.object({
 });
 
 type SubjectFiltersInput = z.infer<typeof subjectFiltersSchema>;
+
+const subjectSortSchema = z.object({
+  column: z.enum(['name', 'platformName', 'platformId', 'qCount', 'status', 'id']),
+  direction: z.enum(['asc', 'desc']).default('asc'),
+});
+
+type SubjectSortInput = z.infer<typeof subjectSortSchema>;
 
 const normalizeInput = (input: z.infer<typeof subjectPayloadSchema>) => {
   const name = input.name.trim();
@@ -81,9 +88,11 @@ export const fetchSubjects = defineAction({
     page: z.number().int().min(1).default(1),
     pageSize: z.number().int().min(1).max(48).default(10),
     filters: subjectFiltersSchema.optional(),
+    sort: subjectSortSchema.optional(),
   }),
-  async handler({ page, pageSize, filters }) {
+  async handler({ page, pageSize, filters, sort }) {
     const normalizedFilters = normalizeFilters(filters);
+    const normalizedSort = sort ?? null;
     const conditions: SqlCondition[] = [];
 
     if (normalizedFilters.name) {
@@ -123,6 +132,15 @@ export const fetchSubjects = defineAction({
     const currentPage = Math.min(Math.max(page, 1), maxPage);
     const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
 
+    const sortColumnMap: Record<SubjectSortInput['column'], any> = {
+      id: Subject.id,
+      name: Subject.name,
+      platformId: Subject.platformId,
+      platformName: Platform.name,
+      qCount: Subject.qCount,
+      status: Subject.isActive,
+    };
+
     let query = db
       .select({ subject: Subject, platformName: Platform.name })
       .from(Subject)
@@ -132,10 +150,19 @@ export const fetchSubjects = defineAction({
       query = query.where(whereClause);
     }
 
-    const subjects = await query
-      .orderBy(Subject.id)
-      .limit(safePageSize)
-      .offset(offset);
+    const orderExpressions: any[] = [];
+    if (normalizedSort) {
+      const columnExpr = sortColumnMap[normalizedSort.column];
+      if (columnExpr) {
+        orderExpressions.push(normalizedSort.direction === 'desc' ? desc(columnExpr) : asc(columnExpr));
+      }
+    }
+
+    if (!normalizedSort || normalizedSort.column !== 'id') {
+      orderExpressions.push(asc(Subject.id));
+    }
+
+    const subjects = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
 
     const items = subjects.map(({ subject, platformName }) =>
       normalizeSubject({ ...subject, platformName: platformName ?? null })

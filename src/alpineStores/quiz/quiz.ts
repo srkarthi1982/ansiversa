@@ -38,6 +38,13 @@ type PlatformFiltersPayload = {
   status?: 'active' | 'inactive';
 };
 
+type PlatformSortColumn = 'name' | 'description' | 'type' | 'qCount' | 'status' | 'id';
+
+type SortState = {
+  column: PlatformSortColumn;
+  direction: 'asc' | 'desc';
+};
+
 class QuizStoreImpl {
   platforms: PlatformRecord[] = [];
   loading = false;
@@ -52,7 +59,9 @@ class QuizStoreImpl {
   showCreateModal = false;
   showEditModal = false;
   filters: PlatformFilters;
+  sort: SortState | null = null;
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
+  private readonly allowedSortColumns: PlatformSortColumn[] = ['name', 'description', 'type', 'qCount', 'status', 'id'];
 
   constructor() {
     this.newPlatform = this.createDefaultForm();
@@ -86,6 +95,7 @@ class QuizStoreImpl {
         page,
         pageSize: this.pageSize,
         filters: filtersPayload,
+        sort: this.sort ?? undefined,
       });
       if (error) {
         throw error;
@@ -111,6 +121,22 @@ class QuizStoreImpl {
     }
   }
 
+  async setSort(column: PlatformSortColumn): Promise<void> {
+    if (!this.allowedSortColumns.includes(column)) {
+      return;
+    }
+
+    const current = this.sort;
+    let direction: SortState['direction'] = 'asc';
+    if (current?.column === column) {
+      direction = current.direction === 'asc' ? 'desc' : 'asc';
+    }
+
+    this.sort = { column, direction };
+    this.page = 1;
+    await this.loadPlatforms(1);
+  }
+
   async setPage(page: number): Promise<void> {
     const maxPage = this.totalPages === 0 ? 1 : this.totalPages;
     const clamped = Math.min(Math.max(1, page), maxPage);
@@ -118,6 +144,19 @@ class QuizStoreImpl {
       return;
     }
     await this.loadPlatforms(clamped);
+  }
+
+  async setPageSize(size: number): Promise<void> {
+    const parsed = Math.max(1, Math.min(48, Math.floor(Number(size))));
+    if (!Number.isFinite(parsed)) {
+      return;
+    }
+    if (parsed === this.pageSize) {
+      return;
+    }
+    this.pageSize = parsed;
+    this.page = 1;
+    await this.loadPlatforms(1);
   }
 
   async nextPage(): Promise<void> {

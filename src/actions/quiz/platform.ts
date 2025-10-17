@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Platform, and, count, eq, gte, lte, sql } from 'astro:db';
+import { db, Platform, and, asc, count, desc, eq, gte, lte, sql } from 'astro:db';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -35,6 +35,13 @@ const platformFiltersSchema = z.object({
 });
 
 type PlatformFiltersInput = z.infer<typeof platformFiltersSchema>;
+
+const platformSortSchema = z.object({
+  column: z.enum(['name', 'description', 'type', 'qCount', 'status', 'id']),
+  direction: z.enum(['asc', 'desc']).default('asc'),
+});
+
+type PlatformSortInput = z.infer<typeof platformSortSchema>;
 
 const normalizeInput = (input: z.infer<typeof platformPayloadSchema>) => {
   const name = input.name.trim();
@@ -86,9 +93,11 @@ export const fetchPlatforms = defineAction({
     page: z.number().int().min(1).default(1),
     pageSize: z.number().int().min(1).max(48).default(6),
     filters: platformFiltersSchema.optional(),
+    sort: platformSortSchema.optional(),
   }),
-  async handler({ page, pageSize, filters }) {
+  async handler({ page, pageSize, filters, sort }) {
     const normalizedFilters = normalizeFilters(filters);
+    const normalizedSort = sort ?? null;
     const conditions: SqlCondition[] = [];
 
     if (normalizedFilters.name) {
@@ -132,14 +141,33 @@ export const fetchPlatforms = defineAction({
     const currentPage = Math.min(Math.max(page, 1), maxPage);
     const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
 
+    const sortColumnMap: Record<PlatformSortInput['column'], any> = {
+      id: Platform.id,
+      name: Platform.name,
+      description: Platform.description,
+      type: Platform.type,
+      qCount: Platform.qCount,
+      status: Platform.isActive,
+    };
+
     let query = db.select().from(Platform);
     if (whereClause) {
       query = query.where(whereClause);
     }
-    const platforms = await query
-      .orderBy((row) => row.id)
-      .limit(safePageSize)
-      .offset(offset);
+
+    const orderExpressions: any[] = [];
+    if (normalizedSort) {
+      const columnExpr = sortColumnMap[normalizedSort.column];
+      if (columnExpr) {
+        orderExpressions.push(normalizedSort.direction === 'desc' ? desc(columnExpr) : asc(columnExpr));
+      }
+    }
+
+    if (!normalizedSort || normalizedSort.column !== 'id') {
+      orderExpressions.push(asc(Platform.id));
+    }
+
+    const platforms = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
 
     return {
       items: platforms.map(normalizePlatform),
