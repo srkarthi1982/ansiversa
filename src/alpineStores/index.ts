@@ -13,5 +13,6 @@ import './contact';
 import './quiz/platform';
 import './quiz/subjects';
 import './resume/index';
+import './cover-letter/index';
 import './admin';
 import './miniApps';

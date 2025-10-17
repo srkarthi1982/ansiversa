@@ -31,6 +31,9 @@ const username = sessionData?.user?.username ?? 'Account';
         if (segments.includes('resume-builder')) {
           return 'resume';
         }
+        if (segments.includes('cover-letter-writer')) {
+          return 'cover-letter-writer';
+        }
         return segments.at(-1) ?? '';
       };
       function onPreparation(location) {

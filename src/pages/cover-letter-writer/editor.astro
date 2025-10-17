@@ -1,0 +1,287 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+
+const letterId = Astro.url.searchParams.get('id') ?? '';
+---
+<Layout>
+  <main
+    class="bg-slate-50 min-h-screen"
+    x-data="() => $store['cover-letter-writer']"
+    x-init="initEditor({ id: $el.dataset.letterId || null })"
+    data-letter-id={letterId}
+  >
+    <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#cover-letter-editor-main">
+      Skip to content
+    </a>
+    <section class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-wrap items-center gap-4 px-4 py-6 sm:px-6 lg:max-w-5xl lg:px-8">
+        <a href="/cover-letter-writer" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900">
+          <i class="fas fa-arrow-left text-xs"></i>
+          Back to cover letters
+        </a>
+        <div class="ml-0 flex flex-1 flex-wrap items-center gap-3 sm:ml-6">
+          <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl" x-text="editor.title || 'Untitled cover letter'"></h1>
+          <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+            <i class="fas fa-briefcase text-[11px]"></i>
+            <span x-text="editor.role || 'Role TBD'"></span>
+          </span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <Button type="button" variant="outline" @click.prevent="openTemplateGallery()">
+            <i class="fas fa-layer-group text-xs"></i>
+            Templates
+          </Button>
+          <Button type="button" variant="secondary" @click.prevent="composeNow()" :disabled="aiUsage.used >= aiUsage.limit">
+            <i class="fas fa-magic text-xs"></i>
+            <span x-text="editor.aiStatus ?? 'AI Compose'"></span>
+          </Button>
+          <Button type="button" variant="secondary" @click.prevent="saveNow()">
+            <i class="fas fa-save text-xs"></i>
+            Save
+          </Button>
+          <div class="relative" x-data="{ open: false }">
+            <Button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true">
+              <i class="fas fa-file-export text-xs"></i>
+              Export
+              <i class="fas fa-chevron-down text-[10px]"></i>
+            </Button>
+            <div
+              class="absolute right-0 z-20 mt-2 w-48 rounded-2xl border border-slate-200 bg-white py-2 text-sm shadow-lg focus:outline-none"
+              x-show="open"
+              x-transition
+              @click.away="open = false"
+              role="menu"
+            >
+              <Button type="button" variant="ghost" block @click.prevent="requestExport('pdf'); open = false;">
+                <i class="fas fa-file-pdf text-xs text-rose-500"></i>
+                PDF
+              </Button>
+              <Button type="button" variant="ghost" block @click.prevent="requestExport('docx'); open = false;">
+                <i class="fas fa-file-word text-xs text-indigo-500"></i>
+                DOCX
+              </Button>
+              <Button type="button" variant="ghost" block @click.prevent="requestExport('md'); open = false;">
+                <i class="fas fa-file-alt text-xs text-emerald-500"></i>
+                Markdown
+              </Button>
+              <Button type="button" variant="ghost" block @click.prevent="requestExport('txt'); open = false;">
+                <i class="fas fa-align-left text-xs text-amber-500"></i>
+                Plain text
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cover-letter-editor-main" class="py-10">
+      <div class="mx-auto grid max-w-5xl gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)] lg:px-8">
+        <div class="space-y-8">
+          <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-4">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Overview</h2>
+                <p class="text-sm text-slate-600">Describe the role and keep your tone settings handy.</p>
+              </div>
+              <span class="text-xs font-semibold text-slate-500">AI usage: <span x-text="`${aiUsage.used}/${aiUsage.limit === Infinity ? '∞' : aiUsage.limit}`"></span></span>
+            </header>
+            <div class="grid gap-4 px-6 py-6 md:grid-cols-2">
+              <label class="flex flex-col gap-1 text-sm">
+                <span class="font-semibold text-slate-700">Letter title</span>
+                <input type="text" x-model="editor.title" @input="markUnsaved()" class="rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Senior Product Manager — Cover Letter" />
+              </label>
+              <label class="flex flex-col gap-1 text-sm">
+                <span class="font-semibold text-slate-700">Role</span>
+                <input type="text" x-model="editor.role" @input="markUnsaved()" class="rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Senior Product Manager" />
+              </label>
+              <label class="flex flex-col gap-1 text-sm">
+                <span class="font-semibold text-slate-700">Company</span>
+                <input type="text" x-model="editor.company" @input="markUnsaved()" class="rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Ansiversa" />
+              </label>
+              <label class="flex flex-col gap-1 text-sm">
+                <span class="font-semibold text-slate-700">Greeting</span>
+                <input type="text" x-model="editor.greeting" @input="markUnsaved()" class="rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Dear Hiring Manager" />
+              </label>
+              <div class="flex flex-col gap-2 text-sm">
+                <span class="font-semibold text-slate-700">Tone</span>
+                <div class="flex flex-wrap gap-2">
+                  <template x-for="tone in tones" :key="tone.value">
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
+                      :class="editor.tone === tone.value ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-300 bg-white text-slate-600'"
+                      @click="editor.tone = tone.value; markUnsaved();"
+                    >
+                      <i :class="tone.icon" class="text-xs"></i>
+                      <span x-text="tone.label"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+              <label class="flex flex-col gap-2 text-sm">
+                <span class="font-semibold text-slate-700">Length</span>
+                <select x-model="editor.length" @change="markUnsaved()" class="rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none">
+                  <template x-for="option in lengths" :key="option.value">
+                    <option :value="option.value" x-text="option.label"></option>
+                  </template>
+                </select>
+              </label>
+              <div class="flex flex-col gap-2 text-sm md:col-span-2">
+                <span class="font-semibold text-slate-700">Template</span>
+                <div class="inline-flex flex-wrap gap-3">
+                  <template x-for="template in templates" :key="template.key">
+                    <button
+                      type="button"
+                      class="flex min-w-[140px] flex-col gap-1 rounded-2xl border px-4 py-3 text-left text-sm transition"
+                      :class="editor.templateKey === template.key ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-300 bg-white text-slate-600'"
+                      :disabled="!canUseTemplate(template.key)"
+                      @click="setTemplate(template.key)"
+                    >
+                      <span class="font-semibold" x-text="template.label"></span>
+                      <span class="text-xs text-slate-500" x-text="template.description"></span>
+                      <span class="mt-1 inline-flex items-center gap-1 text-[11px] font-semibold" :class="template.plan === 'pro' ? 'text-amber-500' : 'text-emerald-500'">
+                        <i :class="template.icon" class="text-[10px]"></i>
+                        <span x-text="template.plan === 'pro' ? 'Pro' : 'Free'"></span>
+                      </span>
+                    </button>
+                  </template>
+                </div>
+                <p class="text-xs font-semibold text-rose-500" x-show="isFreePlan">Upgrade to unlock Classic and Bold templates.</p>
+              </div>
+              <div class="md:col-span-2">
+                <Button type="button" variant="outline" @click.prevent="insertFromResume()">
+                  <i class="fas fa-arrow-down text-xs"></i>
+                  Insert highlights from resume
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <header class="border-b border-slate-100 px-6 py-4">
+              <h2 class="text-lg font-semibold text-slate-900">Prompts</h2>
+              <p class="text-sm text-slate-600">Fill these sections to guide the AI compose action.</p>
+            </header>
+            <div class="space-y-6 px-6 py-6">
+              <label class="flex flex-col gap-2 text-sm">
+                <span class="font-semibold text-slate-700">Introduction</span>
+                <textarea x-model="editor.prompts.introduction" @input="markUnsaved()" rows="3" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Open with a strong first paragraph..."></textarea>
+              </label>
+              <label class="flex flex-col gap-2 text-sm">
+                <span class="font-semibold text-slate-700">Motivation</span>
+                <textarea x-model="editor.prompts.motivation" @input="markUnsaved()" rows="3" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Why this company or role resonates with you..."></textarea>
+              </label>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-slate-700">Value propositions</span>
+                  <button type="button" class="text-xs font-semibold text-indigo-600 hover:text-indigo-500" @click="addValueProp()">
+                    <i class="fas fa-plus text-[10px]"></i>
+                    Add value
+                  </button>
+                </div>
+                <template x-for="(valueProp, index) in editor.prompts.valueProps" :key="index">
+                  <div class="flex items-center gap-2">
+                    <input type="text" class="w-full rounded-2xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" x-model="editor.prompts.valueProps[index]" @input="markUnsaved()" placeholder="Drive cross-functional delivery..." />
+                    <button type="button" class="rounded-full border border-slate-200 p-2 text-slate-500 hover:border-rose-200 hover:text-rose-500" @click="removeValueProp(index)">
+                      <i class="fas fa-times text-xs"></i>
+                    </button>
+                  </div>
+                </template>
+                <p class="text-xs text-slate-500" x-show="editor.prompts.valueProps.length === 0">Add up to 8 short strengths or differentiators.</p>
+              </div>
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-slate-700">Achievements</span>
+                  <button type="button" class="text-xs font-semibold text-indigo-600 hover:text-indigo-500" @click="addAchievement()">
+                    <i class="fas fa-plus text-[10px]"></i>
+                    Add achievement
+                  </button>
+                </div>
+                <template x-for="(achievement, index) in editor.prompts.achievements" :key="index">
+                  <div class="grid gap-2 rounded-2xl border border-slate-200 p-4 sm:grid-cols-3">
+                    <label class="flex flex-col gap-1 text-xs">
+                      <span class="font-semibold text-slate-600">Headline</span>
+                      <input type="text" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none" x-model="editor.prompts.achievements[index].headline" @input="markUnsaved()" placeholder="Grew ARR 45%" />
+                    </label>
+                    <label class="flex flex-col gap-1 text-xs">
+                      <span class="font-semibold text-slate-600">Metric</span>
+                      <input type="text" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none" x-model="editor.prompts.achievements[index].metric" @input="markUnsaved()" placeholder="$12M pipeline" />
+                    </label>
+                    <label class="flex flex-col gap-1 text-xs sm:col-span-1 sm:col-start-auto sm:row-span-2">
+                      <span class="font-semibold text-slate-600">Description</span>
+                      <textarea rows="2" class="rounded-xl border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none" x-model="editor.prompts.achievements[index].description" @input="markUnsaved()"></textarea>
+                    </label>
+                    <div class="flex items-end justify-end">
+                      <button type="button" class="rounded-full border border-slate-200 p-2 text-slate-500 hover:border-rose-200 hover:text-rose-500" @click="removeAchievement(index)">
+                        <i class="fas fa-trash text-xs"></i>
+                      </button>
+                    </div>
+                  </div>
+                </template>
+                <p class="text-xs text-slate-500" x-show="editor.prompts.achievements.length === 0">Capture measurable wins to personalise your closing paragraphs.</p>
+              </div>
+              <label class="flex flex-col gap-2 text-sm">
+                <span class="font-semibold text-slate-700">Closing</span>
+                <textarea x-model="editor.prompts.closing" @input="markUnsaved()" rows="3" class="rounded-2xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none" placeholder="Thank you for your consideration. I’d welcome the chance to discuss..."></textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <header class="flex items-center justify-between gap-3 border-b border-slate-100 px-6 py-4">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Letter body</h2>
+                <p class="text-sm text-slate-600">Fine tune the AI output or write manually.</p>
+              </div>
+              <span class="text-xs font-semibold text-slate-500" x-text="editor.autosaveLabel ?? ''"></span>
+            </header>
+            <div class="space-y-4 px-6 py-6">
+              <textarea
+                rows="14"
+                class="w-full rounded-3xl border border-slate-300 px-4 py-3 text-sm leading-6 shadow-sm focus:border-indigo-500 focus:outline-none"
+                placeholder="Your drafted cover letter will appear here after composing..."
+                x-model="editor.body"
+                @input="markUnsaved()"
+              ></textarea>
+              <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-500">
+                <span>Autosave triggers after a pause or manual save.</span>
+                <span>Undo/redo coming soon.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <aside class="space-y-6 lg:sticky lg:top-20">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex items-center justify-between">
+              <h2 class="text-base font-semibold text-slate-900">Live preview</h2>
+              <span class="text-xs font-semibold text-slate-500" x-text="editor.templateKey"></span>
+            </div>
+            <div class="mt-4 space-y-4 rounded-2xl border border-slate-100 bg-white/80 px-5 py-6 text-sm leading-6 text-slate-700">
+              <p class="text-xs uppercase tracking-wide text-slate-400" x-text="editor.company || 'Cover letter draft'"></p>
+              <p class="font-semibold text-slate-900" x-text="preview.title"></p>
+              <p x-text="preview.greeting"></p>
+              <template x-for="(paragraph, index) in preview.paragraphs" :key="index">
+                <p x-text="paragraph"></p>
+              </template>
+              <p x-text="preview.closing"></p>
+              <template x-for="line in preview.signature.split('\n')" :key="line">
+                <p x-text="line"></p>
+              </template>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-indigo-200 bg-indigo-50 p-6 text-sm text-indigo-900 shadow-sm">
+            <h3 class="text-base font-semibold">Tips</h3>
+            <ul class="mt-3 space-y-2">
+              <li class="flex gap-3"><i class="fas fa-bolt pt-1 text-xs"></i><span>Keep each paragraph focused on one theme—motivation, strengths, or impact.</span></li>
+              <li class="flex gap-3"><i class="fas fa-wand-magic-sparkles pt-1 text-xs"></i><span>Try composing again after tweaking tone, length, or achievements.</span></li>
+              <li class="flex gap-3"><i class="fas fa-language pt-1 text-xs"></i><span>Need another language? Switch tone and edit manually before exporting.</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>

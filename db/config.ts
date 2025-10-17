@@ -92,6 +92,46 @@ const ResumeExport = defineTable({
   },
 });
 
+const CoverLetter = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    title: column.text(),
+    role: column.text(),
+    company: column.text(),
+    greeting: column.text(),
+    tone: column.text({ default: 'professional' }),
+    length: column.text({ default: 'medium' }),
+    templateKey: column.text({ default: 'minimal' }),
+    prompts: column.json({ optional: true }),
+    body: column.text({ default: '' }),
+    status: column.text({ default: 'draft' }),
+    lastSavedAt: column.date({ optional: true }),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
+const CoverLetterExport = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    letterId: column.text({ references: () => CoverLetter.columns.id }),
+    format: column.text(),
+    filePath: column.text(),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
+const CoverLetterHistory = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    letterId: column.text({ references: () => CoverLetter.columns.id }),
+    userId: column.text({ references: () => User.columns.id }),
+    body: column.text(),
+    generatedBy: column.text({ default: 'user' }),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
 export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
@@ -102,5 +142,8 @@ export default defineDb({
     Subject,
     Resume,
     ResumeExport,
+    CoverLetter,
+    CoverLetterExport,
+    CoverLetterHistory,
   },
 });
