@@ -198,12 +198,13 @@ const buildPdfDocument = (pages: string[]): Uint8Array => {
   }
 
   const header = '%PDF-1.4\n';
+  const headerLength = Buffer.byteLength(header, 'utf8');
   const xrefOffset = Buffer.byteLength(header + body, 'utf8');
 
   let xref = `xref\n0 ${currentId + 1}\n`;
   xref += '0000000000 65535 f \n';
   for (let id = 1; id <= currentId; id += 1) {
-    const position = String(offsets[id]).padStart(10, '0');
+    const position = String(headerLength + offsets[id]).padStart(10, '0');
     xref += `${position} 00000 n \n`;
   }
 
