@@ -2,26 +2,22 @@
 import Layout from "../../layouts/Layout.astro";
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section
-      class="border-b border-slate-200 bg-white/80"
-      x-data="() => $store['cover-letter-writer']"
-      x-init="ensureList()"
-    >
+  <main
+    class="bg-slate-50 min-h-screen"
+    x-data="() => $store['cover-letter-writer']"
+    x-init="ensureList()"
+    :dir="direction"
+  >
+    <section class="border-b border-slate-200 bg-white/80">
       <div class="mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-6">
           <div class="space-y-4">
             <p class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-4 py-1 text-sm font-semibold text-indigo-700">
               <i class="fas fa-feather text-xs"></i>
-              New mini-app
+              <span x-text="strings.newMiniApp"></span>
             </p>
-            <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-              Cover Letter Writer
-            </h1>
-            <p class="max-w-3xl text-lg text-slate-600">
-              Generate polished, ATS-friendly cover letters tailored to every role. Guide our AI with structured prompts,
-              reuse templates, and export in PDF, DOCX, Markdown, or plain text.
-            </p>
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl" x-text="strings.moduleTitle"></h1>
+            <p class="max-w-3xl text-lg text-slate-600" x-text="strings.moduleDescription"></p>
             <div class="flex flex-wrap items-center gap-3">
               <button
                 type="button"
@@ -29,58 +25,65 @@ import Layout from "../../layouts/Layout.astro";
                 @click="createLetter()"
               >
                 <i class="fas fa-plus text-xs"></i>
-                New Cover Letter
+                <span x-text="strings.newLetter"></span>
               </button>
               <a
                 href="/cover-letter-writer/templates"
                 class="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 transition hover:border-indigo-300 hover:text-indigo-600"
               >
                 <i class="fas fa-layer-group text-xs"></i>
-                Browse templates
+                <span x-text="strings.browseTemplates"></span>
               </a>
+              <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600">
+                <span x-text="strings.localeLabel"></span>
+                <select
+                  class="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-semibold focus:border-indigo-500 focus:outline-none"
+                  :value="locale"
+                  @change="setLocale($event.target.value)"
+                >
+                  <template x-for="option in availableLocales" :key="option.value">
+                    <option :value="option.value" x-text="`${option.label} · ${option.native}`"></option>
+                  </template>
+                </select>
+              </label>
             </div>
           </div>
           <div
             class="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-700 shadow-sm"
             x-show="plan === 'free'"
           >
-            <h2 class="mb-2 text-base font-semibold text-slate-900">
-              Free plan limits
-            </h2>
+            <h2 class="mb-2 text-base font-semibold text-slate-900" x-text="strings.freePlanHeading"></h2>
             <ul class="list-disc space-y-1 pl-6">
-              <li>3 AI compose requests per day</li>
-              <li>Minimal template unlocked; upgrade for premium layouts</li>
-              <li>PDF exports include a subtle Ansiversa watermark</li>
+              <template x-for="(item, index) in strings.freePlanBullets" :key="index">
+                <li x-text="item"></li>
+              </template>
             </ul>
           </div>
         </div>
       </div>
     </section>
 
-    <section x-data="() => $store['cover-letter-writer']" class="py-16">
+    <section class="py-16">
       <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between gap-4">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 class="text-xl font-semibold text-slate-900">Your cover letters</h2>
-            <p class="text-sm text-slate-600" x-text="letters.length ? `${letters.length} drafts ready to tailor.` : 'No cover letters yet.'"></p>
+            <h2 class="text-xl font-semibold text-slate-900" x-text="strings.lettersHeading"></h2>
+            <p class="text-sm text-slate-600" x-text="lettersSummary(letters.length)"></p>
           </div>
-          <div class="flex flex-col items-end text-sm text-slate-600">
-            <span class="font-semibold text-slate-900">AI compose usage</span>
-            <span x-text="`${aiUsage.used} / ${aiUsage.limit === Infinity ? '∞' : aiUsage.limit}`"></span>
+          <div class="flex flex-col items-start gap-1 text-sm text-slate-600 sm:items-end">
+            <span class="font-semibold text-slate-900" x-text="strings.aiUsageLabel"></span>
+            <span x-text="aiUsageDisplay"></span>
           </div>
         </div>
 
-        <div
-          class="mt-10 grid gap-6 sm:grid-cols-2"
-          x-show="letters.length > 0"
-        >
+        <div class="mt-10 grid gap-6 sm:grid-cols-2" x-show="letters.length > 0">
           <template x-for="letter in letters" :key="letter.id">
             <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:border-indigo-200">
               <div class="space-y-3">
                 <div class="flex items-start justify-between gap-3">
                   <div>
                     <h3 class="text-lg font-semibold text-slate-900" x-text="letter.title"></h3>
-                    <p class="text-sm text-slate-600" x-text="letter.company ? `${letter.role || 'Role'} · ${letter.company}` : letter.role || 'Draft role' "></p>
+                    <p class="text-sm text-slate-600" x-text="letter.company ? `${letter.role || 'Role'} · ${letter.company}` : letter.role || 'Draft role'"></p>
                   </div>
                   <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
                     <i class="fas fa-pen-nib text-[10px]"></i>
@@ -96,7 +99,7 @@ import Layout from "../../layouts/Layout.astro";
                   @click="window.location.assign(`/cover-letter-writer/editor?id=${letter.id}`)"
                 >
                   <i class="fas fa-edit text-xs"></i>
-                  Open editor
+                  <span x-text="strings.openEditor"></span>
                 </button>
                 <button
                   type="button"
@@ -104,7 +107,7 @@ import Layout from "../../layouts/Layout.astro";
                   @click="duplicateLetter(letter.id)"
                 >
                   <i class="fas fa-clone text-xs"></i>
-                  Duplicate
+                  <span x-text="strings.duplicate"></span>
                 </button>
                 <button
                   type="button"
@@ -112,9 +115,9 @@ import Layout from "../../layouts/Layout.astro";
                   @click="deleteLetter(letter.id)"
                 >
                   <i class="fas fa-trash text-xs"></i>
-                  Delete
+                  <span x-text="strings.delete"></span>
                 </button>
-                <span class="ml-auto text-xs text-slate-500" x-text="letter.lastSavedAt ? new Date(letter.lastSavedAt).toLocaleString() : 'Not saved yet'"></span>
+                <span class="ml-auto text-xs text-slate-500" x-text="formatTimestamp(letter.lastSavedAt)"></span>
               </div>
             </article>
           </template>
@@ -126,11 +129,8 @@ import Layout from "../../layouts/Layout.astro";
         >
           <i class="fas fa-envelope-open-text text-4xl text-indigo-500"></i>
           <div class="space-y-2">
-            <p class="text-lg font-semibold text-slate-900">Start with a guided draft</p>
-            <p class="max-w-xl text-sm">
-              Answer a few prompts about the role and company, then let our AI compose a personalised cover letter you can edit
-              in minutes.
-            </p>
+            <p class="text-lg font-semibold text-slate-900" x-text="strings.emptyCtaTitle"></p>
+            <p class="max-w-xl text-sm" x-text="strings.emptyCtaBody"></p>
           </div>
           <button
             type="button"
@@ -138,7 +138,7 @@ import Layout from "../../layouts/Layout.astro";
             @click="createLetter()"
           >
             <i class="fas fa-sparkles text-xs"></i>
-            Create your first letter
+            <span x-text="strings.emptyCtaAction"></span>
           </button>
         </div>
       </div>

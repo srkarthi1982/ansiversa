@@ -10,7 +10,7 @@ export const list = defineAction({
     const items = await listCoverLettersForUser(user.id);
     const used = await countTodaysAiComposes(user.id);
     const plan = (user.plan as 'free' | 'pro' | 'elite' | undefined) ?? 'free';
-    const limit = plan === 'free' ? 3 : plan === 'pro' ? 20 : Number.POSITIVE_INFINITY;
+    const limit = plan === 'free' ? 3 : null;
 
     return {
       items,

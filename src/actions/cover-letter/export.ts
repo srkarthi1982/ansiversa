@@ -6,6 +6,7 @@ import {
   requireUser,
   findCoverLetterOrThrow,
   normalizeCoverLetterRow,
+  recordMetricEvent,
 } from './utils';
 import { renderCoverLetterMarkdown } from '../../lib/coverLetter/render/markdown';
 import { renderCoverLetterPlainText } from '../../lib/coverLetter/render/text';
@@ -73,15 +74,19 @@ export const exportLetter = defineAction({
       data = Buffer.from(data, 'utf8').toString('base64');
     }
 
+    const exportId = crypto.randomUUID();
     await db.insert(CoverLetterExport).values({
-      id: crypto.randomUUID(),
+      id: exportId,
       letterId: letter.id,
       format,
       filePath: name,
       createdAt: new Date(),
     });
 
+    await recordMetricEvent(user.id, 'coverLetter.export', letter.id, { format, exportId });
+
     return {
+      exportId,
       file: {
         filename: name,
         mimeType,

@@ -10,6 +10,7 @@ import {
   recordHistoryEntry,
   toneEnum,
   lengthEnum,
+  recordMetricEvent,
 } from './utils';
 import type { CoverLetterPrompts } from '../../lib/coverLetter/schema';
 
@@ -85,8 +86,8 @@ export const compose = defineAction({
     const user = await requireUser(ctx);
     const plan = (user.plan as 'free' | 'pro' | 'elite' | undefined) ?? 'free';
     const usage = await countTodaysAiComposes(user.id);
-    const limit = plan === 'free' ? 3 : plan === 'pro' ? 20 : Number.POSITIVE_INFINITY;
-    if (usage >= limit) {
+    const limit = plan === 'free' ? 3 : null;
+    if (limit !== null && usage >= limit) {
       throw new ActionError({
         code: 'FORBIDDEN',
         message: 'Daily AI compose limit reached. Upgrade to Pro for unlimited writes.',
@@ -113,6 +114,7 @@ export const compose = defineAction({
       .where(eq(CoverLetter.id, existing.id));
 
     await recordHistoryEntry(existing.id, user.id, body, 'ai');
+    await recordMetricEvent(user.id, 'coverLetter.compose', existing.id, { tone, length });
 
     const row = await findCoverLetterOrThrow(existing.id, user.id);
     return {

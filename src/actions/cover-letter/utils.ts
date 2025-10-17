@@ -1,5 +1,18 @@
 import { ActionError } from 'astro:actions';
-import { db, CoverLetter, CoverLetterExport, CoverLetterHistory, and, count, desc, eq, gte, lt } from 'astro:db';
+import {
+  db,
+  CoverLetter,
+  CoverLetterExport,
+  CoverLetterHistory,
+  CoverLetterShareToken,
+  MetricEvent,
+  and,
+  count,
+  desc,
+  eq,
+  gte,
+  lt,
+} from 'astro:db';
 import { z } from 'astro:schema';
 import {
   CoverLetterDocumentSchema,
@@ -29,6 +42,8 @@ export const normalizeCoverLetterRow = (row: CoverLetterRow) => {
   });
   return parsed;
 };
+
+const SHARE_TOKEN_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 export async function findCoverLetterOrThrow(id: string, userId: string) {
   const rows = await db
@@ -88,6 +103,7 @@ export async function countTodaysAiComposes(userId: string) {
 export async function removeCoverLetterCascade(id: string, userId: string) {
   await db.delete(CoverLetterExport).where(eq(CoverLetterExport.letterId, id));
   await db.delete(CoverLetterHistory).where(eq(CoverLetterHistory.letterId, id));
+  await db.delete(CoverLetterShareToken).where(eq(CoverLetterShareToken.letterId, id));
   await db.delete(CoverLetter).where(and(eq(CoverLetter.id, id), eq(CoverLetter.userId, userId)));
 }
 
@@ -104,3 +120,73 @@ export const promptsInputSchema = CoverLetterPromptsSchema.extend({
     .max(6)
     .default([]),
 });
+
+export async function recordMetricEvent(
+  userId: string,
+  event: string,
+  targetId?: string,
+  metadata?: Record<string, unknown>,
+) {
+  await db.insert(MetricEvent).values({
+    id: crypto.randomUUID(),
+    userId,
+    event,
+    ...(targetId ? { targetId } : {}),
+    ...(metadata ? { metadata } : {}),
+    createdAt: new Date(),
+  });
+}
+
+export async function getOrCreateShareToken(letterId: string, userId: string) {
+  const now = new Date();
+  const [existing] = await db
+    .select()
+    .from(CoverLetterShareToken)
+    .where(
+      and(
+        eq(CoverLetterShareToken.letterId, letterId),
+        eq(CoverLetterShareToken.userId, userId),
+        gte(CoverLetterShareToken.expiresAt, now),
+      ),
+    )
+    .orderBy(desc(CoverLetterShareToken.createdAt))
+    .limit(1);
+
+  if (existing) {
+    return existing;
+  }
+
+  const token = crypto.randomUUID().replace(/-/g, '');
+  const expiresAt = new Date(now.getTime() + SHARE_TOKEN_TTL_MS);
+  const record: typeof CoverLetterShareToken.$inferInsert = {
+    id: crypto.randomUUID(),
+    letterId,
+    userId,
+    token,
+    expiresAt,
+    createdAt: now,
+  };
+
+  await db.insert(CoverLetterShareToken).values(record);
+  return record;
+}
+
+export async function loadCoverLetterForShareToken(token: string) {
+  const now = new Date();
+  const [share] = await db
+    .select()
+    .from(CoverLetterShareToken)
+    .where(and(eq(CoverLetterShareToken.token, token), gte(CoverLetterShareToken.expiresAt, now)))
+    .limit(1);
+
+  if (!share) {
+    return null;
+  }
+
+  const [letter] = await db.select().from(CoverLetter).where(eq(CoverLetter.id, share.letterId)).limit(1);
+  if (!letter) {
+    return null;
+  }
+
+  return normalizeCoverLetterRow(letter);
+}

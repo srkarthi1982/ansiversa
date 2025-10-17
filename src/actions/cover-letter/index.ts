@@ -6,6 +6,7 @@ import { compose } from './compose';
 import { duplicate } from './duplicate';
 import { exportLetter } from './export';
 import { deleteLetter } from './delete';
+import { share } from './share';
 
 export const coverLetter = {
   create,
@@ -16,4 +17,5 @@ export const coverLetter = {
   duplicate,
   export: exportLetter,
   delete: deleteLetter,
+  share,
 };

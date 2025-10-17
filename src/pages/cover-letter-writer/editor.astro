@@ -10,6 +10,7 @@ const letterId = Astro.url.searchParams.get('id') ?? '';
     x-data="() => $store['cover-letter-writer']"
     x-init="initEditor({ id: $el.dataset.letterId || null })"
     data-letter-id={letterId}
+    :dir="direction"
   >
     <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#cover-letter-editor-main">
       Skip to content
@@ -32,13 +33,22 @@ const letterId = Astro.url.searchParams.get('id') ?? '';
             <i class="fas fa-layer-group text-xs"></i>
             Templates
           </Button>
-          <Button type="button" variant="secondary" @click.prevent="composeNow()" :disabled="aiUsage.used >= aiUsage.limit">
+          <Button
+            type="button"
+            variant="secondary"
+            @click.prevent="composeNow()"
+            :disabled="aiUsage.limit !== Infinity && aiUsage.used >= aiUsage.limit"
+          >
             <i class="fas fa-magic text-xs"></i>
-            <span x-text="editor.aiStatus ?? 'AI Compose'"></span>
+            <span x-text="editor.aiStatus ?? strings.aiCompose"></span>
           </Button>
           <Button type="button" variant="secondary" @click.prevent="saveNow()">
             <i class="fas fa-save text-xs"></i>
             Save
+          </Button>
+          <Button type="button" variant="outline" @click.prevent="shareCurrent()">
+            <i class="fas fa-link text-xs"></i>
+            <span x-text="strings.shareButton"></span>
           </Button>
           <div class="relative" x-data="{ open: false }">
             <Button type="button" @click="open = !open" :aria-expanded="open" aria-haspopup="true">
@@ -71,9 +81,57 @@ const letterId = Astro.url.searchParams.get('id') ?? '';
               </Button>
             </div>
           </div>
+          <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600">
+            <span x-text="strings.localeLabel"></span>
+            <select
+              class="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-semibold focus:border-indigo-500 focus:outline-none"
+              :value="locale"
+              @change="setLocale($event.target.value)"
+            >
+              <template x-for="option in availableLocales" :key="option.value">
+                <option :value="option.value" x-text="`${option.label} · ${option.native}`"></option>
+              </template>
+            </select>
+          </label>
         </div>
       </div>
     </section>
+
+    <div
+      class="border-b border-indigo-100 bg-indigo-50/70"
+      x-show="editor.shareLink"
+      x-transition.opacity
+    >
+      <div class="mx-auto max-w-5xl px-4 py-4 sm:px-6 lg:px-8">
+        <div class="rounded-2xl border border-indigo-200 bg-white p-4 text-sm text-slate-700 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <p class="font-semibold text-slate-900" x-text="strings.shareLinkReady"></p>
+            <p class="text-xs font-semibold text-slate-500" x-text="shareExpiryLabel() ?? ''"></p>
+          </div>
+          <p class="mt-2 text-xs text-slate-500" x-text="strings.shareCopyHint"></p>
+          <div class="mt-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+            <label class="flex-1 text-xs font-semibold text-slate-600">
+              <span class="block pb-1" x-text="strings.shareLinkLabel"></span>
+              <input
+                type="text"
+                class="w-full rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none"
+                :value="editor.shareLink ?? ''"
+                readonly
+              />
+            </label>
+            <button
+              type="button"
+              class="inline-flex items-center justify-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500"
+              @click.prevent="editor.shareLink && navigator?.clipboard?.writeText(editor.shareLink)"
+            >
+              <i class="fas fa-copy text-xs"></i>
+              <span x-text="strings.copyLink"></span>
+            </button>
+          </div>
+          <p class="mt-2 text-xs font-semibold text-emerald-600" x-show="editor.shareNotice" x-text="editor.shareNotice"></p>
+        </div>
+      </div>
+    </div>
 
     <section id="cover-letter-editor-main" class="py-10">
       <div class="mx-auto grid max-w-5xl gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,380px)] lg:px-8">
@@ -84,7 +142,10 @@ const letterId = Astro.url.searchParams.get('id') ?? '';
                 <h2 class="text-lg font-semibold text-slate-900">Overview</h2>
                 <p class="text-sm text-slate-600">Describe the role and keep your tone settings handy.</p>
               </div>
-              <span class="text-xs font-semibold text-slate-500">AI usage: <span x-text="`${aiUsage.used}/${aiUsage.limit === Infinity ? '∞' : aiUsage.limit}`"></span></span>
+              <span class="text-xs font-semibold text-slate-500">
+                <span x-text="strings.aiUsageLabel"></span>:
+                <span x-text="aiUsageDisplay"></span>
+              </span>
             </header>
             <div class="grid gap-4 px-6 py-6 md:grid-cols-2">
               <label class="flex flex-col gap-1 text-sm">
@@ -106,7 +167,7 @@ const letterId = Astro.url.searchParams.get('id') ?? '';
               <div class="flex flex-col gap-2 text-sm">
                 <span class="font-semibold text-slate-700">Tone</span>
                 <div class="flex flex-wrap gap-2">
-                  <template x-for="tone in tones" :key="tone.value">
+                  <template x-for="tone in toneOptions" :key="tone.value">
                     <button
                       type="button"
                       class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
@@ -122,7 +183,7 @@ const letterId = Astro.url.searchParams.get('id') ?? '';
               <label class="flex flex-col gap-2 text-sm">
                 <span class="font-semibold text-slate-700">Length</span>
                 <select x-model="editor.length" @change="markUnsaved()" class="rounded-xl border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none">
-                  <template x-for="option in lengths" :key="option.value">
+                  <template x-for="option in lengthOptions" :key="option.value">
                     <option :value="option.value" x-text="option.label"></option>
                   </template>
                 </select>

@@ -2,7 +2,7 @@
 import Layout from '../../layouts/Layout.astro';
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen" x-data="() => $store['cover-letter-writer']" x-init="ensureList()">
+  <main class="bg-slate-50 min-h-screen" x-data="() => $store['cover-letter-writer']" x-init="ensureList()" :dir="direction">
     <section class="border-b border-slate-200 bg-white/80">
       <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
         <a href="/cover-letter-writer" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900">
@@ -14,6 +14,18 @@ import Layout from '../../layouts/Layout.astro';
           <p class="text-slate-600">
             Templates control layout and styling for exports. Switch anytime—your content stays intact.
           </p>
+          <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600">
+            <span x-text="strings.localeLabel"></span>
+            <select
+              class="rounded-full border border-slate-200 bg-white px-2 py-1 text-xs font-semibold focus:border-indigo-500 focus:outline-none"
+              :value="locale"
+              @change="setLocale($event.target.value)"
+            >
+              <template x-for="option in availableLocales" :key="option.value">
+                <option :value="option.value" x-text="`${option.label} · ${option.native}`"></option>
+              </template>
+            </select>
+          </label>
         </div>
       </div>
     </section>

@@ -1,7 +1,7 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
 import { db, CoverLetter } from 'astro:db';
-import { requireUser, findCoverLetterOrThrow, normalizeCoverLetterRow } from './utils';
+import { requireUser, findCoverLetterOrThrow, normalizeCoverLetterRow, recordMetricEvent } from './utils';
 
 export const duplicate = defineAction({
   accept: 'json',
@@ -22,6 +22,7 @@ export const duplicate = defineAction({
     };
 
     await db.insert(CoverLetter).values(record);
+    await recordMetricEvent(user.id, 'coverLetter.duplicate', id, { sourceId: existing.id });
     const duplicated = await findCoverLetterOrThrow(id, user.id);
     return { letter: normalizeCoverLetterRow(duplicated) };
   },

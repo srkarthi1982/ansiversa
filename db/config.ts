@@ -132,6 +132,28 @@ const CoverLetterHistory = defineTable({
   },
 });
 
+const CoverLetterShareToken = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    letterId: column.text({ references: () => CoverLetter.columns.id }),
+    userId: column.text({ references: () => User.columns.id }),
+    token: column.text({ unique: true }),
+    expiresAt: column.date(),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
+const MetricEvent = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    event: column.text(),
+    targetId: column.text({ optional: true }),
+    metadata: column.json({ optional: true }),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
 export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
@@ -145,5 +167,7 @@ export default defineDb({
     CoverLetter,
     CoverLetterExport,
     CoverLetterHistory,
+    CoverLetterShareToken,
+    MetricEvent,
   },
 });

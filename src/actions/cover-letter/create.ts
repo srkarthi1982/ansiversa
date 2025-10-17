@@ -2,7 +2,7 @@ import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
 import { db, CoverLetter } from 'astro:db';
 import { createBlankCoverLetter, createEmptyPrompts } from '../../lib/coverLetter/schema';
-import { requireUser, templateKeyEnum, toneEnum, lengthEnum } from './utils';
+import { requireUser, templateKeyEnum, toneEnum, lengthEnum, recordMetricEvent } from './utils';
 
 export const create = defineAction({
   accept: 'json',
@@ -47,6 +47,7 @@ export const create = defineAction({
     };
 
     await db.insert(CoverLetter).values(record);
+    await recordMetricEvent(user.id, 'coverLetter.create', id);
     const letter = createBlankCoverLetter(record);
     return { letter };
   },
