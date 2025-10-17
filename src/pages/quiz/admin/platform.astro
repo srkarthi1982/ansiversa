@@ -354,6 +354,7 @@ const platformColumns = [
                       :class="platform.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
                     >
                       <span class="h-2 w-2 rounded-full" :class="platform.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                      <span x-text="platform.isActive ? 'Active' : 'Inactive'"></span>
                     </span>
                   </td>
                   <td class="px-4 py-4 text-right align-top">
