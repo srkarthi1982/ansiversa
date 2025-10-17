@@ -33,6 +33,13 @@ type SubjectFiltersPayload = {
   status?: 'active' | 'inactive';
 };
 
+type SubjectSortColumn = 'name' | 'platformName' | 'platformId' | 'qCount' | 'status' | 'id';
+
+type SortState = {
+  column: SubjectSortColumn;
+  direction: 'asc' | 'desc';
+};
+
 class SubjectsStoreImpl {
   subjects: SubjectRecord[] = [];
   loading = false;
@@ -47,7 +54,9 @@ class SubjectsStoreImpl {
   showCreateModal = false;
   showEditModal = false;
   filters: SubjectFilters;
+  sort: SortState | null = null;
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
+  private readonly allowedSortColumns: SubjectSortColumn[] = ['name', 'platformName', 'platformId', 'qCount', 'status', 'id'];
 
   constructor() {
     this.newSubject = this.createDefaultForm();
@@ -81,6 +90,7 @@ class SubjectsStoreImpl {
         page,
         pageSize: this.pageSize,
         filters: filtersPayload,
+        sort: this.sort ?? undefined,
       });
       if (error) {
         throw error;
@@ -106,6 +116,22 @@ class SubjectsStoreImpl {
     }
   }
 
+  async setSort(column: SubjectSortColumn): Promise<void> {
+    if (!this.allowedSortColumns.includes(column)) {
+      return;
+    }
+
+    const current = this.sort;
+    let direction: SortState['direction'] = 'asc';
+    if (current?.column === column) {
+      direction = current.direction === 'asc' ? 'desc' : 'asc';
+    }
+
+    this.sort = { column, direction };
+    this.page = 1;
+    await this.loadSubjects(1);
+  }
+
   async setPage(page: number): Promise<void> {
     const maxPage = this.totalPages === 0 ? 1 : this.totalPages;
     const clamped = Math.min(Math.max(1, page), maxPage);
@@ -113,6 +139,19 @@ class SubjectsStoreImpl {
       return;
     }
     await this.loadSubjects(clamped);
+  }
+
+  async setPageSize(size: number): Promise<void> {
+    const parsed = Math.max(1, Math.min(48, Math.floor(Number(size))));
+    if (!Number.isFinite(parsed)) {
+      return;
+    }
+    if (parsed === this.pageSize) {
+      return;
+    }
+    this.pageSize = parsed;
+    this.page = 1;
+    await this.loadSubjects(1);
   }
 
   async nextPage(): Promise<void> {
