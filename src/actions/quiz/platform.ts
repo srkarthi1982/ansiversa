@@ -10,19 +10,19 @@ const normalizePlatform = (row: PlatformRow) => ({
   id: row.id,
   name: row.name,
   description: row.description,
-  isActive: row.isActive,
   icon: row.icon,
   type: row.type,
   qCount: row.qCount ?? 0,
+  isActive: row.isActive,
 });
 
 const platformPayloadSchema = z.object({
   name: z.string().min(1, 'Name is required'),
   description: z.string().optional(),
-  isActive: z.boolean().optional(),
   icon: z.string().optional(),
   type: z.string().nullable().optional(),
   qCount: z.number().int().min(0).optional(),
+  isActive: z.boolean().optional(),
 });
 
 const platformFiltersSchema = z.object({
@@ -57,7 +57,14 @@ const normalizeInput = (input: z.infer<typeof platformPayloadSchema>) => {
   const qCount = Math.max(0, Number.isFinite(qCountSource) ? qCountSource : 0);
   const isActive = input.isActive ?? true;
 
-  return { name, description, icon, type: type || null, qCount, isActive };
+  return {
+    name,
+    description,
+    icon,
+    type: type || null,
+    qCount,
+    isActive,
+  };
 };
 
 const normalizeFilters = (filters?: PlatformFiltersInput) => {
@@ -71,9 +78,9 @@ const normalizeFilters = (filters?: PlatformFiltersInput) => {
   let maxQuestions = hasMax ? Math.max(0, Math.floor(safe.maxQuestions)) : null;
 
   if (minQuestions !== null && maxQuestions !== null && maxQuestions < minQuestions) {
-    const swappedMin = minQuestions;
+    const swapped = minQuestions;
     minQuestions = maxQuestions;
-    maxQuestions = swappedMin;
+    maxQuestions = swapped;
   }
 
   const status = safe.status ?? 'all';
@@ -91,7 +98,7 @@ const normalizeFilters = (filters?: PlatformFiltersInput) => {
 export const fetchPlatforms = defineAction({
   input: z.object({
     page: z.number().int().min(1).default(1),
-    pageSize: z.number().int().min(1).max(48).default(6),
+    pageSize: z.number().int().min(1).max(48).default(10),
     filters: platformFiltersSchema.optional(),
     sort: platformSortSchema.optional(),
   }),
@@ -132,8 +139,10 @@ export const fetchPlatforms = defineAction({
     if (whereClause) {
       totalQuery = totalQuery.where(whereClause);
     }
+
     const totalResult = await totalQuery;
-    const total = totalResult[0]?.value ?? 0;
+    const rawTotal = totalResult[0]?.value ?? 0;
+    const total = typeof rawTotal === 'number' ? rawTotal : Number(rawTotal);
 
     const safePageSize = pageSize;
     const totalPages = total > 0 ? Math.ceil(total / safePageSize) : 0;
@@ -168,9 +177,10 @@ export const fetchPlatforms = defineAction({
     }
 
     const platforms = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
+    const items = platforms.map(normalizePlatform);
 
     return {
-      items: platforms.map(normalizePlatform),
+      items,
       total,
       page: total === 0 ? 1 : currentPage,
       pageSize: safePageSize,
@@ -190,30 +200,30 @@ export const createPlatform = defineAction({
         description: payload.description,
         icon: payload.icon,
         type: payload.type,
-        isActive: payload.isActive,
         qCount: payload.qCount,
+        isActive: payload.isActive,
       })
       .returning()
       .catch((err) => {
         throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to create platform' });
       });
 
-    const record = inserted?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create platform' });
-    }
-
-    return normalizePlatform(record);
+    return normalizePlatform(inserted[0]);
   },
 });
 
 export const updatePlatform = defineAction({
-  input: platformPayloadSchema.extend({
-    id: z.number().int().min(1, 'Platform id is required'),
+  input: z.object({
+    id: z.number().int().min(1),
+    data: platformPayloadSchema,
   }),
-  async handler(input) {
-    const payload = normalizeInput(input);
-    const { id } = input;
+  async handler({ id, data }) {
+    const payload = normalizeInput(data);
+
+    const existing = await db.select({ id: Platform.id }).from(Platform).where(eq(Platform.id, id)).limit(1);
+    if (!existing[0]) {
+      throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
+    }
 
     const updated = await db
       .update(Platform)
@@ -222,35 +232,34 @@ export const updatePlatform = defineAction({
         description: payload.description,
         icon: payload.icon,
         type: payload.type,
-        isActive: payload.isActive,
         qCount: payload.qCount,
+        isActive: payload.isActive,
       })
       .where(eq(Platform.id, id))
-      .returning();
+      .returning()
+      .catch((err) => {
+        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to update platform' });
+      });
 
-    const record = updated?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
-    }
-
-    return normalizePlatform(record);
+    return normalizePlatform(updated[0]);
   },
 });
 
 export const deletePlatform = defineAction({
-  input: z.object({
-    id: z.number().int().min(1, 'Platform id is required'),
-  }),
+  input: z.object({ id: z.number().int().min(1) }),
   async handler({ id }) {
     const deleted = await db
       .delete(Platform)
       .where(eq(Platform.id, id))
-      .returning({ id: Platform.id });
+      .returning()
+      .catch((err) => {
+        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to delete platform' });
+      });
 
-    if (!deleted?.[0]) {
+    if (!deleted[0]) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
     }
 
-    return { ok: true };
+    return { success: true };
   },
 });

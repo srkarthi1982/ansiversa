@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
 
 const resumeId = Astro.url.searchParams.get('id') ?? '';
 const resumeIdAttr = resumeId ?? '';
@@ -29,26 +30,25 @@ const resumeIdAttr = resumeId ?? '';
           </span>
         </div>
         <div class="flex flex-wrap items-center gap-3">
-          <button
+          <Button
             type="button"
-            class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            variant="outline"
             @click.prevent="resume.openTemplateGallery()"
           >
             <i class="fas fa-layer-group text-xs"></i>
             Templates
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
-            class="inline-flex items-center gap-2 rounded-full bg-slate-800 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+            variant="secondary"
             @click.prevent="resume.saveNow()"
           >
             <i class="fas fa-save text-xs"></i>
             Save
-          </button>
+          </Button>
           <div class="relative" x-data="{ open: false }">
-            <button
+            <Button
               type="button"
-              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
               @click="open = !open"
               :aria-expanded="open"
               aria-haspopup="true"
@@ -56,7 +56,7 @@ const resumeIdAttr = resumeId ?? '';
               <i class="fas fa-file-export text-xs"></i>
               Export
               <i class="fas fa-chevron-down text-[10px]"></i>
-            </button>
+            </Button>
             <div
               class="absolute right-0 z-20 mt-2 w-48 rounded-2xl border border-slate-200 bg-white py-2 text-sm shadow-lg focus:outline-none"
               x-show="open"
@@ -64,22 +64,42 @@ const resumeIdAttr = resumeId ?? '';
               @click.away="open = false"
               role="menu"
             >
-              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('pdf'); open = false;">
+              <Button
+                type="button"
+                variant="ghost"
+                block
+                @click.prevent="resume.requestExport('pdf'); open = false;"
+              >
                 <i class="fas fa-file-pdf text-xs text-rose-500"></i>
                 PDF
-              </button>
-              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('docx'); open = false;">
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                block
+                @click.prevent="resume.requestExport('docx'); open = false;"
+              >
                 <i class="fas fa-file-word text-xs text-indigo-500"></i>
                 DOCX
-              </button>
-              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('md'); open = false;">
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                block
+                @click.prevent="resume.requestExport('md'); open = false;"
+              >
                 <i class="fas fa-file-alt text-xs text-emerald-500"></i>
                 Markdown
-              </button>
-              <button class="flex w-full items-center gap-2 px-4 py-2 text-left text-slate-700 hover:bg-slate-50" @click.prevent="resume.requestExport('html'); open = false;">
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                block
+                @click.prevent="resume.requestExport('html'); open = false;"
+              >
                 <i class="fas fa-code text-xs text-amber-500"></i>
                 HTML
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -111,15 +131,14 @@ const resumeIdAttr = resumeId ?? '';
                 </label>
                 <div class="inline-flex rounded-full border border-slate-200 bg-white p-1 shadow-sm" role="group" aria-label="Template selection">
                   <template x-for="template in resume.templates" :key="template.key">
-                    <button
+                    <Button
                       type="button"
-                      class="relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-semibold transition focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-                      :class="resume.builderState.templateKey === template.key ? 'bg-indigo-600 text-white shadow' : 'text-slate-600 hover:bg-slate-100'"
+                      :variant="resume.builderState.templateKey === template.key ? 'primary' : 'ghost'"
                       @click.prevent="resume.setTemplate(template.key)"
                     >
                       <i :class="template.icon" class="text-[11px]"></i>
                       <span class="hidden sm:inline" x-text="template.label"></span>
-                    </button>
+                    </Button>
                   </template>
                 </div>
               </div>
@@ -202,14 +221,16 @@ const resumeIdAttr = resumeId ?? '';
                     ></textarea>
                     <div class="flex items-center justify-between text-xs text-slate-500">
                       <span x-text="`${resume.builderState.data.summary?.length ?? 0}/1200 characters`"></span>
-                      <button
+                      <Button
                         type="button"
-                        class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                        variant="light"
+                        size="sm"
+                        class="gap-2 rounded-full px-3 py-1 text-indigo-600 transition hover:bg-indigo-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                         @click.prevent="resume.requestAiImprove('summary')"
                       >
                         <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
                         AI improve
-                      </button>
+                      </Button>
                     </div>
                   </label>
                 </div>
@@ -232,22 +253,26 @@ const resumeIdAttr = resumeId ?? '';
                       <div class="flex items-start justify-between gap-3">
                         <h3 class="text-sm font-semibold text-slate-900" x-text="item.position || `Experience #${index + 1}`"></h3>
                         <div class="flex items-center gap-2">
-                          <button
+                          <Button
                             type="button"
-                            class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                            variant="light"
+                            size="sm"
+                            class="gap-1 rounded-full px-3 py-1 text-xs text-indigo-600 hover:bg-indigo-100 focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                             @click.prevent="resume.requestAiImprove('experience', index)"
                           >
                             <i class="fas fa-wand-magic-sparkles text-[9px]"></i>
                             Improve
-                          </button>
-                          <button
+                          </Button>
+                          <Button
                             type="button"
-                            class="inline-flex items-center justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                            variant="ghost"
+                            size="sm"
+                            class="justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
                             @click.prevent="resume.removeExperience(index)"
                             :aria-label="`Remove experience ${index + 1}`"
                           >
                             <i class="fas fa-trash text-[10px]"></i>
-                          </button>
+                          </Button>
                         </div>
                       </div>
                       <div class="mt-4 grid gap-4 sm:grid-cols-2">
@@ -310,14 +335,14 @@ const resumeIdAttr = resumeId ?? '';
                       </label>
                     </article>
                   </template>
-                  <button
+                  <Button
                     type="button"
-                    class="inline-flex items-center gap-2 rounded-full border border-dashed border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    variant="light"
                     @click.prevent="resume.addExperience()"
                   >
                     <i class="fas fa-plus text-xs"></i>
                     Add experience
-                  </button>
+                  </Button>
                 </div>
               </details>
 
@@ -337,14 +362,15 @@ const resumeIdAttr = resumeId ?? '';
                     <article class="rounded-2xl border border-slate-200 p-4 shadow-sm">
                       <div class="flex items-start justify-between gap-3">
                         <h3 class="text-sm font-semibold text-slate-900" x-text="item.school || `Education #${index + 1}`"></h3>
-                        <button
+                        <Button
                           type="button"
-                          class="inline-flex items-center justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                          variant="ghost"
+                          size="sm"
                           @click.prevent="resume.removeEducation(index)"
                           :aria-label="`Remove education ${index + 1}`"
                         >
                           <i class="fas fa-trash text-[10px]"></i>
-                        </button>
+                        </Button>
                       </div>
                       <div class="mt-4 grid gap-4 sm:grid-cols-2">
                         <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -400,14 +426,14 @@ const resumeIdAttr = resumeId ?? '';
                       </label>
                     </article>
                   </template>
-                  <button
+                  <Button
                     type="button"
-                    class="inline-flex items-center gap-2 rounded-full border border-dashed border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                    variant="light"
                     @click.prevent="resume.addEducation()"
                   >
                     <i class="fas fa-plus text-xs"></i>
                     Add education
-                  </button>
+                  </Button>
                 </div>
               </details>
 
@@ -443,38 +469,39 @@ const resumeIdAttr = resumeId ?? '';
                           <option value="advanced">Advanced</option>
                           <option value="expert">Expert</option>
                         </select>
-                        <button
+                        <Button
                           type="button"
-                          class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                           @click.prevent="resume.addSkill()"
                         >
                           <i class="fas fa-plus text-xs"></i>
                           Add
-                        </button>
+                        </Button>
                       </div>
                     </label>
                     <p class="mt-2 text-xs text-slate-500">Up to 30 skills. Use AI assist to standardize and merge duplicates.</p>
-                    <button
+                    <Button
                       type="button"
-                      class="mt-3 inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                      variant="light"
+                      size="sm"
                       @click.prevent="resume.requestAiImprove('skills')"
                     >
                       <i class="fas fa-wand-magic-sparkles text-[9px]"></i>
                       AI standardize
-                    </button>
+                    </Button>
                   </div>
                   <div class="flex flex-wrap gap-2">
                     <template x-for="(skill, index) in resume.builderState.data.skills" :key="`${skill.name}-${index}`">
                       <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
                         <span x-text="`${skill.name} · ${resume.formatSkillLevel(skill.level)}`"></span>
-                        <button
+                        <Button
                           type="button"
-                          class="text-slate-500 hover:text-slate-900 focus:outline-none focus-visible:text-red-600"
+                          variant="ghost"
+                          size="sm"
                           @click.prevent="resume.removeSkill(index)"
                           :aria-label="`Remove skill ${skill.name}`"
                         >
                           <i class="fas fa-times text-[10px]"></i>
-                        </button>
+                        </Button>
                       </span>
                     </template>
                     <template x-if="resume.builderState.data.skills.length === 0">
@@ -492,28 +519,30 @@ const resumeIdAttr = resumeId ?? '';
                 <h2 class="text-lg font-semibold text-slate-900">Links & extras</h2>
                 <p class="text-sm text-slate-600">Add projects, certificates, or portfolio URLs.</p>
               </div>
-              <button
+              <Button
                 type="button"
-                class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                variant="outline"
+                size="sm"
                 @click.prevent="resume.addLink()"
               >
                 <i class="fas fa-plus text-[10px]"></i>
                 Add link
-              </button>
+              </Button>
             </header>
             <div class="mt-4 space-y-4">
               <template x-for="(item, index) in resume.builderState.data.links" :key="item.id || index">
                 <div class="rounded-2xl border border-dashed border-slate-200 p-4">
                   <div class="flex items-center justify-between gap-3">
                     <h3 class="text-sm font-semibold text-slate-900" x-text="item.label || 'Link'"></h3>
-                    <button
+                    <Button
                       type="button"
-                      class="inline-flex items-center justify-center rounded-full bg-slate-100 p-1 text-slate-500 hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                      variant="ghost"
+                      size="sm"
                       @click.prevent="resume.removeLink(index)"
                       :aria-label="`Remove link ${index + 1}`"
                     >
                       <i class="fas fa-trash text-[10px]"></i>
-                    </button>
+                    </Button>
                   </div>
                   <div class="mt-3 grid gap-3 sm:grid-cols-2">
                     <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -552,14 +581,15 @@ const resumeIdAttr = resumeId ?? '';
               <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Live preview</p>
               <h2 class="text-lg font-semibold text-slate-900">Template</h2>
             </div>
-            <button
+            <Button
               type="button"
-              class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-700 shadow-sm transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+              variant="outline"
+              size="sm"
               @click.prevent="resume.openTemplateGallery()"
             >
               <i class="fas fa-display text-[10px]"></i>
               Preview all
-            </button>
+            </Button>
           </header>
           <div class="grid gap-4 px-6 py-5 text-sm text-slate-700">
             <div class="space-y-2 text-center">

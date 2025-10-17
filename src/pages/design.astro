@@ -57,9 +57,13 @@ import Textbox from "../components/Textbox.astro";
                 <span slot="trigger">Team shortcuts</span>
                 <a class="block px-4 py-2 text-slate-600 hover:bg-slate-100" href="#">Profile</a>
                 <a class="block px-4 py-2 text-slate-600 hover:bg-slate-100" href="#">Settings</a>
-                <button type="button" class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  block
+                >
                   Sign out
-                </button>
+                </Button>
               </Dropdown>
               <Dropdown align="stretch" triggerClass="inline-flex items-center justify-between gap-3 rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:border-slate-300 hover:text-slate-900" panelClass="top-12" panelWidthClass="w-full" wrapperClass="w-64">
                 <span slot="trigger" class="flex w-full items-center justify-between gap-3">
@@ -72,18 +76,30 @@ import Textbox from "../components/Textbox.astro";
                   </svg>
                 </span>
                 <div class="px-4 pb-2 pt-3 text-xs font-semibold uppercase tracking-wide text-slate-400">Categories</div>
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-slate-600 hover:bg-slate-100">
+                <Button
+                  type="button"
+                  variant="ghost"
+                  block
+                >
                   <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
                   Launch ready
-                </button>
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-slate-600 hover:bg-slate-100">
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  block
+                >
                   <span class="h-2 w-2 rounded-full bg-indigo-400"></span>
                   Needs review
-                </button>
-                <button type="button" class="flex w-full items-center gap-3 px-4 py-2 text-left text-slate-600 hover:bg-slate-100">
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  block
+                >
                   <span class="h-2 w-2 rounded-full bg-amber-400"></span>
                   Backlog ideas
-                </button>
+                </Button>
               </Dropdown>
             </div>
           </article>

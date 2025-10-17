@@ -1,6 +1,7 @@
 ---
 import { Fragment } from "astro/jsx-runtime";
 import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
 import Modal from "../../../components/Modal.astro";
 import DataGrid from "../../../components/DataGrid.astro";
 
@@ -62,14 +63,14 @@ const platformColumns = [
     filter: {
       type: "button",
       label: "Clear",
-      onClick: "quiz.clearFilters()",
+      onClick: "platform.clearFilters()",
     },
   },
 ];
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section class="py-4" x-data="{ quiz: $store.quiz }">
+    <section class="py-4" x-data="{ platform: $store.platform }" x-init="platform.onInit()">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -78,47 +79,48 @@ const platformColumns = [
             </h2>
           </div>
           <div class="flex flex-wrap items-center gap-3">
-            <button
+            <Button
               type="button"
-              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
-              x-on:click="quiz.openCreateModal()"
-              x-bind:disabled="quiz.loading || quiz.mutating"
+              size="sm"
+              x-on:click="platform.openCreateModal()"
+              x-bind:disabled="platform.loading || platform.mutating"
             >
               <i class="fas fa-plus text-sm"></i>
               Add platform
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="quiz.loadPlatforms()"
-              x-bind:disabled="quiz.loading || quiz.mutating"
+              variant="outline"
+              size="sm"
+              x-on:click="platform.loadPlatforms()"
+              x-bind:disabled="platform.loading || platform.mutating"
             >
               <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.181a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.181" />
               </svg>
               Refresh
-            </button>
+            </Button>
           </div>
         </div>
 
         <Modal
           size="lg"
-          x-show="quiz.showCreateModal"
-          x-on:keydown.escape.window="quiz.closeCreateModal()"
-          x-on:modal-close="quiz.closeCreateModal()"
+          x-show="platform.showCreateModal"
+          x-on:keydown.escape.window="platform.closeCreateModal()"
+          x-on:modal-close="platform.closeCreateModal()"
         >
           <template slot="title">
             <h2 class="text-lg font-semibold text-slate-900">Add a new platform</h2>
           </template>
-          <form id="create-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="quiz.createPlatform()">
+          <form id="create-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="platform.createPlatform()">
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Name</span>
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="Platform name"
-                x-model.trim="quiz.newPlatform.name"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.newPlatform.name"
+                x-bind:disabled="platform.mutating"
                 required
               />
             </label>
@@ -128,8 +130,8 @@ const platformColumns = [
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="e.g. fas fa-rocket"
-                x-model.trim="quiz.newPlatform.icon"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.newPlatform.icon"
+                x-bind:disabled="platform.mutating"
               />
             </label>
             <label class="sm:col-span-2 flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -137,8 +139,8 @@ const platformColumns = [
               <textarea
                 class="min-h-[96px] rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="Short summary that appears on the card"
-                x-model.trim="quiz.newPlatform.description"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.newPlatform.description"
+                x-bind:disabled="platform.mutating"
               ></textarea>
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -147,8 +149,8 @@ const platformColumns = [
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="Optional category"
-                x-model.trim="quiz.newPlatform.type"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.newPlatform.type"
+                x-bind:disabled="platform.mutating"
               />
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -158,46 +160,47 @@ const platformColumns = [
                 min="0"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
                 placeholder="0"
-                x-model.number="quiz.newPlatform.qCount"
-                x-bind:disabled="quiz.mutating"
+                x-model.number="platform.newPlatform.qCount"
+                x-bind:disabled="platform.mutating"
               />
             </label>
             <label class="sm:col-span-2 inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
               <input
                 type="checkbox"
                 class="h-4 w-4 rounded border border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:cursor-not-allowed"
-                x-model="quiz.newPlatform.isActive"
-                x-bind:disabled="quiz.mutating"
+                x-model="platform.newPlatform.isActive"
+                x-bind:disabled="platform.mutating"
               />
               <span>Platform is active</span>
             </label>
           </form>
           <div slot="footer" class="flex w-full items-center justify-end gap-3">
-            <button
+            <Button
               type="button"
-              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="quiz.closeCreateModal()"
-              x-bind:disabled="quiz.mutating"
+              variant="outline"
+              size="sm"
+              x-on:click="platform.closeCreateModal()"
+              x-bind:disabled="platform.mutating"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               form="create-platform-form"
-              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
-              x-bind:disabled="quiz.mutating"
+              size="sm"
+              x-bind:disabled="platform.mutating"
             >
               <i class="fas fa-save text-sm"></i>
               Save platform
-            </button>
+            </Button>
           </div>
         </Modal>
 
         <Modal
           size="lg"
-          x-show="quiz.showEditModal"
-          x-on:keydown.escape.window="quiz.closeEditModal()"
-          x-on:modal-close="quiz.closeEditModal()"
+          x-show="platform.showEditModal"
+          x-on:keydown.escape.window="platform.closeEditModal()"
+          x-on:modal-close="platform.closeEditModal()"
         >
           <template slot="title">
             <div class="flex items-center justify-between gap-3">
@@ -206,18 +209,18 @@ const platformColumns = [
                 class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600"
               >
                 <span>ID</span>
-                <span class="text-slate-900" x-text="quiz.editingId ?? ''"></span>
+                <span class="text-slate-900" x-text="platform.editingId ?? ''"></span>
               </span>
             </div>
           </template>
-          <form id="edit-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="quiz.saveEdit()">
+          <form id="edit-platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="platform.saveEdit()">
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Name</span>
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="quiz.editPlatform.name"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.editPlatform.name"
+                x-bind:disabled="platform.mutating"
                 required
               />
             </label>
@@ -226,16 +229,16 @@ const platformColumns = [
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="quiz.editPlatform.icon"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.editPlatform.icon"
+                x-bind:disabled="platform.mutating"
               />
             </label>
             <label class="sm:col-span-2 flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Description</span>
               <textarea
                 class="min-h-[96px] rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="quiz.editPlatform.description"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.editPlatform.description"
+                x-bind:disabled="platform.mutating"
               ></textarea>
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -243,8 +246,8 @@ const platformColumns = [
               <input
                 type="text"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.trim="quiz.editPlatform.type"
-                x-bind:disabled="quiz.mutating"
+                x-model.trim="platform.editPlatform.type"
+                x-bind:disabled="platform.mutating"
               />
             </label>
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
@@ -253,90 +256,91 @@ const platformColumns = [
                 type="number"
                 min="0"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model.number="quiz.editPlatform.qCount"
-                x-bind:disabled="quiz.mutating"
+                x-model.number="platform.editPlatform.qCount"
+                x-bind:disabled="platform.mutating"
               />
             </label>
             <label class="sm:col-span-2 inline-flex items-center gap-2 text-xs font-semibold text-slate-600">
               <input
                 type="checkbox"
                 class="h-4 w-4 rounded border border-slate-300 text-indigo-600 focus:ring-indigo-500 disabled:cursor-not-allowed"
-                x-model="quiz.editPlatform.isActive"
-                x-bind:disabled="quiz.mutating"
+                x-model="platform.editPlatform.isActive"
+                x-bind:disabled="platform.mutating"
               />
               <span>Platform is active</span>
             </label>
           </form>
           <div slot="footer" class="flex w-full items-center justify-end gap-3">
-            <button
+            <Button
               type="button"
-              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-              x-on:click="quiz.closeEditModal()"
-              x-bind:disabled="quiz.mutating"
+              variant="outline"
+              size="sm"
+              x-on:click="platform.closeEditModal()"
+              x-bind:disabled="platform.mutating"
             >
               Cancel
-            </button>
-            <button
+            </Button>
+            <Button
               type="submit"
               form="edit-platform-form"
-              class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:bg-indigo-400"
-              x-bind:disabled="quiz.mutating"
+              size="sm"
+              x-bind:disabled="platform.mutating"
             >
               <i class="fas fa-save text-sm"></i>
               Save changes
-            </button>
+            </Button>
           </div>
         </Modal>
 
         <div class="mt-10">
           <DataGrid
             columns={platformColumns}
-            rowsVar="quiz.platforms"
-            loadingVar="quiz.loading"
-            errorVar="quiz.error"
-            filtersVar="quiz.filters"
-            hasFiltersVar="quiz.hasActiveFilters"
-            sortStateVar="quiz.sort"
-            onSort="quiz.setSort"
-            onFilterChange="quiz.onFilterChange"
-            onPageSizeChange="quiz.setPageSize"
-            onPrevPage="quiz.prevPage"
-            onNextPage="quiz.nextPage"
-            onSetPage="quiz.setPage"
-            pageSizeVar="quiz.pageSize"
-            pageSizeOptions={[6, 12, 24, 48]}
-            pageVar="quiz.page"
-            pageNumbersVar="quiz.pageNumbers"
-            totalVar="quiz.totalItems"
-            totalPagesVar="quiz.totalPages"
+            rowsVar="platform.platforms"
+            loadingVar="platform.loading"
+            errorVar="platform.error"
+            filtersVar="platform.filters"
+            hasFiltersVar="platform.hasActiveFilters"
+            sortStateVar="platform.sort"
+            onSort="platform.setSort"
+            onFilterChange="platform.onFilterChange"
+            onPageSizeChange="platform.setPageSize"
+            onPrevPage="platform.prevPage"
+            onNextPage="platform.nextPage"
+            onSetPage="platform.setPage"
+            pageSizeVar="platform.pageSize"
+            pageSizeOptions={[10, 20, 30, 40]}
+            pageVar="platform.page"
+            pageNumbersVar="platform.pageNumbers"
+            totalVar="platform.totalItems"
+            totalPagesVar="platform.totalPages"
             emptyMessage="No platforms available yet."
             filteredEmptyMessage="No platforms match the current filters."
           >
             <Fragment slot="body">
-              <template x-for="platform in quiz.platforms" :key="platform.id">
+              <template x-for="item in platform.platforms" :key="item.id">
                 <tr class="transition hover:bg-slate-50">
                   <td class="px-4 py-4">
                     <div class="flex items-center gap-3">
                       <div class="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
-                        <template x-if="(platform.icon || '').trim() !== ''">
-                          <i class="fas text-lg" :class="platform.icon"></i>
+                        <template x-if="(item.icon || '').trim() !== ''">
+                          <i class="fas text-lg" :class="item.icon"></i>
                         </template>
-                        <template x-if="!(platform.icon || '').trim()">
+                        <template x-if="!(item.icon || '').trim()">
                           <i class="fas fa-times text-lg"></i>
                         </template>
                       </div>
                       <div class="flex flex-col">
-                        <span class="font-semibold text-slate-900" x-text="platform.name"></span>
+                        <span class="font-semibold text-slate-900" x-text="item.name"></span>
                       </div>
                     </div>
                   </td>
                   <td class="px-4 py-4 align-top">
-                    <p class="max-w-xs text-sm text-slate-600" x-text="platform.description || 'No description provided.'"></p>
+                    <p class="max-w-xs text-sm text-slate-600" x-text="item.description || 'No description provided.'"></p>
                   </td>
                   <td class="px-4 py-4 align-top">
                     <span
                       class="inline-flex items-center gap-2 rounded-full border border-sky-200 bg-sky-50 px-3 py-1 text-xs font-semibold text-sky-600"
-                      x-text="platform.type ? `Type ${platform.type}` : 'Uncategorized'"
+                      x-text="item.type ? `Type ${item.type}` : 'Uncategorized'"
                     ></span>
                   </td>
                   <td class="px-4 py-4 text-right align-top">
@@ -345,38 +349,40 @@ const platformColumns = [
                         <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5h-.75A2.25 2.25 0 0 0 5.25 6.75v12a.75.75 0 0 0 .75.75h12a.75.75 0 0 0 .75-.75v-12a2.25 2.25 0 0 0-2.25-2.25H15" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M9 3.75v1.5M15 3.75v1.5M5.25 9h13.5" />
                       </svg>
-                      <span x-text="`${new Intl.NumberFormat().format(platform.qCount ?? 0)} questions`"></span>
+                      <span x-text="`${new Intl.NumberFormat().format(item.qCount ?? 0)} questions`"></span>
                     </span>
                   </td>
                   <td class="px-4 py-4 align-top">
                     <span
                       class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
-                      :class="platform.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
+                      :class="item.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
                     >
-                      <span class="h-2 w-2 rounded-full" :class="platform.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
-                      <span x-text="platform.isActive ? 'Active' : 'Inactive'"></span>
+                      <span class="h-2 w-2 rounded-full" :class="item.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
+                      <span x-text="item.isActive ? 'Active' : 'Inactive'"></span>
                     </span>
                   </td>
                   <td class="px-4 py-4 text-right align-top">
                     <div class="flex justify-end gap-2">
-                      <button
+                      <Button
                         type="button"
-                        class="inline-flex items-center justify-center rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-60"
-                        x-on:click="quiz.openEditModal(platform)"
-                        x-bind:disabled="quiz.loading || quiz.mutating"
+                        variant="outline"
+                        size="sm"
+                        x-on:click="platform.openEditModal(item)"
+                        x-bind:disabled="platform.loading || platform.mutating"
                         aria-label="Edit platform"
                       >
                         <i class="fas fa-pen text-sm"></i>
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
-                        class="inline-flex items-center justify-center rounded-full border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 transition hover:border-red-300 hover:text-red-700 disabled:cursor-not-allowed disabled:opacity-60"
-                        x-on:click="quiz.deletePlatform(platform.id)"
-                        x-bind:disabled="quiz.loading || quiz.mutating"
+                        variant="ghost"
+                        size="sm"
+                        x-on:click="platform.deletePlatform(item.id)"
+                        x-bind:disabled="platform.loading || platform.mutating"
                         aria-label="Delete platform"
                       >
                         <i class="fas fa-trash text-sm"></i>
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>

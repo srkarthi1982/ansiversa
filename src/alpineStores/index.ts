@@ -10,7 +10,7 @@ import './pricing';
 import './features';
 import './faq';
 import './contact';
-import './quiz/quiz';
+import './quiz/platform';
 import './quiz/subjects';
 import './resume/index';
 import './admin';

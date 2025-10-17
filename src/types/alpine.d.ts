@@ -11,7 +11,7 @@ import type { FeaturesStore } from '../alpineStores/features';
 import type { FaqStore } from '../alpineStores/faq';
 import type { ContactStore } from '../alpineStores/contact';
 import type { ResumeStore } from '../alpineStores/resume/index';
-import type { QuizStore } from '../alpineStores/quiz/quiz';
+import type { PlatformStore } from '../alpineStores/quiz/platform';
 import type { SubjectsStore } from '../alpineStores/quiz/subjects';
 
 declare module 'alpinejs' {
@@ -30,7 +30,7 @@ declare module 'alpinejs' {
       faq: FaqStore;
       contact: ContactStore;
       resume: ResumeStore;
-      quiz: QuizStore;
+      platform: PlatformStore;
       subjects: SubjectsStore;
     }
   }

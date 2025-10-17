@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
 ---
 <Layout>
   <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#resume-dashboard">
@@ -27,21 +28,20 @@ import Layout from '../../layouts/Layout.astro';
               Manage multiple resumes, tailor them for every opportunity, and export in the format you need. Upgrade to Pro for premium templates and unlimited exports.
             </p>
             <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
-              <button
+              <Button
                 type="button"
-                class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 @click.prevent="resume.createDraft()"
               >
                 <i class="fas fa-plus text-xs"></i>
                 New resume
-              </button>
-              <a
+              </Button>
+              <Button
                 href="/resume-builder/templates"
-                class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-2.5 text-sm font-semibold text-slate-700 transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                variant="outline"
               >
                 <i class="fas fa-layer-group text-xs"></i>
                 Explore templates
-              </a>
+              </Button>
             </div>
           </div>
           <div class="relative">
@@ -139,14 +139,13 @@ import Layout from '../../layouts/Layout.astro';
               <p class="mt-2 text-sm text-slate-600">
                 Start by creating your first resume. You can duplicate and customize it anytime.
               </p>
-              <button
+              <Button
                 type="button"
-                class="mt-4 inline-flex items-center gap-2 rounded-full bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
                 @click.prevent="resume.createDraft()"
               >
                 <i class="fas fa-plus text-xs"></i>
                 Create resume
-              </button>
+              </Button>
             </div>
           </template>
 
@@ -183,37 +182,36 @@ import Layout from '../../layouts/Layout.astro';
               </dl>
 
               <div class="mt-6 flex flex-wrap items-center gap-3">
-                <a
-                  class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
-                :href="`/resume-builder/builder?id=${item.id}`"
+                <Button
+                  :href="`/resume-builder/builder?id=${item.id}`"
                 >
                   <i class="fas fa-pen text-xs"></i>
                   Edit
-                </a>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-slate-300 hover:text-slate-900 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  variant="outline"
                   @click.prevent="resume.duplicate(item.id)"
                 >
                   <i class="fas fa-copy text-xs"></i>
                   Duplicate
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  class="inline-flex items-center gap-2 rounded-full border border-transparent bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
+                  variant="ghost"
                   @click.prevent="resume.requestDelete(item.id)"
                 >
                   <i class="fas fa-trash text-xs"></i>
                   Delete
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  class="ml-auto inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-indigo-200 hover:text-indigo-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+                  variant="outline"
                   @click.prevent="resume.toggleDefault(item.id)"
                 >
                   <i class="fas fa-star-half-alt text-xs"></i>
                   <span x-text="item.isDefault ? 'Unset default' : 'Set as default'"></span>
-                </button>
+                </Button>
               </div>
             </article>
           </template>

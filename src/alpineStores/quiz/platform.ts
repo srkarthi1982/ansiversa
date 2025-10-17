@@ -5,10 +5,10 @@ type PlatformRecord = {
   id: number;
   name: string;
   description: string;
-  isActive: boolean;
   icon: string;
   type: string | null;
   qCount: number;
+  isActive: boolean;
 };
 
 type PlatformForm = {
@@ -45,12 +45,12 @@ type SortState = {
   direction: 'asc' | 'desc';
 };
 
-class QuizStoreImpl {
+class PlatformStoreImpl {
   platforms: PlatformRecord[] = [];
   loading = false;
   error: string | null = null;
   page = 1;
-  pageSize = 6;
+  pageSize = 10;
   totalItems = 0;
   mutating = false;
   newPlatform: PlatformForm;
@@ -83,6 +83,7 @@ class QuizStoreImpl {
 
   async onInit(): Promise<void> {
     await this.loadPlatforms(1);
+    console.log('this.platforms', this.platforms)
   }
 
   async loadPlatforms(page = this.page): Promise<void> {
@@ -97,19 +98,30 @@ class QuizStoreImpl {
         filters: filtersPayload,
         sort: this.sort ?? undefined,
       });
+
       if (error) {
         throw error;
       }
+
       const payload = data ?? { items: [], total: 0, page: 1, pageSize: this.pageSize };
       this.platforms = Array.isArray(payload.items) ? payload.items : [];
-      this.totalItems = typeof payload.total === 'number' ? payload.total : this.platforms.length;
+
+      const totalValue = payload.total;
+      this.totalItems =
+        typeof totalValue === 'number'
+          ? totalValue
+          : typeof totalValue === 'bigint'
+            ? Number(totalValue)
+            : this.platforms.length;
+
       this.page = typeof payload.page === 'number' ? payload.page : page;
       this.pageSize = typeof payload.pageSize === 'number' ? payload.pageSize : this.pageSize;
+
       if (this.totalItems === 0) {
         this.page = 1;
       }
     } catch (err) {
-      console.error('Failed to load quiz platforms', err);
+      console.error('Failed to load platforms', err);
       this.error = err instanceof Error ? err.message : 'Unable to load platforms.';
       this.platforms = [];
       this.totalItems = 0;
@@ -203,6 +215,7 @@ class QuizStoreImpl {
   }
 
   openEditModal(platform: PlatformRecord): void {
+    if (this.loading || this.mutating) return;
     this.error = null;
     this.editingId = platform.id;
     this.editPlatform = {
@@ -211,7 +224,7 @@ class QuizStoreImpl {
       icon: platform.icon ?? '',
       type: platform.type ?? '',
       qCount: platform.qCount ?? 0,
-      isActive: platform.isActive,
+      isActive: Boolean(platform.isActive),
     };
     this.showEditModal = true;
   }
@@ -224,23 +237,16 @@ class QuizStoreImpl {
 
   async createPlatform(): Promise<void> {
     if (this.mutating) return;
-    const payload = this.buildPayload(this.newPlatform);
-    if (!payload.name) {
-      this.error = 'Name is required.';
-      return;
-    }
-
     this.mutating = true;
+    this.error = null;
     try {
+      const payload = this.toPayload(this.newPlatform);
       const { error } = await actions.quiz.createPlatform(payload);
-      if (error) {
-        throw error;
-      }
-      this.newPlatform = this.createDefaultForm();
-      await this.loadPlatforms(this.page);
+      if (error) throw error;
+      await this.loadPlatforms(1);
       this.closeCreateModal(true);
     } catch (err) {
-      console.error('Failed to create quiz platform', err);
+      console.error('Failed to create platform', err);
       this.error = err instanceof Error ? err.message : 'Unable to create platform.';
     } finally {
       this.mutating = false;
@@ -248,39 +254,17 @@ class QuizStoreImpl {
   }
 
   async saveEdit(): Promise<void> {
-    if (this.editingId === null || this.mutating) return;
-    const payload = this.buildPayload(this.editPlatform);
-    if (!payload.name) {
-      this.error = 'Name is required.';
-      return;
-    }
-
+    if (this.mutating || this.editingId == null) return;
     this.mutating = true;
+    this.error = null;
     try {
-      const { data, error } = await actions.quiz.updatePlatform({
-        id: this.editingId,
-        ...payload,
-      });
-      if (error) {
-        throw error;
-      }
-
-      const updated = data as PlatformRecord | null | undefined;
-
-      if (updated && typeof updated.id === 'number') {
-        const idx = this.platforms.findIndex((item) => item.id === updated.id);
-        if (idx !== -1) {
-          this.platforms.splice(idx, 1, updated);
-        } else {
-          await this.loadPlatforms(this.page);
-        }
-      } else {
-        await this.loadPlatforms(this.page);
-      }
-
+      const payload = this.toPayload(this.editPlatform);
+      const { error } = await actions.quiz.updatePlatform({ id: this.editingId, data: payload });
+      if (error) throw error;
+      await this.loadPlatforms(this.page);
       this.closeEditModal(true);
     } catch (err) {
-      console.error('Failed to update quiz platform', err);
+      console.error('Failed to update platform', err);
       this.error = err instanceof Error ? err.message : 'Unable to update platform.';
     } finally {
       this.mutating = false;
@@ -289,46 +273,32 @@ class QuizStoreImpl {
 
   async deletePlatform(id: number): Promise<void> {
     if (this.mutating) return;
-    if (typeof window !== 'undefined' && !window.confirm('Delete this platform?')) {
-      return;
-    }
-
     this.mutating = true;
+    this.error = null;
     try {
       const { error } = await actions.quiz.deletePlatform({ id });
-      if (error) {
-        throw error;
-      }
-      if (this.editingId === id) {
-        this.closeEditModal(true);
-      }
-      await this.loadPlatforms(this.page);
+      if (error) throw error;
+      const nextPage = this.platforms.length === 1 ? this.page - 1 : this.page;
+      await this.loadPlatforms(Math.max(nextPage, 1));
     } catch (err) {
-      console.error('Failed to delete quiz platform', err);
+      console.error('Failed to delete platform', err);
       this.error = err instanceof Error ? err.message : 'Unable to delete platform.';
     } finally {
       this.mutating = false;
     }
   }
 
-  private resetNewForm(): void {
+  resetNewForm(): void {
     this.newPlatform = this.createDefaultForm();
   }
 
-  private resetEditState(): void {
-    this.editingId = null;
+  resetEditState(): void {
     this.editPlatform = this.createDefaultForm();
+    this.editingId = null;
   }
 
-  private setLoading(state: boolean): void {
-    this.loading = state;
-    const loaderStore = Alpine.store('loader');
-    if (!loaderStore) return;
-    if (state) {
-      loaderStore.show();
-    } else {
-      loaderStore.hide();
-    }
+  private setLoading(value: boolean): void {
+    this.loading = value;
   }
 
   private createDefaultForm(): PlatformForm {
@@ -353,63 +323,32 @@ class QuizStoreImpl {
     };
   }
 
-  private buildPayload(form: PlatformForm) {
-    const qCountValue = Number.isFinite(form.qCount) ? Math.round(form.qCount) : 0;
-    const name = form.name.trim();
+  private toPayload(form: PlatformForm) {
+    const qCount = Number.isFinite(form.qCount) ? form.qCount : 0;
     return {
-      name,
+      name: form.name.trim(),
       description: form.description.trim(),
       icon: form.icon.trim(),
       type: form.type.trim() || null,
-      qCount: Math.max(0, qCountValue),
-      isActive: !!form.isActive,
+      qCount: Math.max(0, qCount),
+      isActive: Boolean(form.isActive),
     };
   }
 
   private buildFiltersPayload(): PlatformFiltersPayload {
     const payload: PlatformFiltersPayload = {};
-    const name = this.filters.name.trim();
-    if (name) {
-      payload.name = name;
-    }
 
-    const description = this.filters.description.trim();
-    if (description) {
-      payload.description = description;
-    }
+    if (this.filters.name.trim()) payload.name = this.filters.name.trim();
+    if (this.filters.description.trim()) payload.description = this.filters.description.trim();
+    if (this.filters.type.trim()) payload.type = this.filters.type.trim();
 
-    const type = this.filters.type.trim();
-    if (type) {
-      payload.type = type;
-    }
+    const min = Number(this.filters.minQuestions);
+    if (Number.isFinite(min) && min >= 0) payload.minQuestions = Math.floor(min);
 
-    const minRaw = this.filters.minQuestions.trim();
-    if (minRaw !== '') {
-      const minValue = Number(minRaw);
-      if (!Number.isNaN(minValue)) {
-        payload.minQuestions = Math.max(0, Math.floor(minValue));
-      }
-    }
+    const max = Number(this.filters.maxQuestions);
+    if (Number.isFinite(max) && max >= 0) payload.maxQuestions = Math.floor(max);
 
-    const maxRaw = this.filters.maxQuestions.trim();
-    if (maxRaw !== '') {
-      const maxValue = Number(maxRaw);
-      if (!Number.isNaN(maxValue)) {
-        payload.maxQuestions = Math.max(0, Math.floor(maxValue));
-      }
-    }
-
-    if (
-      payload.minQuestions !== undefined &&
-      payload.maxQuestions !== undefined &&
-      payload.maxQuestions < payload.minQuestions
-    ) {
-      const originalMin = payload.minQuestions;
-      payload.minQuestions = payload.maxQuestions;
-      payload.maxQuestions = originalMin;
-    }
-
-    if (this.filters.status !== 'all') {
+    if (this.filters.status === 'active' || this.filters.status === 'inactive') {
       payload.status = this.filters.status;
     }
 
@@ -417,6 +356,6 @@ class QuizStoreImpl {
   }
 }
 
-export type QuizStore = QuizStoreImpl;
+export type PlatformStore = PlatformStoreImpl;
 
-Alpine.store('quiz', new QuizStoreImpl());
+Alpine.store('platform', new PlatformStoreImpl());

@@ -97,7 +97,13 @@ class SubjectsStoreImpl {
       }
       const payload = data ?? { items: [], total: 0, page: 1, pageSize: this.pageSize };
       this.subjects = Array.isArray(payload.items) ? payload.items : [];
-      this.totalItems = typeof payload.total === 'number' ? payload.total : this.subjects.length;
+      const totalValue = payload.total;
+      this.totalItems =
+        typeof totalValue === 'number'
+          ? totalValue
+          : typeof totalValue === 'bigint'
+            ? Number(totalValue)
+            : this.subjects.length;
       this.page = typeof payload.page === 'number' ? payload.page : page;
       this.pageSize = typeof payload.pageSize === 'number' ? payload.pageSize : this.pageSize;
       if (this.totalItems === 0) {
