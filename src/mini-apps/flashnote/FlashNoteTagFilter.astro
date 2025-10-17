@@ -1,0 +1,45 @@
+---
+---
+<aside
+  x-data="() => ({ flashnote: $store.flashnote, query: '' })"
+  class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+>
+  <div class="flex items-center justify-between">
+    <h2 class="text-lg font-semibold text-slate-900">Tags</h2>
+    <button
+      type="button"
+      class="text-xs font-medium text-indigo-600 hover:underline"
+      @click="flashnote.applyFilter(null); query = ''"
+      x-show="flashnote.state.filterTag"
+    >
+      Clear
+    </button>
+  </div>
+
+  <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600 focus-within:border-indigo-300 focus-within:bg-white">
+    <i class="fas fa-search text-xs text-slate-400"></i>
+    <input
+      type="search"
+      class="w-full border-none bg-transparent text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none"
+      placeholder="Filter tags"
+      x-model="query"
+    />
+  </label>
+
+  <div class="flex flex-wrap gap-2">
+    <template x-for="tag in flashnote.state.tags.filter((tag) => tag.toLowerCase().includes(query.toLowerCase()))" :key="`tag-${tag}`">
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border px-4 py-1.5 text-sm font-medium transition"
+        :class="flashnote.state.filterTag === tag ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:text-indigo-600'"
+        @click="flashnote.applyFilter(flashnote.state.filterTag === tag ? null : tag)"
+      >
+        <i class="fas fa-tag text-xs"></i>
+        <span x-text="tag"></span>
+      </button>
+    </template>
+    <template x-if="flashnote.state.tags.length === 0">
+      <p class="text-sm text-slate-500">Tags will appear as you add them to notes.</p>
+    </template>
+  </div>
+</aside>

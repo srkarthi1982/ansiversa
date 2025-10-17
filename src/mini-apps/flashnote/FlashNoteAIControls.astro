@@ -1,0 +1,55 @@
+---
+---
+<div x-data="() => ({ flashnote: $store.flashnote })" class="space-y-4">
+  <div class="flex flex-wrap items-center gap-3">
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600 transition hover:border-indigo-200 hover:text-indigo-600"
+      :class="flashnote.state.aiMode === 'summarising' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : ''"
+      @click="flashnote.triggerAI('summarising')"
+    >
+      <i class="fas fa-align-left text-[10px]"></i>
+      Summarise
+    </button>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600 transition hover:border-indigo-200 hover:text-indigo-600"
+      :class="flashnote.state.aiMode === 'simplifying' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : ''"
+      @click="flashnote.triggerAI('simplifying')"
+    >
+      <i class="fas fa-feather text-[10px]"></i>
+      Simplify
+    </button>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600 transition hover:border-indigo-200 hover:text-indigo-600"
+      :class="flashnote.state.aiMode === 'explaining' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : ''"
+      @click="flashnote.triggerAI('explaining')"
+    >
+      <i class="fas fa-chalkboard-user text-[10px]"></i>
+      Explain
+    </button>
+    <button
+      type="button"
+      class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600 transition hover:border-indigo-200 hover:text-indigo-600"
+      :class="flashnote.state.aiMode === 'quizzing' ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : ''"
+      @click="flashnote.triggerAI('quizzing')"
+    >
+      <i class="fas fa-question text-[10px]"></i>
+      Quiz
+    </button>
+  </div>
+
+  <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-sm text-slate-700">
+    <div class="flex items-center justify-between gap-3">
+      <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">AI output</h3>
+      <template x-if="flashnote.state.aiMode !== 'idle'">
+        <div class="inline-flex items-center gap-2 text-xs font-medium text-indigo-600">
+          <span class="h-2 w-2 animate-pulse rounded-full bg-indigo-500"></span>
+          Working…
+        </div>
+      </template>
+    </div>
+    <p class="mt-3 whitespace-pre-line text-sm" x-text="flashnote.state.aiSummary || 'Use an AI action to populate this panel.'"></p>
+  </div>
+</div>

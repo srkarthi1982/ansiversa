@@ -1,0 +1,15 @@
+---
+---
+<div
+  x-data="() => ({ loader: $store.loader, flashnote: $store.flashnote })"
+  x-show="loader?.visible || flashnote.state.loading || flashnote.state.exporting"
+  x-transition.opacity
+  class="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm"
+>
+  <div class="flex flex-col items-center gap-3 rounded-2xl border border-slate-200 bg-white px-6 py-4 text-sm font-medium text-slate-600 shadow-lg">
+    <span class="relative h-8 w-8">
+      <span class="absolute inset-0 animate-spin rounded-full border-2 border-indigo-200 border-t-indigo-600"></span>
+    </span>
+    Working on it…
+  </div>
+</div>
