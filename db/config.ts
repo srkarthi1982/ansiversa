@@ -1,5 +1,5 @@
 // db/config.ts  (root of project)
-import { defineDb, defineTable, column, NOW } from 'astro:db';
+import { defineDb, defineTable, column, NOW, sql } from 'astro:db';
 
 const User = defineTable({
   columns: {
@@ -92,6 +92,23 @@ const ResumeExport = defineTable({
   },
 });
 
+const FlashNote = defineTable({
+  columns: {
+    id: column.text({ primaryKey: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    title: column.text(),
+    content: column.text(),
+    tags: column.json(),
+    summary: column.text({ optional: true }),
+    createdAt: column.date({ default: NOW }),
+    updatedAt: column.date({ default: NOW }),
+  },
+  indexes: [
+    { on: ['userId', 'updatedAt'] },
+    { on: ['userId'], where: sql`json_array_length(tags) > 0` },
+  ],
+});
+
 export default defineDb({
   tables: {
     User,                // ← this exact key is what you import
@@ -102,5 +119,6 @@ export default defineDb({
     Subject,
     Resume,
     ResumeExport,
+    FlashNote,
   },
 });
