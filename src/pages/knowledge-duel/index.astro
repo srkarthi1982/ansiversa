@@ -3,7 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section class="py-16" x-data="() => ({ loader: $store.loader, app: $store['knowledge-duel'] ?? {} })">
+    <section data-mini-app-landing class="py-16" x-data="() => ({ loader: $store.loader, app: $store['knowledge-duel'] ?? {} })">
       <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
           Knowledge Duel

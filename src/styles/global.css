@@ -156,3 +156,26 @@ code { @apply rounded px-1.5 py-0.5 text-sm; background-color: rgb(241 245 249);
 .dark .glass {
   background-color: rgba(2, 6, 23, 0.50); /* slate-950/50 */
 }
+
+/* Mini app landing title card */
+section[data-mini-app-landing] > div {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+section[data-mini-app-landing] > div > h1 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.25rem 2.5rem;
+  border-radius: 1.5rem;
+  background-color: rgb(var(--ans-card));
+  border: 1px solid rgb(226 232 240 / 0.6);
+  box-shadow: 0 25px 45px -25px rgb(15 23 42 / 0.4);
+  text-align: center;
+}
+.dark section[data-mini-app-landing] > div > h1 {
+  border-color: rgb(30 41 59);
+  box-shadow: 0 25px 45px -25px rgb(2 6 23 / 0.85);
+  background-color: rgb(var(--ans-card));
+}
