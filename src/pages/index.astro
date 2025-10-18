@@ -255,7 +255,7 @@ const plans = [
                 <h3 class="text-xl font-semibold text-slate-900">{category.name}</h3>
                 <p class="text-sm text-slate-600">{category.blurb}</p>
               </div>
-              <ul class="mt-6 space-y-2 text-sm font-medium text-slate-700">
+              <ul class="mt-6 grid gap-2 text-sm font-medium text-slate-700 sm:grid-cols-2 lg:grid-cols-3">
                 {category.apps.map((app) => (
                   <li class="flex items-center gap-3 rounded-2xl bg-slate-50/80 px-3 py-2 transition group-hover:bg-slate-100">
                     <span class={`inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-gradient-to-r ${category.accent}`}></span>
