@@ -9,6 +9,10 @@ type PaginationProps = {
   onSetPage: string;
   prevLabel?: string;
   nextLabel?: string;
+  totalVar?: string;
+  pageSizeVar?: string;
+  onPageSizeChange?: string;
+  pageSizeOptions?: number[];
 };
 
 const {
@@ -21,13 +25,52 @@ const {
   onSetPage,
   prevLabel = "Prev",
   nextLabel = "Next",
+  totalVar,
+  pageSizeVar,
+  onPageSizeChange,
+  pageSizeOptions = [10, 20, 30],
 }: PaginationProps = Astro.props;
+
+const canShowRange = Boolean(totalVar && pageVar && pageSizeVar);
+const startRangeExpression = canShowRange
+  ? `Intl.NumberFormat().format(Math.min(((${pageVar} ?? 1) - 1) * (${pageSizeVar} ?? 0) + 1, (${totalVar} ?? 0)))`
+  : "";
+const endRangeExpression = canShowRange
+  ? `Intl.NumberFormat().format(Math.min((${pageVar} ?? 1) * (${pageSizeVar} ?? 0), (${totalVar} ?? 0)))`
+  : "";
+const totalExpression = totalVar ? `Intl.NumberFormat().format(${totalVar} ?? 0)` : "";
+const shouldRenderPageSizeSelect = Boolean(pageSizeVar && onPageSizeChange);
 ---
 <div class="border-t border-slate-200 px-4 py-4 sm:px-6">
   <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-    <p class="text-xs font-medium text-slate-500">
-      <span x-text={`'Page ' + (${pageVar} ?? 1) + ' of ' + (${totalPagesVar} ?? 1)`}></span>
-    </p>
+    {canShowRange ? (
+      <div class="flex flex-wrap items-center gap-1 text-xs font-medium text-slate-500">
+        <span>Showing</span>
+        <span x-text={startRangeExpression}></span>
+        <span>to</span>
+        {shouldRenderPageSizeSelect ? (
+          <select
+            class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            x-bind:disabled={`${loadingVar}`}
+            x-bind:value={`${pageSizeVar}`}
+            x-on:change={`${onPageSizeChange}(Number($event.target.value))`}
+          >
+            {pageSizeOptions.map((size) => (
+              <option value={size}>{size}</option>
+            ))}
+          </select>
+        ) : (
+          <span x-text={endRangeExpression}></span>
+        )}
+        <span>of</span>
+        <span x-text={totalExpression}></span>
+        <span>entries</span>
+      </div>
+    ) : (
+      <p class="text-xs font-medium text-slate-500">
+        <span x-text={`'Page ' + (${pageVar} ?? 1) + ' of ' + (${totalPagesVar} ?? 1)`}></span>
+      </p>
+    )}
     <div class="flex flex-wrap items-center gap-2" x-cloak>
       <button
         type="button"
