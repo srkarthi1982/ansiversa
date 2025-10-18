@@ -72,8 +72,9 @@ const normalizeFilters = (filters?: PlatformFiltersInput) => {
   const name = safe.name?.trim() ?? '';
   const description = safe.description?.trim() ?? '';
   const type = safe.type?.trim() ?? '';
-  const hasMin = typeof safe.minQuestions === 'number' && Number.isFinite(safe.minQuestions);
-  const hasMax = typeof safe.maxQuestions === 'number' && Number.isFinite(safe.maxQuestions);
+  // Treat zero as "not set" so empty inputs from the UI don't force qCount filters.
+  const hasMin = typeof safe.minQuestions === 'number' && Number.isFinite(safe.minQuestions) && safe.minQuestions > 0;
+  const hasMax = typeof safe.maxQuestions === 'number' && Number.isFinite(safe.maxQuestions) && safe.maxQuestions > 0;
   let minQuestions = hasMin ? Math.max(0, Math.floor(safe.minQuestions)) : null;
   let maxQuestions = hasMax ? Math.max(0, Math.floor(safe.maxQuestions)) : null;
 

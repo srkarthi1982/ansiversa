@@ -1,53 +1,69 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import { getSessionWithUser } from '../utils/session.server';
+
+const sessionData = await getSessionWithUser(Astro.cookies);
+const isLoggedIn = Boolean(sessionData);
 
 const capabilityHighlights = [
   {
-    title: "Auth & Profiles",
+    title: "Quiz Institute",
     description:
-      "Passwordless logins, secure sessions, and profile personalization so every member’s journey feels tailored.",
+      "Publish quiz platforms, organise subjects, and keep question banks current through the built-in admin console.",
   },
   {
-    title: "AI Assistants",
+    title: "FlashNote Workspace",
     description:
-      "Context-aware prompts help with quiz creation, resume drafts, story arcs, and more—always private to your account.",
+      "Capture study notes, trigger AI summaries and explanations, review via flashcards, and export shareable decks.",
   },
   {
-    title: "Design System",
+    title: "Resume Studio",
     description:
-      "Tailwind + Alpine components tuned for blue-purple gradients, rounded surfaces, and accessible contrast.",
+      "Craft multiple resume versions, run AI improvements, duplicate drafts, and export polished PDFs in minutes.",
   },
   {
-    title: "Insights & Progress",
+    title: "Mini-App Library",
     description:
-      "Track completions, saved drafts, and streaks across the suite with dashboards that surface what matters most.",
+      "Unlock 100 specialised mini-apps spanning writing, productivity, wellness, fun, and more under one subscription.",
   },
 ];
 
 const experiencePillars = [
   {
-    icon: "🎓",
-    name: "Learning",
+    icon: "fas fa-graduation-cap",
+    name: "Learning & Knowledge",
     details:
-      "Adaptive quizzes, flash notes, and study streaks keep knowledge sessions on track with minimal setup.",
+      "Quiz Institute, FlashNote, Study Planner, and Concept Explainer support learners and teachers alike.",
   },
   {
-    icon: "💼",
-    name: "Career",
+    icon: "fas fa-briefcase",
+    name: "Career & Professional",
     details:
-      "Resume Builder, Interview Coach, and polished visiting cards give professionals a confidence boost in minutes.",
+      "Resume Builder, Interview Coach, Visiting Card Maker, and Meeting Minutes AI sharpen every workday moment.",
   },
   {
-    icon: "✍️",
-    name: "Creativity",
+    icon: "fas fa-pen-nib",
+    name: "Writing & Creativity",
     details:
-      "StoryCrafter, Poem Studio, and Tone Assistant blend human imagination with guarded AI co-writing.",
+      "StoryCrafter, Poem Studio, Blog Writer, and Prompt Builder fuel storytelling, marketing, and script work.",
   },
   {
-    icon: "🛠️",
-    name: "Utility",
+    icon: "fas fa-toolbox",
+    name: "Utility & Productivity",
     details:
-      "Focused helpers like Snippet Generator and Price Checker streamline everyday decisions.",
+      "Snippet Generator, API Tester, JSON Formatter, and Clipboard Manager automate repetitive tasks.",
+  },
+  {
+    icon: "fas fa-spa",
+    name: "Lifestyle & Well-Being",
+    details:
+      "Wellness & Goal Planner, Meal Planner, Meditation Script Maker, and Travel Itinerary Builder encourage balance.",
+  },
+  {
+    icon: "fas fa-gamepad",
+    name: "Fun & Engagement",
+    details:
+      "Trivia Arena, Puzzle Zone, Would You Rather, and AI Character Chat keep communities energised between sessions.",
   },
 ];
 ---
@@ -116,14 +132,16 @@ const experiencePillars = [
             </p>
           </div>
         </div>
-        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {experiencePillars.map((pillar) => (
             <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-lg">
-              <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-2xl">
-                <span>{pillar.icon}</span>
+              <div class="flex items-center gap-3">
+                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                  <i class={`${pillar.icon} text-base`}></i>
+                </span>
+                <h3 class="text-lg font-semibold text-slate-900">{pillar.name}</h3>
               </div>
-              <h3 class="mt-5 text-lg font-semibold text-slate-900">{pillar.name}</h3>
-              <p class="mt-2 text-sm text-slate-600">{pillar.details}</p>
+              <p class="mt-3 text-sm text-slate-600">{pillar.details}</p>
             </article>
           ))}
         </div>
@@ -160,21 +178,43 @@ const experiencePillars = [
               </ul>
             </div>
             <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/40">
-              <p class="text-sm font-semibold uppercase tracking-wide text-white/70">Why members stay</p>
-              <div class="mt-6 space-y-4 text-sm text-white/80">
-                <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
-                  Cohesive UI and shortcuts across every mini-app keep you in flow.
-                </p>
-                <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
-                  AI suggestions evolve with your activity, surfacing smarter prompts every session.
-                </p>
-                <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
-                  Roadmap polls and feedback loops give members a voice in upcoming builds.
-                </p>
-              </div>
-              <a href="/signup" class="mt-6 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
-                Create your account
-              </a>
+              {isLoggedIn ? (
+                <>
+                  <p class="text-sm font-semibold uppercase tracking-wide text-white/70">Keep exploring</p>
+                  <div class="mt-6 space-y-4 text-sm text-white/80">
+                    <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                      Pin favourite mini-apps and pick up exactly where you left off.
+                    </p>
+                    <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                      Switch between FlashNote, Resume Studio, and Quiz dashboards without losing context.
+                    </p>
+                    <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                      Share feedback from any workspace to influence the next feature drops.
+                    </p>
+                  </div>
+                  <a href="/#mini-apps" class="mt-6 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
+                    Open mini-app library
+                  </a>
+                </>
+              ) : (
+                <>
+                  <p class="text-sm font-semibold uppercase tracking-wide text-white/70">Why members stay</p>
+                  <div class="mt-6 space-y-4 text-sm text-white/80">
+                    <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                      Cohesive UI and shortcuts across every mini-app keep you in flow.
+                    </p>
+                    <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                      AI suggestions evolve with your activity, surfacing smarter prompts every session.
+                    </p>
+                    <p class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                      Roadmap polls and feedback loops give members a voice in upcoming builds.
+                    </p>
+                  </div>
+                  <a href="/signup" class="mt-6 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
+                    Create your account
+                  </a>
+                </>
+              )}
             </div>
           </div>
         </div>
