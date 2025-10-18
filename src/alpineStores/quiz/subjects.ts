@@ -49,11 +49,10 @@ class SubjectsStoreImpl {
   pageSize = 10;
   totalItems = 0;
   mutating = false;
-  newSubject: SubjectForm;
-  editSubject: SubjectForm;
+  form: SubjectForm;
   editingId: number | null = null;
-  showCreateModal = false;
-  showEditModal = false;
+  modalMode: 'create' | 'edit' = 'create';
+  showModal = false;
   filters: SubjectFilters;
   sort: SortState | null = null;
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
@@ -62,8 +61,7 @@ class SubjectsStoreImpl {
 
   constructor() {
     this.loader = Alpine.store('loader') as LoaderStore;
-    this.newSubject = this.createDefaultForm();
-    this.editSubject = this.createDefaultForm();
+    this.form = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
   }
 
@@ -71,8 +69,45 @@ class SubjectsStoreImpl {
     return this.totalItems === 0 ? 0 : Math.ceil(this.totalItems / this.pageSize);
   }
 
-  get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  get pageNumbers(): (number | string)[] {
+    const totalPages = this.totalPages;
+    if (totalPages <= 0) {
+      return [];
+    }
+    if (totalPages <= 3) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const current = Math.min(Math.max(1, this.page), totalPages);
+
+    let numbers: number[];
+    if (current <= 2) {
+      numbers = [1, 2, totalPages];
+    } else if (current >= totalPages - 1) {
+      numbers = [1, totalPages - 1, totalPages];
+    } else {
+      numbers = [1, current, totalPages];
+    }
+
+    const uniqueNumbers = Array.from(new Set(numbers.filter((value) => value >= 1 && value <= totalPages))).sort(
+      (a, b) => a - b,
+    );
+
+    const items: (number | string)[] = [];
+    let previous: number | null = null;
+    for (const value of uniqueNumbers) {
+      if (previous !== null && value - previous > 1) {
+        items.push(`ellipsis-${previous}-${value}`);
+      }
+      items.push(value);
+      previous = value;
+    }
+
+    return items;
+  }
+
+  get isEditMode(): boolean {
+    return this.modalMode === 'edit';
   }
 
   get hasActiveFilters(): boolean {
@@ -118,8 +153,7 @@ class SubjectsStoreImpl {
       this.subjects = [];
       this.totalItems = 0;
       this.page = 1;
-      this.resetEditState();
-      this.showEditModal = false;
+      this.closeModal(true);
     } finally {
       this.setLoading(false);
     }
@@ -168,6 +202,21 @@ class SubjectsStoreImpl {
     await this.setPage(this.page + 1);
   }
 
+  async firstPage(): Promise<void> {
+    if (this.page <= 1) {
+      return;
+    }
+    await this.setPage(1);
+  }
+
+  async lastPage(): Promise<void> {
+    const totalPages = this.totalPages;
+    if (totalPages <= 0 || this.page >= totalPages) {
+      return;
+    }
+    await this.setPage(totalPages);
+  }
+
   async prevPage(): Promise<void> {
     if (this.page <= 1) return;
     await this.setPage(this.page - 1);
@@ -196,37 +245,44 @@ class SubjectsStoreImpl {
 
   openCreateModal(): void {
     this.error = null;
-    this.resetNewForm();
-    this.showCreateModal = true;
-  }
-
-  closeCreateModal(force = false): void {
-    if (this.mutating && !force) return;
-    this.showCreateModal = false;
-    this.resetNewForm();
+    this.modalMode = 'create';
+    this.editingId = null;
+    this.resetForm();
+    this.showModal = true;
   }
 
   openEditModal(subject: SubjectRecord): void {
     this.error = null;
+    this.modalMode = 'edit';
     this.editingId = subject.id;
-    this.editSubject = {
+    this.form = {
       platformId: String(subject.platformId ?? ''),
       name: subject.name ?? '',
       qCount: subject.qCount ?? 0,
       isActive: subject.isActive,
     };
-    this.showEditModal = true;
+    this.showModal = true;
   }
 
-  closeEditModal(force = false): void {
+  closeModal(force = false): void {
     if (this.mutating && !force) return;
-    this.showEditModal = false;
-    this.resetEditState();
+    this.showModal = false;
+    this.editingId = null;
+    this.modalMode = 'create';
+    this.resetForm();
   }
 
-  async createSubject(): Promise<void> {
+  async submitModal(): Promise<void> {
+    if (this.isEditMode) {
+      await this.saveEdit();
+    } else {
+      await this.createSubject();
+    }
+  }
+
+  private async createSubject(): Promise<void> {
     if (this.mutating) return;
-    const payload = this.buildPayload(this.newSubject);
+    const payload = this.buildPayload(this.form);
     if (!payload) {
       this.error = 'Platform and name are required.';
       return;
@@ -238,9 +294,9 @@ class SubjectsStoreImpl {
       if (error) {
         throw error;
       }
-      this.newSubject = this.createDefaultForm();
+      this.resetForm();
       await this.loadSubjects(this.page);
-      this.closeCreateModal(true);
+      this.closeModal(true);
     } catch (err) {
       console.error('Failed to create quiz subject', err);
       this.error = err instanceof Error ? err.message : 'Unable to create subject.';
@@ -249,9 +305,9 @@ class SubjectsStoreImpl {
     }
   }
 
-  async saveEdit(): Promise<void> {
+  private async saveEdit(): Promise<void> {
     if (this.editingId === null || this.mutating) return;
-    const payload = this.buildPayload(this.editSubject);
+    const payload = this.buildPayload(this.form);
     if (!payload) {
       this.error = 'Platform and name are required.';
       return;
@@ -280,7 +336,7 @@ class SubjectsStoreImpl {
         await this.loadSubjects(this.page);
       }
 
-      this.closeEditModal(true);
+      this.closeModal(true);
     } catch (err) {
       console.error('Failed to update quiz subject', err);
       this.error = err instanceof Error ? err.message : 'Unable to update subject.';
@@ -302,7 +358,7 @@ class SubjectsStoreImpl {
         throw error;
       }
       if (this.editingId === id) {
-        this.closeEditModal(true);
+        this.closeModal(true);
       }
       await this.loadSubjects(this.page);
     } catch (err) {
@@ -313,13 +369,8 @@ class SubjectsStoreImpl {
     }
   }
 
-  private resetNewForm(): void {
-    this.newSubject = this.createDefaultForm();
-  }
-
-  private resetEditState(): void {
-    this.editingId = null;
-    this.editSubject = this.createDefaultForm();
+  private resetForm(): void {
+    this.form = this.createDefaultForm();
   }
 
   private setLoading(state: boolean): void {

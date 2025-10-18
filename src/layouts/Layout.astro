@@ -12,7 +12,7 @@ const sessionData = await getSessionWithUser(Astro.cookies);
 const isLoggedIn = Boolean(sessionData);
 const userInitial = sessionData?.user?.username?.charAt(0)?.toUpperCase() ?? 'U';
 const logoutAction = actions.auth.logout;
-const username = sessionData?.user?.username ?? 'Account';
+const username = (sessionData?.user?.username ?? 'Account').toUpperCase();
 const shouldShowBreadcrumb = Astro.url.pathname !== '/';
 ---
 <!doctype html>
@@ -67,7 +67,7 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
       <div class="flex h-16 items-center justify-between">
         <a href="/" class="flex items-center gap-2">
-          <img src="/logo_full.svg" alt="Ansiversa Logo" class="rounded-lg" />
+          <img src="/logo_full.svg" alt="Ansiversa Logo" class="rounded-lg transition dark:invert dark:brightness-0" />
         </a>
         <nav class="hidden md:flex items-center gap-8 text-sm">
           <a href="/features" class="hover:text-indigo-600">Features</a>
@@ -87,6 +87,20 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
               <div class="border-b border-slate-200 px-4 py-2">
                 <p class="text-sm font-semibold text-slate-900">{username}</p>
               </div>
+              <a
+                href="/dashboard"
+                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                x-on:click="$dispatch('dropdown-close')"
+              >
+                Dashboard
+              </a>
+              <a
+                href="/settings"
+                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                x-on:click="$dispatch('dropdown-close')"
+              >
+                Settings
+              </a>
               <a
                 href="/change-password"
                 class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
@@ -167,6 +181,20 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
                     <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
                   </svg>
                 </span>
+                <a
+                  href="/dashboard"
+                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
+                >
+                  Dashboard
+                </a>
+                <a
+                  href="/settings"
+                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
+                >
+                  Settings
+                </a>
                 <a
                   href="/change-password"
                   class="block px-4 py-2 text-slate-700 hover:bg-slate-100"

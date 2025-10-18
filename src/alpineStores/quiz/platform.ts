@@ -54,11 +54,10 @@ class PlatformStoreImpl {
   pageSize = 10;
   totalItems = 0;
   mutating = false;
-  newPlatform: PlatformForm;
-  editPlatform: PlatformForm;
+  form: PlatformForm;
   editingId: number | null = null;
-  showCreateModal = false;
-  showEditModal = false;
+  modalMode: 'create' | 'edit' = 'create';
+  showModal = false;
   filters: PlatformFilters;
   sort: SortState | null = null;
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
@@ -67,8 +66,7 @@ class PlatformStoreImpl {
 
   constructor() {
     this.loader = Alpine.store('loader') as LoaderStore;
-    this.newPlatform = this.createDefaultForm();
-    this.editPlatform = this.createDefaultForm();
+    this.form = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
   }
 
@@ -76,8 +74,45 @@ class PlatformStoreImpl {
     return this.totalItems === 0 ? 0 : Math.ceil(this.totalItems / this.pageSize);
   }
 
-  get pageNumbers(): number[] {
-    return Array.from({ length: this.totalPages }, (_, index) => index + 1);
+  get pageNumbers(): (number | string)[] {
+    const totalPages = this.totalPages;
+    if (totalPages <= 0) {
+      return [];
+    }
+    if (totalPages <= 3) {
+      return Array.from({ length: totalPages }, (_, index) => index + 1);
+    }
+
+    const current = Math.min(Math.max(1, this.page), totalPages);
+
+    let numbers: number[];
+    if (current <= 2) {
+      numbers = [1, 2, totalPages];
+    } else if (current >= totalPages - 1) {
+      numbers = [1, totalPages - 1, totalPages];
+    } else {
+      numbers = [1, current, totalPages];
+    }
+
+    const uniqueNumbers = Array.from(new Set(numbers.filter((value) => value >= 1 && value <= totalPages))).sort(
+      (a, b) => a - b,
+    );
+
+    const items: (number | string)[] = [];
+    let previous: number | null = null;
+    for (const value of uniqueNumbers) {
+      if (previous !== null && value - previous > 1) {
+        items.push(`ellipsis-${previous}-${value}`);
+      }
+      items.push(value);
+      previous = value;
+    }
+
+    return items;
+  }
+
+  get isEditMode(): boolean {
+    return this.modalMode === 'edit';
   }
 
   get hasActiveFilters(): boolean {
@@ -86,7 +121,6 @@ class PlatformStoreImpl {
 
   async onInit(): Promise<void> {
     await this.loadPlatforms(1);
-    console.log('this.platforms', this.platforms)
   }
 
   async loadPlatforms(page = this.page): Promise<void> {
@@ -129,8 +163,7 @@ class PlatformStoreImpl {
       this.platforms = [];
       this.totalItems = 0;
       this.page = 1;
-      this.resetEditState();
-      this.showEditModal = false;
+      this.closeModal(true);
     } finally {
       this.setLoading(false);
     }
@@ -179,6 +212,21 @@ class PlatformStoreImpl {
     await this.setPage(this.page + 1);
   }
 
+  async firstPage(): Promise<void> {
+    if (this.page <= 1) {
+      return;
+    }
+    await this.setPage(1);
+  }
+
+  async lastPage(): Promise<void> {
+    const totalPages = this.totalPages;
+    if (totalPages <= 0 || this.page >= totalPages) {
+      return;
+    }
+    await this.setPage(totalPages);
+  }
+
   async prevPage(): Promise<void> {
     if (this.page <= 1) return;
     await this.setPage(this.page - 1);
@@ -207,21 +255,18 @@ class PlatformStoreImpl {
 
   openCreateModal(): void {
     this.error = null;
-    this.resetNewForm();
-    this.showCreateModal = true;
-  }
-
-  closeCreateModal(force = false): void {
-    if (this.mutating && !force) return;
-    this.showCreateModal = false;
-    this.resetNewForm();
+    this.modalMode = 'create';
+    this.editingId = null;
+    this.resetForm();
+    this.showModal = true;
   }
 
   openEditModal(platform: PlatformRecord): void {
     if (this.loading || this.mutating) return;
     this.error = null;
+    this.modalMode = 'edit';
     this.editingId = platform.id;
-    this.editPlatform = {
+    this.form = {
       name: platform.name ?? '',
       description: platform.description ?? '',
       icon: platform.icon ?? '',
@@ -229,25 +274,35 @@ class PlatformStoreImpl {
       qCount: platform.qCount ?? 0,
       isActive: Boolean(platform.isActive),
     };
-    this.showEditModal = true;
+    this.showModal = true;
   }
 
-  closeEditModal(force = false): void {
+  closeModal(force = false): void {
     if (this.mutating && !force) return;
-    this.showEditModal = false;
-    this.resetEditState();
+    this.showModal = false;
+    this.editingId = null;
+    this.modalMode = 'create';
+    this.resetForm();
   }
 
-  async createPlatform(): Promise<void> {
+  async submitModal(): Promise<void> {
+    if (this.isEditMode) {
+      await this.saveEdit();
+    } else {
+      await this.createPlatform();
+    }
+  }
+
+  private async createPlatform(): Promise<void> {
     if (this.mutating) return;
     this.mutating = true;
     this.error = null;
     try {
-      const payload = this.toPayload(this.newPlatform);
+      const payload = this.toPayload(this.form);
       const { error } = await actions.quiz.createPlatform(payload);
       if (error) throw error;
       await this.loadPlatforms(1);
-      this.closeCreateModal(true);
+      this.closeModal(true);
     } catch (err) {
       console.error('Failed to create platform', err);
       this.error = err instanceof Error ? err.message : 'Unable to create platform.';
@@ -256,16 +311,16 @@ class PlatformStoreImpl {
     }
   }
 
-  async saveEdit(): Promise<void> {
+  private async saveEdit(): Promise<void> {
     if (this.mutating || this.editingId == null) return;
     this.mutating = true;
     this.error = null;
     try {
-      const payload = this.toPayload(this.editPlatform);
+      const payload = this.toPayload(this.form);
       const { error } = await actions.quiz.updatePlatform({ id: this.editingId, data: payload });
       if (error) throw error;
       await this.loadPlatforms(this.page);
-      this.closeEditModal(true);
+      this.closeModal(true);
     } catch (err) {
       console.error('Failed to update platform', err);
       this.error = err instanceof Error ? err.message : 'Unable to update platform.';
@@ -281,6 +336,9 @@ class PlatformStoreImpl {
     try {
       const { error } = await actions.quiz.deletePlatform({ id });
       if (error) throw error;
+      if (this.editingId === id) {
+        this.closeModal(true);
+      }
       const nextPage = this.platforms.length === 1 ? this.page - 1 : this.page;
       await this.loadPlatforms(Math.max(nextPage, 1));
     } catch (err) {
@@ -289,15 +347,6 @@ class PlatformStoreImpl {
     } finally {
       this.mutating = false;
     }
-  }
-
-  resetNewForm(): void {
-    this.newPlatform = this.createDefaultForm();
-  }
-
-  resetEditState(): void {
-    this.editPlatform = this.createDefaultForm();
-    this.editingId = null;
   }
 
   private setLoading(value: boolean): void {
@@ -310,6 +359,10 @@ class PlatformStoreImpl {
         loader.hide();
       }
     }
+  }
+
+  private resetForm(): void {
+    this.form = this.createDefaultForm();
   }
 
   private createDefaultForm(): PlatformForm {

@@ -16,7 +16,14 @@ const {
   ...rest
 } = Astro.props as Props & Record<string, unknown>;
 
-const restProps = rest as Record<string, unknown>;
+const restProps = { ...(rest as Record<string, unknown>) };
+const extraClass =
+  typeof restProps.class === 'string'
+    ? (restProps.class as string)
+    : '';
+if (typeof restProps.class !== 'undefined') {
+  delete restProps.class;
+}
 const hasDynamicHref =
   typeof restProps[':href'] !== 'undefined' || typeof restProps['x-bind:href'] !== 'undefined';
 const isLink = Boolean(href ?? hasDynamicHref);
@@ -37,13 +44,14 @@ const sizeClasses: Record<string, string> = {
 };
 
 const baseClasses =
-  'inline-flex items-center justify-center rounded-lg font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60';
+  'inline-flex items-center justify-center rounded-lg font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-60 gap-2';
 
 const resolvedClasses = [
   baseClasses,
   sizeClasses[size] ?? sizeClasses.md,
   variantClasses[variant] ?? variantClasses.primary,
   block ? 'w-full' : '',
+  extraClass,
 ]
   .filter(Boolean)
   .join(' ');

@@ -1,0 +1,124 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Button from "../components/Button.astro";
+---
+<Layout>
+  <main class="bg-slate-50 min-h-screen">
+    <section class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto max-w-4xl px-4 py-12 sm:px-6 lg:px-8">
+        <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Workspace Settings</h1>
+        <p class="mt-3 max-w-2xl text-base text-slate-600">
+          Tune your profile, notification cadence, and collaboration preferences. Changes apply instantly across the platform.
+        </p>
+      </div>
+    </section>
+
+    <section class="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-12 sm:px-6 lg:px-8">
+      <form class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Profile basics</h2>
+            <p class="text-xs text-slate-500">Update the details teammates see across dashboards.</p>
+          </div>
+          <Button type="submit" size="xs">
+            Save profile
+          </Button>
+        </div>
+        <div class="mt-6 grid gap-5 sm:grid-cols-2">
+          <label class="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span>Display name</span>
+            <input
+              type="text"
+              placeholder="Ex: Taylor Okafor"
+              class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+          </label>
+          <label class="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span>Role</span>
+            <input
+              type="text"
+              placeholder="Product strategy lead"
+              class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            />
+          </label>
+          <label class="sm:col-span-2 flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span>Pronunciation / bio</span>
+            <textarea
+              placeholder="Share a short note to help new collaborators get to know you."
+              class="min-h-[120px] rounded-lg border border-slate-200 px-3 py-2 text-sm font-medium text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            ></textarea>
+          </label>
+        </div>
+      </form>
+
+      <form class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Notifications</h2>
+            <p class="text-xs text-slate-500">Choose how often you hear from us and what warrants a push.</p>
+          </div>
+          <Button type="submit" size="xs">
+            Update channels
+          </Button>
+        </div>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          {[
+            { label: "Weekly digest", description: "Summary of product metrics and top feedback." },
+            { label: "Launch alerts", description: "Immediate alerts when new quizzes go live." },
+            { label: "Review requests", description: "Get pinged when teammates assign follow-ups." },
+            { label: "Beta invites", description: "Early access to experimental features." },
+          ].map((item) => (
+            <label class="flex items-start gap-3 rounded-xl border border-slate-200 p-4 transition hover:border-indigo-300 hover:bg-indigo-50">
+              <input type="checkbox" class="mt-1 h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" checked />
+              <span>
+                <span class="block text-sm font-semibold text-slate-900">{item.label}</span>
+                <span class="mt-1 block text-xs text-slate-500">{item.description}</span>
+              </span>
+            </label>
+          ))}
+        </div>
+      </form>
+
+      <form class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900">Security</h2>
+            <p class="text-xs text-slate-500">Stay resilient with configurable safeguards.</p>
+          </div>
+          <Button type="submit" size="xs" variant="outline">
+            Review access
+          </Button>
+        </div>
+        <div class="mt-6 space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">Two-factor authentication</p>
+              <p class="text-xs text-slate-500">Strengthens login attempts with authenticator apps or SMS.</p>
+            </div>
+            <Button type="button" size="xs">
+              Manage 2FA
+            </Button>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50 px-4 py-3">
+            <div>
+              <p class="text-sm font-semibold text-slate-900">API tokens</p>
+              <p class="text-xs text-slate-500">Rotate keys powering your integrations every 30 days.</p>
+            </div>
+            <Button type="button" size="xs" variant="outline">
+              Rotate token
+            </Button>
+          </div>
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-red-100 bg-rose-50 px-4 py-3">
+            <div>
+              <p class="text-sm font-semibold text-rose-600">Danger zone</p>
+              <p class="text-xs text-rose-500">Temporarily suspend the workspace or transfer ownership.</p>
+            </div>
+            <Button type="button" size="xs" variant="ghost">
+              View options
+            </Button>
+          </div>
+        </div>
+      </form>
+    </section>
+  </main>
+</Layout>
