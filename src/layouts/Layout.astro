@@ -13,6 +13,7 @@ const isLoggedIn = Boolean(sessionData);
 const userInitial = sessionData?.user?.username?.charAt(0)?.toUpperCase() ?? 'U';
 const logoutAction = actions.auth.logout;
 const username = sessionData?.user?.username ?? 'Account';
+const shouldShowBreadcrumb = Astro.url.pathname !== '/';
 ---
 <!doctype html>
 <html lang="en">
@@ -198,7 +199,7 @@ const username = sessionData?.user?.username ?? 'Account';
     </div>
   </header>
                 <main transition:name="page">
-                        <Breadcrumb />
+                        {shouldShowBreadcrumb && <Breadcrumb />}
                         <slot />
                 </main>
 
