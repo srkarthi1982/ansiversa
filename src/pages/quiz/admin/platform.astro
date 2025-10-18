@@ -46,13 +46,15 @@ const platformColumns = [
     label: "Status",
     sortable: true,
     sortKey: "status",
+    align: "center",
+    widthClass: "w-16",
     filter: {
       type: "select",
       key: "status",
       options: [
         { label: "All", value: "all" },
-        { label: "Active", value: "active" },
-        { label: "Inactive", value: "inactive" },
+        { label: "✓", value: "active" },
+        { label: "✕", value: "inactive" },
       ],
     },
   },
@@ -352,14 +354,12 @@ const platformColumns = [
                       <span x-text="`${new Intl.NumberFormat().format(item.qCount ?? 0)} questions`"></span>
                     </span>
                   </td>
-                  <td class="px-4 py-4 align-top">
+                  <td class="px-4 py-4 text-center align-top">
                     <span
-                      class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
-                      :class="item.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-100 text-slate-500'"
-                    >
-                      <span class="h-2 w-2 rounded-full" :class="item.isActive ? 'bg-emerald-500' : 'bg-slate-400'"></span>
-                      <span x-text="item.isActive ? 'Active' : 'Inactive'"></span>
-                    </span>
+                      class="inline-flex h-7 w-7 items-center justify-center rounded-full border text-sm font-semibold"
+                      :class="item.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-rose-200 bg-rose-50 text-rose-600'"
+                      x-text="item.isActive ? '✓' : '✕'"
+                    ></span>
                   </td>
                   <td class="px-4 py-4 text-right align-top">
                     <div class="flex justify-end gap-2">
