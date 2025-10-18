@@ -5,6 +5,7 @@ import { actions } from 'astro:actions';
 import { ClientRouter } from 'astro:transitions';
 import Dropdown from '../components/Dropdown.astro';
 import Button from '../components/Button.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
 import { getSessionWithUser } from '../utils/session.server';
 import Loader from '../components/Loader.astro';
 const sessionData = await getSessionWithUser(Astro.cookies);
@@ -196,9 +197,10 @@ const username = sessionData?.user?.username ?? 'Account';
       </div>
     </div>
   </header>
-		<main transition:name="page">
-			<slot />
-		</main>
+                <main transition:name="page">
+                        <Breadcrumb />
+                        <slot />
+                </main>
 
 		<!-- CTA -->
   <section id="cta" class="py-14">

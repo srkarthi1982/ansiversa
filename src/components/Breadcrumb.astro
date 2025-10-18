@@ -1,0 +1,34 @@
+---
+const { pathname } = Astro.url;
+const segments = pathname.split('/').filter(Boolean);
+
+const formatSegment = (segment: string) =>
+  segment
+    .split('-')
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
+
+const crumbs = segments.map((segment, index) => ({
+  href: `/${segments.slice(0, index + 1).join('/')}`,
+  label: formatSegment(segment),
+}));
+---
+<nav aria-label="Breadcrumb" class="border-b bg-slate-50/60">
+  <ol class="mx-auto flex max-w-7xl items-center gap-2 px-4 py-4 text-sm text-slate-600 sm:px-6 lg:px-8">
+    <li class="flex items-center gap-2">
+      <a href="/" class="font-medium text-indigo-600 hover:text-indigo-500">Home</a>
+    </li>
+    {crumbs.map((crumb) => (
+      <li class="flex items-center gap-2" aria-current={crumb.href === pathname ? 'page' : undefined}>
+        <span aria-hidden="true" class="text-slate-400">/</span>
+        {crumb.href === pathname ? (
+          <span class="font-medium text-slate-900">{crumb.label}</span>
+        ) : (
+          <a href={crumb.href} class="font-medium text-slate-600 hover:text-indigo-500">
+            {crumb.label}
+          </a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
