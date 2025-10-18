@@ -5,6 +5,6 @@ export const logout = defineAction({
   accept: 'form',
   async handler(_, ctx) {
     await clearSession(ctx);
-    return ctx.redirect('/');
+    return ctx.redirect('/', 303);
   },
 });

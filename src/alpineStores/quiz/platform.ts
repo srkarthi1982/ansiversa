@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
+import type { LoaderStore } from '../loader';
 
 type PlatformRecord = {
   id: number;
@@ -62,8 +63,10 @@ class PlatformStoreImpl {
   sort: SortState | null = null;
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
   private readonly allowedSortColumns: PlatformSortColumn[] = ['name', 'description', 'type', 'qCount', 'status', 'id'];
+  private readonly loader: LoaderStore;
 
   constructor() {
+    this.loader = Alpine.store('loader') as LoaderStore;
     this.newPlatform = this.createDefaultForm();
     this.editPlatform = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
@@ -299,6 +302,14 @@ class PlatformStoreImpl {
 
   private setLoading(value: boolean): void {
     this.loading = value;
+    const loader = this.loader;
+    if (loader && typeof loader.show === 'function' && typeof loader.hide === 'function') {
+      if (value) {
+        loader.show();
+      } else {
+        loader.hide();
+      }
+    }
   }
 
   private createDefaultForm(): PlatformForm {

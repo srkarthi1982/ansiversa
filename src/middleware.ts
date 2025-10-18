@@ -1,16 +1,28 @@
 // src/middleware.ts
 import type { MiddlewareHandler } from 'astro';
-import { SESSION_COOKIE_NAME, findActiveSessionByToken } from './utils/session.server';
+import { getSessionWithUser } from './utils/session.server';
 
 export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redirect }, next) => {
-  if (url.toString().includes('/api/') || url.toString().includes('/_actions/')) return next();
-  const token = cookies.get(SESSION_COOKIE_NAME)?.value;
-  const session = await findActiveSessionByToken(token);
+  const result = await getSessionWithUser(cookies);
+  const session = result?.session ?? null;
+  const user = result?.user ?? null;
   const isAuthed = Boolean(session);
-  const protectedPaths = ['/dashboard', '/settings'];
+  const protectedPaths = ['/dashboard', '/settings', '/change-password'];
+  const includesAdminSegment = url.pathname.split('/').filter(Boolean).includes('admin');
+  const requiresAuth = protectedPaths.some((p) => url.pathname.startsWith(p)) || includesAdminSegment;
 
-  if (!isAuthed && protectedPaths.some((p) => url.pathname.startsWith(p))) {
+  if (!isAuthed && requiresAuth) {
     return redirect('/login');
+  }
+
+  if (session) {
+    locals.session = session;
+  }
+  if (user) {
+    locals.user = user;
+    if (includesAdminSegment && user.roleId !== 1) {
+      return redirect('/unauthorized');
+    }
   }
   return next();
 };

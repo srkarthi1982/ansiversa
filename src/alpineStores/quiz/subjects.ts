@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
+import type { LoaderStore } from '../loader';
 
 type SubjectRecord = {
   id: number;
@@ -57,8 +58,10 @@ class SubjectsStoreImpl {
   sort: SortState | null = null;
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
   private readonly allowedSortColumns: SubjectSortColumn[] = ['name', 'platformName', 'platformId', 'qCount', 'status', 'id'];
+  private readonly loader: LoaderStore;
 
   constructor() {
+    this.loader = Alpine.store('loader') as LoaderStore;
     this.newSubject = this.createDefaultForm();
     this.editSubject = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
@@ -321,12 +324,13 @@ class SubjectsStoreImpl {
 
   private setLoading(state: boolean): void {
     this.loading = state;
-    const loaderStore = Alpine.store('loader');
-    if (!loaderStore) return;
-    if (state) {
-      loaderStore.show();
-    } else {
-      loaderStore.hide();
+    const loader = this.loader;
+    if (loader && typeof loader.show === 'function' && typeof loader.hide === 'function') {
+      if (state) {
+        loader.show();
+      } else {
+        loader.hide();
+      }
     }
   }
 

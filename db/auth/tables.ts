@@ -16,7 +16,7 @@ export const User = defineTable({
     plan: column.text({ default: 'free' }),
     emailVerifiedAt: column.date({ optional: true }),
     createdAt: column.date({ default: NOW }),
-    roleId: column.number({ references: () => Role.columns.id, optional: true }),
+    roleId: column.number({ references: () => Role.columns.id, default: 2 }),
   },
 });
 
