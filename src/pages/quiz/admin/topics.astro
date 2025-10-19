@@ -90,19 +90,6 @@ const topicColumns = [
             </h2>
           </div>
           <div class="flex flex-wrap items-center gap-3">
-            <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
-              <span class="text-slate-400">Total:</span>
-              <span class="ml-2 text-slate-900" x-text="Intl.NumberFormat().format(topics.totalItems)"></span>
-            </div>
-            <template x-if="topics.totalItems > 0">
-              <div class="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-600">
-                <span class="text-slate-400">Showing</span>
-                <span
-                  class="ml-2 text-slate-900"
-                  x-text="`${Intl.NumberFormat().format((topics.page - 1) * topics.pageSize + 1)}-${Intl.NumberFormat().format(Math.min(topics.page * topics.pageSize, topics.totalItems))}`"
-                ></span>
-              </div>
-            </template>
             <Button
               type="button"
               size="sm"
