@@ -31,7 +31,7 @@ type QuestionForm = {
   roadmapId: string;
   questionText: string;
   options: string[];
-  answer: string;
+  correctOptionIndex: number | null;
   answerKey: string;
   explanation: string;
   difficulty: string;
@@ -335,7 +335,15 @@ class QuestionsStoreImpl {
       roadmapId: question.roadmapId ? String(question.roadmapId) : '',
       questionText: question.questionText ?? '',
       options: existingOptions.map((option) => option ?? ''),
-      answer: question.answer ?? '',
+      correctOptionIndex:
+        typeof question.answer === 'string'
+          ? (() => {
+              const answerValue = question.answer?.trim() ?? '';
+              if (!answerValue) return null;
+              const matchIndex = existingOptions.findIndex((option) => (option ?? '').trim() === answerValue);
+              return matchIndex >= 0 ? matchIndex : null;
+            })()
+          : null,
       answerKey: question.answerKey ?? '',
       explanation: question.explanation ?? '',
       difficulty: question.difficulty ?? '',
@@ -482,7 +490,7 @@ class QuestionsStoreImpl {
       roadmapId: '',
       questionText: '',
       options: Array.from({ length: 4 }, () => ''),
-      answer: '',
+      correctOptionIndex: null,
       answerKey: '',
       explanation: '',
       difficulty: '',
@@ -531,12 +539,18 @@ class QuestionsStoreImpl {
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-    const options = form.options
-      .map((option) => option.trim())
-      .filter((option) => option.length > 0);
+    const trimmedOptions = form.options.map((option) => option.trim());
+    const options = trimmedOptions.filter((option) => option.length > 0);
     const tags = parseTags(form.tags);
 
-    const answer = form.answer.trim();
+    const correctIndex =
+      typeof form.correctOptionIndex === 'number' && Number.isFinite(form.correctOptionIndex)
+        ? Math.trunc(form.correctOptionIndex)
+        : null;
+    const selectedAnswer =
+      correctIndex !== null && correctIndex >= 0 && correctIndex < trimmedOptions.length
+        ? trimmedOptions[correctIndex]
+        : '';
     const answerKey = form.answerKey.trim();
     const explanation = form.explanation.trim();
     const difficulty = form.difficulty.trim();
@@ -566,7 +580,7 @@ class QuestionsStoreImpl {
       roadmapId,
       questionText,
       options: options.length > 0 ? options : undefined,
-      answer: answer ? answer : undefined,
+      answer: selectedAnswer ? selectedAnswer : undefined,
       answerKey: answerKey ? answerKey : undefined,
       explanation: explanation ? explanation : undefined,
       difficulty: difficulty ? difficulty : undefined,
