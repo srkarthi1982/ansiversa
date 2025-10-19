@@ -233,13 +233,24 @@ const questionColumns = [
                   <template x-for="(option, index) in questions.form.options" x-bind:key="`option-${index}`">
                     <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
                       <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Option <span x-text="index + 1"></span></span>
-                      <input
-                        type="text"
-                        class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                        x-model="questions.form.options[index]"
-                        x-bind:disabled="questions.mutating"
-                        x-bind:placeholder="`Option ${index + 1}`"
-                      />
+                      <div class="flex items-center gap-3">
+                        <input
+                          type="radio"
+                          name="correct-option"
+                          class="h-4 w-4 border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                          x-model.number="questions.form.correctOptionIndex"
+                          x-bind:value="index"
+                          x-bind:disabled="questions.mutating"
+                          x-bind:aria-label="`Mark option ${index + 1} as correct`"
+                        />
+                        <input
+                          type="text"
+                          class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                          x-model="questions.form.options[index]"
+                          x-bind:disabled="questions.mutating"
+                          x-bind:placeholder="`Option ${index + 1}`"
+                        />
+                      </div>
                     </label>
                   </template>
                 </div>
@@ -256,22 +267,12 @@ const questionColumns = [
             </div>
 
             <div class="grid gap-4 sm:grid-cols-2">
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Answer</span>
-                <input
-                  type="text"
-                  placeholder="Correct answer"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.answer"
-                  x-bind:disabled="questions.mutating"
-                />
-              </label>
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600 sm:col-span-2 sm:flex-row sm:items-center sm:gap-3">
                 <span>Answer key</span>
                 <input
                   type="text"
                   placeholder="Reference key"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100 sm:flex-1"
                   x-model.trim="questions.form.answerKey"
                   x-bind:disabled="questions.mutating"
                 />
