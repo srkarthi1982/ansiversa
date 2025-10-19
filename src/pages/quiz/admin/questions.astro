@@ -227,15 +227,23 @@ const questionColumns = [
             </label>
 
             <div class="grid gap-4 sm:grid-cols-2">
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Options (one per line)</span>
-                <textarea
-                  rows="4"
-                  class="h-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model="questions.form.options"
-                  x-bind:disabled="questions.mutating"
-                ></textarea>
-              </label>
+              <fieldset class="flex flex-col gap-2">
+                <legend class="text-xs font-semibold text-slate-600">Options</legend>
+                <div class="grid gap-2 sm:grid-cols-2">
+                  <template x-for="(option, index) in questions.form.options" x-bind:key="`option-${index}`">
+                    <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+                      <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Option <span x-text="index + 1"></span></span>
+                      <input
+                        type="text"
+                        class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                        x-model="questions.form.options[index]"
+                        x-bind:disabled="questions.mutating"
+                        x-bind:placeholder="`Option ${index + 1}`"
+                      />
+                    </label>
+                  </template>
+                </div>
+              </fieldset>
               <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
                 <span>Explanation</span>
                 <textarea
