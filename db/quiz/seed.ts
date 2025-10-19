@@ -1,10 +1,21 @@
-import { db, Platform, Subject, Topic } from 'astro:db';
+import { db, Platform, Subject, Topic, Roadmap } from 'astro:db';
 import topicsData from './topics.json';
+import roadmapsData from './roadmaps.json';
 
 type TopicJson = {
   id: number;
   platform_id: number;
   subject_id: number;
+  name: string;
+  is_active: boolean;
+  q_count?: number;
+};
+
+type RoadmapJson = {
+  id: number;
+  platform_id: number;
+  subject_id: number;
+  topic_id: number;
   name: string;
   is_active: boolean;
   q_count?: number;
@@ -2283,6 +2294,7 @@ export async function seedQuiz() {
       qCount: item.q_count ?? 0,
     }));
 
+  let insertedTopicsCount = 0;
   if (topics.length > 0) {
     console.log(`Seeding ${topics.length} topics (after validation)`);
     const batchSize = 100;
@@ -2290,15 +2302,76 @@ export async function seedQuiz() {
       const batch = topics.slice(i, i + batchSize);
       try {
         await db.insert(Topic).values(batch);
+        insertedTopicsCount += batch.length;
       } catch (err) {
         for (const entry of batch) {
           try {
             await db.insert(Topic).values(entry);
+            insertedTopicsCount += 1;
           } catch (singleErr) {
             console.error('Skipping topic during seed', entry.id, singleErr instanceof Error ? singleErr.message : singleErr);
           }
         }
       }
     }
+  }
+
+  if (insertedTopicsCount > 0) {
+    console.log(`Inserted ${insertedTopicsCount} topics`);
+  }
+
+  const topicRows = await db.select({ id: Topic.id, platformId: Topic.platformId, subjectId: Topic.subjectId }).from(Topic);
+  const topicLookup = new Map<number, { platformId: number; subjectId: number }>();
+  for (const row of topicRows) {
+    topicLookup.set(row.id, { platformId: row.platformId, subjectId: row.subjectId });
+  }
+
+  const roadmaps = (roadmapsData as RoadmapJson[])
+    .filter((item): item is RoadmapJson => typeof item?.id === 'number')
+    .filter((item) => {
+      if (!platformIds.has(item.platform_id)) {
+        return false;
+      }
+      const subjectPlatformId = subjectPlatformMap.get(item.subject_id);
+      if (typeof subjectPlatformId !== 'number' || subjectPlatformId !== item.platform_id) {
+        return false;
+      }
+      const topicEntry = topicLookup.get(item.topic_id);
+      if (!topicEntry) {
+        return false;
+      }
+      return topicEntry.platformId === item.platform_id && topicEntry.subjectId === item.subject_id;
+    })
+    .map((item) => ({
+      id: item.id,
+      platformId: item.platform_id,
+      subjectId: item.subject_id,
+      topicId: item.topic_id,
+      name: item.name,
+      isActive: item.is_active,
+      qCount: item.q_count ?? 0,
+    }));
+
+  if (roadmaps.length > 0) {
+    console.log(`Seeding ${roadmaps.length} roadmaps (after validation)`);
+    const batchSize = 100;
+    let insertedRoadmapsCount = 0;
+    for (let i = 0; i < roadmaps.length; i += batchSize) {
+      const batch = roadmaps.slice(i, i + batchSize);
+      try {
+        await db.insert(Roadmap).values(batch);
+        insertedRoadmapsCount += batch.length;
+      } catch (err) {
+        for (const entry of batch) {
+          try {
+            await db.insert(Roadmap).values(entry);
+            insertedRoadmapsCount += 1;
+          } catch (singleErr) {
+            console.error('Skipping roadmap during seed', entry.id, singleErr instanceof Error ? singleErr.message : singleErr);
+          }
+        }
+      }
+    }
+    console.log(`Inserted ${insertedRoadmapsCount} roadmaps`);
   }
 }

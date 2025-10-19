@@ -33,8 +33,21 @@ export const Topic = defineTable({
   },
 });
 
+export const Roadmap = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    platformId: column.number({ references: () => Platform.columns.id }),
+    subjectId: column.number({ references: () => Subject.columns.id }),
+    topicId: column.number({ references: () => Topic.columns.id }),
+    name: column.text(),
+    isActive: column.boolean({ default: true }),
+    qCount: column.number({ default: 0 }),
+  },
+});
+
 export const quizTables = {
   Platform,
   Subject,
   Topic,
+  Roadmap,
 } as const;
