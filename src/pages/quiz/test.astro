@@ -1,0 +1,284 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import { Fragment } from "astro/jsx-runtime";
+---
+<Layout>
+  <main class="bg-slate-50 min-h-screen">
+    <section class="py-6" x-data="{ test: $store.test }" x-init="test.onInit()">
+      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-2">
+          <h1 class="text-3xl font-bold text-slate-900 sm:text-4xl">Quiz Builder Playground</h1>
+          <p class="text-sm text-slate-500">Experiment with the platform/subject/topic selection flow driven entirely by live data from the quiz actions.</p>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white shadow-[0_24px_60px_-32px_rgba(15,23,42,0.3)]">
+          <div class="border-b border-slate-200 px-6 pb-6 pt-8">
+            <ol class="grid grid-cols-6 items-start justify-items-center gap-4 text-xs font-semibold text-slate-400">
+              <template x-for="(label, index) in ['Platform', 'Subject', 'Topic', 'Roadmap', 'Level', 'Quiz']" :key="`step-${index}`">
+                <li class="flex flex-col items-center justify-center gap-1 text-center">
+                  <button
+                    type="button"
+                    class="inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-current font-semibold transition"
+                    :class="test.step === index + 1 ? 'border-indigo-400 bg-indigo-100 text-indigo-700' : test.step > index + 1 ? 'border-emerald-300 bg-emerald-50 text-emerald-600' : 'border-slate-200 bg-slate-50 text-slate-400'"
+                    x-text="index + 1"
+                    @click.prevent="test.goToStep(index + 1)"
+                    :disabled="!test.canNavigateTo(index + 1)"
+                  ></button>
+                  <span class="text-[11px] uppercase tracking-wide hidden sm:block" x-text="label"></span>
+                </li>
+              </template>
+            </ol>
+          </div>
+
+          <aside class="border-b border-slate-200 px-6 py-6">
+            <dl class="grid gap-3 text-sm text-slate-600 sm:grid-cols-2 lg:grid-cols-3">
+              <div>
+                <dt class="font-semibold text-slate-500">Platform</dt>
+                <dd x-text="test.list.platforms.find((item) => item.id === test.selection.platformId)?.name ?? '—'"></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-slate-500">Subject</dt>
+                <dd x-text="test.list.subjects.find((item) => item.id === test.selection.subjectId)?.name ?? '—'"></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-slate-500">Topic</dt>
+                <dd x-text="test.list.topics.find((item) => item.id === test.selection.topicId)?.name ?? '—'"></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-slate-500">Roadmap</dt>
+                <dd x-text="test.list.roadmaps.find((item) => item.id === test.selection.roadmapId)?.name ?? '—'"></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-slate-500">Level</dt>
+                <dd x-text="test.selection.levelId || '—'"></dd>
+              </div>
+              <div>
+                <dt class="font-semibold text-slate-500">Questions loaded</dt>
+                <dd x-text="test.totalQuestions"></dd>
+              </div>
+            </dl>
+          </aside>
+
+          <div class="px-6 pb-8 pt-6">
+            <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-xl font-semibold text-slate-900" x-text="['Choose a Platform','Choose a Subject','Choose a Topic','Choose a Roadmap','Pick a Level','Take the Quiz'][test.step - 1]"></h2>
+                <p class="text-xs text-slate-500" x-show="test.isCompleted">Review your results and restart anytime.</p>
+              </div>
+              <div class="flex items-center gap-2" x-show="test.step < 5">
+                <input
+                  type="search"
+                  class="w-56 rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  placeholder="Search"
+                  x-model="test.search"
+                  x-bind:disabled="test.loading"
+                />
+              </div>
+            </div>
+
+            <!-- Step 1: Platforms -->
+            <div x-show="test.step === 1" x-cloak>
+              <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
+                <template x-for="platform in test.filteredPlatforms" :key="`platform-${platform.id}`">
+                  <button
+                    class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 text-left transition hover:border-indigo-200 hover:bg-indigo-50"
+                    :class="test.selection.platformId === platform.id ? 'border-indigo-300 bg-indigo-50 text-indigo-700 shadow-inner' : ''"
+                    @click.prevent="test.choosePlatform(platform.id)"
+                    x-bind:disabled="test.loading"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+                        <i :class="platform.icon ? `fas ${platform.icon}` : 'fas fa-shapes'"></i>
+                      </span>
+                      <div>
+                        <p class="font-semibold text-slate-900" x-text="platform.name"></p>
+                      </div>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                      <i class="fas fa-question-circle text-[10px]"></i>
+                      <span x-text="platform.qCount ? platform.qCount.toLocaleString() : 0"></span>
+                    </span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- Step 2: Subjects -->
+            <div x-show="test.step === 2" x-cloak>
+              <div class="grid gap-3 sm:grid-cols-2">
+                <template x-for="subject in test.filteredSubjects" :key="`subject-${subject.id}`">
+                  <button
+                    class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 text-left transition hover:border-emerald-200 hover:bg-emerald-50"
+                    :class="test.selection.subjectId === subject.id ? 'border-emerald-300 bg-emerald-50 text-emerald-700 shadow-inner' : ''"
+                    @click.prevent="test.chooseSubject(subject.id)"
+                    x-bind:disabled="test.loading"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-100 text-emerald-600">
+                        <i class="fas fa-book"></i>
+                      </span>
+                      <p class="font-semibold text-slate-900" x-text="subject.name"></p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-600">
+                      <i class="fas fa-question-circle text-[10px]"></i>
+                      <span x-text="subject.qCount ? subject.qCount.toLocaleString() : 0"></span>
+                    </span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- Step 3: Topics -->
+            <div x-show="test.step === 3" x-cloak>
+              <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-2">
+                <template x-for="topic in test.filteredTopics" :key="`topic-${topic.id}`">
+                  <button
+                    class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 text-left transition hover:border-purple-200 hover:bg-purple-50"
+                    :class="test.selection.topicId === topic.id ? 'border-purple-300 bg-purple-50 text-purple-700 shadow-inner' : ''"
+                    @click.prevent="test.chooseTopic(topic.id)"
+                    x-bind:disabled="test.loading"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-purple-100 text-purple-600">
+                        <i class="fas fa-layer-group"></i>
+                      </span>
+                      <p class="font-semibold text-slate-900" x-text="topic.name"></p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-600">
+                      <i class="fas fa-question-circle text-[10px]"></i>
+                      <span x-text="topic.qCount ? topic.qCount.toLocaleString() : 0"></span>
+                    </span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- Step 4: Roadmaps -->
+            <div x-show="test.step === 4" x-cloak>
+              <div class="grid gap-3 md:grid-cols-2">
+                <template x-for="roadmap in test.filteredRoadmaps" :key="`roadmap-${roadmap.id}`">
+                  <button
+                    class="flex items-center justify-between rounded-2xl border border-slate-200 px-4 py-3 text-left transition hover:border-orange-200 hover:bg-orange-50"
+                    :class="test.selection.roadmapId === roadmap.id ? 'border-orange-300 bg-orange-50 text-orange-700 shadow-inner' : ''"
+                    @click.prevent="test.chooseRoadmap(roadmap.id)"
+                    x-bind:disabled="test.loading"
+                  >
+                    <div class="flex items-center gap-3">
+                      <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-orange-100 text-orange-600">
+                        <i class="fas fa-road"></i>
+                      </span>
+                      <p class="font-semibold text-slate-900" x-text="roadmap.name"></p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-orange-100 px-3 py-1 text-xs font-semibold text-orange-600">
+                      <i class="fas fa-question-circle text-[10px]"></i>
+                      <span x-text="roadmap.qCount ? roadmap.qCount.toLocaleString() : 0"></span>
+                    </span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- Step 5: Levels -->
+            <div x-show="test.step === 5" x-cloak>
+              <div class="grid gap-3 md:grid-cols-3">
+                <template x-for="level in test.list.levels" :key="level.id">
+                  <button
+                    class="flex items-center gap-3 rounded-2xl border border-slate-200 px-4 py-3 text-left transition hover:border-blue-200 hover:bg-blue-50"
+                    :class="test.selection.levelId === level.id ? 'border-blue-300 bg-blue-50 text-blue-700 shadow-inner' : ''"
+                    @click.prevent="test.chooseLevel(level.id)"
+                    x-bind:disabled="test.loading"
+                  >
+                    <span class="inline-flex h-10 w-10 items-center justify-center rounded-xl bg-blue-100 text-blue-600">
+                      <i :class="`fas ${level.icon}`"></i>
+                    </span>
+                    <p class="font-semibold text-slate-900" x-text="level.name"></p>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <!-- Step 6: Quiz -->
+            <div x-show="test.step === 6" x-cloak>
+              <template x-if="test.totalQuestions === 0 && !test.loading">
+                <p class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-6 text-sm text-slate-500">
+                  No questions were found for this combination. Try selecting a different roadmap or level.
+                </p>
+              </template>
+
+              <template x-if="test.totalQuestions > 0">
+                <div class="space-y-6">
+                  <div class="rounded-2xl border border-slate-200 bg-white px-5 py-6 shadow-inner">
+                    <div class="flex items-start justify-between gap-4">
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Question <span x-text="test.currentQuestion + 1"></span> of <span x-text="test.totalQuestions"></span></p>
+                        <h3 class="mt-2 text-lg font-semibold text-slate-900" x-text="test.currentQuestionItem?.questionText"></h3>
+                      </div>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                        <i class="fas fa-signal text-[10px]"></i>
+                        <span x-text="test.currentQuestionItem?.level ?? '—'"></span>
+                      </span>
+                    </div>
+
+                    <ul class="mt-4 space-y-2">
+                      <template x-for="(option, index) in test.currentQuestionItem?.options ?? []" :key="`question-option-${index}`">
+                        <li>
+                          <label class="flex items-center gap-3 rounded-xl border border-slate-200 px-4 py-2 transition hover:border-indigo-200 hover:bg-indigo-50">
+                            <input
+                              type="radio"
+                              class="h-4 w-4 text-indigo-600 focus:ring-indigo-500"
+                              :name="`question-${test.currentQuestion}`"
+                              :value="index"
+                              x-model="test.selection.answers[test.currentQuestion]"
+                            />
+                            <span class="text-sm text-slate-700" x-text="option"></span>
+                          </label>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex items-center gap-2">
+                      <Button variant="ghost" size="sm" x-on:click="test.previousQuestion()" x-bind:disabled="test.currentQuestion === 0">
+                        <i class="fas fa-arrow-left text-sm"></i>
+                        Previous
+                      </Button>
+                      <Button variant="ghost" size="sm" x-on:click="test.nextQuestion()" x-bind:disabled="test.currentQuestion >= test.totalQuestions - 1">
+                        Next
+                        <i class="fas fa-arrow-right text-sm"></i>
+                      </Button>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <Button variant="outline" size="sm" x-on:click="test.reset()">
+                        Restart
+                      </Button>
+                      <Button size="sm" x-on:click="test.finishQuiz()" x-bind:disabled="test.isCompleted">
+                        Submit answers
+                      </Button>
+                    </div>
+                  </div>
+
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5" x-show="test.isCompleted">
+                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                      <div>
+                        <p class="text-sm font-semibold text-slate-900">Score</p>
+                        <p class="text-xs text-slate-500">Correct answers out of <span x-text="test.totalQuestions"></span></p>
+                      </div>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-semibold text-emerald-600">
+                        <i class="fas fa-star text-[11px]"></i>
+                        <span x-text="`${test.mark} / ${test.totalQuestions}`"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+    </section>
+  </main>
+</Layout>

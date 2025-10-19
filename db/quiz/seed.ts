@@ -1,7 +1,7 @@
 import { db, Platform, Subject, Topic, Roadmap, Question } from 'astro:db';
-import { readFile } from 'node:fs/promises';
 import topicsData from './topics.json';
 import roadmapsData from './roadmaps.json';
+import medicalQuestionsData from './medical_questions.json';
 
 type TopicJson = {
   id: number;
@@ -36,58 +36,29 @@ type QuestionJson = {
   correct_option?: unknown;
   correct_answer?: unknown;
   answer_key?: unknown;
+  level?: unknown;
+  l?: unknown;
   options?: unknown;
   choices?: unknown;
   explanation?: unknown;
-  difficulty?: unknown;
   question_type?: unknown;
-  tags?: unknown;
-  metadata?: unknown;
   [key: string]: unknown;
 };
 
-type NormalizedOptions = string[] | Record<string, string>;
+type NormalizedOptions = string[];
 
 type InsertableQuestion = {
-  id: number;
   platformId: number;
   subjectId: number;
   topicId: number;
-  roadmapId?: number;
-  questionText: string;
-  options?: NormalizedOptions;
-  answer?: string;
-  answerKey?: string;
-  explanation?: string;
-  difficulty?: string;
-  questionType?: string;
-  tags?: string[];
-  metadata?: Record<string, unknown>;
+  roadmapId: number;
+  q: string;
+  o: NormalizedOptions;
+  a: string;
+  e: string;
+  l: string;
   isActive: boolean;
 };
-
-const QUESTION_KNOWN_FIELDS = new Set([
-  'id',
-  'platform_id',
-  'subject_id',
-  'topic_id',
-  'roadmap_id',
-  'is_active',
-  'question',
-  'question_text',
-  'prompt',
-  'answer',
-  'correct_option',
-  'correct_answer',
-  'answer_key',
-  'options',
-  'choices',
-  'explanation',
-  'difficulty',
-  'question_type',
-  'tags',
-  'metadata',
-]);
 
 const normalizeText = (value: unknown): string | null => {
   if (typeof value === 'string') {
@@ -109,6 +80,20 @@ const normalizeFlexibleString = (value: unknown): string | null => {
 };
 
 const normalizeKey = (value: unknown): string | null => normalizeFlexibleString(value);
+
+const normalizeLevel = (value: unknown): string | null => {
+  const normalized = normalizeFlexibleString(value);
+  if (!normalized) {
+    return null;
+  }
+
+  const upper = normalized.trim().toUpperCase();
+  if (upper === 'EASY' || upper === 'E') return 'E';
+  if (upper === 'MEDIUM' || upper === 'M') return 'M';
+  if (upper === 'DIFFICULT' || upper === 'HARD' || upper === 'D') return 'D';
+
+  return null;
+};
 
 const normalizeOptions = (value: unknown): NormalizedOptions | undefined => {
   if (Array.isArray(value)) {
@@ -134,144 +119,70 @@ const normalizeOptions = (value: unknown): NormalizedOptions | undefined => {
     return normalized.length > 0 ? normalized : undefined;
   }
 
-  if (value && typeof value === 'object' && !Array.isArray(value)) {
-    const normalized: Record<string, string> = {};
-    for (const [rawKey, rawValue] of Object.entries(value as Record<string, unknown>)) {
-      const key = normalizeText(rawKey) ?? normalizeFlexibleString(rawKey);
-      if (!key) {
-        continue;
-      }
+  if (value && typeof value === 'object') {
+    const normalized: string[] = [];
+    for (const rawValue of Object.values(value as Record<string, unknown>)) {
       const normalizedValue = normalizeFlexibleString(rawValue);
       if (normalizedValue) {
-        normalized[key] = normalizedValue;
+        normalized.push(normalizedValue);
       } else if (rawValue && typeof rawValue === 'object') {
         try {
-          normalized[key] = JSON.stringify(rawValue);
+          normalized.push(JSON.stringify(rawValue));
         } catch {
           continue;
         }
       }
     }
-    return Object.keys(normalized).length > 0 ? normalized : undefined;
-  }
-
-  return undefined;
-};
-
-const normalizeStringArray = (value: unknown): string[] | undefined => {
-  if (Array.isArray(value)) {
-    const normalized = value
-      .map((entry) => normalizeText(entry) ?? normalizeFlexibleString(entry))
-      .filter((entry): entry is string => typeof entry === 'string');
-    return normalized.length > 0 ? normalized : undefined;
-  }
-
-  if (typeof value === 'string') {
-    const normalized = value
-      .split(',')
-      .map((entry) => entry.trim())
-      .filter((entry) => entry.length > 0);
     return normalized.length > 0 ? normalized : undefined;
   }
 
   return undefined;
 };
 
-const buildMetadata = (item: QuestionJson): Record<string, unknown> | undefined => {
-  const metadataEntries: [string, unknown][] = [];
-  for (const [key, value] of Object.entries(item)) {
-    if (QUESTION_KNOWN_FIELDS.has(key)) {
-      continue;
-    }
-    metadataEntries.push([key, value]);
-  }
-
-  let metadataObject: Record<string, unknown> | undefined;
-  if (item.metadata && typeof item.metadata === 'object' && !Array.isArray(item.metadata)) {
-    metadataObject = { ...(item.metadata as Record<string, unknown>) };
-  }
-
-  if (metadataEntries.length > 0) {
-    metadataObject = { ...(metadataObject ?? {}), ...Object.fromEntries(metadataEntries) };
-  }
-
-  return metadataObject;
-};
-
-const deriveAnswer = (
-  answer: string | null,
+const deriveAnswerKey = (
   answerKey: string | null,
+  answer: string | null,
   options: NormalizedOptions | undefined,
-): { answer?: string; answerKey?: string } => {
-  let resolvedAnswer = answer ?? undefined;
-  let resolvedKey = answerKey ?? undefined;
+): string | undefined => {
+  const normalizedKey = normalizeKey(answerKey ?? undefined);
+  if (normalizedKey) {
+    return normalizedKey;
+  }
 
-  if (!resolvedAnswer && resolvedKey && options) {
-    if (Array.isArray(options)) {
-      const numericKey = Number.parseInt(resolvedKey, 10);
-      if (!Number.isNaN(numericKey)) {
-        const potentialIndexes = [numericKey, numericKey - 1];
-        for (const index of potentialIndexes) {
-          if (index >= 0 && index < options.length) {
-            resolvedAnswer = options[index];
-            break;
-          }
-        }
-      }
+  const normalizedAnswer = normalizeFlexibleString(answer);
+  if (!normalizedAnswer || !options) {
+    return undefined;
+  }
 
-      if (!resolvedAnswer) {
-        const normalizedKey = resolvedKey.trim().toLowerCase();
-        if (normalizedKey.length === 1) {
-          const index = normalizedKey.charCodeAt(0) - 97;
-          if (index >= 0 && index < options.length) {
-            resolvedAnswer = options[index];
-          }
-        }
-      }
-    } else {
-      const direct = options[resolvedKey] ?? options[resolvedKey.trim()];
-      if (typeof direct === 'string') {
-        resolvedAnswer = direct;
-      }
+  const lowerAnswer = normalizedAnswer.trim().toLowerCase();
 
-      if (!resolvedAnswer) {
-        const normalizedKey = resolvedKey.trim().toLowerCase();
-        for (const [key, value] of Object.entries(options)) {
-          if (key.trim().toLowerCase() === normalizedKey) {
-            resolvedAnswer = value;
-            resolvedKey = key;
-            break;
-          }
-        }
-      }
+  for (let index = 0; index < options.length; index += 1) {
+    const option = options[index];
+    if (option.trim().toLowerCase() === lowerAnswer) {
+      return String(index);
     }
   }
 
-  return {
-    answer: resolvedAnswer,
-    answerKey: resolvedKey,
-  };
-};
-
-const loadMedicalQuestions = async (): Promise<QuestionJson[]> => {
-  try {
-    const fileUrl = new URL('./medical_questions.json', import.meta.url);
-    const fileContents = await readFile(fileUrl, 'utf-8');
-    const parsed = JSON.parse(fileContents);
-    if (Array.isArray(parsed)) {
-      return parsed.filter((item): item is QuestionJson => typeof item === 'object' && item !== null);
+  const parsedIndex = Number.parseInt(normalizedAnswer, 10);
+  if (!Number.isNaN(parsedIndex)) {
+    if (parsedIndex >= 0 && parsedIndex < options.length) {
+      return String(parsedIndex);
     }
-    console.warn('medical_questions.json did not contain an array; skipping question seed');
-  } catch (error) {
-    const errorWithCode = error as { code?: unknown };
-    if (typeof errorWithCode?.code === 'string' && errorWithCode.code === 'ENOENT') {
-      console.warn('medical_questions.json not found, skipping question seed');
-    } else {
-      console.error('Failed to read medical_questions.json', error);
+
+    const zeroBasedIndex = parsedIndex - 1;
+    if (zeroBasedIndex >= 0 && zeroBasedIndex < options.length) {
+      return String(zeroBasedIndex);
     }
   }
 
-  return [];
+  if (lowerAnswer.length === 1) {
+    const alphaIndex = lowerAnswer.charCodeAt(0) - 97;
+    if (alphaIndex >= 0 && alphaIndex < options.length) {
+      return String(alphaIndex);
+    }
+  }
+
+  return undefined;
 };
 
 const normalizeQuestion = (
@@ -312,20 +223,20 @@ const normalizeQuestion = (
     return null;
   }
 
-  let roadmapId: number | undefined;
-  if (typeof item.roadmap_id === 'number') {
-    const roadmapEntry = context.roadmapLookup.get(item.roadmap_id);
-    if (!roadmapEntry) {
-      return null;
-    }
-    if (
-      roadmapEntry.platformId !== platformId ||
-      roadmapEntry.subjectId !== subjectId ||
-      roadmapEntry.topicId !== topicId
-    ) {
-      return null;
-    }
-    roadmapId = item.roadmap_id;
+  if (typeof item.roadmap_id !== 'number') {
+    return null;
+  }
+
+  const roadmapEntry = context.roadmapLookup.get(item.roadmap_id);
+  if (!roadmapEntry) {
+    return null;
+  }
+  if (
+    roadmapEntry.platformId !== platformId ||
+    roadmapEntry.subjectId !== subjectId ||
+    roadmapEntry.topicId !== topicId
+  ) {
+    return null;
   }
 
   const questionText =
@@ -338,68 +249,47 @@ const normalizeQuestion = (
   }
 
   const options = normalizeOptions(item.options ?? item.choices);
+  if (!options || options.length === 0) {
+    return null;
+  }
+
   const rawAnswer = normalizeFlexibleString(item.answer ?? item.correct_answer);
   const rawAnswerKey = normalizeKey(item.answer_key ?? item.correct_option);
-  const { answer, answerKey } = deriveAnswer(rawAnswer, rawAnswerKey, options);
+  const answerKey = deriveAnswerKey(rawAnswerKey, rawAnswer, options);
+  if (!answerKey) {
+    return null;
+  }
+
   const explanation = normalizeText(item.explanation);
-  const difficulty = normalizeText(item.difficulty);
-  const questionType = normalizeText(item.question_type);
-  const tags = normalizeStringArray(item.tags);
-  const metadata = buildMetadata(item);
+  if (!explanation) {
+    return null;
+  }
+
+  const level = normalizeLevel(item.level ?? item.l ?? item.difficulty);
+  if (!level) {
+    return null;
+  }
   const isActive = typeof item.is_active === 'boolean' ? item.is_active : true;
 
   const normalized: InsertableQuestion = {
-    id: item.id,
     platformId,
     subjectId,
     topicId,
-    questionText,
+    roadmapId: item.roadmap_id,
+    q: questionText,
+    o: options,
+    a: answerKey,
+    e: explanation,
+    l: level,
     isActive,
   };
-
-  if (typeof roadmapId === 'number') {
-    normalized.roadmapId = roadmapId;
-  }
-
-  if (options) {
-    normalized.options = options;
-  }
-
-  if (answer) {
-    normalized.answer = answer;
-  }
-
-  if (answerKey) {
-    normalized.answerKey = answerKey;
-  }
-
-  if (explanation) {
-    normalized.explanation = explanation;
-  }
-
-  if (difficulty) {
-    normalized.difficulty = difficulty;
-  }
-
-  if (questionType) {
-    normalized.questionType = questionType;
-  }
-
-  if (tags) {
-    normalized.tags = tags;
-  }
-
-  if (metadata) {
-    normalized.metadata = metadata;
-  }
-
   return normalized;
 };
 
 // https://astro.build/db/seed
 export async function seedQuiz() {
   console.log('Seeding quiz data...');
-	await db.insert(Platform).values([
+  await db.insert(Platform).values([
     {
       id: 1,
       name: "Medical",
@@ -814,7 +704,7 @@ export async function seedQuiz() {
       type: "A",
       qCount: 59374,
     },
-  ]);
+  ]).onConflictDoNothing();
 
   await db.insert(Subject).values([
       {
@@ -2637,7 +2527,7 @@ export async function seedQuiz() {
         isActive: true,
         qCount: 5849,
       }
-  ]);
+  ]).onConflictDoNothing();
 
   const [subjectRows, platformRows] = await Promise.all([
     db.select({ id: Subject.id, platformId: Subject.platformId }).from(Subject),
@@ -2768,8 +2658,16 @@ export async function seedQuiz() {
     });
   }
 
-  const rawQuestions = await loadMedicalQuestions();
-  const questions = rawQuestions
+  let rawQuestionsSource: QuestionJson[] = [];
+  if (Array.isArray(medicalQuestionsData)) {
+    rawQuestionsSource = (medicalQuestionsData as unknown[]).filter(
+      (item): item is QuestionJson => typeof item === 'object' && item !== null,
+    );
+  } else {
+    console.warn('medical_questions.json did not contain an array; skipping question seed');
+  }
+
+  const questions = rawQuestionsSource
     .map((item) => normalizeQuestion(item, { platformIds, subjectPlatformMap, topicLookup, roadmapLookup }))
     .filter((item): item is InsertableQuestion => item !== null);
 
@@ -2788,7 +2686,11 @@ export async function seedQuiz() {
             await db.insert(Question).values(entry);
             insertedQuestionsCount += 1;
           } catch (singleErr) {
-            console.error('Skipping question during seed', entry.id, singleErr instanceof Error ? singleErr.message : singleErr);
+            console.error(
+              'Skipping question during seed',
+              entry.q,
+              singleErr instanceof Error ? singleErr.message : singleErr,
+            );
           }
         }
       }

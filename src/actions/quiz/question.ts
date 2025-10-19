@@ -20,23 +20,69 @@ type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 type QuestionRow = typeof Question.$inferSelect;
 
 const normalizeArray = (value: unknown): string[] => {
-  if (!Array.isArray(value)) {
-    return [];
+  if (Array.isArray(value)) {
+    return value
+      .map((item) => {
+        if (typeof item === 'string') return item.trim();
+        if (typeof item === 'number' || typeof item === 'boolean') return String(item);
+        return '';
+      })
+      .filter((item) => item.length > 0);
   }
-  return value
-    .map((item) => {
-      if (typeof item === 'string') return item.trim();
-      if (typeof item === 'number' || typeof item === 'boolean') return String(item);
-      return '';
-    })
-    .filter((item) => item.length > 0);
+
+  if (value && typeof value === 'object') {
+    return Object.values(value as Record<string, unknown>)
+      .map((item) => {
+        if (typeof item === 'string') return item.trim();
+        if (typeof item === 'number' || typeof item === 'boolean') return String(item);
+        try {
+          return JSON.stringify(item);
+        } catch {
+          return '';
+        }
+      })
+      .filter((item) => item.length > 0);
+  }
+
+  return [];
 };
 
-const normalizeMetadata = (value: unknown): Record<string, unknown> | null => {
-  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+const deriveAnswerFromKey = (options: string[], answerKey?: string | null): string | null => {
+  if (!Array.isArray(options) || options.length === 0) {
     return null;
   }
-  return value as Record<string, unknown>;
+
+  const key = typeof answerKey === 'string' ? answerKey.trim() : '';
+  if (!key) {
+    return null;
+  }
+
+  const numericKey = Number.parseInt(key, 10);
+  if (!Number.isNaN(numericKey)) {
+    if (numericKey >= 0 && numericKey < options.length) {
+      return options[numericKey];
+    }
+    const zeroBased = numericKey - 1;
+    if (zeroBased >= 0 && zeroBased < options.length) {
+      return options[zeroBased];
+    }
+  }
+
+  if (key.length === 1) {
+    const alphaIndex = key.toLowerCase().charCodeAt(0) - 97;
+    if (alphaIndex >= 0 && alphaIndex < options.length) {
+      return options[alphaIndex];
+    }
+  }
+
+  const loweredKey = key.toLowerCase();
+  for (const option of options) {
+    if (option.trim().toLowerCase() === loweredKey) {
+      return option;
+    }
+  }
+
+  return null;
 };
 
 const normalizeQuestion = (
@@ -46,44 +92,44 @@ const normalizeQuestion = (
     topicName?: string | null;
     roadmapName?: string | null;
   },
-) => ({
-  id: row.id,
-  platformId: row.platformId,
-  subjectId: row.subjectId,
-  topicId: row.topicId,
-  roadmapId: row.roadmapId ?? null,
-  questionText: row.questionText,
-  options: normalizeArray(row.options),
-  answer: typeof row.answer === 'string' && row.answer.trim().length > 0 ? row.answer : null,
-  answerKey: typeof row.answerKey === 'string' && row.answerKey.trim().length > 0 ? row.answerKey : null,
-  explanation:
-    typeof row.explanation === 'string' && row.explanation.trim().length > 0 ? row.explanation : null,
-  difficulty: typeof row.difficulty === 'string' && row.difficulty.trim().length > 0 ? row.difficulty : null,
-  questionType:
-    typeof row.questionType === 'string' && row.questionType.trim().length > 0 ? row.questionType : null,
-  tags: normalizeArray(row.tags),
-  metadata: normalizeMetadata(row.metadata),
-  isActive: Boolean(row.isActive),
-  platformName: row.platformName ?? null,
-  subjectName: row.subjectName ?? null,
-  topicName: row.topicName ?? null,
-  roadmapName: row.roadmapName ?? null,
-});
+) => {
+  const options = normalizeArray(row.o);
+  const rawAnswerKey = typeof row.a === 'string' ? row.a.trim() : '';
+  const answerKey = rawAnswerKey.length > 0 ? rawAnswerKey : '0';
+  const explanation = typeof row.e === 'string' ? row.e.trim() : '';
+  const levelRaw = typeof row.l === 'string' ? row.l.trim().toUpperCase() : 'E';
+  const level: 'E' | 'M' | 'D' = levelRaw === 'M' || levelRaw === 'D' ? levelRaw : 'E';
+
+  return {
+    id: row.id,
+    platformId: row.platformId,
+    subjectId: row.subjectId,
+    topicId: row.topicId,
+    roadmapId: row.roadmapId ?? null,
+    questionText: row.q,
+    options,
+    answer: deriveAnswerFromKey(options, answerKey),
+    answerKey,
+    explanation,
+    level,
+    isActive: Boolean(row.isActive),
+    platformName: row.platformName ?? null,
+    subjectName: row.subjectName ?? null,
+    topicName: row.topicName ?? null,
+    roadmapName: row.roadmapName ?? null,
+  };
+};
 
 const questionPayloadSchema = z.object({
   platformId: z.number().int().min(1, 'Platform is required'),
   subjectId: z.number().int().min(1, 'Subject is required'),
   topicId: z.number().int().min(1, 'Topic is required'),
-  roadmapId: z.number().int().min(1).nullable().optional(),
+  roadmapId: z.number().int().min(1, 'Roadmap is required'),
   questionText: z.string().min(1, 'Question text is required'),
-  options: z.array(z.string()).optional(),
-  answer: z.string().optional(),
-  answerKey: z.string().optional(),
-  explanation: z.string().optional(),
-  difficulty: z.string().optional(),
-  questionType: z.string().optional(),
-  tags: z.array(z.string()).optional(),
-  metadata: z.record(z.any()).optional(),
+  options: z.array(z.string().min(1, 'Option cannot be empty')).min(1, 'At least one option is required'),
+  answerKey: z.string().min(1, 'Answer key is required'),
+  explanation: z.string().min(1, 'Explanation is required'),
+  level: z.enum(['E', 'M', 'D']),
   isActive: z.boolean().optional(),
 });
 
@@ -93,8 +139,7 @@ const questionFiltersSchema = z.object({
   subjectId: z.number().int().min(1).optional(),
   topicId: z.number().int().min(1).optional(),
   roadmapId: z.number().int().min(1).optional(),
-  difficulty: z.string().optional(),
-  questionType: z.string().optional(),
+  level: z.string().optional(),
   status: z.enum(['all', 'active', 'inactive']).optional(),
 });
 
@@ -111,8 +156,7 @@ const questionSortSchema = z.object({
     'subjectId',
     'topicId',
     'roadmapId',
-    'difficulty',
-    'questionType',
+    'level',
     'status',
     'id',
   ]),
@@ -141,14 +185,9 @@ const normalizeInput = (input: z.infer<typeof questionPayloadSchema>) => {
     throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic is required' });
   }
 
-  const rawRoadmap = input.roadmapId ?? null;
-  let roadmapId: number | null = null;
-  if (rawRoadmap !== null && rawRoadmap !== undefined) {
-    const parsedRoadmap = Math.floor(rawRoadmap);
-    if (!Number.isFinite(parsedRoadmap) || parsedRoadmap <= 0) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap must be a positive number' });
-    }
-    roadmapId = parsedRoadmap;
+  const roadmapId = Math.floor(input.roadmapId);
+  if (!Number.isFinite(roadmapId) || roadmapId <= 0) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap is required' });
   }
 
   const normalizeString = (value?: string | null) => {
@@ -158,22 +197,34 @@ const normalizeInput = (input: z.infer<typeof questionPayloadSchema>) => {
   };
 
   const normalizeArrayField = (value?: string[]) => {
-    if (!Array.isArray(value)) return null;
+    if (!Array.isArray(value)) {
+      throw new ActionError({ code: 'BAD_REQUEST', message: 'Options are required' });
+    }
     const items = value
       .map((entry) => (typeof entry === 'string' ? entry.trim() : ''))
       .filter((entry) => entry.length > 0);
-    return items.length > 0 ? items : null;
+    if (items.length === 0) {
+      throw new ActionError({ code: 'BAD_REQUEST', message: 'Provide at least one option' });
+    }
+    return items;
   };
 
-  const metadata = (() => {
-    if (input.metadata === undefined) {
-      return null;
+  const normalizeRequiredString = (value: string | null, field: string) => {
+    const normalized = normalizeString(value);
+    if (!normalized) {
+      throw new ActionError({ code: 'BAD_REQUEST', message: `${field} is required` });
     }
-    if (!input.metadata || typeof input.metadata !== 'object' || Array.isArray(input.metadata)) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Metadata must be a JSON object' });
+    return normalized;
+  };
+
+  const normalizeLevelField = (value?: string | null) => {
+    const normalized = normalizeRequiredString(value ?? null, 'Level');
+    const upper = normalized.toUpperCase();
+    if (upper !== 'E' && upper !== 'M' && upper !== 'D') {
+      throw new ActionError({ code: 'BAD_REQUEST', message: 'Level must be E, M, or D' });
     }
-    return input.metadata;
-  })();
+    return upper;
+  };
 
   return {
     platformId,
@@ -182,13 +233,9 @@ const normalizeInput = (input: z.infer<typeof questionPayloadSchema>) => {
     roadmapId,
     questionText,
     options: normalizeArrayField(input.options),
-    answer: normalizeString(input.answer),
-    answerKey: normalizeString(input.answerKey),
-    explanation: normalizeString(input.explanation),
-    difficulty: normalizeString(input.difficulty),
-    questionType: normalizeString(input.questionType),
-    tags: normalizeArrayField(input.tags),
-    metadata,
+    answerKey: normalizeRequiredString(input.answerKey ?? null, 'Answer key'),
+    explanation: normalizeRequiredString(input.explanation ?? null, 'Explanation'),
+    level: normalizeLevelField(input.level),
     isActive: input.isActive ?? true,
   } as const;
 };
@@ -197,8 +244,8 @@ const normalizeFilters = (filters?: QuestionFiltersInput) => {
   const safe = filters ?? {};
   const toTrimmed = (value?: string | null) => value?.trim() ?? '';
   const questionText = toTrimmed(safe.questionText);
-  const difficulty = toTrimmed(safe.difficulty);
-  const questionType = toTrimmed(safe.questionType);
+  const rawLevel = toTrimmed(safe.level).toUpperCase();
+  const level = rawLevel === 'E' || rawLevel === 'M' || rawLevel === 'D' ? rawLevel : '';
 
   const platformId = safe.platformId && Number.isFinite(safe.platformId) ? Math.floor(safe.platformId) : null;
   const subjectId = safe.subjectId && Number.isFinite(safe.subjectId) ? Math.floor(safe.subjectId) : null;
@@ -209,8 +256,7 @@ const normalizeFilters = (filters?: QuestionFiltersInput) => {
 
   return {
     questionText,
-    difficulty,
-    questionType,
+    level,
     platformId,
     subjectId,
     topicId,
@@ -234,7 +280,7 @@ export const fetchQuestions = defineAction({
 
     if (normalizedFilters.questionText) {
       conditions.push(
-        sql`lower(${Question.questionText}) LIKE ${`%${normalizedFilters.questionText.toLowerCase()}%`}`,
+        sql`lower(${Question.q}) LIKE ${`%${normalizedFilters.questionText.toLowerCase()}%`}`,
       );
     }
 
@@ -254,16 +300,8 @@ export const fetchQuestions = defineAction({
       conditions.push(eq(Question.roadmapId, normalizedFilters.roadmapId));
     }
 
-    if (normalizedFilters.difficulty) {
-      conditions.push(
-        sql`lower(${Question.difficulty}) LIKE ${`%${normalizedFilters.difficulty.toLowerCase()}%`}`,
-      );
-    }
-
-    if (normalizedFilters.questionType) {
-      conditions.push(
-        sql`lower(${Question.questionType}) LIKE ${`%${normalizedFilters.questionType.toLowerCase()}%`}`,
-      );
+    if (normalizedFilters.level) {
+      conditions.push(sql`upper(${Question.l}) = ${normalizedFilters.level.toUpperCase()}`);
     }
 
     if (normalizedFilters.status === 'active') {
@@ -289,7 +327,7 @@ export const fetchQuestions = defineAction({
 
     const sortColumnMap: Record<QuestionSortInput['column'], any> = {
       id: Question.id,
-      questionText: Question.questionText,
+      questionText: Question.q,
       platformId: Question.platformId,
       subjectId: Question.subjectId,
       topicId: Question.topicId,
@@ -298,8 +336,7 @@ export const fetchQuestions = defineAction({
       subjectName: Subject.name,
       topicName: Topic.name,
       roadmapName: Roadmap.name,
-      difficulty: Question.difficulty,
-      questionType: Question.questionType,
+      level: Question.l,
       status: Question.isActive,
     };
 
@@ -449,15 +486,11 @@ export const createQuestion = defineAction({
         subjectId: payload.subjectId,
         topicId: payload.topicId,
         roadmapId: payload.roadmapId,
-        questionText: payload.questionText,
-        options: payload.options ?? null,
-        answer: payload.answer,
-        answerKey: payload.answerKey,
-        explanation: payload.explanation,
-        difficulty: payload.difficulty,
-        questionType: payload.questionType,
-        tags: payload.tags ?? null,
-        metadata: payload.metadata ?? null,
+        q: payload.questionText,
+        o: payload.options ?? null,
+        a: payload.answerKey,
+        e: payload.explanation,
+        l: payload.level,
         isActive: payload.isActive,
       })
       .returning()
@@ -578,15 +611,11 @@ export const updateQuestion = defineAction({
         subjectId: payload.subjectId,
         topicId: payload.topicId,
         roadmapId: payload.roadmapId,
-        questionText: payload.questionText,
-        options: payload.options ?? null,
-        answer: payload.answer,
-        answerKey: payload.answerKey,
-        explanation: payload.explanation,
-        difficulty: payload.difficulty,
-        questionType: payload.questionType,
-        tags: payload.tags ?? null,
-        metadata: payload.metadata ?? null,
+        q: payload.questionText,
+        o: payload.options ?? null,
+        a: payload.answerKey,
+        e: payload.explanation,
+        l: payload.level,
         isActive: payload.isActive,
       })
       .where(eq(Question.id, id))
@@ -621,4 +650,3 @@ export const deleteQuestion = defineAction({
     return { ok: true } as const;
   },
 });
-

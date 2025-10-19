@@ -15,6 +15,7 @@ import './quiz/subjects';
 import './quiz/topics';
 import './quiz/roadmaps';
 import './quiz/questions';
+import './quiz/test';
 import './resume/index';
 import './admin';
 import './flashnote';

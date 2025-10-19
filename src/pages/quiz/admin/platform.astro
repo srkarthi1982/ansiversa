@@ -114,7 +114,7 @@ const platformColumns = [
           x-on:keydown.escape.window="platform.closeModal()"
           x-on:modal-close="platform.closeModal()"
         >
-          <template slot="title">
+          <Fragment slot="title">
             <div class="flex items-center justify-between gap-3">
               <h2 class="text-lg font-semibold text-slate-900" x-text="platform.isEditMode ? 'Update platform' : 'Add a new platform'"></h2>
               <template x-if="platform.isEditMode">
@@ -126,7 +126,7 @@ const platformColumns = [
                 </span>
               </template>
             </div>
-          </template>
+          </Fragment>
           <form id="platform-form" class="grid gap-4 sm:grid-cols-2" x-on:submit.prevent="platform.submitModal()">
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Name</span>
@@ -268,7 +268,6 @@ const platformColumns = [
                           variant="ghost"
                           size="sm"
                           block
-                          class="justify-start rounded-md px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
                           x-on:click="open = false; platform.openEditModal(item)"
                           x-bind:disabled="platform.loading || platform.mutating"
                         >
@@ -279,7 +278,6 @@ const platformColumns = [
                           variant="ghost"
                           size="sm"
                           block
-                          class="justify-start rounded-md px-3 py-2 text-xs font-semibold text-rose-600 hover:bg-rose-50"
                           x-on:click="open = false; platform.deletePlatform(item.id)"
                           x-bind:disabled="platform.loading || platform.mutating"
                         >

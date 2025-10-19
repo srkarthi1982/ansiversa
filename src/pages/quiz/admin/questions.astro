@@ -7,34 +7,12 @@ import DataGrid from "../../../components/DataGrid.astro";
 
 const questionColumns = [
   {
-    key: "questionText",
-    label: "Question",
-    sortable: true,
-    sortKey: "questionText",
-    filter: { type: "text", key: "questionText", placeholder: "Search" },
-  },
-  {
-    key: "topic",
-    label: "Topic",
-    sortable: true,
-    sortKey: "topicName",
+    key: "actions",
+    label: "Actions",
     filter: {
-      type: "number",
-      key: "topicId",
-      placeholder: "Topic ID",
-      attributes: { inputmode: "numeric" },
-    },
-  },
-  {
-    key: "subject",
-    label: "Subject",
-    sortable: true,
-    sortKey: "subjectName",
-    filter: {
-      type: "number",
-      key: "subjectId",
-      placeholder: "Subject ID",
-      attributes: { inputmode: "numeric" },
+      type: "button",
+      label: "Clear",
+      onClick: "questions.clearFilters()",
     },
   },
   {
@@ -43,10 +21,46 @@ const questionColumns = [
     sortable: true,
     sortKey: "platformName",
     filter: {
-      type: "number",
+      type: "select",
       key: "platformId",
-      placeholder: "Platform ID",
-      attributes: { inputmode: "numeric" },
+      placeholder: "All platforms",
+      optionsVar: "questions.filterPlatformOptions",
+      attributes: {
+        "x-on:change": "questions.onFilterPlatformChange()",
+        "x-bind:disabled": "questions.mutating || !questions.filterPlatformOptions.length",
+      },
+    },
+  },
+  {
+    key: "subject",
+    label: "Subject",
+    sortable: true,
+    sortKey: "subjectName",
+    filter: {
+      type: "select",
+      key: "subjectId",
+      placeholder: "All subjects",
+      optionsVar: "questions.filterSubjectOptions",
+      attributes: {
+        "x-on:change": "questions.onFilterSubjectChange()",
+        "x-bind:disabled": "questions.mutating || !questions.filters.platformId || !questions.filterSubjectOptions.length",
+      },
+    },
+  },
+  {
+    key: "topic",
+    label: "Topic",
+    sortable: true,
+    sortKey: "topicName",
+    filter: {
+      type: "select",
+      key: "topicId",
+      placeholder: "All topics",
+      optionsVar: "questions.filterTopicOptions",
+      attributes: {
+        "x-on:change": "questions.onFilterTopicChange()",
+        "x-bind:disabled": "questions.mutating || !questions.filters.subjectId || !questions.filterTopicOptions.length",
+      },
     },
   },
   {
@@ -55,25 +69,30 @@ const questionColumns = [
     sortable: true,
     sortKey: "roadmapName",
     filter: {
-      type: "number",
+      type: "select",
       key: "roadmapId",
-      placeholder: "Roadmap ID",
-      attributes: { inputmode: "numeric" },
+      placeholder: "All roadmaps",
+      optionsVar: "questions.filterRoadmapOptions",
+      attributes: {
+        "x-bind:disabled": "questions.mutating || !questions.filters.topicId || !questions.filterRoadmapOptions.length",
+      },
     },
   },
   {
-    key: "difficulty",
-    label: "Difficulty",
+    key: "level",
+    label: "Level",
     sortable: true,
-    sortKey: "difficulty",
-    filter: { type: "text", key: "difficulty", placeholder: "Difficulty" },
-  },
-  {
-    key: "questionType",
-    label: "Type",
-    sortable: true,
-    sortKey: "questionType",
-    filter: { type: "text", key: "questionType", placeholder: "Type" },
+    sortKey: "level",
+    filter: {
+      type: "select",
+      key: "level",
+      options: [
+        { label: "All", value: "" },
+        { label: "Easy (E)", value: "E" },
+        { label: "Medium (M)", value: "M" },
+        { label: "Difficult (D)", value: "D" },
+      ],
+    },
   },
   {
     key: "status",
@@ -90,15 +109,6 @@ const questionColumns = [
         { label: "✓", value: "active" },
         { label: "✕", value: "inactive" },
       ],
-    },
-  },
-  {
-    key: "actions",
-    label: "Actions",
-    filter: {
-      type: "button",
-      label: "Clear",
-      onClick: "questions.clearFilters()",
     },
   },
 ];
@@ -155,7 +165,7 @@ const questionColumns = [
           x-on:keydown.escape.window="questions.closeModal()"
           x-on:modal-close="questions.closeModal()"
         >
-          <template slot="title">
+          <Fragment slot="title">
             <div class="flex items-center justify-between gap-3">
               <h2 class="text-lg font-semibold text-slate-900" x-text="questions.isEditMode ? 'Update question' : 'Add a new question'"></h2>
               <template x-if="questions.isEditMode">
@@ -167,53 +177,70 @@ const questionColumns = [
                 </span>
               </template>
             </div>
-          </template>
+          </Fragment>
           <form id="question-form" class="grid gap-4" x-on:submit.prevent="questions.submitModal()">
-            <div class="grid gap-4 sm:grid-cols-2">
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Platform ID</span>
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.platformId"
-                  x-bind:disabled="questions.mutating"
-                  required
-                />
-              </label>
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Subject ID</span>
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.subjectId"
-                  x-bind:disabled="questions.mutating"
-                  required
-                />
-              </label>
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Topic ID</span>
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.topicId"
-                  x-bind:disabled="questions.mutating"
-                  required
-                />
-              </label>
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Roadmap ID (optional)</span>
-                <input
-                  type="text"
-                  inputmode="numeric"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.roadmapId"
-                  x-bind:disabled="questions.mutating"
-                />
-              </label>
-            </div>
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Platform</span>
+              <select
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model="questions.form.platformId"
+                x-on:change="questions.onPlatformChange()"
+                x-bind:disabled="questions.mutating || !questions.platformOptionList.length"
+                required
+              >
+                <option value="" disabled>Select platform</option>
+                <template x-for="platform in questions.platformOptionList" x-bind:key="platform.id">
+                  <option x-bind:value="String(platform.id)" x-text="`${platform.name} (#${platform.id})`"></option>
+                </template>
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Subject</span>
+              <select
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model="questions.form.subjectId"
+                x-on:change="questions.onSubjectChange()"
+                x-bind:disabled="questions.mutating || !questions.form.platformId || !questions.subjectOptionList.length"
+                required
+              >
+                <option value="" disabled>Select subject</option>
+                <template x-for="subject in questions.subjectOptionList" x-bind:key="subject.id">
+                  <option x-bind:value="String(subject.id)" x-text="`${subject.name} (#${subject.id})`"></option>
+                </template>
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Topic</span>
+              <select
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model="questions.form.topicId"
+                x-on:change="questions.onTopicChange()"
+                x-bind:disabled="questions.mutating || !questions.form.subjectId || !questions.topicOptionList.length"
+                required
+              >
+                <option value="" disabled>Select topic</option>
+                <template x-for="topic in questions.topicOptionList" x-bind:key="topic.id">
+                  <option x-bind:value="String(topic.id)" x-text="`${topic.name} (#${topic.id})`"></option>
+                </template>
+              </select>
+            </label>
+
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Roadmap</span>
+              <select
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model="questions.form.roadmapId"
+                x-bind:disabled="questions.mutating || !questions.form.topicId || !questions.roadmapOptionList.length"
+                required
+              >
+                <option value="" disabled>Select roadmap</option>
+                <template x-for="roadmap in questions.roadmapOptionList" x-bind:key="roadmap.id">
+                  <option x-bind:value="String(roadmap.id)" x-text="`${roadmap.name} (#${roadmap.id})`"></option>
+                </template>
+              </select>
+            </label>
 
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
               <span>Question text</span>
@@ -226,102 +253,54 @@ const questionColumns = [
               ></textarea>
             </label>
 
-            <div class="grid gap-4 sm:grid-cols-2">
-              <fieldset class="flex flex-col gap-2">
-                <legend class="text-xs font-semibold text-slate-600">Options</legend>
-                <div class="grid gap-2 sm:grid-cols-2">
-                  <template x-for="(option, index) in questions.form.options" x-bind:key="`option-${index}`">
-                    <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                      <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-500">Option <span x-text="index + 1"></span></span>
-                      <div class="flex items-center gap-3">
-                        <input
-                          type="radio"
-                          name="correct-option"
-                          class="h-4 w-4 border-slate-300 text-indigo-600 focus:ring-indigo-500"
-                          x-model.number="questions.form.correctOptionIndex"
-                          x-bind:value="index"
-                          x-bind:disabled="questions.mutating"
-                          x-bind:aria-label="`Mark option ${index + 1} as correct`"
-                        />
-                        <input
-                          type="text"
-                          class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                          x-model="questions.form.options[index]"
-                          x-bind:disabled="questions.mutating"
-                          x-bind:placeholder="`Option ${index + 1}`"
-                        />
-                      </div>
-                    </label>
-                  </template>
+            <fieldset class="flex flex-col gap-2">
+              <legend class="text-xs font-semibold text-slate-600">Options</legend>
+              <template x-for="(option, index) in questions.form.options" x-bind:key="`option-${index}`">
+                <div class="flex items-center gap-3">
+                  <input
+                    type="radio"
+                    name="correct-option"
+                    class="h-4 w-4 border-slate-300 text-indigo-600 focus:ring-indigo-500"
+                    x-model.number="questions.form.correctOptionIndex"
+                    x-bind:value="index"
+                    x-bind:disabled="questions.mutating"
+                    x-bind:aria-label="`Mark option ${index + 1} as correct`"
+                  />
+                  <input
+                    type="text"
+                    class="flex-1 rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                    x-model="questions.form.options[index]"
+                    x-bind:disabled="questions.mutating"
+                    x-bind:placeholder="`Option ${index + 1}`"
+                  />
                 </div>
-              </fieldset>
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Explanation</span>
-                <textarea
-                  rows="4"
-                  class="h-full rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model="questions.form.explanation"
-                  x-bind:disabled="questions.mutating"
-                ></textarea>
-              </label>
-            </div>
-
-            <div class="grid gap-4 sm:grid-cols-2">
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600 sm:col-span-2 sm:flex-row sm:items-center sm:gap-3">
-                <span>Answer key</span>
-                <input
-                  type="text"
-                  placeholder="Reference key"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100 sm:flex-1"
-                  x-model.trim="questions.form.answerKey"
-                  x-bind:disabled="questions.mutating"
-                />
-              </label>
-            </div>
-
-            <div class="grid gap-4 sm:grid-cols-2">
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Difficulty</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Beginner"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.difficulty"
-                  x-bind:disabled="questions.mutating"
-                />
-              </label>
-              <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-                <span>Question type</span>
-                <input
-                  type="text"
-                  placeholder="e.g. Multiple choice"
-                  class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                  x-model.trim="questions.form.questionType"
-                  x-bind:disabled="questions.mutating"
-                />
-              </label>
-            </div>
+              </template>
+            </fieldset>
 
             <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-              <span>Tags (comma separated)</span>
-              <input
-                type="text"
-                placeholder="e.g. anatomy, cardiology"
-                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                x-model="questions.form.tags"
-                x-bind:disabled="questions.mutating"
-              />
-            </label>
-
-            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
-              <span>Metadata (JSON object)</span>
+              <span>Explanation</span>
               <textarea
                 rows="4"
                 class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
-                placeholder='{"source": "quiz"}'
-                x-model="questions.form.metadata"
+                x-model="questions.form.explanation"
                 x-bind:disabled="questions.mutating"
+                required
               ></textarea>
+            </label>
+
+            <label class="flex flex-col gap-1 text-xs font-semibold text-slate-600">
+              <span>Level</span>
+              <select
+                class="rounded-lg border border-slate-200 px-3 py-2 text-sm font-normal text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 disabled:cursor-not-allowed disabled:bg-slate-100"
+                x-model="questions.form.level"
+                x-bind:disabled="questions.mutating"
+                required
+              >
+                <option value="" disabled>Select difficulty</option>
+                <option value="E">Easy</option>
+                <option value="M">Medium</option>
+                <option value="D">Difficult</option>
+              </select>
             </label>
 
             <label class="flex items-center gap-2 text-xs font-semibold text-slate-600">
@@ -384,131 +363,135 @@ const questionColumns = [
           >
             <Fragment slot="body">
               <template x-for="question in questions.questions" :key="question.id">
-                <tr class="transition hover:bg-slate-50">
-                  <td class="px-3 py-3">
-                    <div
-                      class="relative"
-                      x-data="{ open: false }"
-                      x-on:click.away="open = false"
-                      x-on:keydown.escape.stop="open = false"
-                    >
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        x-on:click="open = !open"
-                        x-bind:disabled="questions.loading || questions.mutating"
-                        aria-label="Question actions"
-                      >
-                        <i class="fas fa-ellipsis-v text-sm"></i>
-                      </Button>
-                      <div
-                        x-cloak
-                        x-show="open"
-                        x-transition
-                        class="absolute left-full top-0 z-20 mt-0 ml-3 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
-                      >
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          block
-                          x-on:click="open = false; questions.openEditModal(question)"
-                          x-bind:disabled="questions.loading || questions.mutating"
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          block
-                          class="text-rose-600 hover:bg-rose-50"
-                          x-on:click="open = false; questions.deleteQuestion(question.id)"
-                          x-bind:disabled="questions.loading || questions.mutating"
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </div>
-                  </td>
-                  <td class="px-3 py-3">
-                    <div class="flex flex-col gap-2">
-                      <div class="flex flex-col gap-1">
-                        <span class="text-sm font-semibold text-slate-900" x-text="question.questionText"></span>
-                        <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
-                          <span x-text="`ID: ${question.id}`"></span>
-                          <template x-if="question.answer">
-                            <span class="inline-flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 font-semibold text-emerald-600">
-                              <i class="fas fa-check text-[10px]"></i>
-                              <span x-text="question.answer"></span>
+                <tr class="align-top">
+                  <td class="px-3 py-4" colspan="7">
+                    <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+                      <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                        <div class="flex-1">
+                          <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-wide text-slate-400">
+                            <span>Q</span>
+                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                              <i class="fas fa-hashtag text-[9px]"></i>
+                              <span x-text="question.id"></span>
                             </span>
-                          </template>
-                          <template x-if="question.options?.length">
-                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 font-semibold text-slate-600">
-                              <i class="fas fa-list-ul text-[10px]"></i>
-                              <span x-text="`${question.options.length} options`"></span>
+                            <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-600">
+                              <i class="fas fa-signal text-[9px]"></i>
+                              <span x-text="question.level || 'N/A'"></span>
                             </span>
-                          </template>
+                          </div>
+                          <h3 class="mt-2 text-base font-semibold text-slate-900" x-text="question.questionText"></h3>
+                        </div>
+                        <div
+                          class="relative flex justify-end"
+                          x-data="{ open: false }"
+                          x-on:click.away="open = false"
+                          x-on:keydown.escape.stop="open = false"
+                        >
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            x-on:click="open = !open"
+                            x-bind:disabled="questions.loading || questions.mutating"
+                            aria-label="Question actions"
+                          >
+                            <i class="fas fa-ellipsis-v text-sm"></i>
+                          </Button>
+                          <div
+                            x-cloak
+                            x-show="open"
+                            x-transition
+                            class="absolute right-0 top-full z-20 mt-2 w-40 rounded-lg border border-slate-200 bg-white p-1 shadow-lg"
+                          >
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              block
+                              x-on:click="open = false; questions.openEditModal(question)"
+                              x-bind:disabled="questions.loading || questions.mutating"
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="sm"
+                              block
+                              class="text-rose-600 hover:bg-rose-50"
+                              x-on:click="open = false; questions.deleteQuestion(question.id)"
+                              x-bind:disabled="questions.loading || questions.mutating"
+                            >
+                              Delete
+                            </Button>
+                          </div>
                         </div>
                       </div>
-                      <template x-if="question.tags?.length">
-                        <div class="flex flex-wrap gap-2">
-                          <template x-for="tag in question.tags" :key="`${question.id}-tag-${tag}`">
-                            <span class="inline-flex items-center rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-600">
-                              <span x-text="`#${tag}`"></span>
-                            </span>
-                          </template>
+
+                      <ol class="mt-4 space-y-2 text-sm text-slate-700">
+                        <template x-for="(option, index) in question.options" x-bind:key="`option-display-${question.id}-${index}`">
+                          <li
+                            class="flex items-start gap-3 rounded-lg border border-transparent px-3 py-2"
+                            x-data="{ isCorrect: question.answer ? question.answer.trim() === (option ?? '').trim() : Number(question.answerKey) === index }"
+                            x-bind:class="isCorrect ? 'border-emerald-200 bg-emerald-50/50 text-emerald-700' : 'bg-slate-50/40 text-slate-700'"
+                          >
+                            <span class="text-xs font-semibold text-slate-500" x-text="`${index + 1}.`"></span>
+                            <div class="flex flex-1 items-center gap-2">
+                              <span class="flex-1" x-text="option"></span>
+                              <template x-if="isCorrect">
+                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-semibold text-emerald-600">
+                                  <i class="fas fa-check text-[9px]"></i>
+                                  Correct
+                                </span>
+                              </template>
+                            </div>
+                          </li>
+                        </template>
+                      </ol>
+
+                      <div class="mt-4 rounded-lg bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                        <span class="font-semibold text-slate-900">Explanation:</span>
+                        <span class="ml-1" x-text="question.explanation || 'No explanation provided.'"></span>
+                      </div>
+
+                      <div class="mt-4 grid gap-3 text-xs text-slate-500 sm:grid-cols-2 md:grid-cols-4">
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-600">Platform</span>
+                          <span x-text="question.platformName || 'Unassigned platform'"></span>
+                          <span class="text-[11px]" x-text="`#${question.platformId}`"></span>
                         </div>
-                      </template>
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-600">Subject</span>
+                          <span x-text="question.subjectName || 'Unknown subject'"></span>
+                          <span class="text-[11px]" x-text="`#${question.subjectId}`"></span>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-600">Topic</span>
+                          <span x-text="question.topicName || 'Unknown topic'"></span>
+                          <span class="text-[11px]" x-text="`#${question.topicId}`"></span>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="font-semibold text-slate-600">Roadmap</span>
+                          <span x-text="question.roadmapName || 'None'"></span>
+                          <span class="text-[11px]" x-text="question.roadmapId ? `#${question.roadmapId}` : '—'"></span>
+                        </div>
+                      </div>
+
+                      <div class="mt-4 flex items-center justify-between text-xs font-semibold text-slate-500">
+                        <div class="inline-flex items-center gap-2">
+                          <span>Status:</span>
+                          <span
+                            class="inline-flex h-6 min-w-[2rem] items-center justify-center rounded-full border px-3"
+                            :class="question.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-rose-200 bg-rose-50 text-rose-600'"
+                            x-text="question.isActive ? 'Active' : 'Inactive'"
+                          ></span>
+                        </div>
+                        <div class="inline-flex items-center gap-2">
+                          <i class="fas fa-list-ul text-[10px]"></i>
+                          <span x-text="`${question.options?.length ?? 0} options`"></span>
+                        </div>
+                      </div>
                     </div>
-                  </td>
-                  <td class="px-3 py-3">
-                    <div class="flex flex-col">
-                      <span class="font-medium text-slate-800" x-text="question.topicName || 'Unknown topic'"></span>
-                      <span class="text-xs text-slate-500" x-text="`Topic ID: ${question.topicId}`"></span>
-                    </div>
-                  </td>
-                  <td class="px-3 py-3">
-                    <div class="flex flex-col">
-                      <span class="font-medium text-slate-800" x-text="question.subjectName || 'Unknown subject'"></span>
-                      <span class="text-xs text-slate-500" x-text="`Subject ID: ${question.subjectId}`"></span>
-                    </div>
-                  </td>
-                  <td class="px-3 py-3">
-                    <div class="flex flex-col">
-                      <span class="font-medium text-slate-800" x-text="question.platformName || 'Unassigned platform'"></span>
-                      <span class="text-xs text-slate-500" x-text="`Platform ID: ${question.platformId}`"></span>
-                    </div>
-                  </td>
-                  <td class="px-3 py-3">
-                    <div class="flex flex-col">
-                      <span class="font-medium text-slate-800" x-text="question.roadmapName || 'No roadmap'"></span>
-                      <span class="text-xs text-slate-500" x-text="question.roadmapId ? `Roadmap ID: ${question.roadmapId}` : 'Optional'"></span>
-                    </div>
-                  </td>
-                  <td class="px-3 py-3">
-                    <span
-                      class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700"
-                    >
-                      <i class="fas fa-signal text-[10px]"></i>
-                      <span x-text="question.difficulty || 'N/A'"></span>
-                    </span>
-                  </td>
-                  <td class="px-3 py-3">
-                    <span
-                      class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-700"
-                    >
-                      <i class="fas fa-file-alt text-[10px]"></i>
-                      <span x-text="question.questionType || 'N/A'"></span>
-                    </span>
-                  </td>
-                  <td class="px-3 py-3 text-center">
-                    <span
-                      class="inline-flex h-7 w-7 items-center justify-center rounded-full border text-sm font-semibold"
-                      :class="question.isActive ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-rose-200 bg-rose-50 text-rose-600'"
-                      x-text="question.isActive ? '✓' : '✕'"
-                    ></span>
                   </td>
                 </tr>
               </template>

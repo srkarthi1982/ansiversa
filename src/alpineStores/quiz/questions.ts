@@ -11,17 +11,40 @@ type QuestionRecord = {
   questionText: string;
   options: string[];
   answer: string | null;
-  answerKey: string | null;
-  explanation: string | null;
-  difficulty: string | null;
-  questionType: string | null;
-  tags: string[];
-  metadata: Record<string, unknown> | null;
+  answerKey: string;
+  explanation: string;
+  level: string;
   isActive: boolean;
   platformName: string | null;
   subjectName: string | null;
   topicName: string | null;
   roadmapName: string | null;
+};
+
+type PlatformOption = {
+  id: number;
+  name: string;
+};
+
+type SubjectOption = {
+  id: number;
+  name: string;
+  platformId: number;
+};
+
+type TopicOption = {
+  id: number;
+  name: string;
+  platformId: number;
+  subjectId: number;
+};
+
+type RoadmapOption = {
+  id: number;
+  name: string;
+  platformId: number;
+  subjectId: number;
+  topicId: number;
 };
 
 type QuestionForm = {
@@ -32,12 +55,8 @@ type QuestionForm = {
   questionText: string;
   options: string[];
   correctOptionIndex: number | null;
-  answerKey: string;
   explanation: string;
-  difficulty: string;
-  questionType: string;
-  tags: string;
-  metadata: string;
+  level: string;
   isActive: boolean;
 };
 
@@ -47,8 +66,7 @@ type QuestionFilters = {
   subjectId: string;
   topicId: string;
   roadmapId: string;
-  difficulty: string;
-  questionType: string;
+  level: string;
   status: 'all' | 'active' | 'inactive';
 };
 
@@ -58,15 +76,13 @@ type QuestionFiltersPayload = {
   subjectId?: number;
   topicId?: number;
   roadmapId?: number;
-  difficulty?: string;
-  questionType?: string;
+  level?: string;
   status?: 'active' | 'inactive';
 };
 
 type QuestionSortColumn =
   | 'questionText'
-  | 'difficulty'
-  | 'questionType'
+  | 'level'
   | 'platformName'
   | 'subjectName'
   | 'topicName'
@@ -110,8 +126,7 @@ class QuestionsStoreImpl {
   private filterDebounce: ReturnType<typeof setTimeout> | null = null;
   private readonly allowedSortColumns: QuestionSortColumn[] = [
     'questionText',
-    'difficulty',
-    'questionType',
+    'level',
     'platformName',
     'subjectName',
     'topicName',
@@ -123,12 +138,400 @@ class QuestionsStoreImpl {
     'status',
     'id',
   ];
+  platformOptions: PlatformOption[] = [];
+  private platformOptionsLoaded = false;
+  private subjectOptionsCache = new Map<number, SubjectOption[]>();
+  private topicOptionsCache = new Map<number, TopicOption[]>();
+  private roadmapOptionsCache = new Map<number, RoadmapOption[]>();
+  private filterPlatformOptionsLoaded = false;
+  private filterSubjectOptionsCache = new Map<number, SubjectOption[]>();
+  private filterTopicOptionsCache = new Map<number, TopicOption[]>();
+  private filterRoadmapOptionsCache = new Map<number, RoadmapOption[]>();
   private readonly loader: LoaderStore;
 
   constructor() {
     this.loader = Alpine.store('loader') as LoaderStore;
     this.form = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
+  }
+
+  get platformOptionList(): PlatformOption[] {
+    return this.platformOptions;
+  }
+
+  get subjectOptionList(): SubjectOption[] {
+    const platformId = parseNumber(this.form.platformId.trim());
+    if (!platformId) {
+      return [];
+    }
+    return this.subjectOptionsCache.get(platformId) ?? [];
+  }
+
+  get filterPlatformOptions(): PlatformOption[] {
+    return this.platformOptions;
+  }
+
+  get filterSubjectOptions(): SubjectOption[] {
+    const platformId = parseNumber(this.filters.platformId.trim());
+    if (!platformId) {
+      return [];
+    }
+    return this.filterSubjectOptionsCache.get(platformId) ?? [];
+  }
+
+  get filterTopicOptions(): TopicOption[] {
+    const subjectId = parseNumber(this.filters.subjectId.trim());
+    if (!subjectId) {
+      return [];
+    }
+    return this.filterTopicOptionsCache.get(subjectId) ?? [];
+  }
+
+  get filterRoadmapOptions(): RoadmapOption[] {
+    const topicId = parseNumber(this.filters.topicId.trim());
+    if (!topicId) {
+      return [];
+    }
+    return this.filterRoadmapOptionsCache.get(topicId) ?? [];
+  }
+
+  get topicOptionList(): TopicOption[] {
+    const subjectId = parseNumber(this.form.subjectId.trim());
+    if (!subjectId) {
+      return [];
+    }
+    return this.topicOptionsCache.get(subjectId) ?? [];
+  }
+
+  get roadmapOptionList(): RoadmapOption[] {
+    const topicId = parseNumber(this.form.topicId.trim());
+    if (!topicId) {
+      return [];
+    }
+    return this.roadmapOptionsCache.get(topicId) ?? [];
+  }
+
+  private normalizeOptionName(id: number, name: unknown, fallback: string): string {
+    if (typeof name === 'string') {
+      const trimmed = name.trim();
+      if (trimmed.length > 0) {
+        return trimmed;
+      }
+    }
+    return `${fallback} #${id}`;
+  }
+
+  private async ensurePlatformOptions(): Promise<void> {
+    if (this.platformOptionsLoaded && this.platformOptions.length > 0) {
+      return;
+    }
+    try {
+      const collected: PlatformOption[] = [];
+      const pageSize = 48;
+      let page = 1;
+      let total = 0;
+      while (page <= 100) {
+        const { data, error } = await actions.quiz.fetchPlatforms({
+          page,
+          pageSize,
+          filters: { status: 'all' },
+        });
+        if (error) {
+          throw error;
+        }
+        const payload = data ?? { items: [], total: 0 };
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        collected.push(
+          ...items.map((item: any) => ({
+            id: Number(item.id),
+            name: this.normalizeOptionName(Number(item.id), item.name, 'Platform'),
+          })),
+        );
+        const rawTotal = payload.total;
+        total =
+          typeof rawTotal === 'number'
+            ? rawTotal
+            : typeof rawTotal === 'bigint'
+              ? Number(rawTotal)
+              : collected.length;
+        if (collected.length >= total || items.length < pageSize) {
+          break;
+        }
+        page += 1;
+      }
+      this.platformOptions = collected;
+      this.platformOptionsLoaded = true;
+    } catch (err) {
+      console.error('Failed to load platform options', err);
+      this.platformOptions = [];
+      this.platformOptionsLoaded = false;
+    }
+  }
+
+  private async ensureSubjectOptions(platformId: number): Promise<void> {
+    if (this.subjectOptionsCache.has(platformId)) {
+      return;
+    }
+    try {
+      const collected: SubjectOption[] = [];
+      const pageSize = 48;
+      let page = 1;
+      let total = 0;
+      while (page <= 100) {
+        const { data, error } = await actions.quiz.fetchSubjects({
+          page,
+          pageSize,
+          filters: { platformId, status: 'all' },
+        });
+        if (error) {
+          throw error;
+        }
+        const payload = data ?? { items: [], total: 0 };
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        collected.push(
+          ...items.map((item: any) => ({
+            id: Number(item.id),
+            name: this.normalizeOptionName(Number(item.id), item.name, 'Subject'),
+            platformId: Number(item.platformId),
+          })),
+        );
+        const rawTotal = payload.total;
+        total =
+          typeof rawTotal === 'number'
+            ? rawTotal
+            : typeof rawTotal === 'bigint'
+              ? Number(rawTotal)
+              : collected.length;
+        if (collected.length >= total || items.length < pageSize) {
+          break;
+        }
+        page += 1;
+      }
+      this.subjectOptionsCache.set(platformId, collected);
+      if (
+        this.form.subjectId &&
+        !collected.some((option) => String(option.id) === this.form.subjectId.trim())
+      ) {
+        this.form.subjectId = '';
+      }
+    } catch (err) {
+      console.error('Failed to load subject options', err);
+      this.subjectOptionsCache.delete(platformId);
+      this.form.subjectId = '';
+    }
+  }
+
+  private async ensureTopicOptions(platformId: number, subjectId: number): Promise<void> {
+    if (this.topicOptionsCache.has(subjectId)) {
+      return;
+    }
+    try {
+      const collected: TopicOption[] = [];
+      const pageSize = 48;
+      let page = 1;
+      let total = 0;
+      while (page <= 100) {
+        const { data, error } = await actions.quiz.fetchTopics({
+          page,
+          pageSize,
+          filters: { platformId, subjectId, status: 'all' },
+        });
+        if (error) {
+          throw error;
+        }
+        const payload = data ?? { items: [], total: 0 };
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        collected.push(
+          ...items.map((item: any) => ({
+            id: Number(item.id),
+            name: this.normalizeOptionName(Number(item.id), item.name, 'Topic'),
+            platformId: Number(item.platformId),
+            subjectId: Number(item.subjectId),
+          })),
+        );
+        const rawTotal = payload.total;
+        total =
+          typeof rawTotal === 'number'
+            ? rawTotal
+            : typeof rawTotal === 'bigint'
+              ? Number(rawTotal)
+              : collected.length;
+        if (collected.length >= total || items.length < pageSize) {
+          break;
+        }
+        page += 1;
+      }
+      this.topicOptionsCache.set(subjectId, collected);
+      if (
+        this.form.topicId &&
+        !collected.some((option) => String(option.id) === this.form.topicId.trim())
+      ) {
+        this.form.topicId = '';
+      }
+    } catch (err) {
+      console.error('Failed to load topic options', err);
+      this.topicOptionsCache.delete(subjectId);
+      this.form.topicId = '';
+    }
+  }
+
+  private async ensureRoadmapOptions(platformId: number, subjectId: number, topicId: number): Promise<void> {
+    if (this.roadmapOptionsCache.has(topicId)) {
+      return;
+    }
+    try {
+      const collected: RoadmapOption[] = [];
+      const pageSize = 48;
+      let page = 1;
+      let total = 0;
+      while (page <= 100) {
+        const { data, error } = await actions.quiz.fetchRoadmaps({
+          page,
+          pageSize,
+          filters: { platformId, subjectId, topicId, status: 'all' },
+        });
+        if (error) {
+          throw error;
+        }
+        const payload = data ?? { items: [], total: 0 };
+        const items = Array.isArray(payload.items) ? payload.items : [];
+        collected.push(
+          ...items.map((item: any) => ({
+            id: Number(item.id),
+            name: this.normalizeOptionName(Number(item.id), item.name, 'Roadmap'),
+            platformId: Number(item.platformId),
+            subjectId: Number(item.subjectId),
+            topicId: Number(item.topicId),
+          })),
+        );
+        const rawTotal = payload.total;
+        total =
+          typeof rawTotal === 'number'
+            ? rawTotal
+            : typeof rawTotal === 'bigint'
+              ? Number(rawTotal)
+              : collected.length;
+        if (collected.length >= total || items.length < pageSize) {
+          break;
+        }
+        page += 1;
+      }
+      this.roadmapOptionsCache.set(topicId, collected);
+      if (
+        this.form.roadmapId &&
+        !collected.some((option) => String(option.id) === this.form.roadmapId.trim())
+      ) {
+        this.form.roadmapId = '';
+      }
+    } catch (err) {
+      console.error('Failed to load roadmap options', err);
+      this.roadmapOptionsCache.delete(topicId);
+      this.form.roadmapId = '';
+    }
+  }
+
+  async onPlatformChange(): Promise<void> {
+    const platformId = parseNumber(this.form.platformId.trim());
+    this.form.subjectId = '';
+    this.form.topicId = '';
+    this.form.roadmapId = '';
+    if (!platformId) {
+      return;
+    }
+    await this.ensureSubjectOptions(platformId);
+  }
+
+  async onSubjectChange(): Promise<void> {
+    const platformId = parseNumber(this.form.platformId.trim());
+    const subjectId = parseNumber(this.form.subjectId.trim());
+    this.form.topicId = '';
+    this.form.roadmapId = '';
+    if (!platformId || !subjectId) {
+      return;
+    }
+    await this.ensureTopicOptions(platformId, subjectId);
+  }
+
+  async onTopicChange(): Promise<void> {
+    const platformId = parseNumber(this.form.platformId.trim());
+    const subjectId = parseNumber(this.form.subjectId.trim());
+    const topicId = parseNumber(this.form.topicId.trim());
+    this.form.roadmapId = '';
+    if (!platformId || !subjectId || !topicId) {
+      return;
+    }
+    await this.ensureRoadmapOptions(platformId, subjectId, topicId);
+  }
+
+  private async ensureFilterPlatformOptions(): Promise<void> {
+    if (this.filterPlatformOptionsLoaded && this.platformOptions.length > 0) {
+      return;
+    }
+    await this.ensurePlatformOptions();
+    this.filterPlatformOptionsLoaded = this.platformOptions.length > 0;
+  }
+
+  private async ensureFilterSubjectOptions(platformId: number): Promise<void> {
+    if (this.filterSubjectOptionsCache.has(platformId)) {
+      return;
+    }
+    await this.ensureSubjectOptions(platformId);
+    this.filterSubjectOptionsCache.set(platformId, this.subjectOptionsCache.get(platformId) ?? []);
+  }
+
+  private async ensureFilterTopicOptions(platformId: number, subjectId: number): Promise<void> {
+    if (this.filterTopicOptionsCache.has(subjectId)) {
+      return;
+    }
+    await this.ensureTopicOptions(platformId, subjectId);
+    this.filterTopicOptionsCache.set(subjectId, this.topicOptionsCache.get(subjectId) ?? []);
+  }
+
+  private async ensureFilterRoadmapOptions(platformId: number, subjectId: number, topicId: number): Promise<void> {
+    if (this.filterRoadmapOptionsCache.has(topicId)) {
+      return;
+    }
+    await this.ensureRoadmapOptions(platformId, subjectId, topicId);
+    this.filterRoadmapOptionsCache.set(topicId, this.roadmapOptionsCache.get(topicId) ?? []);
+  }
+
+  async onFilterPlatformChange(): Promise<void> {
+    const platformId = parseNumber(this.filters.platformId.trim());
+    this.filters.subjectId = '';
+    this.filters.topicId = '';
+    this.filters.roadmapId = '';
+    if (!platformId) {
+      this.onFilterChange();
+      return;
+    }
+    await this.ensureFilterSubjectOptions(platformId);
+    this.onFilterChange();
+  }
+
+  async onFilterSubjectChange(): Promise<void> {
+    const platformId = parseNumber(this.filters.platformId.trim());
+    const subjectId = parseNumber(this.filters.subjectId.trim());
+    this.filters.topicId = '';
+    this.filters.roadmapId = '';
+    if (!platformId || !subjectId) {
+      this.onFilterChange();
+      return;
+    }
+    await this.ensureFilterTopicOptions(platformId, subjectId);
+    this.onFilterChange();
+  }
+
+  async onFilterTopicChange(): Promise<void> {
+    const platformId = parseNumber(this.filters.platformId.trim());
+    const subjectId = parseNumber(this.filters.subjectId.trim());
+    const topicId = parseNumber(this.filters.topicId.trim());
+    this.filters.roadmapId = '';
+    if (!platformId || !subjectId || !topicId) {
+      this.onFilterChange();
+      return;
+    }
+    await this.ensureFilterRoadmapOptions(platformId, subjectId, topicId);
+    this.onFilterChange();
   }
 
   get totalPages(): number {
@@ -181,6 +584,19 @@ class QuestionsStoreImpl {
   }
 
   async onInit(): Promise<void> {
+    await this.ensureFilterPlatformOptions();
+    const initialPlatformId = parseNumber(this.filters.platformId.trim());
+    if (initialPlatformId) {
+      await this.ensureFilterSubjectOptions(initialPlatformId);
+      const initialSubjectId = parseNumber(this.filters.subjectId.trim());
+      if (initialPlatformId && initialSubjectId) {
+        await this.ensureFilterTopicOptions(initialPlatformId, initialSubjectId);
+        const initialTopicId = parseNumber(this.filters.topicId.trim());
+        if (initialPlatformId && initialSubjectId && initialTopicId) {
+          await this.ensureFilterRoadmapOptions(initialPlatformId, initialSubjectId, initialTopicId);
+        }
+      }
+    }
     await this.loadQuestions(1);
   }
 
@@ -308,15 +724,16 @@ class QuestionsStoreImpl {
     void this.loadQuestions(1);
   }
 
-  openCreateModal(): void {
+  async openCreateModal(): Promise<void> {
     this.error = null;
     this.modalMode = 'create';
     this.editingId = null;
     this.resetForm();
+    await this.ensurePlatformOptions();
     this.showModal = true;
   }
 
-  openEditModal(question: QuestionRecord): void {
+  async openEditModal(question: QuestionRecord): Promise<void> {
     this.error = null;
     this.modalMode = 'edit';
     this.editingId = question.id;
@@ -332,7 +749,7 @@ class QuestionsStoreImpl {
       platformId: String(question.platformId ?? ''),
       subjectId: String(question.subjectId ?? ''),
       topicId: String(question.topicId ?? ''),
-      roadmapId: question.roadmapId ? String(question.roadmapId) : '',
+      roadmapId: typeof question.roadmapId === 'number' ? String(question.roadmapId) : '',
       questionText: question.questionText ?? '',
       options: existingOptions.map((option) => option ?? ''),
       correctOptionIndex:
@@ -341,17 +758,37 @@ class QuestionsStoreImpl {
               const answerValue = question.answer?.trim() ?? '';
               if (!answerValue) return null;
               const matchIndex = existingOptions.findIndex((option) => (option ?? '').trim() === answerValue);
-              return matchIndex >= 0 ? matchIndex : null;
+              if (matchIndex >= 0) {
+                return matchIndex;
+              }
+              const numericKey = Number.parseInt(question.answerKey, 10);
+              if (!Number.isNaN(numericKey) && numericKey >= 0 && numericKey < existingOptions.length) {
+                return numericKey;
+              }
+              const zeroBased = numericKey - 1;
+              if (!Number.isNaN(zeroBased) && zeroBased >= 0 && zeroBased < existingOptions.length) {
+                return zeroBased;
+              }
+              return null;
             })()
           : null,
-      answerKey: question.answerKey ?? '',
       explanation: question.explanation ?? '',
-      difficulty: question.difficulty ?? '',
-      questionType: question.questionType ?? '',
-      tags: (question.tags ?? []).join(', '),
-      metadata: question.metadata ? JSON.stringify(question.metadata, null, 2) : '',
+      level: question.level ?? '',
       isActive: question.isActive,
     };
+    await this.ensurePlatformOptions();
+    const platformId = parseNumber(this.form.platformId.trim());
+    if (platformId) {
+      await this.ensureSubjectOptions(platformId);
+    }
+    const subjectId = parseNumber(this.form.subjectId.trim());
+    if (platformId && subjectId) {
+      await this.ensureTopicOptions(platformId, subjectId);
+    }
+    const topicId = parseNumber(this.form.topicId.trim());
+    if (platformId && subjectId && topicId) {
+      await this.ensureRoadmapOptions(platformId, subjectId, topicId);
+    }
     this.showModal = true;
   }
 
@@ -491,12 +928,8 @@ class QuestionsStoreImpl {
       questionText: '',
       options: Array.from({ length: 4 }, () => ''),
       correctOptionIndex: null,
-      answerKey: '',
       explanation: '',
-      difficulty: '',
-      questionType: '',
-      tags: '',
-      metadata: '',
+      level: '',
       isActive: true,
     };
   }
@@ -508,8 +941,7 @@ class QuestionsStoreImpl {
       subjectId: '',
       topicId: '',
       roadmapId: '',
-      difficulty: '',
-      questionType: '',
+      level: '',
       status: 'all',
     };
   }
@@ -525,53 +957,65 @@ class QuestionsStoreImpl {
       throw new Error('Platform, subject, topic, and question text are required.');
     }
 
-    let roadmapId: number | null = null;
     const roadmapValue = parseNumber(form.roadmapId.trim());
-    if (roadmapValue) {
-      roadmapId = roadmapValue;
-    } else if (form.roadmapId.trim()) {
-      throw new Error('Roadmap ID must be a positive number.');
+    if (!roadmapValue) {
+      throw new Error('Roadmap ID is required.');
     }
-
-    const parseTags = (value: string) =>
-      value
-        .split(',')
-        .map((tag) => tag.trim())
-        .filter((tag) => tag.length > 0);
+    const roadmapId = roadmapValue;
 
     const trimmedOptions = form.options.map((option) => option.trim());
-    const options = trimmedOptions.filter((option) => option.length > 0);
-    const tags = parseTags(form.tags);
 
     const correctIndex =
       typeof form.correctOptionIndex === 'number' && Number.isFinite(form.correctOptionIndex)
         ? Math.trunc(form.correctOptionIndex)
         : null;
-    const selectedAnswer =
-      correctIndex !== null && correctIndex >= 0 && correctIndex < trimmedOptions.length
-        ? trimmedOptions[correctIndex]
-        : '';
-    const answerKey = form.answerKey.trim();
-    const explanation = form.explanation.trim();
-    const difficulty = form.difficulty.trim();
-    const questionType = form.questionType.trim();
-
-    let metadata: Record<string, unknown> | undefined;
-    const metadataRaw = form.metadata.trim();
-    if (metadataRaw) {
-      try {
-        const parsed = JSON.parse(metadataRaw);
-        if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
-          throw new Error('Metadata must be a JSON object.');
-        }
-        metadata = parsed as Record<string, unknown>;
-      } catch (err) {
-        if (err instanceof Error && err.message === 'Metadata must be a JSON object.') {
-          throw err;
-        }
-        throw new Error('Metadata must be valid JSON.');
-      }
+    if (correctIndex !== null && (correctIndex < 0 || correctIndex >= trimmedOptions.length)) {
+      throw new Error('Correct option selection is invalid.');
     }
+
+    const options: string[] = [];
+    let sanitizedCorrectIndex: number | null = null;
+    trimmedOptions.forEach((option, index) => {
+      if (!option) {
+        if (index === correctIndex) {
+          throw new Error('Correct option cannot be empty.');
+        }
+        return;
+      }
+      if (index === correctIndex) {
+        sanitizedCorrectIndex = options.length;
+      }
+      options.push(option);
+    });
+
+    if (options.length === 0) {
+      throw new Error('Provide at least one option.');
+    }
+
+    if (correctIndex === null) {
+      throw new Error('Select the correct option.');
+    }
+
+    if (sanitizedCorrectIndex === null) {
+      throw new Error('Correct option must match one of the provided options.');
+    }
+
+    const answerKey = String(sanitizedCorrectIndex);
+
+    const explanation = form.explanation.trim();
+    if (!explanation) {
+      throw new Error('Explanation is required.');
+    }
+
+    const levelRaw = form.level.trim().toUpperCase();
+    if (!levelRaw) {
+      throw new Error('Level is required.');
+    }
+    if (!['E', 'M', 'D'].includes(levelRaw)) {
+      throw new Error('Level must be one of E, M, or D.');
+    }
+    const level = levelRaw;
+    this.form.level = level;
 
     return {
       platformId: platformIdValue,
@@ -579,14 +1023,10 @@ class QuestionsStoreImpl {
       topicId: topicIdValue,
       roadmapId,
       questionText,
-      options: options.length > 0 ? options : undefined,
-      answer: selectedAnswer ? selectedAnswer : undefined,
-      answerKey: answerKey ? answerKey : undefined,
-      explanation: explanation ? explanation : undefined,
-      difficulty: difficulty ? difficulty : undefined,
-      questionType: questionType ? questionType : undefined,
-      tags: tags.length > 0 ? tags : undefined,
-      metadata,
+      options,
+      answerKey,
+      explanation,
+      level,
       isActive: !!form.isActive,
     };
   }
@@ -619,14 +1059,9 @@ class QuestionsStoreImpl {
       payload.roadmapId = roadmapIdValue;
     }
 
-    const difficulty = this.filters.difficulty.trim();
-    if (difficulty) {
-      payload.difficulty = difficulty;
-    }
-
-    const questionType = this.filters.questionType.trim();
-    if (questionType) {
-      payload.questionType = questionType;
+    const level = this.filters.level.trim().toUpperCase();
+    if (level && ['E', 'M', 'D'].includes(level)) {
+      payload.level = level;
     }
 
     if (this.filters.status !== 'all') {
@@ -640,4 +1075,3 @@ class QuestionsStoreImpl {
 export type QuestionsStore = QuestionsStoreImpl;
 
 Alpine.store('questions', new QuestionsStoreImpl());
-

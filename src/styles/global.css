@@ -33,6 +33,20 @@ html, body {
   color: rgb(var(--ans-fg));
 }
 
+button,
+a,
+[role="button"],
+[tabindex="0"],
+[x-on\\:click],
+[@click],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+label[for],
+summary {
+  cursor: pointer;
+}
+
 [x-cloak] {
   display: none !important;
 }
@@ -178,4 +192,16 @@ section[data-mini-app-landing] > div > h1 {
   border-color: rgb(30 41 59);
   box-shadow: 0 25px 45px -25px rgb(2 6 23 / 0.85);
   background-color: rgb(var(--ans-card));
+}
+button,
+a,
+[role="button"],
+[tabindex="0"],
+[x-on\\:click],
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+label[for],
+summary {
+  cursor: pointer;
 }

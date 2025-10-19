@@ -30,10 +30,11 @@ type NumberRangeFilter = {
   debounceMs?: number;
 };
 
-type SelectFilter = {
+type SelectFilter = BaseFilter & {
   type: "select";
   key: string;
-  options: { label: string; value: string }[];
+  options?: { label: string; value: string }[];
+  optionsVar?: string;
   placeholder?: string;
 };
 
@@ -322,17 +323,26 @@ const serializeAttributes = (attributes?: Record<string, string>) => attributes 
               }
 
               if (filter.type === "select") {
+                const selectAttributes = serializeAttributes(filter.attributes);
                 return (
                   <th class={`${cellClasses} ${alignClass(column.align)}`}>
                     <select
                       class="w-full rounded-lg border border-slate-200 px-2 py-1 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
                       x-model={`${filtersVar}.${filter.key}`}
-                      x-on:change={`${onFilterChange}()`}
+                      x-on:change={filter.attributes?.["x-on:change"] ? undefined : `${onFilterChange}()`}
+                      {...selectAttributes}
                     >
                       {filter.placeholder && <option value="">{filter.placeholder}</option>}
-                      {filter.options.map((option) => (
-                        <option value={option.value}>{option.label}</option>
-                      ))}
+                      {filter.optionsVar ? (
+                        <template x-for={`option in ${filter.optionsVar}`} x-bind:key="option.value ?? option.id ?? option">
+                          <option
+                            x-bind:value="option.value ?? option.id ?? option"
+                            x-text="option.label ?? option.name ?? option"
+                          ></option>
+                        </template>
+                      ) : (
+                        (filter.options ?? []).map((option) => <option value={option.value}>{option.label}</option>)
+                      )}
                     </select>
                   </th>
                 );
