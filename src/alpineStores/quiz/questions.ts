@@ -30,7 +30,7 @@ type QuestionForm = {
   topicId: string;
   roadmapId: string;
   questionText: string;
-  options: string;
+  options: string[];
   answer: string;
   answerKey: string;
   explanation: string;
@@ -320,13 +320,21 @@ class QuestionsStoreImpl {
     this.error = null;
     this.modalMode = 'edit';
     this.editingId = question.id;
+    const existingOptions = Array.isArray(question.options) ? [...question.options] : [];
+    while (existingOptions.length < 4) {
+      existingOptions.push('');
+    }
+    if (existingOptions.length > 4) {
+      existingOptions.length = 4;
+    }
+
     this.form = {
       platformId: String(question.platformId ?? ''),
       subjectId: String(question.subjectId ?? ''),
       topicId: String(question.topicId ?? ''),
       roadmapId: question.roadmapId ? String(question.roadmapId) : '',
       questionText: question.questionText ?? '',
-      options: (question.options ?? []).join('\n'),
+      options: existingOptions.map((option) => option ?? ''),
       answer: question.answer ?? '',
       answerKey: question.answerKey ?? '',
       explanation: question.explanation ?? '',
@@ -473,7 +481,7 @@ class QuestionsStoreImpl {
       topicId: '',
       roadmapId: '',
       questionText: '',
-      options: '',
+      options: Array.from({ length: 4 }, () => ''),
       answer: '',
       answerKey: '',
       explanation: '',
@@ -517,19 +525,15 @@ class QuestionsStoreImpl {
       throw new Error('Roadmap ID must be a positive number.');
     }
 
-    const parseLines = (value: string) =>
-      value
-        .split(/\r?\n/g)
-        .map((line) => line.trim())
-        .filter((line) => line.length > 0);
-
     const parseTags = (value: string) =>
       value
         .split(',')
         .map((tag) => tag.trim())
         .filter((tag) => tag.length > 0);
 
-    const options = parseLines(form.options);
+    const options = form.options
+      .map((option) => option.trim())
+      .filter((option) => option.length > 0);
     const tags = parseTags(form.tags);
 
     const answer = form.answer.trim();
