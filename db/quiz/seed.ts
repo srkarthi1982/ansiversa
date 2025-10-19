@@ -1,7 +1,18 @@
-import { db, Platform, Subject } from 'astro:db';
+import { db, Platform, Subject, Topic } from 'astro:db';
+import topicsData from './topics.json';
+
+type TopicJson = {
+  id: number;
+  platform_id: number;
+  subject_id: number;
+  name: string;
+  is_active: boolean;
+  q_count?: number;
+};
 
 // https://astro.build/db/seed
 export async function seedQuiz() {
+  console.log('Seeding quiz data...');
 	await db.insert(Platform).values([
     {
       id: 1,
@@ -2241,4 +2252,53 @@ export async function seedQuiz() {
         qCount: 5849,
       }
   ]);
+
+  const [subjectRows, platformRows] = await Promise.all([
+    db.select({ id: Subject.id, platformId: Subject.platformId }).from(Subject),
+    db.select({ id: Platform.id }).from(Platform),
+  ]);
+
+  const subjectPlatformMap = new Map<number, number>();
+  for (const row of subjectRows) {
+    subjectPlatformMap.set(row.id, row.platformId);
+  }
+
+  const platformIds = new Set(platformRows.map((row) => row.id));
+
+  const topics = (topicsData as TopicJson[])
+    .filter((item): item is TopicJson => typeof item?.id === 'number')
+    .filter((item) => {
+      if (!platformIds.has(item.platform_id)) {
+        return false;
+      }
+      const subjectPlatformId = subjectPlatformMap.get(item.subject_id);
+      return typeof subjectPlatformId === 'number' && subjectPlatformId === item.platform_id;
+    })
+    .map((item) => ({
+      id: item.id,
+      platformId: item.platform_id,
+      subjectId: item.subject_id,
+      name: item.name,
+      isActive: item.is_active,
+      qCount: item.q_count ?? 0,
+    }));
+
+  if (topics.length > 0) {
+    console.log(`Seeding ${topics.length} topics (after validation)`);
+    const batchSize = 100;
+    for (let i = 0; i < topics.length; i += batchSize) {
+      const batch = topics.slice(i, i + batchSize);
+      try {
+        await db.insert(Topic).values(batch);
+      } catch (err) {
+        for (const entry of batch) {
+          try {
+            await db.insert(Topic).values(entry);
+          } catch (singleErr) {
+            console.error('Skipping topic during seed', entry.id, singleErr instanceof Error ? singleErr.message : singleErr);
+          }
+        }
+      }
+    }
+  }
 }

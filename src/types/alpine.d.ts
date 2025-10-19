@@ -13,6 +13,7 @@ import type { ContactStore } from '../alpineStores/contact';
 import type { ResumeStore } from '../alpineStores/resume/index';
 import type { PlatformStore } from '../alpineStores/quiz/platform';
 import type { SubjectsStore } from '../alpineStores/quiz/subjects';
+import type { TopicsStore } from '../alpineStores/quiz/topics';
 
 declare module 'alpinejs' {
   namespace Alpine {
@@ -32,6 +33,7 @@ declare module 'alpinejs' {
       resume: ResumeStore;
       platform: PlatformStore;
       subjects: SubjectsStore;
+      topics: TopicsStore;
     }
   }
 }

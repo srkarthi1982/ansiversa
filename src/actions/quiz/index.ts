@@ -1,5 +1,6 @@
 import { fetchPlatforms, createPlatform, updatePlatform, deletePlatform } from './platform';
 import { fetchSubjects, createSubject, updateSubject, deleteSubject } from './subject';
+import { fetchTopics, createTopic, updateTopic, deleteTopic } from './topic';
 
 export const quiz = {
   fetchPlatforms,
@@ -10,6 +11,10 @@ export const quiz = {
   createSubject,
   updateSubject,
   deleteSubject,
+  fetchTopics,
+  createTopic,
+  updateTopic,
+  deleteTopic,
 };
 
 export {
@@ -21,4 +26,8 @@ export {
   createSubject,
   updateSubject,
   deleteSubject,
+  fetchTopics,
+  createTopic,
+  updateTopic,
+  deleteTopic,
 };

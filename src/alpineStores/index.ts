@@ -12,6 +12,7 @@ import './faq';
 import './contact';
 import './quiz/platform';
 import './quiz/subjects';
+import './quiz/topics';
 import './resume/index';
 import './admin';
 import './flashnote';

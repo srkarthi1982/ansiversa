@@ -26,21 +26,21 @@ import Layout from "../../../layouts/Layout.astro";
             View public page
           </a>
         </div>
-        <div class="grid gap-6 pt-6 sm:grid-cols-2">
+        <div class="grid gap-6 pt-6 sm:grid-cols-2 lg:grid-cols-3">
           <a
             href="/quiz/admin/platform"
             class="group flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
           >
             <div class="space-y-4">
-              <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-100">
-                <i class="fas fa-sitemap text-lg"></i>
-              </span>
-              <div class="space-y-2">
-                <h2 class="text-xl font-semibold text-slate-900">Platform settings</h2>
-                <p class="text-sm text-slate-600">
-                  Configure quiz metadata, update descriptions, and control how your quiz appears to learners.
-                </p>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-100">
+                  <i class="fas fa-sitemap text-lg"></i>
+                </span>
+                <h2 class="text-xl font-semibold text-slate-900">Platform</h2>
               </div>
+              <p class="text-sm text-slate-600">
+                Configure quiz metadata, update descriptions, and control how your quiz appears to learners.
+              </p>
             </div>
             <span class="mt-6 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:gap-2">
               Manage platform
@@ -52,18 +52,38 @@ import Layout from "../../../layouts/Layout.astro";
             class="group flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
           >
             <div class="space-y-4">
-              <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-100">
-                <i class="fas fa-book-open text-lg"></i>
-              </span>
-              <div class="space-y-2">
-                <h2 class="text-xl font-semibold text-slate-900">Subjects library</h2>
-                <p class="text-sm text-slate-600">
-                  Build and organize subjects, add new quizzes, and keep question sets aligned with your curriculum.
-                </p>
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-100">
+                  <i class="fas fa-book-open text-lg"></i>
+                </span>
+                <h2 class="text-xl font-semibold text-slate-900">Subjects</h2>
               </div>
+              <p class="text-sm text-slate-600">
+                Build and organize subjects, add new quizzes, and keep question sets aligned with your curriculum.
+              </p>
             </div>
             <span class="mt-6 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:gap-2">
               Browse subjects
+              <i class="fas fa-arrow-right text-xs transition group-hover:translate-x-1"></i>
+            </span>
+          </a>
+          <a
+            href="/quiz/admin/topics"
+            class="group flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
+          >
+            <div class="space-y-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 transition group-hover:bg-indigo-100">
+                  <i class="fas fa-list-ul text-lg"></i>
+                </span>
+                <h2 class="text-xl font-semibold text-slate-900">Topics</h2>
+              </div>
+              <p class="text-sm text-slate-600">
+                Organise topic banks within each subject, fine-tune availability, and keep counts aligned with your quizzes.
+              </p>
+            </div>
+            <span class="mt-6 inline-flex items-center text-sm font-semibold text-indigo-600 group-hover:gap-2">
+              Browse topics
               <i class="fas fa-arrow-right text-xs transition group-hover:translate-x-1"></i>
             </span>
           </a>

@@ -22,7 +22,19 @@ export const Subject = defineTable({
   },
 });
 
+export const Topic = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true }),
+    platformId: column.number({ references: () => Platform.columns.id }),
+    subjectId: column.number({ references: () => Subject.columns.id }),
+    name: column.text(),
+    isActive: column.boolean({ default: true }),
+    qCount: column.number({ default: 0 }),
+  },
+});
+
 export const quizTables = {
   Platform,
   Subject,
+  Topic,
 } as const;
