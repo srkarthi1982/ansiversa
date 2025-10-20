@@ -230,9 +230,12 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
       </div>
     </div>
   </header>
-                <main transition:name="page">
-                        {shouldShowBreadcrumb && <Breadcrumb />}
-                        <slot />
+                <main
+                  transition:name="page"
+                  class="[&>nav+*]:mt-0 [&>nav+*]:pt-6 md:[&>nav+*]:pt-8"
+                >
+                  {shouldShowBreadcrumb && <Breadcrumb />}
+                  <slot />
                 </main>
 
 		<!-- CTA -->

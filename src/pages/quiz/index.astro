@@ -56,6 +56,15 @@ const isAdmin = user?.roleId === 1;
                   Admin dashboard
                 </a>
               )}
+              {isAdmin && (
+                <a
+                  href="/quiz/seed"
+                  class="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-6 py-2.5 text-sm font-semibold text-emerald-600 transition hover:border-emerald-300 hover:bg-emerald-100"
+                >
+                  <i class="fas fa-seedling text-xs"></i>
+                  Seed questions
+                </a>
+              )}
               <a
                 href="/quiz/test"
                 class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-6 py-2.5 text-sm font-semibold text-indigo-600 transition hover:border-indigo-300 hover:bg-indigo-100"
