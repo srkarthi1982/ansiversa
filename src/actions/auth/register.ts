@@ -10,6 +10,7 @@ import {
   hashPassword,
   toBool,
 } from './helpers';
+import type { SessionUser } from '../../types/session-user';
 import { sendVerificationEmail } from '../../utils/email.server';
 
 export const register = defineAction({
@@ -43,12 +44,23 @@ export const register = defineAction({
     const passwordHash = hashPassword(password);
     await db.insert(User).values({ id: userId, username, email, passwordHash });
 
-    await createSession(userId, remember, ctx);
+    const sessionUser: SessionUser = {
+      id: userId,
+      username,
+      email,
+      roleId: 2,
+      plan: 'free',
+    };
+
+    await createSession(sessionUser, remember, ctx);
 
     const verificationToken = await createEmailVerificationToken(userId);
     const verificationUrl = new URL(`/verify-email?token=${verificationToken}`, ctx.url).toString();
     await sendVerificationEmail({ to: email, username, verificationUrl });
 
-    return { ok: true, user: { id: userId, username, email } };
+    return {
+      ok: true,
+      user: { id: sessionUser.id, username: sessionUser.username, email: sessionUser.email },
+    };
   },
 });

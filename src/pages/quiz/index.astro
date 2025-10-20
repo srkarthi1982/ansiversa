@@ -1,6 +1,5 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import type { User } from 'astro:db';
 
 const highlights = [
   {
@@ -20,7 +19,7 @@ const highlights = [
   },
 ];
 
-const user = Astro.locals.user as User | undefined;
+const user = Astro.locals.user ?? undefined;
 const isAdmin = user?.roleId === 1;
 ---
 <Layout>
