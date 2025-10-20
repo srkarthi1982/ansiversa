@@ -2,7 +2,14 @@ import type { AstroCookies } from 'astro';
 import { db, User, Session, EmailVerificationToken, eq, or } from 'astro:db';
 
 const { randomUUID, randomBytes, scryptSync, timingSafeEqual } = await import('node:crypto');
-import { deleteSessionByToken, hashSessionToken, SESSION_COOKIE_NAME } from '../../utils/session.server';
+import {
+  deleteSessionByToken,
+  deleteUserCookie,
+  hashSessionToken,
+  SESSION_COOKIE_NAME,
+  setUserCookie,
+} from '../../utils/session.server';
+import type { SessionUser } from '../../types/session-user';
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24;
 const SESSION_TTL_REMEMBER_SECONDS = SESSION_TTL_SECONDS * 30;
@@ -45,7 +52,7 @@ export async function findUserByEmail(email: string) {
   return rows[0];
 }
 
-export async function createSession(userId: string, remember: boolean, ctx: { cookies: AstroCookies }) {
+export async function createSession(user: SessionUser, remember: boolean, ctx: { cookies: AstroCookies }) {
   const previousToken = ctx.cookies.get(SESSION_COOKIE_NAME)?.value;
   if (previousToken) {
     await deleteSessionByToken(previousToken);
@@ -58,7 +65,7 @@ export async function createSession(userId: string, remember: boolean, ctx: { co
 
   await db.insert(Session).values({
     id: randomUUID(),
-    userId,
+    userId: user.id,
     tokenHash,
     expiresAt,
   });
@@ -70,6 +77,8 @@ export async function createSession(userId: string, remember: boolean, ctx: { co
     secure: true,
     maxAge,
   });
+
+  setUserCookie(ctx.cookies, user, maxAge);
 }
 
 export async function clearSession(ctx: { cookies: AstroCookies }) {
@@ -78,6 +87,7 @@ export async function clearSession(ctx: { cookies: AstroCookies }) {
     await deleteSessionByToken(token);
   }
   ctx.cookies.delete(SESSION_COOKIE_NAME, { path: '/' });
+  deleteUserCookie(ctx.cookies);
 }
 
 export { randomUUID, randomBytes };

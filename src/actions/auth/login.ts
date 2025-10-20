@@ -1,11 +1,7 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import {
-  createSession,
-  findUserByIdentifier,
-  toBool,
-  verifyPassword,
-} from './helpers';
+import { createSession, findUserByIdentifier, toBool, verifyPassword } from './helpers';
+import type { SessionUser } from '../../types/session-user';
 
 export const login = defineAction({
   accept: 'form',
@@ -20,8 +16,23 @@ export const login = defineAction({
       throw new ActionError({ code: 'UNAUTHORIZED', message: 'Invalid credentials' });
     }
 
-    await createSession(user.id, remember, ctx);
+    const sessionUser: SessionUser = {
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      roleId: user.roleId ?? 2,
+      plan: user.plan ?? null,
+    };
 
-    return { ok: true, user: { id: user.id, username: user.username, email: user.email } };
+    await createSession(sessionUser, remember, ctx);
+
+    return {
+      ok: true,
+      user: {
+        id: sessionUser.id,
+        username: sessionUser.username,
+        email: sessionUser.email,
+      },
+    };
   },
 });

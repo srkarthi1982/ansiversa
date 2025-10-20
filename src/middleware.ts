@@ -1,11 +1,36 @@
 // src/middleware.ts
 import type { MiddlewareHandler } from 'astro';
-import { getSessionWithUser } from './utils/session.server';
+import {
+  SESSION_COOKIE_NAME,
+  deleteUserCookie,
+  findActiveSessionByToken,
+  getSessionWithUser,
+  getUserFromCookies,
+  setUserCookie,
+} from './utils/session.server';
 
 export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redirect }, next) => {
-  const result = await getSessionWithUser(cookies);
-  const session = result?.session ?? null;
-  const user = result?.user ?? null;
+  const sessionToken = cookies.get(SESSION_COOKIE_NAME)?.value;
+  const session = await findActiveSessionByToken(sessionToken);
+  let user = getUserFromCookies(cookies);
+
+  if (session && !user) {
+    const result = await getSessionWithUser(cookies);
+    if (result?.user) {
+      user = result.user;
+      const remainingMs = result.session.expiresAt.getTime() - Date.now();
+      const maxAge = Math.max(0, Math.floor(remainingMs / 1000));
+      if (maxAge > 0) {
+        setUserCookie(cookies, user, maxAge);
+      }
+    }
+  }
+
+  if (!session && user) {
+    deleteUserCookie(cookies);
+    user = null;
+  }
+
   const isAuthed = Boolean(session);
   const protectedPaths = ['/dashboard', '/settings', '/change-password'];
   const includesAdminSegment = url.pathname.split('/').filter(Boolean).includes('admin');
