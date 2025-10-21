@@ -20,3 +20,4 @@ import './resume/index';
 import './admin';
 import './flashnote';
 import './miniApps';
+import './portfolioCreator';

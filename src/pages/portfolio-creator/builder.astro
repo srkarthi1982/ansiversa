@@ -1,0 +1,909 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+
+const portfolioId = Astro.url.searchParams.get('id') ?? '';
+const portfolioIdAttr = portfolioId ?? '';
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#portfolio-builder-main"
+  >
+    Skip to content
+  </a>
+  <main
+    id="portfolio-builder-main"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ portfolio: $store['portfolio-creator'] })"
+    x-init="portfolio.initBuilder({ id: $el.dataset.portfolioId || null })"
+    data-portfolio-id={portfolioIdAttr}
+  >
+    <section class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-wrap items-center gap-4 px-4 py-6 sm:px-6 lg:max-w-6xl lg:px-8">
+        <a href="/portfolio-creator" class="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 transition hover:text-slate-900">
+          <i class="fas fa-arrow-left text-xs"></i>
+          Back to dashboard
+        </a>
+        <div class="flex flex-1 flex-wrap items-center gap-3">
+          <div>
+            <h1 class="text-2xl font-bold text-slate-900 sm:text-3xl" x-text="portfolio.builderState.title || 'Untitled portfolio'"></h1>
+            <p class="text-xs font-medium uppercase tracking-wide text-slate-500" x-text="portfolio.builderPublicUrl"></p>
+          </div>
+          <span
+            class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+            :class="{
+              'bg-emerald-100 text-emerald-700': portfolio.builderState.status === 'published',
+              'bg-amber-100 text-amber-700': portfolio.builderState.status === 'draft',
+              'bg-slate-100 text-slate-600': portfolio.builderState.status === 'archived',
+            }"
+          >
+            <i class="fas fa-circle text-[9px]"></i>
+            <span class="capitalize" x-text="portfolio.builderState.status"></span>
+          </span>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <Button
+            href="/portfolio-creator/templates"
+            variant="outline"
+          >
+            <i class="fas fa-layer-group text-xs"></i>
+            Templates
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            @click.prevent="portfolio.saveNow()"
+          >
+            <i class="fas fa-save text-xs"></i>
+            Save
+          </Button>
+          <template x-if="portfolio.builderState.status !== 'published'">
+            <Button
+              type="button"
+              variant="secondary"
+              @click.prevent="portfolio.publish()"
+            >
+              <i class="fas fa-upload text-xs"></i>
+              Publish
+            </Button>
+          </template>
+          <template x-if="portfolio.builderState.status === 'published'">
+            <Button
+              type="button"
+              variant="secondary"
+              @click.prevent="portfolio.unpublish()"
+            >
+              <i class="fas fa-ban text-xs"></i>
+              Unpublish
+            </Button>
+          </template>
+          <div class="relative" x-data="{ open: false }">
+            <Button
+              type="button"
+              @click="open = !open"
+              :aria-expanded="open"
+              aria-haspopup="true"
+            >
+              <i class="fas fa-file-export text-xs"></i>
+              Export
+              <i class="fas fa-chevron-down text-[10px]"></i>
+            </Button>
+            <div
+              class="absolute right-0 z-20 mt-2 w-48 rounded-2xl border border-slate-200 bg-white py-2 text-sm shadow-lg"
+              x-show="open"
+              x-transition
+              @click.away="open = false"
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                block
+                @click.prevent="portfolio.export('pdf'); open = false;"
+              >
+                <i class="fas fa-file-pdf text-xs text-rose-500"></i>
+                PDF export
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                block
+                @click.prevent="portfolio.export('html'); open = false;"
+              >
+                <i class="fas fa-code text-xs text-indigo-500"></i>
+                HTML bundle
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-10">
+      <div class="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_minmax(320px,420px)] lg:px-8">
+        <div class="space-y-8">
+          <div class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-6 py-4">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Structure</h2>
+                <p class="text-sm text-slate-600">Manage sections, templates, and live preview settings.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+                  <span class="sr-only">Template</span>
+                  <i class="fas fa-palette text-xs"></i>
+                  <select
+                    class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                    x-model="portfolio.builderState.templateKey"
+                    @change="portfolio.setTemplate(portfolio.builderState.templateKey)"
+                  >
+                    <option value="professional">Professional</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="creative">Creative</option>
+                    <option value="bold">Bold</option>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+                  <span class="sr-only">Slug</span>
+                  <i class="fas fa-link text-xs"></i>
+                  <input
+                    type="text"
+                    class="w-36 bg-transparent text-sm focus:outline-none"
+                    placeholder="slug"
+                    x-model="portfolio.builderState.slug"
+                    @blur="portfolio.setSlug(portfolio.builderState.slug)"
+                  />
+                </label>
+              </div>
+            </header>
+            <div class="divide-y divide-slate-100">
+              <details class="group" :open="portfolio.isSectionOpen('basics')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('basics')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-id-card text-xs text-indigo-500"></i>
+                    Basics
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Full name
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Your name"
+                        x-model="portfolio.builderState.data.basics.name"
+                        @input="portfolio.syncTitleWithName()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Title
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Product builder"
+                        x-model="portfolio.builderState.data.basics.title"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Email
+                      <input
+                        type="email"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="hello@example.com"
+                        x-model="portfolio.builderState.data.basics.email"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Phone
+                      <input
+                        type="tel"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="+971 00 000 0000"
+                        x-model="portfolio.builderState.data.basics.phone"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Location
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="City, Country"
+                        x-model="portfolio.builderState.data.basics.location"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Website
+                      <input
+                        type="url"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="https://"
+                        x-model="portfolio.builderState.data.basics.website"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Availability
+                    <input
+                      type="text"
+                      class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="Open to collaborations"
+                      x-model="portfolio.builderState.data.basics.availability"
+                      @input="portfolio.markUnsaved()"
+                    />
+                  </label>
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Headline
+                    <textarea
+                      class="min-h-[96px] rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="A concise headline that sells your value."
+                      x-model="portfolio.builderState.data.basics.headline"
+                      @input="portfolio.markUnsaved()"
+                    ></textarea>
+                  </label>
+                  <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                      <h4 class="text-sm font-semibold text-slate-900">Social links</h4>
+                      <Button type="button" variant="ghost" class="text-xs" @click.prevent="portfolio.addSocialLink()">
+                        <i class="fas fa-plus text-[10px]"></i>
+                        Add link
+                      </Button>
+                    </div>
+                    <template x-if="portfolio.builderState.data.basics.social.length === 0">
+                      <p class="text-xs text-slate-500">Add LinkedIn, GitHub, Behance, or other destinations.</p>
+                    </template>
+                    <template x-for="link in portfolio.builderState.data.basics.social" :key="link.id">
+                      <div class="grid gap-2 rounded-2xl border border-slate-100 bg-slate-50 p-3 sm:grid-cols-[160px_1fr_auto]">
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Label"
+                          x-model="link.label"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <input
+                          type="url"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="https://"
+                          x-model="link.url"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          class="justify-self-end text-xs text-red-600 hover:text-red-700"
+                          @click.prevent="portfolio.removeSocialLink(link.id)"
+                        >
+                          <i class="fas fa-times"></i>
+                          Remove
+                        </Button>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </details>
+
+              <details class="group" :open="portfolio.isSectionOpen('about')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('about')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-feather text-xs text-indigo-500"></i>
+                    About
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <div class="flex items-center justify-between">
+                    <p class="text-xs text-slate-500">Summarize your story in a warm, outcome-driven way.</p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      class="text-xs"
+                      @click.prevent="portfolio.aiImprove({ type: 'about' })"
+                    >
+                      <i class="fas fa-robot text-[10px]"></i>
+                      AI improve
+                    </Button>
+                  </div>
+                  <textarea
+                    class="min-h-[160px] rounded-2xl border border-slate-200 px-3 py-3 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                    placeholder="Share how you work, who you help, and the impact you create."
+                    x-model="portfolio.builderState.data.about"
+                    @input="portfolio.markUnsaved()"
+                  ></textarea>
+                </div>
+              </details>
+
+              <details class="group" :open="portfolio.isSectionOpen('skills')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('skills')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-swatchbook text-xs text-indigo-500"></i>
+                    Skills
+                  </span>
+                  <div class="flex items-center gap-3">
+                    <Button type="button" variant="ghost" class="text-xs" @click.prevent="portfolio.addSkill()">
+                      <i class="fas fa-plus text-[10px]"></i>
+                      Add
+                    </Button>
+                    <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                  </div>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <template x-if="portfolio.builderState.data.skills.length === 0">
+                    <p class="text-xs text-slate-500">Highlight 3–6 signature skills with clear proof.</p>
+                  </template>
+                  <template x-for="skill in portfolio.builderState.data.skills" :key="skill.id">
+                    <div class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <div class="grid gap-3 sm:grid-cols-[minmax(0,200px)_minmax(0,160px)_auto]">
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Skill"
+                          x-model="skill.name"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <select
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          x-model="skill.level"
+                          @change="portfolio.markUnsaved()"
+                        >
+                          <option value="beginner">Beginner</option>
+                          <option value="intermediate">Intermediate</option>
+                          <option value="advanced">Advanced</option>
+                          <option value="expert">Expert</option>
+                        </select>
+                        <Button type="button" variant="ghost" class="justify-self-end text-xs text-red-600 hover:text-red-700" @click.prevent="portfolio.removeSkill(skill.id)">
+                          <i class="fas fa-times"></i>
+                          Remove
+                        </Button>
+                      </div>
+                      <textarea
+                        class="min-h-[96px] rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Explain how you apply this skill to deliver results."
+                        x-model="skill.description"
+                        @input="portfolio.markUnsaved()"
+                      ></textarea>
+                    </div>
+                  </template>
+                </div>
+              </details>
+
+              <details class="group" :open="portfolio.isSectionOpen('experience')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('experience')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-briefcase text-xs text-indigo-500"></i>
+                    Experience
+                  </span>
+                  <div class="flex items-center gap-3">
+                    <Button type="button" variant="ghost" class="text-xs" @click.prevent="portfolio.addExperience()">
+                      <i class="fas fa-plus text-[10px]"></i>
+                      Add
+                    </Button>
+                    <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                  </div>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <template x-if="portfolio.builderState.data.experience.length === 0">
+                    <p class="text-xs text-slate-500">Capture role, outcomes, and a few measurable wins.</p>
+                  </template>
+                  <template x-for="role in portfolio.builderState.data.experience" :key="role.id">
+                    <div class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <div class="grid gap-3 sm:grid-cols-[minmax(0,200px)_minmax(0,200px)_minmax(0,120px)_minmax(0,120px)_auto]">
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Role"
+                          x-model="role.role"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Company"
+                          x-model="role.company"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Start"
+                          x-model="role.startDate"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-xs text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="End"
+                          x-model="role.endDate"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <Button type="button" variant="ghost" class="justify-self-end text-xs text-red-600 hover:text-red-700" @click.prevent="portfolio.removeExperience(role.id)">
+                          <i class="fas fa-times"></i>
+                          Remove
+                        </Button>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-500">Focus on mission, ownership, and the results you delivered.</p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          class="text-xs"
+                          @click.prevent="portfolio.aiImprove({ type: 'experience', id: role.id })"
+                        >
+                          <i class="fas fa-robot text-[10px]"></i>
+                          AI improve
+                        </Button>
+                      </div>
+                      <textarea
+                        class="min-h-[120px] rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Summarize responsibilities and strategy."
+                        x-model="role.summary"
+                        @input="portfolio.markUnsaved()"
+                      ></textarea>
+                      <div class="space-y-3">
+                        <div class="flex items-center justify-between">
+                          <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Key wins</h4>
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            class="text-xs"
+                            @click.prevent="role.achievements.push('Add a specific, quantified achievement.'); portfolio.markUnsaved()"
+                          >
+                            <i class="fas fa-plus text-[10px]"></i>
+                            Add
+                          </Button>
+                        </div>
+                        <template x-if="role.achievements.length === 0">
+                          <p class="text-xs text-slate-500">Use bullet points with measurable metrics.</p>
+                        </template>
+                        <template x-for="(achievement, index) in role.achievements" :key="`${role.id}-achievement-${index}`">
+                          <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-700 shadow-sm">
+                            <input
+                              type="text"
+                              class="flex-1 bg-transparent focus:outline-none"
+                              x-model="role.achievements[index]"
+                              @input="portfolio.markUnsaved()"
+                            />
+                            <button
+                              type="button"
+                              class="rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-red-500"
+                              @click.prevent="role.achievements.splice(index, 1); portfolio.markUnsaved()"
+                              aria-label="Remove achievement"
+                            >
+                              <i class="fas fa-times"></i>
+                            </button>
+                          </div>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </details>
+
+              <details class="group" :open="portfolio.isSectionOpen('projects')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('projects')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-display text-xs text-indigo-500"></i>
+                    Projects
+                  </span>
+                  <div class="flex items-center gap-3">
+                    <Button type="button" variant="ghost" class="text-xs" @click.prevent="portfolio.addProject()">
+                      <i class="fas fa-plus text-[10px]"></i>
+                      Add
+                    </Button>
+                    <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                  </div>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <template x-if="portfolio.builderState.data.projects.length === 0">
+                    <p class="text-xs text-slate-500">Showcase 2–4 flagship projects with context and impact.</p>
+                  </template>
+                  <template x-for="project in portfolio.builderState.data.projects" :key="project.id">
+                    <div class="space-y-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <div class="grid gap-3 sm:grid-cols-[minmax(0,200px)_minmax(0,200px)_auto]">
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Project name"
+                          x-model="project.name"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Tagline"
+                          x-model="project.tagline"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <Button type="button" variant="ghost" class="justify-self-end text-xs text-red-600 hover:text-red-700" @click.prevent="portfolio.removeProject(project.id)">
+                          <i class="fas fa-times"></i>
+                          Remove
+                        </Button>
+                      </div>
+                      <div class="flex items-center justify-between">
+                        <p class="text-xs text-slate-500">Tell the story and highlight what changed because of you.</p>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          class="text-xs"
+                          @click.prevent="portfolio.aiImprove({ type: 'project', id: project.id })"
+                        >
+                          <i class="fas fa-robot text-[10px]"></i>
+                          AI improve
+                        </Button>
+                      </div>
+                      <textarea
+                        class="min-h-[120px] rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Describe the challenge, your approach, and the results."
+                        x-model="project.description"
+                        @input="portfolio.markUnsaved()"
+                      ></textarea>
+                      <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,200px)]">
+                        <input
+                          type="url"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Project link"
+                          x-model="project.link"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Tags (comma separated)"
+                          :value="project.tags.join(', ')"
+                          @blur="project.tags = $event.target.value.split(',').map(tag => tag.trim()).filter(Boolean); portfolio.markUnsaved()"
+                        />
+                      </div>
+                      <label class="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        Spotlight metric
+                        <input
+                          type="text"
+                          class="rounded-lg border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                          placeholder="Share a headline win"
+                          x-model="project.spotlight"
+                          @input="portfolio.markUnsaved()"
+                        />
+                      </label>
+                    </div>
+                  </template>
+                </div>
+              </details>
+
+              <details class="group" :open="portfolio.isSectionOpen('contact')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('contact')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-envelope-open-text text-xs text-indigo-500"></i>
+                    Contact & CTA
+                  </span>
+                  <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Message
+                    <textarea
+                      class="min-h-[120px] rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="Invite prospective clients to reach out."
+                      x-model="portfolio.builderState.data.contact.message"
+                      @input="portfolio.markUnsaved()"
+                    ></textarea>
+                  </label>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Contact email
+                      <input
+                        type="email"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="contact@example.com"
+                        x-model="portfolio.builderState.data.contact.email"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Phone or WhatsApp
+                      <input
+                        type="tel"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="+971 00 000 0000"
+                        x-model="portfolio.builderState.data.contact.phone"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Location
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Remote / Dubai"
+                        x-model="portfolio.builderState.data.contact.location"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Response time
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Replies in under 24 hours"
+                        x-model="portfolio.builderState.data.contact.availability"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    CTA label
+                    <input
+                      type="text"
+                      class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="Book a discovery call"
+                      x-model="portfolio.builderState.data.contact.ctaLabel"
+                      @input="portfolio.markUnsaved()"
+                    />
+                  </label>
+                </div>
+              </details>
+
+              <details class="group" :open="portfolio.isSectionOpen('seo')">
+                <summary
+                  class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4 text-left text-sm font-semibold text-slate-900 transition hover:bg-slate-50 focus:outline-none focus-visible:bg-slate-100"
+                  @click.prevent="portfolio.toggleSection('seo')"
+                >
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fas fa-rocket text-xs text-indigo-500"></i>
+                    Highlights & SEO
+                  </span>
+                  <div class="flex items-center gap-3">
+                    <Button type="button" variant="ghost" class="text-xs" @click.prevent="portfolio.addHighlight()">
+                      <i class="fas fa-plus text-[10px]"></i>
+                      Add highlight
+                    </Button>
+                    <i class="fas fa-chevron-down text-xs transition group-open:rotate-180"></i>
+                  </div>
+                </summary>
+                <div class="space-y-4 px-6 pb-6 pt-2">
+                  <div class="space-y-3">
+                    <template x-if="portfolio.builderState.data.highlights.length === 0">
+                      <p class="text-xs text-slate-500">Add a few proof points and recognitions.</p>
+                    </template>
+                    <template x-for="(highlight, index) in portfolio.builderState.data.highlights" :key="`highlight-${index}`">
+                      <div class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-xs text-slate-700">
+                        <input
+                          type="text"
+                          class="flex-1 bg-transparent focus:outline-none"
+                          x-model="portfolio.builderState.data.highlights[index]"
+                          @input="portfolio.markUnsaved()"
+                        />
+                        <div class="flex items-center gap-2">
+                          <button
+                            type="button"
+                            class="rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-indigo-600"
+                            @click.prevent="portfolio.aiImprove({ type: 'highlight', index })"
+                            aria-label="AI improve highlight"
+                          >
+                            <i class="fas fa-robot"></i>
+                          </button>
+                          <button
+                            type="button"
+                            class="rounded-full p-1 text-slate-400 transition hover:bg-slate-100 hover:text-red-500"
+                            @click.prevent="portfolio.removeHighlight(index)"
+                            aria-label="Remove highlight"
+                          >
+                            <i class="fas fa-times"></i>
+                          </button>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                  <div class="grid gap-4 sm:grid-cols-2">
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      SEO title
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="Portfolio title for search"
+                        x-model="portfolio.builderState.data.seo.title"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                    <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                      Keywords
+                      <input
+                        type="text"
+                        class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        placeholder="founder, product, strategist"
+                        x-model="portfolio.builderState.data.seo.keywords"
+                        @input="portfolio.markUnsaved()"
+                      />
+                    </label>
+                  </div>
+                  <label class="flex flex-col gap-1 text-sm font-medium text-slate-700">
+                    Meta description
+                    <textarea
+                      class="min-h-[96px] rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                      placeholder="A concise description for search engines and social sharing."
+                      x-model="portfolio.builderState.data.seo.description"
+                      @input="portfolio.markUnsaved()"
+                    ></textarea>
+                  </label>
+                </div>
+              </details>
+            </div>
+          </div>
+        </div>
+
+        <aside class="space-y-6">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Live preview</h2>
+                <p class="text-xs text-slate-500">Changes appear instantly in your shareable site.</p>
+              </div>
+              <div class="inline-flex rounded-full border border-slate-200 bg-slate-50 p-1 text-xs">
+                <button
+                  type="button"
+                  class="rounded-full px-3 py-1 font-semibold"
+                  :class="portfolio.builderState.previewMode === 'desktop' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'"
+                  @click="portfolio.builderState.previewMode = 'desktop'"
+                >
+                  <i class="fas fa-display text-xs"></i>
+                </button>
+                <button
+                  type="button"
+                  class="rounded-full px-3 py-1 font-semibold"
+                  :class="portfolio.builderState.previewMode === 'mobile' ? 'bg-white text-slate-900 shadow-sm' : 'text-slate-500'"
+                  @click="portfolio.builderState.previewMode = 'mobile'"
+                >
+                  <i class="fas fa-mobile-screen text-xs"></i>
+                </button>
+              </div>
+            </header>
+            <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <div
+                class="mx-auto space-y-6"
+                :class="portfolio.builderState.previewMode === 'mobile' ? 'max-w-xs' : 'max-w-none'"
+              >
+                <section
+                  class="rounded-2xl border border-slate-100 p-6 text-slate-900"
+                  :class="{
+                    'bg-gradient-to-br from-indigo-500/10 via-white to-white': portfolio.builderState.templateKey === 'professional',
+                    'bg-gradient-to-br from-emerald-500/10 via-white to-white': portfolio.builderState.templateKey === 'minimal',
+                    'bg-gradient-to-br from-rose-500/10 via-white to-white': portfolio.builderState.templateKey === 'creative',
+                    'bg-gradient-to-br from-amber-500/10 via-white to-white': portfolio.builderState.templateKey === 'bold',
+                  }"
+                >
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Hero</p>
+                  <h3 class="mt-3 text-2xl font-bold" x-text="portfolio.builderState.data.basics.name"></h3>
+                  <p class="text-sm text-slate-600" x-text="portfolio.builderState.data.basics.title"></p>
+                  <p class="mt-3 text-sm text-slate-700" x-text="portfolio.builderState.data.basics.headline"></p>
+                  <div class="mt-4 flex flex-wrap gap-2 text-xs text-indigo-600">
+                    <template x-for="link in portfolio.builderState.data.basics.social" :key="`preview-social-${link.id}`">
+                      <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1">
+                        <i class="fas fa-link text-[9px]"></i>
+                        <span x-text="link.label"></span>
+                      </span>
+                    </template>
+                  </div>
+                </section>
+                <section class="space-y-4 rounded-2xl border border-slate-100 bg-white p-6 text-slate-900">
+                  <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">About</h4>
+                  <p class="text-sm leading-relaxed text-slate-700" x-text="portfolio.builderState.data.about"></p>
+                  <div class="grid gap-3 sm:grid-cols-2">
+                    <template x-for="skill in portfolio.builderState.data.skills" :key="`preview-skill-${skill.id}`">
+                      <div class="rounded-xl border border-slate-100 bg-slate-50 p-3">
+                        <p class="text-sm font-semibold text-slate-900" x-text="skill.name"></p>
+                        <p class="text-xs uppercase tracking-wide text-slate-500" x-text="skill.level"></p>
+                        <p class="mt-2 text-xs text-slate-600" x-text="skill.description"></p>
+                      </div>
+                    </template>
+                  </div>
+                </section>
+                <section class="space-y-4 rounded-2xl border border-slate-100 bg-white p-6 text-slate-900">
+                  <div class="flex items-center justify-between">
+                    <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Projects</h4>
+                    <span class="text-xs text-slate-400" x-text="`${portfolio.builderState.data.projects.length} case studies`"></span>
+                  </div>
+                  <div class="space-y-4">
+                    <template x-for="project in portfolio.builderState.data.projects" :key="`preview-project-${project.id}`">
+                      <article class="rounded-xl border border-slate-100 bg-slate-50 p-4">
+                        <h5 class="text-base font-semibold text-slate-900" x-text="project.name"></h5>
+                        <p class="text-xs uppercase tracking-wide text-indigo-500" x-text="project.tagline"></p>
+                        <p class="mt-2 text-sm text-slate-700" x-text="project.description"></p>
+                        <div class="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-600">
+                          <template x-for="tag in project.tags" :key="`preview-project-${project.id}-${tag}`">
+                            <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-1 shadow-sm">
+                              <i class="fas fa-hashtag text-[9px]"></i>
+                              <span x-text="tag"></span>
+                            </span>
+                          </template>
+                        </div>
+                        <p class="mt-3 text-xs font-medium text-emerald-600" x-text="project.spotlight"></p>
+                      </article>
+                    </template>
+                  </div>
+                </section>
+                <section class="space-y-3 rounded-2xl border border-slate-100 bg-white p-6 text-slate-900">
+                  <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Highlights</h4>
+                  <ul class="space-y-2 text-sm text-slate-700">
+                    <template x-for="(highlight, index) in portfolio.builderState.data.highlights" :key="`preview-highlight-${index}`">
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-star text-[10px] text-amber-500"></i>
+                        <span x-text="highlight"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </section>
+                <section class="space-y-4 rounded-2xl border border-slate-100 bg-white p-6 text-slate-900">
+                  <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Contact</h4>
+                  <p class="text-sm text-slate-700" x-text="portfolio.builderState.data.contact.message"></p>
+                  <div class="space-y-2 text-sm text-slate-600">
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-envelope text-xs text-indigo-500"></i>
+                      <span x-text="portfolio.builderState.data.contact.email"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-phone text-xs text-indigo-500"></i>
+                      <span x-text="portfolio.builderState.data.contact.phone"></span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                      <i class="fas fa-location-dot text-xs text-indigo-500"></i>
+                      <span x-text="portfolio.builderState.data.contact.location"></span>
+                    </div>
+                  </div>
+                  <Button type="button">
+                    <i class="fas fa-paper-plane text-xs"></i>
+                    <span x-text="portfolio.builderState.data.contact.ctaLabel"></span>
+                  </Button>
+                </section>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-600 shadow-sm">
+            <h3 class="text-base font-semibold text-slate-900">Publishing notes</h3>
+            <ul class="mt-3 space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-shield-check mt-1 text-xs text-emerald-500"></i>
+                Published portfolios are sanitized and SEO optimized automatically.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-wand-magic-sparkles mt-1 text-xs text-indigo-500"></i>
+                Use AI improves on About, Experience, Projects, and Highlights to maintain tone.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-file-export mt-1 text-xs text-slate-500"></i>
+                Export PDF/HTML anytime for offline decks or investor packets.
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>
