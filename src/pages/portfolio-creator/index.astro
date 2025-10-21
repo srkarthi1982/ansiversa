@@ -1,14 +1,442 @@
 ---
-import Layout from "../../layouts/Layout.astro";
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+import Modal from '../../components/Modal.astro';
+
+const planHighlights = [
+  { label: 'Portfolios', free: '1 active', pro: 'Unlimited' },
+  { label: 'Templates', free: 'Professional only', pro: 'All 4 themes' },
+  { label: 'AI improvements', free: '3 per day', pro: 'Unlimited' },
+  { label: 'Storage', free: '10 MB', pro: '500 MB' },
+  { label: 'Exports', free: 'HTML & PDF with watermark', pro: 'PDF, HTML, + brandless' },
+];
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section data-mini-app-landing class="py-16" x-data="() => ({ loader: $store.loader, app: $store['portfolio-creator'] ?? {} })">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Portfolio Creator
-        </h1>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#portfolio-dashboard"
+  >
+    Skip to content
+  </a>
+  <main
+    id="portfolio-dashboard"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ portfolio: $store['portfolio-creator'] })"
+    x-init="portfolio.initDashboard()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-slate-50 to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-7 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-sparkles text-xs"></i>
+              AI portfolio studio
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Ship a standout personal brand in minutes
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Collect your story, polish the copy with AI, and publish to a beautiful link powered by Ansiversa. Templates, media, and SEO are all included.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button
+                type="button"
+                class="shadow-sm"
+                @click.prevent="portfolio.createDraft()"
+              >
+                <i class="fas fa-plus text-xs"></i>
+                Create portfolio
+              </Button>
+              <Button
+                href="/portfolio-creator/templates"
+                variant="outline"
+              >
+                <i class="fas fa-layer-group text-xs"></i>
+                Explore templates
+              </Button>
+              <Button
+                href="/portfolio-creator/builder"
+                variant="ghost"
+              >
+                <i class="fas fa-sliders text-xs"></i>
+                Open builder
+              </Button>
+            </div>
+            <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm">
+                <i class="fas fa-id-card-clip text-[11px] text-indigo-500"></i>
+                <span x-text="portfolio.currentPlanLabel"></span>
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full bg-white px-4 py-2 text-xs font-semibold text-slate-700 shadow-sm">
+                <i class="fas fa-robot text-[11px] text-emerald-500"></i>
+                <span x-text="portfolio.aiQuotaLabel"></span>
+              </span>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-2xl"></div>
+            <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-slate-900">Portfolio snapshot</h2>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-chart-line text-[11px] text-indigo-500"></i>
+                  <span>Live analytics</span>
+                </span>
+              </div>
+              <dl class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Monthly views</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="Intl.NumberFormat().format(portfolio.state.metrics.views)"></span>
+                    <span class="text-xs font-medium text-slate-500">visitors</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Leads captured</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="Intl.NumberFormat().format(portfolio.state.metrics.leads)"></span>
+                    <span class="text-xs font-medium text-slate-500">contacts</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4 sm:col-span-2">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-indigo-700">Ready to share</dt>
+                  <dd class="mt-2 flex items-center gap-3">
+                    <span class="text-2xl font-semibold text-indigo-900" x-text="portfolio.state.metrics.published"></span>
+                    <span class="text-sm text-indigo-700">published portfolios</span>
+                  </dd>
+                </div>
+              </dl>
+              <div class="rounded-2xl border border-slate-100 bg-white/60 p-4">
+                <h3 class="text-sm font-semibold text-slate-900">Usage summary</h3>
+                <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                  <li class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-2">
+                      <i class="fas fa-folder-open text-[10px] text-indigo-500"></i>
+                      Active portfolios
+                    </span>
+                    <span class="font-semibold text-slate-900" x-text="portfolio.state.items.filter(item => item.status !== 'archived').length"></span>
+                  </li>
+                  <li class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-2">
+                      <i class="fas fa-cloud-arrow-down text-[10px] text-indigo-500"></i>
+                      Exports
+                    </span>
+                    <span class="font-semibold text-slate-900" x-text="Intl.NumberFormat().format(portfolio.state.metrics.exports)"></span>
+                  </li>
+                  <li class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-2">
+                      <i class="fas fa-clock text-[10px] text-indigo-500"></i>
+                      Last saved
+                    </span>
+                    <span class="font-semibold text-slate-900" x-text="portfolio.formatRelative(portfolio.builderState.lastSavedAt)"></span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div class="space-y-8">
+            <header class="flex flex-wrap items-center justify-between gap-4">
+              <div class="space-y-1">
+                <h2 class="text-2xl font-semibold text-slate-900">Your portfolios</h2>
+                <p class="text-sm text-slate-600">Manage drafts, publish, and export from one workspace.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+                  <span class="sr-only">Template filter</span>
+                  <i class="fas fa-layer-group text-xs"></i>
+                  <select
+                    class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                    x-model="portfolio.state.filters.template"
+                    @change="portfolio.applyFilters()"
+                  >
+                    <option value="all">All templates</option>
+                    <option value="professional">Professional</option>
+                    <option value="minimal">Minimal</option>
+                    <option value="creative">Creative</option>
+                    <option value="bold">Bold</option>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+                  <span class="sr-only">Status filter</span>
+                  <i class="fas fa-signal text-xs"></i>
+                  <select
+                    class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                    x-model="portfolio.state.filters.status"
+                    @change="portfolio.applyFilters()"
+                  >
+                    <option value="all">All statuses</option>
+                    <option value="draft">Draft</option>
+                    <option value="published">Published</option>
+                    <option value="archived">Archived</option>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+                  <span class="sr-only">Search portfolios</span>
+                  <i class="fas fa-search text-xs"></i>
+                  <input
+                    type="search"
+                    placeholder="Search"
+                    class="w-32 bg-transparent text-sm focus:outline-none"
+                    x-model="portfolio.state.search"
+                    @input.debounce.300ms="portfolio.applyFilters()"
+                  />
+                </label>
+              </div>
+            </header>
+
+            <template x-if="portfolio.state.loading">
+              <div class="grid gap-6 sm:grid-cols-2">
+                <template x-for="index in 4" :key="`portfolio-skeleton-${index}`">
+                  <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <div class="space-y-3">
+                      <div class="h-6 w-40 rounded bg-slate-200"></div>
+                      <div class="h-4 w-32 rounded bg-slate-100"></div>
+                      <div class="h-[72px] rounded bg-slate-50"></div>
+                    </div>
+                    <div class="mt-6 flex items-center justify-between">
+                      <div class="h-6 w-24 rounded-full bg-slate-100"></div>
+                      <div class="h-10 w-28 rounded-full bg-slate-200"></div>
+                    </div>
+                  </article>
+                </template>
+              </div>
+            </template>
+
+            <template x-if="!portfolio.state.loading && portfolio.state.filtered.length === 0">
+              <div class="rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
+                <i class="fas fa-swatchbook text-3xl text-slate-300"></i>
+                <h3 class="mt-4 text-lg font-semibold text-slate-900">No portfolios yet</h3>
+                <p class="mt-2 text-sm text-slate-600">Kick off your first portfolio and publish to a branded Ansiversa link.</p>
+                <div class="mt-6">
+                  <Button
+                    type="button"
+                    @click.prevent="portfolio.createDraft()"
+                  >
+                    <i class="fas fa-plus text-xs"></i>
+                    Create portfolio
+                  </Button>
+                </div>
+              </div>
+            </template>
+
+            <div class="grid gap-6 lg:grid-cols-2" x-show="!portfolio.state.loading && portfolio.state.filtered.length > 0" x-cloak>
+              <template x-for="item in portfolio.state.filtered" :key="item.id">
+                <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg focus-within:-translate-y-1 focus-within:border-indigo-300 focus-within:shadow-lg">
+                  <div class="space-y-4">
+                    <div class="flex items-start justify-between gap-3">
+                      <div>
+                        <h3 class="text-xl font-semibold text-slate-900" x-text="item.title"></h3>
+                        <p class="mt-1 text-sm text-slate-600" x-text="portfolio.describe(item)"></p>
+                      </div>
+                      <div class="space-y-2 text-right">
+                        <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                          <i class="fas fa-layer-group text-[10px]"></i>
+                          <span class="capitalize" x-text="item.templateKey"></span>
+                        </span>
+                        <span
+                          class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                          :class="{
+                            'bg-emerald-100 text-emerald-700': item.status === 'published',
+                            'bg-amber-100 text-amber-700': item.status === 'draft',
+                            'bg-slate-100 text-slate-600': item.status === 'archived',
+                          }"
+                        >
+                          <i class="fas fa-circle text-[9px]"></i>
+                          <span class="capitalize" x-text="item.status"></span>
+                        </span>
+                      </div>
+                    </div>
+                    <dl class="grid gap-3 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-xs text-slate-600 sm:grid-cols-3">
+                      <div class="flex flex-col gap-1">
+                        <dt class="font-semibold text-slate-500">Views</dt>
+                        <dd class="text-sm font-semibold text-slate-900" x-text="Intl.NumberFormat().format(item.views)"></dd>
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <dt class="font-semibold text-slate-500">Leads</dt>
+                        <dd class="text-sm font-semibold text-slate-900" x-text="Intl.NumberFormat().format(item.leads)"></dd>
+                      </div>
+                      <div class="flex flex-col gap-1">
+                        <dt class="font-semibold text-slate-500">Last saved</dt>
+                        <dd class="text-sm font-semibold text-slate-900" x-text="portfolio.formatRelative(item.lastSavedAt)"></dd>
+                      </div>
+                    </dl>
+                    <template x-if="item.publishedUrl">
+                      <a
+                        class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+                        :href="item.publishedUrl"
+                      >
+                        <i class="fas fa-link text-xs"></i>
+                        <span x-text="item.publishedUrl"></span>
+                      </a>
+                    </template>
+                  </div>
+                  <div class="mt-6 flex flex-wrap items-center gap-3">
+                    <Button
+                      :href="`/portfolio-creator/builder?id=${item.id}`"
+                    >
+                      <i class="fas fa-pen text-xs"></i>
+                      Edit
+                    </Button>
+                    <Button
+                      :href="`/portfolio-creator/view/${item.slug}`"
+                      variant="outline"
+                    >
+                      <i class="fas fa-eye text-xs"></i>
+                      Preview
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      @click.prevent="portfolio.duplicate(item.id)"
+                    >
+                      <i class="fas fa-copy text-xs"></i>
+                      Duplicate
+                    </Button>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      class="text-red-600 hover:text-red-700"
+                      @click.prevent="portfolio.delete(item.id)"
+                    >
+                      <i class="fas fa-trash text-xs"></i>
+                      Delete
+                    </Button>
+                  </div>
+                </article>
+              </template>
+            </div>
+          </div>
+
+          <aside class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">Plan insights</h3>
+                  <p class="mt-1 text-sm text-slate-600">Upgrade to unlock templates, unlimited AI, and more storage.</p>
+                </div>
+                <i class="fas fa-gem text-lg text-rose-500"></i>
+              </div>
+              <dl class="mt-4 space-y-3 text-sm text-slate-600">
+                <div class="flex items-center justify-between gap-2">
+                  <dt class="flex items-center gap-2 font-medium text-slate-700">
+                    <i class="fas fa-bolt text-[11px] text-indigo-500"></i>
+                    AI assists used
+                  </dt>
+                  <dd class="font-semibold text-slate-900" x-text="portfolio.aiQuotaLabel"></dd>
+                </div>
+                <div class="flex items-center justify-between gap-2">
+                  <dt class="flex items-center gap-2 font-medium text-slate-700">
+                    <i class="fas fa-layer-group text-[11px] text-indigo-500"></i>
+                    Templates unlocked
+                  </dt>
+                  <dd class="font-semibold text-slate-900" x-text="portfolio.state.plan === 'pro' ? 'All templates' : 'Professional only'"></dd>
+                </div>
+              </dl>
+              <div class="mt-6">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  class="w-full"
+                  @click.prevent="portfolio.openPlanUpsell()"
+                >
+                  <i class="fas fa-arrow-up-right-dots text-xs"></i>
+                  Compare Free vs Pro
+                </Button>
+              </div>
+            </div>
+
+            <div class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-sm">
+              <h3 class="text-lg font-semibold text-indigo-900">How to make it shine</h3>
+              <ul class="mt-4 space-y-3 text-sm text-indigo-900">
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-magic-wand-sparkles mt-1 text-sm"></i>
+                  Run AI improves on About, Experience, and Projects for a polished tone.
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-image mt-1 text-sm"></i>
+                  Add hero imagery and testimonials to build instant trust.
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-share-nodes mt-1 text-sm"></i>
+                  Publish to shareable URLs or export PDF/HTML for offline decks.
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <template x-if="portfolio.state.showPlanModal">
+      <Modal
+        size="lg"
+        class="items-start"
+        x-on:modal-close.window="portfolio.closePlanUpsell()"
+      >
+        <div class="space-y-6">
+          <header class="space-y-2">
+            <h2 class="text-2xl font-semibold text-slate-900">Upgrade to Pro</h2>
+            <p class="text-sm text-slate-600">Unlimited portfolios, advanced templates, and AI without limits for brand-ready storytelling.</p>
+          </header>
+          <div class="rounded-3xl border border-slate-100 bg-slate-50 p-4">
+            <div class="grid gap-4 text-sm text-slate-600 sm:grid-cols-3">
+              <div class="rounded-2xl bg-white p-4 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Free</p>
+                <p class="mt-2 text-2xl font-semibold text-slate-900">$0</p>
+                <p class="mt-1 text-xs text-slate-500">1 live portfolio</p>
+              </div>
+              <div class="rounded-2xl bg-indigo-600 p-4 text-white shadow-md sm:col-span-2">
+                <p class="text-xs font-semibold uppercase tracking-wide text-indigo-100">Pro</p>
+                <p class="mt-2 text-2xl font-semibold">$18/mo</p>
+                <p class="mt-1 text-xs text-indigo-100">Unlimited brands, priority publishing, and custom exports.</p>
+              </div>
+            </div>
+          </div>
+          <div class="overflow-hidden rounded-3xl border border-slate-100">
+            <table class="min-w-full divide-y divide-slate-100 text-sm">
+              <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-4 py-3">Feature</th>
+                  <th class="px-4 py-3">Free</th>
+                  <th class="px-4 py-3">Pro</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
+                {planHighlights.map((row) => (
+                  <tr>
+                    <td class="px-4 py-3 font-semibold text-slate-900">{row.label}</td>
+                    <td class="px-4 py-3">{row.free}</td>
+                    <td class="px-4 py-3 text-indigo-600">{row.pro}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div slot="footer" class="flex w-full flex-wrap items-center justify-end gap-3">
+          <Button
+            type="button"
+            variant="ghost"
+            @click.prevent="portfolio.closePlanUpsell()"
+          >
+            Maybe later
+          </Button>
+          <Button
+            type="button"
+            @click.prevent="portfolio.upgradeToPro()"
+          >
+            Upgrade to Pro
+          </Button>
+        </div>
+      </Modal>
+    </template>
   </main>
 </Layout>

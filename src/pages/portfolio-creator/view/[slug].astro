@@ -1,0 +1,224 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+import Button from '../../../components/Button.astro';
+import { createEmptyPortfolioData, createPortfolioDocument } from '../../../lib/portfolio/schema';
+import { findSampleBySlug } from '../../../lib/portfolio/sample';
+
+const { slug = '' } = Astro.params;
+const sample = findSampleBySlug(slug);
+const portfolio = sample ??
+  createPortfolioDocument({
+    title: 'Your portfolio preview',
+    slug: slug || 'preview',
+    status: 'draft',
+    data: createEmptyPortfolioData(),
+  });
+const accentClasses: Record<string, string> = {
+  professional: 'from-indigo-500 via-purple-500 to-sky-500',
+  minimal: 'from-emerald-500 via-teal-500 to-cyan-500',
+  creative: 'from-fuchsia-500 via-rose-500 to-orange-500',
+  bold: 'from-amber-500 via-pink-500 to-indigo-500',
+};
+const gradientClass = accentClasses[portfolio.templateKey] ?? accentClasses.professional;
+const isSample = Boolean(sample);
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#portfolio-public-view"
+  >
+    Skip to content
+  </a>
+  <main id="portfolio-public-view" class="bg-slate-50 min-h-screen">
+    <section class="relative overflow-hidden">
+      <div class={`absolute inset-0 bg-gradient-to-br ${gradientClass} opacity-10`}></div>
+      <div class="relative mx-auto max-w-5xl px-4 py-16 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl backdrop-blur">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                <i class="fas fa-user-astronaut text-[10px]"></i>
+                {portfolio.data.basics.location}
+              </span>
+              <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+                {portfolio.data.basics.name}
+              </h1>
+              <p class="text-lg text-slate-600">{portfolio.data.basics.title}</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <a
+                href={portfolio.data.basics.website}
+                class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-indigo-600 hover:border-indigo-300 hover:text-indigo-500"
+              >
+                <i class="fas fa-globe text-xs"></i>
+                Website
+              </a>
+              <Button href={`/portfolio-creator/builder?id=${portfolio.id}`}>Edit</Button>
+            </div>
+          </div>
+          <p class="mt-6 text-base text-slate-700 sm:text-lg">{portfolio.data.basics.headline}</p>
+          <div class="mt-6 flex flex-wrap gap-3 text-sm text-slate-600">
+            {portfolio.data.basics.social.map((link) => (
+              <a
+                class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-slate-200"
+                href={link.url}
+              >
+                <i class="fas fa-link text-[9px]"></i>
+                {link.label}
+              </a>
+            ))}
+          </div>
+          {!isSample && (
+            <div class="mt-6 rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-4 text-sm text-indigo-700">
+              <i class="fas fa-lightbulb text-xs"></i>
+              Draft preview. Publish from the builder when you are ready.
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto grid max-w-5xl gap-12 px-4 sm:px-6 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)] lg:px-8">
+        <div class="space-y-10">
+          <article class="space-y-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <header class="space-y-2">
+              <h2 class="text-2xl font-semibold text-slate-900">About</h2>
+              <p class="text-sm text-slate-500">Vision, principles, and strengths</p>
+            </header>
+            <p class="text-base leading-relaxed text-slate-700">{portfolio.data.about}</p>
+          </article>
+
+          <article class="space-y-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <header class="space-y-2">
+              <h2 class="text-2xl font-semibold text-slate-900">Projects</h2>
+              <p class="text-sm text-slate-500">Selected case studies</p>
+            </header>
+            <div class="space-y-6">
+              {portfolio.data.projects.map((project) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                  <div class="flex flex-wrap items-start justify-between gap-3">
+                    <div>
+                      <h3 class="text-xl font-semibold text-slate-900">{project.name}</h3>
+                      <p class="text-sm uppercase tracking-wide text-indigo-500">{project.tagline}</p>
+                    </div>
+                    <a href={project.link} class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+                      <i class="fas fa-arrow-up-right-from-square text-xs"></i>
+                      View project
+                    </a>
+                  </div>
+                  <p class="mt-4 text-sm text-slate-700">{project.description}</p>
+                  <div class="mt-4 flex flex-wrap gap-2 text-xs text-slate-600">
+                    {project.tags.map((tag) => (
+                      <span class="inline-flex items-center gap-1 rounded-full bg-white px-3 py-1 shadow-sm">
+                        <i class="fas fa-hashtag text-[9px]"></i>
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                  <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                    <i class="fas fa-signal text-[10px]"></i>
+                    {project.spotlight}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <article class="space-y-4 rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <header class="space-y-2">
+              <h2 class="text-2xl font-semibold text-slate-900">Experience</h2>
+              <p class="text-sm text-slate-500">Recent roles and wins</p>
+            </header>
+            <div class="space-y-6">
+              {portfolio.data.experience.map((item) => (
+                <div class="space-y-3 rounded-2xl border border-slate-100 bg-slate-50 p-6">
+                  <div class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 class="text-lg font-semibold text-slate-900">{item.role}</h3>
+                      <p class="text-sm text-slate-600">{item.company}</p>
+                    </div>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.startDate} – {item.endDate}</span>
+                  </div>
+                  <p class="text-sm text-slate-700">{item.summary}</p>
+                  <ul class="space-y-2 text-sm text-slate-600">
+                    {item.achievements.map((achievement, index) => (
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-[10px] text-emerald-500"></i>
+                        <span>{achievement}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </article>
+        </div>
+
+        <aside class="space-y-8">
+          <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <header class="space-y-2">
+              <h2 class="text-xl font-semibold text-slate-900">Highlights</h2>
+              <p class="text-sm text-slate-500">Proof points that set me apart</p>
+            </header>
+            <ul class="space-y-3 text-sm text-slate-700">
+              {portfolio.data.highlights.map((highlight, index) => (
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-[11px] font-semibold text-indigo-600">{index + 1}</span>
+                  <span>{highlight}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <header class="space-y-2">
+              <h2 class="text-xl font-semibold text-slate-900">Testimonials</h2>
+              <p class="text-sm text-slate-500">What collaborators say</p>
+            </header>
+            <div class="space-y-4">
+              {portfolio.data.testimonials.map((testimonial) => (
+                <blockquote class="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-sm text-slate-700">
+                  <p class="italic">“{testimonial.quote}”</p>
+                  <footer class="mt-3 text-xs font-semibold text-slate-500">{testimonial.name} · {testimonial.role}</footer>
+                </blockquote>
+              ))}
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-sm">
+            <header class="space-y-2">
+              <h2 class="text-xl font-semibold text-slate-900">Contact</h2>
+              <p class="text-sm text-slate-500">Let’s build something remarkable</p>
+            </header>
+            <p class="text-sm text-slate-700">{portfolio.data.contact.message}</p>
+            <dl class="mt-4 space-y-2 text-sm text-slate-600">
+              <div class="flex items-center gap-2">
+                <i class="fas fa-envelope text-xs text-indigo-500"></i>
+                <a class="hover:text-indigo-500" href={`mailto:${portfolio.data.contact.email}`}>{portfolio.data.contact.email}</a>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-phone text-xs text-indigo-500"></i>
+                <a class="hover:text-indigo-500" href={`tel:${portfolio.data.contact.phone}`}>{portfolio.data.contact.phone}</a>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-location-dot text-xs text-indigo-500"></i>
+                <span>{portfolio.data.contact.location}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <i class="fas fa-clock text-xs text-indigo-500"></i>
+                <span>{portfolio.data.contact.availability}</span>
+              </div>
+            </dl>
+            <div class="mt-4">
+              <Button href={`mailto:${portfolio.data.contact.email}`} class="w-full">
+                <i class="fas fa-paper-plane text-xs"></i>
+                {portfolio.data.contact.ctaLabel}
+              </Button>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>
