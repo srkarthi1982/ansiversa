@@ -1,5 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import HeroSection from "../components/HeroSection.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import FeatureCard from "../components/FeatureCard.astro";
 import { getSessionWithUser } from '../utils/session.server';
 
 const sessionData = await getSessionWithUser(Astro.cookies);
@@ -70,43 +73,43 @@ const experiencePillars = [
 
 <Layout>
   <main>
-    <section class="bg-slate-950 py-10 text-white">
-      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Features</p>
-        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
-          Everything inside the Ansiversa ecosystem
-        </h1>
-        <p class="mt-4 text-base text-white/70">
-          Discover the polished capabilities powering our AI-driven mini-apps—from intuitive onboarding to premium content drops.
-        </p>
-        <div class="mt-10 flex flex-wrap justify-center gap-4 text-sm font-semibold">
-          <a href="/pricing" class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
-            Compare plans
-          </a>
-          <a href="/#mini-apps" class="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-6 py-3 text-white/80 transition hover:border-white/60 hover:text-white">
-            Browse mini-apps
-          </a>
-        </div>
-      </div>
-    </section>
+    <HeroSection
+      eyebrow="Features"
+      title="Everything inside the Ansiversa ecosystem"
+      description="Discover the polished capabilities powering our AI-driven mini-apps—from intuitive onboarding to premium content drops."
+    >
+      <a
+        slot="actions"
+        href="/pricing"
+        class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100"
+      >
+        Compare plans
+      </a>
+      <a
+        slot="actions"
+        href="/#mini-apps"
+        class="inline-flex items-center justify-center gap-2 rounded-full border border-white/30 px-6 py-3 text-sm font-semibold text-white/80 transition hover:border-white/60 hover:text-white"
+      >
+        Browse mini-apps
+      </a>
+    </HeroSection>
 
     <section class="bg-white py-16 text-slate-900">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl">
-          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Platform Capabilities</p>
-          <h2 class="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
-            Built for fast starts and delightful daily use
-          </h2>
-          <p class="mt-4 text-base text-slate-600">
-            Each capability is maintained by the Ansiversa team so you can focus on learning, creating, or planning—not configuration.
-          </p>
-        </div>
+        <SectionHeading
+          eyebrow="Platform Capabilities"
+          title="Built for fast starts and delightful daily use"
+          description="Each capability is maintained by the Ansiversa team so you can focus on learning, creating, or planning—not configuration."
+          containerClass="max-w-3xl"
+        />
         <div class="mt-12 grid gap-6 sm:grid-cols-2">
           {capabilityHighlights.map((feature) => (
-            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-xl">
-              <h3 class="text-xl font-semibold text-slate-900">{feature.title}</h3>
-              <p class="mt-3 text-sm text-slate-600">{feature.description}</p>
-            </article>
+            <FeatureCard
+              title={feature.title}
+              description={feature.description}
+              titleClass="text-xl font-semibold text-slate-900"
+              class="transition hover:-translate-y-1 hover:shadow-xl"
+            />
           ))}
         </div>
       </div>
@@ -115,15 +118,15 @@ const experiencePillars = [
     <section class="bg-slate-100 py-16 text-slate-900">
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-          <div class="max-w-xl">
-            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500">Mini-App Pillars</p>
-            <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
-              Cohesive experiences across every category
-            </h2>
-            <p class="mt-3 text-base text-slate-600">
-              Ansiversa bundles mini-apps into curated pillars so membership tiers feel intuitive and expansive as we ship new releases.
-            </p>
-          </div>
+          <SectionHeading
+            eyebrow="Mini-App Pillars"
+            title="Cohesive experiences across every category"
+            description="Ansiversa bundles mini-apps into curated pillars so membership tiers feel intuitive and expansive as we ship new releases."
+            containerClass="max-w-xl"
+            eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-slate-500"
+            titleClass="mt-4 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900"
+            descriptionClass="mt-3 text-base text-slate-600"
+          />
           <div class="rounded-3xl border border-indigo-200 bg-gradient-to-br from-indigo-500/20 via-purple-500/10 to-sky-400/20 p-6 shadow-soft backdrop-blur sm:max-w-sm">
             <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Drop cadence</p>
             <p class="mt-2 text-lg font-semibold text-slate-900">Bi-weekly updates</p>
@@ -134,15 +137,13 @@ const experiencePillars = [
         </div>
         <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {experiencePillars.map((pillar) => (
-            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-lg">
-              <div class="flex items-center gap-3">
-                <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
-                  <i class={`${pillar.icon} text-base`}></i>
-                </span>
-                <h3 class="text-lg font-semibold text-slate-900">{pillar.name}</h3>
-              </div>
-              <p class="mt-3 text-sm text-slate-600">{pillar.details}</p>
-            </article>
+            <FeatureCard
+              icon={pillar.icon}
+              title={pillar.name}
+              description={pillar.details}
+              titleClass="text-lg font-semibold text-slate-900"
+              class="transition hover:-translate-y-1 hover:shadow-lg"
+            />
           ))}
         </div>
       </div>

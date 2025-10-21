@@ -1,63 +1,69 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import HeroSection from "../components/HeroSection.astro";
+import SectionHeading from "../components/SectionHeading.astro";
+import PricingTierCard from "../components/PricingTierCard.astro";
 ---
 
 <Layout>
-  <section class="bg-slate-950 py-10 text-white">
-    <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-      <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Pricing</p>
-      <h1 class="mt-4 text-4xl font-black tracking-tight">Memberships for the Ansiversa mini-app ecosystem</h1>
-      <p class="mt-4 text-base text-white/70">
-        Every tier unlocks curated experiences crafted by the Ansiversa team—no app submissions required, just polished tools ready to use.
-      </p>
-    </div>
-  </section>
+  <HeroSection
+    eyebrow="Pricing"
+    title="Memberships for the Ansiversa mini-app ecosystem"
+    description="Every tier unlocks curated experiences crafted by the Ansiversa team—no app submissions required, just polished tools ready to use."
+  />
 
   <section class="bg-white py-16">
     <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+      <SectionHeading
+        align="center"
+        eyebrow="Memberships"
+        title="Choose your plan and keep exploring"
+        description="Flexible tiers make it easy to start with featured tools, go unlimited with Pro, or lock in annual savings with Elite."
+        containerClass="max-w-3xl"
+        titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900"
+        descriptionClass="mt-4 text-base text-slate-600"
+      />
       <div class="mt-12 grid gap-8 md:grid-cols-3">
-        <div class="card h-full">
-          <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Free</p>
-          <div class="mt-3 flex items-baseline gap-1">
-            <span class="text-4xl font-black text-slate-900">$0</span>
-            <span class="text-sm text-slate-500">/month</span>
-          </div>
-          <p class="mt-3 text-sm text-slate-600">Explore featured mini-apps with limited usage and starter templates.</p>
-          <ul class="mt-4 space-y-2 text-sm text-slate-600">
-            <li>✔ Guided access to Quiz Institute & FlashNote basics</li>
-            <li>✔ Essential AI prompts and template gallery</li>
-            <li>✔ Community updates and launch announcements</li>
-          </ul>
-          <a href="/signup" class="mt-6 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Create free account</a>
-        </div>
-        <div class="card h-full border-indigo-200 ring-2 ring-indigo-500/70">
-          <p class="text-sm font-semibold text-indigo-600 uppercase tracking-wide">Pro</p>
-          <div class="mt-3 flex items-baseline gap-1">
-            <span class="text-4xl font-black text-slate-900">$10</span>
-            <span class="text-sm text-slate-500">/month</span>
-          </div>
-          <p class="mt-3 text-sm text-slate-600">Unlock the full Ansiversa library with unlimited sessions and premium templates.</p>
-          <ul class="mt-4 space-y-2 text-sm text-slate-600">
-            <li>✔ Full catalog access across every mini-app</li>
-            <li>✔ Advanced AI drafting & content refinement tools</li>
-            <li>✔ Priority feature updates and roadmap previews</li>
-          </ul>
-          <a href="/signup" class="mt-6 inline-flex w-full items-center justify-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white hover:bg-indigo-500">Upgrade to Pro</a>
-        </div>
-        <div class="card h-full">
-          <p class="text-sm font-semibold text-slate-500 uppercase tracking-wide">Elite</p>
-          <div class="mt-3 flex items-baseline gap-1">
-            <span class="text-4xl font-black text-slate-900">$50</span>
-            <span class="text-sm text-slate-500">/year</span>
-          </div>
-          <p class="mt-3 text-sm text-slate-600">Save annually and be first to experience new releases and seasonal drops.</p>
-          <ul class="mt-4 space-y-2 text-sm text-slate-600">
-            <li>✔ Everything in Pro, billed once per year</li>
-            <li>✔ Early access to upcoming mini-apps and betas</li>
-            <li>✔ Exclusive themes, content packs, and launch webinars</li>
-          </ul>
-          <a href="/signup" class="mt-6 inline-flex w-full items-center justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50">Go Elite (annual)</a>
-        </div>
+        <PricingTierCard
+          name="Free"
+          price="$0"
+          priceSuffix="/month"
+          description="Explore featured mini-apps with limited usage and starter templates."
+          features={[
+            'Guided access to Quiz Institute & FlashNote basics',
+            'Essential AI prompts and template gallery',
+            'Community updates and launch announcements',
+          ]}
+          ctaLabel="Create free account"
+          ctaHref="/signup"
+        />
+        <PricingTierCard
+          name="Pro"
+          price="$10"
+          priceSuffix="/month"
+          description="Unlock the full Ansiversa library with unlimited sessions and premium templates."
+          features={[
+            'Full catalog access across every mini-app',
+            'Advanced AI drafting & content refinement tools',
+            'Priority feature updates and roadmap previews',
+          ]}
+          ctaLabel="Upgrade to Pro"
+          ctaHref="/signup"
+          featured
+        />
+        <PricingTierCard
+          name="Elite"
+          price="$50"
+          priceSuffix="/year"
+          description="Save annually and be first to experience new releases and seasonal drops."
+          features={[
+            'Everything in Pro, billed once per year',
+            'Early access to upcoming mini-apps and betas',
+            'Exclusive themes, content packs, and launch webinars',
+          ]}
+          ctaLabel="Go Elite (annual)"
+          ctaHref="/signup"
+        />
       </div>
     </div>
   </section>

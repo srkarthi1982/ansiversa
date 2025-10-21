@@ -1,55 +1,72 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Button from "../components/Button.astro";
+import HeroSection from "../components/HeroSection.astro";
+import FeatureCard from "../components/FeatureCard.astro";
 ---
 
 <Layout>
   <main>
-    <section class="bg-slate-950 py-10 text-white">
-      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
-        <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/70">Contact</p>
-        <h1 class="mt-4 text-4xl font-black tracking-tight sm:text-5xl">
-          Reach the Ansiversa team
-        </h1>
-        <p class="mt-4 text-base text-white/70">
-          Questions about memberships, product roadmap, or collaboration ideas? We’re here to help and love hearing from the community.
-        </p>
-      </div>
-    </section>
+    <HeroSection
+      eyebrow="Contact"
+      title="Reach the Ansiversa team"
+      description="Questions about memberships, product roadmap, or collaboration ideas? We’re here to help and love hearing from the community."
+    />
 
     <section class="bg-white py-16">
       <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Support</p>
-            <h2 class="mt-3 text-xl font-semibold text-slate-900">Member questions</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              Need help with billing, subscriptions, or mini-app access? Email our support crew and we’ll get back within a business day.
-            </p>
-            <a href="mailto:contact@ansiversa.com" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+          <FeatureCard
+            eyebrow="Support"
+            title="Member questions"
+            titleTag="h2"
+            titleClass="mt-3 text-xl font-semibold text-slate-900"
+            description="Need help with billing, subscriptions, or mini-app access? Email our support crew and we’ll get back within a business day."
+            descriptionClass="mt-2 text-sm text-slate-600"
+            class="h-full"
+          >
+            <a
+              slot="footer"
+              href="mailto:contact@ansiversa.com"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+            >
               contact@ansiversa.com
             </a>
-          </article>
-          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Partnerships</p>
-            <h2 class="mt-3 text-xl font-semibold text-slate-900">Collaborations & launches</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              Interested in co-creating future mini-apps or running a joint launch? Share your ideas and we’ll explore the fit together.
-            </p>
-            <a href="mailto:contact@ansiversa.com?subject=Partnership%20with%20Ansiversa" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+          </FeatureCard>
+          <FeatureCard
+            eyebrow="Partnerships"
+            title="Collaborations & launches"
+            titleTag="h2"
+            titleClass="mt-3 text-xl font-semibold text-slate-900"
+            description="Interested in co-creating future mini-apps or running a joint launch? Share your ideas and we’ll explore the fit together."
+            descriptionClass="mt-2 text-sm text-slate-600"
+            class="h-full"
+          >
+            <a
+              slot="footer"
+              href="mailto:contact@ansiversa.com?subject=Partnership%20with%20Ansiversa"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+            >
               Start a conversation →
             </a>
-          </article>
-          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
-            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Media</p>
-            <h2 class="mt-3 text-xl font-semibold text-slate-900">Press & updates</h2>
-            <p class="mt-2 text-sm text-slate-600">
-              Covering Ansiversa or planning a feature? We can provide product shots, interviews, or media kits on request.
-            </p>
-            <a href="mailto:contact@ansiversa.com?subject=Press%20Inquiry" class="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500">
+          </FeatureCard>
+          <FeatureCard
+            eyebrow="Media"
+            title="Press & updates"
+            titleTag="h2"
+            titleClass="mt-3 text-xl font-semibold text-slate-900"
+            description="Covering Ansiversa or planning a feature? We can provide product shots, interviews, or media kits on request."
+            descriptionClass="mt-2 text-sm text-slate-600"
+            class="h-full"
+          >
+            <a
+              slot="footer"
+              href="mailto:contact@ansiversa.com?subject=Press%20Inquiry"
+              class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+            >
               Request media kit →
             </a>
-          </article>
+          </FeatureCard>
         </div>
       </div>
     </section>
@@ -57,15 +74,19 @@ import Button from "../components/Button.astro";
     <section class="bg-slate-100 py-16">
       <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
         <div class="grid gap-8 lg:grid-cols-[0.75fr_1.25fr]">
-          <div class="rounded-3xl border border-indigo-100 bg-white p-6 shadow-soft">
-            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Headquarters</p>
-            <p class="mt-3 text-base text-slate-600">
-              Ansiversa operates globally with a remote-first team. The fastest way to reach us is via email or the portal inside your account.
-            </p>
-            <p class="mt-4 text-sm text-slate-600">
+          <FeatureCard
+            eyebrow="Headquarters"
+            title="Global & remote-first"
+            titleTag="h2"
+            titleClass="mt-3 text-xl font-semibold text-slate-900"
+            description="Ansiversa operates globally with a remote-first team. The fastest way to reach us is via email or the portal inside your account."
+            descriptionClass="mt-3 text-base text-slate-600"
+            baseClass="rounded-3xl border border-indigo-100 bg-white p-6 shadow-soft"
+          >
+            <p class="text-sm text-slate-600">
               Join the mailing list at <a href="https://www.ansiversa.com" class="font-semibold text-indigo-600 hover:text-indigo-500">ansiversa.com</a> to receive launch notes and roadmap polls.
             </p>
-          </div>
+          </FeatureCard>
           <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
             <h2 class="text-xl font-semibold text-slate-900">Send us a note</h2>
             <p class="mt-2 text-sm text-slate-600">

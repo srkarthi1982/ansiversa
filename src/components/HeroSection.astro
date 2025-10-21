@@ -1,0 +1,46 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+  background?: string;
+  padding?: string;
+  containerClass?: string;
+  eyebrowClass?: string;
+  titleClass?: string;
+  descriptionClass?: string;
+  actionsClass?: string;
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  align = 'center',
+  background = 'bg-slate-950 text-white',
+  padding = 'py-10',
+  containerClass = 'mx-auto max-w-5xl px-4 sm:px-6 lg:px-8',
+  eyebrowClass = 'text-xs font-semibold uppercase tracking-[0.35em] text-white/70',
+  titleClass = 'mt-4 text-4xl font-black tracking-tight sm:text-5xl',
+  descriptionClass = 'mt-4 text-base text-white/70',
+  actionsClass,
+} = Astro.props as Props;
+
+const alignmentClass = align === 'center' ? 'text-center' : 'text-left';
+const hasActions = Astro.slots.has('actions');
+const computedActionsClass =
+  actionsClass ?? `mt-8 flex flex-wrap gap-4${align === 'center' ? ' justify-center' : ''}`;
+---
+<section class={`${background} ${padding}`}>
+  <div class={`${containerClass} ${alignmentClass}`}>
+    {eyebrow && <p class={eyebrowClass}>{eyebrow}</p>}
+    <h1 class={titleClass}>{title}</h1>
+    {description && <p class={descriptionClass}>{description}</p>}
+    {hasActions && (
+      <div class={computedActionsClass}>
+        <slot name="actions" />
+      </div>
+    )}
+  </div>
+</section>
