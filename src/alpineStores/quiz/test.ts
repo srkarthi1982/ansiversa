@@ -559,20 +559,35 @@ class QuizTestStore {
     }
     let score = 0;
     questions.forEach((question, index) => {
-      const answer = this.selection.answers[index];
-      if (answer === null || question.answerKey === null) {
+      const rawAnswer = this.selection.answers[index];
+      if (rawAnswer === null || question.answerKey === null) {
         return;
       }
+      const answer =
+        typeof rawAnswer === 'string' ? Number.parseInt(rawAnswer, 10) : rawAnswer;
+      const hasNumericAnswer = typeof answer === 'number' && !Number.isNaN(answer);
       const normalizedKey = Number.parseInt(question.answerKey, 10);
       if (!Number.isNaN(normalizedKey)) {
-        if (normalizedKey === answer || normalizedKey - 1 === answer) {
+        if (hasNumericAnswer && (normalizedKey === answer || normalizedKey - 1 === answer)) {
           score += 1;
         }
         return;
       }
       const options = question.options ?? [];
-      const correctValue = options.findIndex((option) => option.trim() === question.answerKey?.trim());
-      if (correctValue !== -1 && correctValue === answer) {
+      const normalizedKeyValue = question.answerKey.trim().toLowerCase();
+      const correctValue = options.findIndex(
+        (option) => option.trim().toLowerCase() === normalizedKeyValue,
+      );
+      if (correctValue !== -1 && hasNumericAnswer && correctValue === answer) {
+        score += 1;
+        return;
+      }
+      if (
+        !hasNumericAnswer &&
+        typeof rawAnswer === 'string' &&
+        rawAnswer.trim().length > 0 &&
+        rawAnswer.trim().toLowerCase() === normalizedKeyValue
+      ) {
         score += 1;
       }
     });
