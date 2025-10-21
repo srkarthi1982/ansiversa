@@ -21,3 +21,4 @@ import './admin';
 import './flashnote';
 import './miniApps';
 import './portfolioCreator';
+import './proposal';

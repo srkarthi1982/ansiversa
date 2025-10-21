@@ -1,0 +1,841 @@
+<section class="space-y-6">
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-user-tie text-xs text-indigo-500"></i>
+        Client information
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-4 border-t border-slate-100 px-5 py-5 sm:grid-cols-2">
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Client name
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.name"
+          @input="$store.proposal.updateField('client.name', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Contact person
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.contact"
+          @input="$store.proposal.updateField('client.contact', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Company
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.company"
+          @input="$store.proposal.updateField('client.company', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Email
+        <input
+          type="email"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.email"
+          @input="$store.proposal.updateField('client.email', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Phone
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.phone"
+          @input="$store.proposal.updateField('client.phone', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Website
+        <input
+          type="url"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.website"
+          @input="$store.proposal.updateField('client.website', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Industry
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.industry"
+          @input="$store.proposal.updateField('client.industry', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Location
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.client.location"
+          @input="$store.proposal.updateField('client.location', $event.target.value)"
+        />
+      </label>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-lightbulb text-xs text-indigo-500"></i>
+        Overview & goals
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="space-y-5 border-t border-slate-100 px-5 py-5">
+      <label class="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Executive summary
+        <textarea
+          rows="3"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.overview"
+          @input="$store.proposal.updateField('overview', $event.target.value)"
+        ></textarea>
+      </label>
+      <div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Goals</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('goals', '')"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add goal
+          </button>
+        </div>
+        <div class="mt-3 space-y-2">
+          <template x-for="(goal, index) in $store.proposal.builder.data.goals" :key="`goal-${index}`">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                :value="goal"
+                @input="$store.proposal.updateField(`goals[${index}]`, $event.target.value)"
+              />
+              <button
+                type="button"
+                class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                @click.prevent="$store.proposal.removeListItem('goals', index)"
+              >
+                <i class="fas fa-xmark text-xs"></i>
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Scope</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('scope', '')"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add scope item
+          </button>
+        </div>
+        <div class="mt-3 space-y-2">
+          <template x-for="(item, index) in $store.proposal.builder.data.scope" :key="`scope-${index}`">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                :value="item"
+                @input="$store.proposal.updateField(`scope[${index}]`, $event.target.value)"
+              />
+              <button
+                type="button"
+                class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                @click.prevent="$store.proposal.removeListItem('scope', index)"
+              >
+                <i class="fas fa-xmark text-xs"></i>
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="grid gap-6 sm:grid-cols-2">
+        <div>
+          <div class="flex items-center justify-between">
+            <h3 class="text-sm font-semibold text-slate-900">Deliverables</h3>
+            <button
+              type="button"
+              class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+              @click.prevent="$store.proposal.addListItem('deliverables', '')"
+            >
+              <i class="fas fa-plus text-[10px]"></i>
+              Add deliverable
+            </button>
+          </div>
+          <div class="mt-3 space-y-2">
+            <template x-for="(deliverable, index) in $store.proposal.builder.data.deliverables" :key="`deliverable-${index}`">
+              <div class="flex items-center gap-2">
+                <input
+                  type="text"
+                  class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="deliverable"
+                  @input="$store.proposal.updateField(`deliverables[${index}]`, $event.target.value)"
+                />
+                <button
+                  type="button"
+                  class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                  @click.prevent="$store.proposal.removeListItem('deliverables', index)"
+                >
+                  <i class="fas fa-xmark text-xs"></i>
+                </button>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="space-y-4">
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900">Out of scope</h3>
+              <button
+                type="button"
+                class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+                @click.prevent="$store.proposal.addListItem('outOfScope', '')"
+              >
+                <i class="fas fa-plus text-[10px]"></i>
+                Add item
+              </button>
+            </div>
+            <div class="mt-3 space-y-2">
+              <template x-for="(item, index) in $store.proposal.builder.data.outOfScope" :key="`out-${index}`">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="text"
+                    class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item"
+                    @input="$store.proposal.updateField(`outOfScope[${index}]`, $event.target.value)"
+                  />
+                  <button
+                    type="button"
+                    class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                    @click.prevent="$store.proposal.removeListItem('outOfScope', index)"
+                  >
+                    <i class="fas fa-xmark text-xs"></i>
+                  </button>
+                </div>
+              </template>
+            </div>
+          </div>
+          <div>
+            <div class="flex items-center justify-between">
+              <h3 class="text-sm font-semibold text-slate-900">Assumptions</h3>
+              <button
+                type="button"
+                class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+                @click.prevent="$store.proposal.addListItem('assumptions', '')"
+              >
+                <i class="fas fa-plus text-[10px]"></i>
+                Add assumption
+              </button>
+            </div>
+            <div class="mt-3 space-y-2">
+              <template x-for="(item, index) in $store.proposal.builder.data.assumptions" :key="`assumption-${index}`">
+                <div class="flex items-center gap-2">
+                  <input
+                    type="text"
+                    class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item"
+                    @input="$store.proposal.updateField(`assumptions[${index}]`, $event.target.value)"
+                  />
+                  <button
+                    type="button"
+                    class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                    @click.prevent="$store.proposal.removeListItem('assumptions', index)"
+                  >
+                    <i class="fas fa-xmark text-xs"></i>
+                  </button>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-timeline text-xs text-indigo-500"></i>
+        Timeline
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="space-y-4 border-t border-slate-100 px-5 py-5">
+      <div class="rounded-xl border border-slate-200 overflow-hidden">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <tr>
+              <th class="px-4 py-3">Milestone</th>
+              <th class="px-4 py-3">Start</th>
+              <th class="px-4 py-3">End</th>
+              <th class="px-4 py-3">Notes</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <template x-for="(item, index) in $store.proposal.builder.data.timeline" :key="`timeline-${index}`">
+              <tr>
+                <td class="px-4 py-3">
+                  <input
+                    type="text"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.milestone"
+                    @input="$store.proposal.updateField(`timeline[${index}].milestone`, $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <input
+                    type="date"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.start"
+                    @input="$store.proposal.updateField(`timeline[${index}].start`, $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <input
+                    type="date"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.end"
+                    @input="$store.proposal.updateField(`timeline[${index}].end`, $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <input
+                    type="text"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.description"
+                    @input="$store.proposal.updateField(`timeline[${index}].description`, $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <button
+                    type="button"
+                    class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                    @click.prevent="$store.proposal.removeListItem('timeline', index)"
+                  >
+                    <i class="fas fa-trash text-xs"></i>
+                  </button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-dashed border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-100"
+        @click.prevent="$store.proposal.addListItem('timeline', { milestone: '', start: '', end: '', description: '' })"
+      >
+        <i class="fas fa-plus text-xs"></i>
+        Add milestone
+      </button>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-coins text-xs text-indigo-500"></i>
+        Budget & pricing
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="space-y-4 border-t border-slate-100 px-5 py-5">
+      <div class="overflow-hidden rounded-xl border border-slate-200">
+        <table class="w-full text-left text-sm">
+          <thead class="bg-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-600">
+            <tr>
+              <th class="px-4 py-3">Label</th>
+              <th class="px-4 py-3">Qty</th>
+              <th class="px-4 py-3">Unit price</th>
+              <th class="px-4 py-3">Total</th>
+              <th class="px-4 py-3">Notes</th>
+              <th class="px-4 py-3 text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-slate-100">
+            <template x-for="(item, index) in $store.proposal.builder.data.budget.items" :key="`budget-${index}`">
+              <tr>
+                <td class="px-4 py-3">
+                  <input
+                    type="text"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.label"
+                    @input="$store.proposal.updateBudgetValue(index, 'label', $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.qty"
+                    @input="$store.proposal.updateBudgetValue(index, 'qty', $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3">
+                  <input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.unitPrice"
+                    @input="$store.proposal.updateBudgetValue(index, 'unitPrice', $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3 font-semibold text-slate-900">
+                  <span x-text="$store.proposal.formatCurrency(item.total ?? 0, $store.proposal.builder.currency)"></span>
+                </td>
+                <td class="px-4 py-3">
+                  <input
+                    type="text"
+                    class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    :value="item.notes"
+                    @input="$store.proposal.updateBudgetValue(index, 'notes', $event.target.value)"
+                  />
+                </td>
+                <td class="px-4 py-3 text-right">
+                  <button
+                    type="button"
+                  class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                    @click.prevent="$store.proposal.removeBudgetItem(index)"
+                  >
+                    <i class="fas fa-trash text-xs"></i>
+                  </button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <button
+          type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-dashed border-indigo-300 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-100"
+        @click.prevent="$store.proposal.addBudgetItem({ label: '', qty: 1, unitPrice: 0, total: 0, notes: '' })"
+        >
+          <i class="fas fa-plus text-xs"></i>
+          Add line item
+        </button>
+        <div class="flex flex-wrap items-center gap-4 text-sm text-slate-700">
+          <label class="flex items-center gap-2">
+            Tax
+            <input
+              type="number"
+              step="0.01"
+              class="w-24 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :value="$store.proposal.builder.data.budget.tax"
+              @input="$store.proposal.updateBudgetMeta('tax', $event.target.value)"
+            />
+          </label>
+          <label class="flex items-center gap-2">
+            Discount
+            <input
+              type="number"
+              step="0.01"
+              class="w-24 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :value="$store.proposal.builder.data.budget.discount"
+              @input="$store.proposal.updateBudgetMeta('discount', $event.target.value)"
+            />
+          </label>
+        </div>
+      </div>
+      <div class="rounded-xl bg-slate-50 p-4 text-sm text-slate-700">
+        <dl class="grid gap-3 sm:grid-cols-2">
+          <div class="flex items-center justify-between">
+            <dt>Subtotal</dt>
+            <dd class="font-semibold" x-text="$store.proposal.formatCurrency($store.proposal.builder.data.budget.subtotal)"></dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt>Total</dt>
+            <dd class="font-semibold text-indigo-600" x-text="$store.proposal.formatCurrency($store.proposal.builder.data.budget.total)"></dd>
+          </div>
+        </dl>
+        <label class="mt-4 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Pricing notes
+          <textarea
+            rows="2"
+            class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            :value="$store.proposal.builder.data.budget.notes"
+            @input="$store.proposal.updateBudgetMeta('notes', $event.target.value)"
+          ></textarea>
+        </label>
+      </div>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-people-group text-xs text-indigo-500"></i>
+        Team & case studies
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-5 border-t border-slate-100 px-5 py-5 sm:grid-cols-2">
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Team</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('team', { name: '', role: '', bio: '', email: '', phone: '' })"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add teammate
+          </button>
+        </div>
+        <div class="space-y-4">
+          <template x-for="(member, index) in $store.proposal.builder.data.team" :key="`team-${index}`">
+            <div class="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div class="flex justify-between">
+                <h4 class="text-sm font-semibold text-slate-900" x-text="member.name || 'Team member'"></h4>
+                <button
+                  type="button"
+                  class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                  @click.prevent="$store.proposal.removeListItem('team', index)"
+                >
+                  <i class="fas fa-trash text-xs"></i>
+                </button>
+              </div>
+              <div class="grid gap-3">
+                <input
+                  type="text"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Name"
+                  :value="member.name"
+                  @input="$store.proposal.updateField(`team[${index}].name`, $event.target.value)"
+                />
+                <input
+                  type="text"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Role"
+                  :value="member.role"
+                  @input="$store.proposal.updateField(`team[${index}].role`, $event.target.value)"
+                />
+                <textarea
+                  rows="2"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Bio"
+                  :value="member.bio"
+                  @input="$store.proposal.updateField(`team[${index}].bio`, $event.target.value)"
+                ></textarea>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Case studies</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('caseStudies', { title: '', summary: '', url: '' })"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add case study
+          </button>
+        </div>
+        <div class="space-y-4">
+          <template x-for="(caseStudy, index) in $store.proposal.builder.data.caseStudies" :key="`case-${index}`">
+            <div class="space-y-3 rounded-xl border border-slate-200 bg-slate-50 p-4">
+              <div class="flex justify-between">
+                <h4 class="text-sm font-semibold text-slate-900" x-text="caseStudy.title || 'Case study'"></h4>
+                <button
+                  type="button"
+                  class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                  @click.prevent="$store.proposal.removeListItem('caseStudies', index)"
+                >
+                  <i class="fas fa-trash text-xs"></i>
+                </button>
+              </div>
+              <div class="grid gap-3">
+                <input
+                  type="text"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Title"
+                  :value="caseStudy.title"
+                  @input="$store.proposal.updateField(`caseStudies[${index}].title`, $event.target.value)"
+                />
+                <textarea
+                  rows="2"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Summary"
+                  :value="caseStudy.summary"
+                  @input="$store.proposal.updateField(`caseStudies[${index}].summary`, $event.target.value)"
+                ></textarea>
+                <input
+                  type="url"
+                  class="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="URL"
+                  :value="caseStudy.url"
+                  @input="$store.proposal.updateField(`caseStudies[${index}].url`, $event.target.value)"
+                />
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-triangle-exclamation text-xs text-indigo-500"></i>
+        Risks & terms
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-6 border-t border-slate-100 px-5 py-5 sm:grid-cols-2">
+      <div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Risks</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('risks', '')"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add risk
+          </button>
+        </div>
+        <div class="mt-3 space-y-2">
+          <template x-for="(item, index) in $store.proposal.builder.data.risks" :key="`risk-${index}`">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                :value="item"
+                @input="$store.proposal.updateField(`risks[${index}]`, $event.target.value)"
+              />
+              <button
+                type="button"
+                class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                @click.prevent="$store.proposal.removeListItem('risks', index)"
+              >
+                <i class="fas fa-xmark text-xs"></i>
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div>
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Mitigations</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('mitigations', '')"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add mitigation
+          </button>
+        </div>
+        <div class="mt-3 space-y-2">
+          <template x-for="(item, index) in $store.proposal.builder.data.mitigations" :key="`mitigation-${index}`">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                :value="item"
+                @input="$store.proposal.updateField(`mitigations[${index}]`, $event.target.value)"
+              />
+              <button
+                type="button"
+                class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                @click.prevent="$store.proposal.removeListItem('mitigations', index)"
+              >
+                <i class="fas fa-xmark text-xs"></i>
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+      <div class="sm:col-span-2">
+        <div class="flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-slate-900">Terms</h3>
+          <button
+            type="button"
+            class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+            @click.prevent="$store.proposal.addListItem('terms', '')"
+          >
+            <i class="fas fa-plus text-[10px]"></i>
+            Add term
+          </button>
+        </div>
+        <div class="mt-3 space-y-2">
+          <template x-for="(item, index) in $store.proposal.builder.data.terms" :key="`term-${index}`">
+            <div class="flex items-center gap-2">
+              <input
+                type="text"
+                class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                :value="item"
+                @input="$store.proposal.updateField(`terms[${index}]`, $event.target.value)"
+              />
+              <button
+                type="button"
+                class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-red-500"
+                @click.prevent="$store.proposal.removeListItem('terms', index)"
+              >
+                <i class="fas fa-xmark text-xs"></i>
+              </button>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-swatchbook text-xs text-indigo-500"></i>
+        Branding & notes
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-5 border-t border-slate-100 px-5 py-5 sm:grid-cols-2">
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Logo URL
+        <input
+          type="url"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.branding.logoUrl"
+          @input="$store.proposal.updateField('branding.logoUrl', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Accent color
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm uppercase text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.branding.accentColor"
+          @input="$store.proposal.setAccentColor($event.target.value)"
+        />
+      </label>
+      <label class="sm:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Footer note
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.branding.footerNote"
+          @input="$store.proposal.updateField('branding.footerNote', $event.target.value)"
+        />
+      </label>
+      <label class="sm:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Internal notes
+        <textarea
+          rows="3"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.proposal.builder.data.notes"
+          @input="$store.proposal.updateField('notes', $event.target.value)"
+        ></textarea>
+      </label>
+    </div>
+  </details>
+
+  <section class="rounded-2xl border border-slate-200 bg-slate-900 p-6 text-white shadow-sm">
+    <div class="flex flex-wrap items-start justify-between gap-4">
+      <div>
+        <h3 class="text-lg font-semibold">Brief insights</h3>
+        <p class="mt-1 text-sm text-slate-300">
+          Paste RFP or discovery notes and let the assistant extract goals, requirements, and potential risks.
+        </p>
+      </div>
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+        @click.prevent="$store.proposal.analyzeBrief($store.proposal.builder.briefDraft)"
+        :disabled="$store.proposal.builder.insightsLoading"
+      >
+        <i class="fas fa-wand-magic-sparkles text-xs"></i>
+        Analyze brief
+      </button>
+    </div>
+    <div class="mt-4 grid gap-5 lg:grid-cols-[0.7fr_1fr]">
+      <textarea
+        rows="5"
+        class="rounded-xl border border-white/30 bg-white/5 px-3 py-2 text-sm text-white placeholder:text-slate-300 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        placeholder="Paste client brief or RFP text here"
+        x-model="$store.proposal.builder.briefDraft"
+      ></textarea>
+      <div class="grid gap-4 sm:grid-cols-2">
+        <div class="rounded-xl border border-white/20 bg-white/5 p-4">
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-200">Goals</h4>
+          <ul class="mt-2 space-y-1 text-sm text-slate-100">
+            <template x-for="(goal, index) in $store.proposal.builder.data.briefInsights.goals" :key="`insight-goal-${index}`">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-check text-emerald-400 text-xs mt-1"></i>
+                <span x-text="goal"></span>
+              </li>
+            </template>
+            <template x-if="$store.proposal.builder.data.briefInsights.goals.length === 0">
+              <li class="text-xs text-slate-300">Insights will appear after analysis.</li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-white/20 bg-white/5 p-4">
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-200">Requirements</h4>
+          <ul class="mt-2 space-y-1 text-sm text-slate-100">
+            <template x-for="(item, index) in $store.proposal.builder.data.briefInsights.requirements" :key="`insight-req-${index}`">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-list-check text-amber-300 text-xs mt-1"></i>
+                <span x-text="item"></span>
+              </li>
+            </template>
+            <template x-if="$store.proposal.builder.data.briefInsights.requirements.length === 0">
+              <li class="text-xs text-slate-300">No requirements captured yet.</li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-white/20 bg-white/5 p-4">
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-200">Risks</h4>
+          <ul class="mt-2 space-y-1 text-sm text-slate-100">
+            <template x-for="(risk, index) in $store.proposal.builder.data.briefInsights.risks" :key="`insight-risk-${index}`">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-triangle-exclamation text-amber-300 text-xs mt-1"></i>
+                <span x-text="risk"></span>
+              </li>
+            </template>
+            <template x-if="$store.proposal.builder.data.briefInsights.risks.length === 0">
+              <li class="text-xs text-slate-300">No risks detected yet.</li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-xl border border-white/20 bg-white/5 p-4">
+          <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-200">Timeline hints</h4>
+          <ul class="mt-2 space-y-1 text-sm text-slate-100">
+            <template x-for="(hint, index) in $store.proposal.builder.data.briefInsights.timelineHints" :key="`insight-time-${index}`">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-clock text-sky-300 text-xs mt-1"></i>
+                <span x-text="hint"></span>
+              </li>
+            </template>
+            <template x-if="$store.proposal.builder.data.briefInsights.timelineHints.length === 0">
+              <li class="text-xs text-slate-300">Timeline ideas will surface here.</li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>

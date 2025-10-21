@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ProposalBuilderToolbar from '../../mini-apps/proposal/ProposalBuilderToolbar.astro';
+import ProposalBuilderForm from '../../mini-apps/proposal/ProposalBuilderForm.astro';
+import ProposalPreview from '../../mini-apps/proposal/ProposalPreview.astro';
+
+const proposalId = Astro.url.searchParams.get('id');
+const builderInit = JSON.stringify({ id: proposalId });
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ proposal: $store.proposal })"
+    x-init={`proposal.initBuilder(${builderInit})`}
+  >
+    <ProposalBuilderToolbar />
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+      <div class="space-y-6">
+        <ProposalBuilderForm />
+      </div>
+      <div class="space-y-6">
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-col gap-2">
+            <h2 class="text-lg font-semibold text-slate-900">Live preview</h2>
+            <p class="text-sm text-slate-600">Content updates automatically as you edit the sections.</p>
+          </header>
+          <div class="mt-4">
+            <ProposalPreview />
+          </div>
+        </section>
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-col gap-2">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Publish link</h3>
+            <template x-if="$store.proposal.builder.shareUrl">
+              <a
+                class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+                :href="$store.proposal.builder.shareUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i class="fas fa-link text-xs"></i>
+                <span x-text="$store.proposal.builder.shareUrl"></span>
+              </a>
+            </template>
+            <template x-if="!$store.proposal.builder.shareUrl">
+              <p class="text-xs text-slate-500">Publish the proposal to generate a shareable link.</p>
+            </template>
+          </header>
+        </section>
+      </div>
+    </div>
+    <div
+      x-show="$store.proposal.builder.toast"
+      x-transition
+      class="fixed bottom-6 left-1/2 z-40 w-[min(90vw,360px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg"
+      x-cloak
+    >
+      <div class="flex items-center gap-3" :class="$store.proposal.builder.toast?.type === 'error' ? 'text-red-600' : 'text-emerald-600'">
+        <i class="fas" :class="$store.proposal.builder.toast?.type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
+        <span x-text="$store.proposal.builder.toast?.message"></span>
+      </div>
+    </div>
+  </main>
+</Layout>

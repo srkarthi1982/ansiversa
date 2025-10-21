@@ -1,0 +1,66 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ proposal: $store.proposal })"
+    x-init="proposal.initDashboard()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-slate-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+        <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+          <i class="fas fa-layer-group text-xs"></i>
+          Template gallery
+        </span>
+        <h1 class="mt-4 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Pick a foundation for your next proposal</h1>
+        <p class="mt-4 text-base text-slate-600 sm:text-lg">
+          Choose from curated layouts optimised for different services and engagement models. Customize every section with your content and branding.
+        </p>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto grid max-w-5xl gap-6 px-4 sm:grid-cols-2 sm:px-6 lg:px-8">
+        <template x-for="template in proposal.templates" :key="template.key">
+          <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas" :class="template.icon"></i>
+                  <span x-text="template.label"></span>
+                </span>
+                <span class="text-xs font-semibold uppercase tracking-wide" :class="template.plan === 'pro' ? 'text-amber-500' : 'text-emerald-500'" x-text="template.plan === 'pro' ? 'Pro' : 'Free'"></span>
+              </div>
+              <p class="text-sm text-slate-600" x-text="template.description"></p>
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-check text-emerald-500 text-xs mt-1"></i>
+                  Tailored sections for proposal storytelling
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-check text-emerald-500 text-xs mt-1"></i>
+                  Works with AI drafting and export features
+                </li>
+              </ul>
+            </div>
+            <div class="mt-6 flex items-center justify-between">
+              <div class="text-xs text-slate-400">Use template</div>
+              <Button
+                type="button"
+                variant="ghost"
+                @click.prevent="proposal.createDraft(template.key)"
+              >
+                <i class="fas fa-arrow-right text-xs"></i>
+                <span>Start with </span>
+                <span x-text="template.label"></span>
+              </Button>
+            </div>
+          </article>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>
