@@ -226,6 +226,15 @@ class QuizTestStore {
     this.currentQuestion = 0;
   }
 
+  private shuffleArray<T>(items: T[]): T[] {
+    const shuffled = [...items];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+
   private normalizeOptionName(id: number, name: unknown, fallback: string): string {
     if (typeof name === 'string') {
       const trimmed = name.trim();
@@ -478,9 +487,10 @@ class QuizTestStore {
     if (!platformId || !subjectId || !topicId || !roadmapId || !level) {
       throw new Error('Missing quiz selection.');
     }
-    const { data, error } = await actions.quiz.fetchQuestions({
+    const pageSize = 10;
+    const requestPayload = {
       page: 1,
-      pageSize: 10,
+      pageSize,
       filters: {
         platformId,
         subjectId,
@@ -488,13 +498,38 @@ class QuizTestStore {
         roadmapId,
         level,
       },
-    });
+    } as const;
+
+    const { data, error } = await actions.quiz.fetchQuestions(requestPayload);
     if (error) {
       throw error;
     }
-    const payload = data ?? { items: [] };
-    const items = Array.isArray(payload.items) ? payload.items : [];
-    this.list.questions = items.map((item: any) => ({
+
+    let payload = data ?? { items: [], total: 0, page: 1 };
+    let items = Array.isArray(payload.items) ? payload.items : [];
+
+    const rawTotal = (payload as any).total ?? 0;
+    const total = typeof rawTotal === 'number' ? rawTotal : Number(rawTotal);
+    const totalPages = Number.isFinite(total) && total > 0 ? Math.ceil(total / pageSize) : 0;
+
+    if (totalPages > 1) {
+      const randomPage = Math.floor(Math.random() * totalPages) + 1;
+      const currentPage = typeof (payload as any).page === 'number' ? (payload as any).page : 1;
+      if (randomPage !== currentPage) {
+        const { data: randomData, error: randomError } = await actions.quiz.fetchQuestions({
+          ...requestPayload,
+          page: randomPage,
+        });
+        if (!randomError && randomData) {
+          payload = randomData;
+          items = Array.isArray(randomData.items) ? randomData.items : items;
+        }
+      }
+    }
+
+    const shuffledItems = this.shuffleArray(items);
+
+    this.list.questions = shuffledItems.map((item: any) => ({
       id: Number(item.id),
       questionText: item.questionText ?? '',
       options: Array.isArray(item.options) ? item.options : [],
