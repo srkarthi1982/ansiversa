@@ -1,0 +1,110 @@
+---
+import Button from '../../components/Button.astro';
+---
+<section class="sticky top-[72px] z-30 border-b border-slate-200 bg-white/90 backdrop-blur">
+  <div class="mx-auto flex flex-col gap-4 px-4 py-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:justify-between">
+    <div class="flex flex-1 flex-col gap-3 lg:flex-row lg:items-center">
+      <div class="lg:w-60">
+        <label class="block text-xs font-semibold uppercase tracking-wide text-slate-500">
+          Invoice number
+          <input
+            type="text"
+            class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            :value="$store.invoice.builder.record.number"
+            @input="$store.invoice.updateField('number', $event.target.value)"
+          />
+        </label>
+      </div>
+      <div class="grid flex-1 grid-cols-1 gap-3 sm:grid-cols-4">
+        <label class="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 shadow-sm">
+          Issue date
+          <input
+            type="date"
+            class="w-full rounded-md border-none bg-transparent text-sm font-semibold text-slate-900 focus:outline-none"
+            :value="$store.invoice.builder.record.issueDate"
+            @input="$store.invoice.updateField('issueDate', $event.target.value)"
+          />
+        </label>
+        <label class="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 shadow-sm">
+          Due date
+          <input
+            type="date"
+            class="w-full rounded-md border-none bg-transparent text-sm font-semibold text-slate-900 focus:outline-none"
+            :value="$store.invoice.builder.record.dueDate"
+            @input="$store.invoice.updateField('dueDate', $event.target.value)"
+          />
+        </label>
+        <label class="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 shadow-sm">
+          Currency
+          <input
+            type="text"
+            maxlength="3"
+            class="w-full rounded-md border-none bg-transparent text-sm font-semibold uppercase text-slate-900 focus:outline-none"
+            :value="$store.invoice.builder.record.currency"
+            @input="$store.invoice.updateCurrency($event.target.value)"
+          />
+        </label>
+        <label class="flex flex-col gap-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold uppercase tracking-wide text-slate-500 shadow-sm">
+          Template
+          <select
+            class="w-full appearance-none rounded-md border-none bg-transparent text-sm font-semibold text-slate-900 focus:outline-none"
+            :value="$store.invoice.builder.record.templateKey"
+            @change="$store.invoice.updateTemplate($event.target.value)"
+          >
+            <template x-for="template in $store.invoice.templates" :key="template.key">
+              <option :value="template.key" x-text="template.label"></option>
+            </template>
+          </select>
+        </label>
+      </div>
+    </div>
+    <div class="flex flex-wrap items-center gap-3">
+      <div class="text-xs text-slate-500" x-text="$store.invoice.builder.autosaveLabel ?? ''"></div>
+      <Button
+        type="button"
+        variant="ghost"
+        class="min-w-[110px]"
+        @click.prevent="$store.invoice.saveNow()"
+      >
+        <i class="fas fa-floppy-disk text-xs"></i>
+        Save now
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        class="min-w-[130px]"
+        @click.prevent="$store.invoice.markSent()"
+      >
+        <i class="fas fa-paper-plane text-xs"></i>
+        Mark as sent
+      </Button>
+      <Button
+        type="button"
+        variant="ghost"
+        class="min-w-[130px]"
+        @click.prevent="$store.invoice.copyReminder()"
+      >
+        <i class="fas fa-message text-xs"></i>
+        Copy reminder
+      </Button>
+      <div class="hidden h-6 w-px bg-slate-200 md:block"></div>
+      <Button
+        type="button"
+        :disabled="!$store.invoice.builder.shareUrl"
+        class="min-w-[120px]"
+        variant="ghost"
+        @click.prevent="$store.invoice.builder.shareUrl ? window.open($store.invoice.builder.shareUrl, '_blank') : null"
+      >
+        <i class="fas fa-link text-xs"></i>
+        Share link
+      </Button>
+      <Button
+        type="button"
+        @click.prevent="$store.invoice.saveNow()"
+      >
+        <i class="fas fa-circle-check text-xs"></i>
+        Save draft
+      </Button>
+    </div>
+  </div>
+</section>

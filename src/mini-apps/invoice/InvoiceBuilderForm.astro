@@ -1,0 +1,467 @@
+<section class="space-y-6">
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-building text-xs text-indigo-500"></i>
+        Business & branding
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-4 border-t border-slate-100 px-5 py-5 sm:grid-cols-2">
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Business name
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.businessName"
+          @input="$store.invoice.updateField('branding.businessName', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Email
+        <input
+          type="email"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.businessEmail"
+          @input="$store.invoice.updateField('branding.businessEmail', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Phone
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.businessPhone"
+          @input="$store.invoice.updateField('branding.businessPhone', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Website
+        <input
+          type="url"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.website"
+          @input="$store.invoice.updateField('branding.website', $event.target.value)"
+        />
+      </label>
+      <label class="sm:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Address
+        <textarea
+          rows="2"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.businessAddress"
+          @input="$store.invoice.updateField('branding.businessAddress', $event.target.value)"
+        ></textarea>
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Accent color
+        <input
+          type="color"
+          class="mt-1 h-10 w-full cursor-pointer rounded-xl border border-slate-200 bg-white px-3 py-2"
+          :value="$store.invoice.builder.record.branding.accentColor"
+          @input="$store.invoice.updateAccentColor($event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Logo URL
+        <input
+          type="url"
+          placeholder="https://"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.logoUrl"
+          @input="$store.invoice.updateField('branding.logoUrl', $event.target.value)"
+        />
+      </label>
+      <label class="sm:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Footer note
+        <textarea
+          rows="2"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.branding.footerNote"
+          @input="$store.invoice.updateField('branding.footerNote', $event.target.value)"
+        ></textarea>
+      </label>
+    </div>
+  </details>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-user text-xs text-indigo-500"></i>
+        Client information
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-4 border-t border-slate-100 px-5 py-5 sm:grid-cols-2">
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Client name
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.client.name"
+          @input="$store.invoice.updateField('client.name', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Company
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.client.company"
+          @input="$store.invoice.updateField('client.company', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Email
+        <input
+          type="email"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.client.email"
+          @input="$store.invoice.updateField('client.email', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Phone
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.client.phone"
+          @input="$store.invoice.updateField('client.phone', $event.target.value)"
+        />
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Tax ID / VAT
+        <input
+          type="text"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.client.taxId"
+          @input="$store.invoice.updateField('client.taxId', $event.target.value)"
+        />
+      </label>
+      <label class="sm:col-span-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Address
+        <textarea
+          rows="2"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.client.address"
+          @input="$store.invoice.updateField('client.address', $event.target.value)"
+        ></textarea>
+      </label>
+    </div>
+  </details>
+
+  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Line items</h3>
+        <p class="text-xs text-slate-500">Include quantity, tax, and discounts per line. Totals update automatically.</p>
+      </div>
+      <button
+        type="button"
+        class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-indigo-600 shadow-sm hover:border-indigo-300 hover:text-indigo-500"
+        @click.prevent="$store.invoice.addItem()"
+      >
+        <i class="fas fa-plus text-[10px]"></i>
+        Add item
+      </button>
+    </header>
+    <div class="overflow-x-auto">
+      <table class="min-w-full divide-y divide-slate-100 text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-4 py-3 text-left">Description</th>
+            <th class="px-4 py-3 text-right">Qty</th>
+            <th class="px-4 py-3 text-right">Unit price</th>
+            <th class="px-4 py-3 text-right">Tax %</th>
+            <th class="px-4 py-3 text-right">Discount %</th>
+            <th class="px-4 py-3"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <template x-for="(item, index) in $store.invoice.builder.record.items" :key="item.id">
+            <tr class="bg-white">
+              <td class="px-4 py-3 align-top">
+                <textarea
+                  rows="2"
+                  class="w-full rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="item.description"
+                  @input="$store.invoice.updateItem(index, 'description', $event.target.value)"
+                ></textarea>
+              </td>
+              <td class="px-4 py-3 align-top">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-24 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="item.quantity"
+                  @input="$store.invoice.updateItem(index, 'quantity', $event.target.value)"
+                />
+              </td>
+              <td class="px-4 py-3 align-top">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-28 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="item.unitPrice"
+                  @input="$store.invoice.updateItem(index, 'unitPrice', $event.target.value)"
+                />
+              </td>
+              <td class="px-4 py-3 align-top">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-24 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="item.taxPct"
+                  @input="$store.invoice.updateItem(index, 'taxPct', $event.target.value)"
+                />
+              </td>
+              <td class="px-4 py-3 align-top">
+                <input
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  class="w-24 rounded-lg border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="item.discountPct"
+                  @input="$store.invoice.updateItem(index, 'discountPct', $event.target.value)"
+                />
+              </td>
+              <td class="px-4 py-3 text-right align-top">
+                <button
+                  type="button"
+                  class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-rose-500"
+                  @click.prevent="$store.invoice.removeItem(index)"
+                  :disabled="$store.invoice.builder.record.items.length === 1"
+                  :class="$store.invoice.builder.record.items.length === 1 ? 'opacity-40' : ''"
+                >
+                  <i class="fas fa-xmark text-xs"></i>
+                </button>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <footer class="flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 px-5 py-4 text-sm text-slate-600">
+      <div class="space-y-1">
+        <p>
+          <span class="font-semibold text-slate-900">Subtotal:</span>
+          <span x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.subtotal)"></span>
+        </p>
+        <p>
+          <span class="font-semibold text-slate-900">Tax:</span>
+          <span x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.taxTotal)"></span>
+        </p>
+        <p>
+          <span class="font-semibold text-slate-900">Discount:</span>
+          <span x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.discountTotal)"></span>
+        </p>
+      </div>
+      <div class="text-right">
+        <p class="text-xs uppercase tracking-wide text-slate-500">Grand total</p>
+        <p class="text-2xl font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.grandTotal)"></p>
+        <p class="text-xs text-slate-500">
+          Paid: <span x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.paidTotal)"></span>
+          · Balance: <span x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.balanceDue)"></span>
+        </p>
+      </div>
+    </footer>
+  </section>
+
+  <details class="rounded-2xl border border-slate-200 bg-white shadow-sm" open>
+    <summary class="flex cursor-pointer items-center justify-between gap-3 rounded-2xl px-5 py-4 text-left text-sm font-semibold text-slate-900">
+      <span class="flex items-center gap-2">
+        <i class="fas fa-clipboard-list text-xs text-indigo-500"></i>
+        Notes & terms
+      </span>
+      <i class="fas fa-chevron-down text-xs text-slate-400"></i>
+    </summary>
+    <div class="grid gap-4 border-t border-slate-100 px-5 py-5">
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Notes for client
+        <textarea
+          rows="3"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.notes"
+          @input="$store.invoice.updateField('notes', $event.target.value)"
+        ></textarea>
+      </label>
+      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+        Terms & conditions
+        <textarea
+          rows="4"
+          class="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+          :value="$store.invoice.builder.record.terms"
+          @input="$store.invoice.updateField('terms', $event.target.value)"
+        ></textarea>
+      </label>
+    </div>
+  </details>
+
+  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Payments & receipts</h3>
+        <p class="text-xs text-slate-500">Record partial payments and auto-generate receipt numbers on Pro.</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-slate-500">
+        Balance:
+        <span class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.balanceDue)"></span>
+      </div>
+    </header>
+    <div class="space-y-5 px-5 py-5">
+      <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+        <div class="grid gap-3 sm:grid-cols-[repeat(4,minmax(0,1fr))_160px]">
+          <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Date
+            <input
+              type="date"
+              class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :value="$store.invoice.builder.paymentForm.date"
+              @input="$store.invoice.builder.paymentForm.date = $event.target.value"
+            />
+          </label>
+          <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Amount
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              placeholder="0.00"
+              class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :value="$store.invoice.builder.paymentForm.amount"
+              @input="$store.invoice.builder.paymentForm.amount = $event.target.value"
+            />
+          </label>
+          <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Method
+            <select
+              class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :value="$store.invoice.builder.paymentForm.method"
+              @change="$store.invoice.builder.paymentForm.method = $event.target.value"
+            >
+              <template x-for="method in $store.invoice.paymentMethods" :key="`method-${method}`">
+                <option :value="method" x-text="method"></option>
+              </template>
+            </select>
+          </label>
+          <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Note
+            <input
+              type="text"
+              placeholder="Optional"
+              class="mt-1 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              :value="$store.invoice.builder.paymentForm.note"
+              @input="$store.invoice.builder.paymentForm.note = $event.target.value"
+            />
+          </label>
+          <div class="flex items-end">
+            <Button type="button" class="w-full" @click.prevent="$store.invoice.addPayment()">
+              <i class="fas fa-circle-plus text-xs"></i>
+              Add payment
+            </Button>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <template x-if="$store.invoice.builder.record.payments.length === 0">
+          <p class="rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-3 text-sm text-slate-500">
+            No payments recorded yet. Add a payment to update balance and mark invoices as paid.
+          </p>
+        </template>
+        <template x-for="payment in $store.invoice.builder.record.payments" :key="payment.id">
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">
+            <div class="space-y-1">
+              <p class="font-semibold text-slate-900">
+                <span x-text="new Date(payment.date).toLocaleDateString()"></span>
+                · <span x-text="$store.invoice.formatCurrency(payment.amount)"></span>
+              </p>
+              <p class="text-xs text-slate-500">
+                <span x-text="payment.method"></span>
+                <template x-if="payment.note">
+                  <span> · <span x-text="payment.note"></span></span>
+                </template>
+                <template x-if="payment.receiptNumber">
+                  <span class="ml-2 inline-flex items-center gap-1 rounded-full bg-indigo-50 px-2 py-0.5 text-[11px] font-semibold text-indigo-600">
+                    <i class="fas fa-receipt text-[9px]"></i>
+                    <span x-text="payment.receiptNumber"></span>
+                  </span>
+                </template>
+              </p>
+            </div>
+            <div class="flex items-center gap-2">
+              <Button
+                type="button"
+                variant="ghost"
+                class="text-xs"
+                :disabled="!payment.receiptNumber"
+                @click.prevent="payment.receiptNumber ? window.open(`/invoice/receipt/${payment.receiptNumber}`, '_blank') : null"
+              >
+                <i class="fas fa-print text-[10px]"></i>
+                Receipt
+              </Button>
+              <button
+                type="button"
+                class="rounded-full border border-slate-200 bg-white p-2 text-slate-500 hover:text-rose-500"
+                @click.prevent="$store.invoice.removePayment(payment.id)"
+              >
+                <i class="fas fa-xmark text-xs"></i>
+              </button>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <section class="rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <header class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 px-5 py-4">
+      <div>
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Reminder assistant</h3>
+        <p class="text-xs text-slate-500">Let AI craft a polite nudge or refine an item description.</p>
+      </div>
+      <div class="flex items-center gap-2 text-xs text-slate-500">
+        <select
+          class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 focus:outline-none"
+          :value="$store.invoice.builder.reminderMode"
+          @change="$store.invoice.setReminderMode($event.target.value)"
+        >
+          <template x-for="mode in $store.invoice.reminderModes" :key="mode.value">
+            <option :value="mode.value" x-text="mode.label"></option>
+          </template>
+        </select>
+        <select
+          class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-semibold text-slate-600 focus:outline-none"
+          :value="$store.invoice.builder.reminderTone"
+          @change="$store.invoice.setReminderTone($event.target.value)"
+        >
+          <template x-for="tone in $store.invoice.reminderTones" :key="tone.value">
+            <option :value="tone.value" x-text="tone.label"></option>
+          </template>
+        </select>
+      </div>
+    </header>
+    <div class="space-y-4 px-5 py-5">
+      <textarea
+        rows="3"
+        placeholder="Draft or paste context for the AI helper."
+        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        :value="$store.invoice.builder.reminderDraft"
+        @input="$store.invoice.setReminderDraft($event.target.value)"
+      ></textarea>
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <p class="text-xs text-slate-500">
+          Copy suggestion to your clipboard or update the line item manually.
+        </p>
+        <div class="flex items-center gap-2">
+          <Button type="button" variant="ghost" @click.prevent="$store.invoice.copyReminder()">
+            <i class="fas fa-copy text-xs"></i>
+            Copy suggestion
+          </Button>
+        </div>
+      </div>
+    </div>
+  </section>
+</section>

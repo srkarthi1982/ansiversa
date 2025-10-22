@@ -1,0 +1,163 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+const slug = Astro.params.slug;
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ invoice: $store.invoice })"
+    x-init={`invoice.initViewer('${slug}')`}
+  >
+    <section class="mx-auto max-w-4xl px-4 py-16 sm:px-6 lg:px-8">
+      <template x-if="$store.invoice.viewer.notFound">
+        <div class="rounded-3xl border border-dashed border-slate-200 bg-white p-12 text-center">
+          <i class="fas fa-circle-xmark text-3xl text-rose-400"></i>
+          <h1 class="mt-4 text-2xl font-semibold text-slate-900">Invoice not found</h1>
+          <p class="mt-2 text-sm text-slate-600">The invoice link may be expired or has been removed.</p>
+        </div>
+      </template>
+      <template x-if="!$store.invoice.viewer.notFound && $store.invoice.viewer.invoice">
+        <div class="space-y-8">
+          <header class="text-center">
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900">Invoice</h1>
+            <p class="text-sm text-slate-500">
+              <span>Number:</span>
+              <span class="font-semibold text-slate-700" x-text="$store.invoice.viewer.invoice?.number"></span>
+            </p>
+          </header>
+          <section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+            <header
+              class="relative flex flex-wrap items-start justify-between gap-6 px-8 py-10 text-white"
+              :style="`background: linear-gradient(140deg, ${$store.invoice.viewer.invoice?.branding.accentColor}, #1e1b4b)`"
+            >
+              <div class="space-y-2">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/70">Invoice</p>
+                <h2 class="text-3xl font-bold" x-text="$store.invoice.viewer.invoice?.branding.businessName"></h2>
+                <p class="text-sm text-white/80" x-text="$store.invoice.viewer.invoice?.branding.businessAddress"></p>
+                <div class="flex flex-wrap gap-4 text-xs text-white/70">
+                  <span x-text="$store.invoice.viewer.invoice?.branding.businessEmail"></span>
+                  <span x-text="$store.invoice.viewer.invoice?.branding.businessPhone"></span>
+                  <span x-text="$store.invoice.viewer.invoice?.branding.website"></span>
+                </div>
+              </div>
+              <div class="flex flex-1 flex-col items-end gap-4 text-right text-sm text-white/80 sm:flex-none">
+                <template x-if="$store.invoice.viewer.invoice?.branding.logoUrl">
+                  <img :src="$store.invoice.viewer.invoice?.branding.logoUrl" alt="Logo" class="h-16 w-16 rounded-xl border border-white/30 object-cover" />
+                </template>
+                <dl class="grid gap-1 text-xs text-white/80">
+                  <div class="flex items-center justify-between gap-4">
+                    <dt>Issue date</dt>
+                    <dd class="font-semibold text-white" x-text="$store.invoice.viewer.invoice?.issueDate"></dd>
+                  </div>
+                  <div class="flex items-center justify-between gap-4">
+                    <dt>Due date</dt>
+                    <dd class="font-semibold text-white" x-text="$store.invoice.viewer.invoice?.dueDate"></dd>
+                  </div>
+                  <div class="flex items-center justify-between gap-4">
+                    <dt>Status</dt>
+                    <dd class="font-semibold text-white" x-text="$store.invoice.viewer.invoice?.status.toUpperCase()"></dd>
+                  </div>
+                </dl>
+              </div>
+            </header>
+            <div class="space-y-10 px-8 py-10">
+              <section class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+                  <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Bill to</h3>
+                  <p class="mt-3 text-base font-semibold text-slate-900" x-text="$store.invoice.viewer.invoice?.client.company || $store.invoice.viewer.invoice?.client.name"></p>
+                  <p class="text-sm text-slate-600" x-text="$store.invoice.viewer.invoice?.client.name"></p>
+                  <p class="text-sm text-slate-600" x-text="$store.invoice.viewer.invoice?.client.address"></p>
+                  <div class="mt-2 text-xs text-slate-500">
+                    <span x-text="$store.invoice.viewer.invoice?.client.email"></span>
+                    <template x-if="$store.invoice.viewer.invoice?.client.taxId">
+                      <span> · Tax ID: <span x-text="$store.invoice.viewer.invoice?.client.taxId"></span></span>
+                    </template>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-white p-5">
+                  <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Summary</h3>
+                  <dl class="mt-3 space-y-2 text-sm text-slate-600">
+                    <div class="flex items-center justify-between">
+                      <dt>Subtotal</dt>
+                      <dd class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.viewer.invoice?.totals.subtotal ?? 0, $store.invoice.viewer.invoice?.currency)"></dd>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <dt>Tax</dt>
+                      <dd class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.viewer.invoice?.totals.taxTotal ?? 0, $store.invoice.viewer.invoice?.currency)"></dd>
+                    </div>
+                    <div class="flex items-center justify-between">
+                      <dt>Discount</dt>
+                      <dd class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.viewer.invoice?.totals.discountTotal ?? 0, $store.invoice.viewer.invoice?.currency)"></dd>
+                    </div>
+                    <div class="flex items-center justify-between text-base font-semibold text-slate-900">
+                      <dt>Total due</dt>
+                      <dd x-text="$store.invoice.formatCurrency($store.invoice.viewer.invoice?.totals.grandTotal ?? 0, $store.invoice.viewer.invoice?.currency)"></dd>
+                    </div>
+                    <div class="flex items-center justify-between text-xs text-slate-500">
+                      <dt>Balance</dt>
+                      <dd class="font-semibold" :class="$store.invoice.viewer.invoice?.totals.balanceDue <= 0 ? 'text-emerald-600' : 'text-slate-700'" x-text="$store.invoice.formatCurrency($store.invoice.viewer.invoice?.totals.balanceDue ?? 0, $store.invoice.viewer.invoice?.currency)"></dd>
+                    </div>
+                  </dl>
+                </div>
+              </section>
+
+              <section class="overflow-hidden rounded-2xl border border-slate-100">
+                <table class="w-full text-sm">
+                  <thead class="bg-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th class="px-4 py-3 text-left">Item</th>
+                      <th class="px-4 py-3 text-right">Qty</th>
+                      <th class="px-4 py-3 text-right">Unit</th>
+                      <th class="px-4 py-3 text-right">Tax</th>
+                      <th class="px-4 py-3 text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100">
+                    <template x-for="item in $store.invoice.viewer.invoice?.items" :key="item.id">
+                      <tr>
+                        <td class="px-4 py-3 text-left text-slate-700">
+                          <p class="font-semibold text-slate-900" x-text="item.description"></p>
+                          <p class="text-xs text-slate-500" x-text="`Tax ${item.taxPct || 0}% · Discount ${item.discountPct || 0}%`"></p>
+                        </td>
+                        <td class="px-4 py-3 text-right text-slate-600" x-text="item.quantity"></td>
+                        <td class="px-4 py-3 text-right text-slate-600" x-text="$store.invoice.formatCurrency(item.unitPrice, $store.invoice.viewer.invoice?.currency)"></td>
+                        <td class="px-4 py-3 text-right text-slate-600" x-text="`${item.taxPct || 0}%`"></td>
+                        <td class="px-4 py-3 text-right font-semibold text-slate-900" x-text="$store.invoice.formatCurrency((item.quantity || 0) * (item.unitPrice || 0) * (1 + (item.taxPct || 0) / 100) - ((item.quantity || 0) * (item.unitPrice || 0) * (item.discountPct || 0) / 100), $store.invoice.viewer.invoice?.currency)"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </section>
+
+              <section class="grid gap-6 lg:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-sm text-slate-600">
+                  <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Notes</h3>
+                  <p class="mt-2 whitespace-pre-line" x-text="$store.invoice.viewer.invoice?.notes"></p>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-sm text-slate-600">
+                  <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Terms</h3>
+                  <p class="mt-2 whitespace-pre-line" x-text="$store.invoice.viewer.invoice?.terms"></p>
+                </div>
+              </section>
+
+              <section class="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-4 text-xs text-slate-500">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <span>Have questions about this invoice? Reply to this email or contact us at the address above.</span>
+                  <template x-if="$store.invoice.viewer.invoice?.branding.footerNote">
+                    <span class="font-semibold text-slate-600" x-text="$store.invoice.viewer.invoice?.branding.footerNote"></span>
+                  </template>
+                </div>
+                <template x-if="$store.invoice.viewer.invoice?.watermark">
+                  <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-500">
+                    <i class="fas fa-droplet text-[9px]"></i>
+                    Generated with Ansiversa
+                  </p>
+                </template>
+              </section>
+            </div>
+          </section>
+        </div>
+      </template>
+    </section>
+  </main>
+</Layout>
