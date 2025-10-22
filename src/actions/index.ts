@@ -4,6 +4,7 @@ import { flashnote } from './flashnote';
 import { quiz } from './quiz';
 import { resume } from './resume';
 import { proposal } from './proposal';
+import { contract } from './contract';
 
 export const server = {
   auth,
@@ -11,4 +12,5 @@ export const server = {
   quiz,
   resume,
   proposal,
+  contract,
 };

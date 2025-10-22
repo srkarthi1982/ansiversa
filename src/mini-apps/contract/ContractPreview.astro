@@ -1,0 +1,91 @@
+<section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" x-data="() => ({ preview: $store.contract.resolvedPreview() })" x-effect="preview = $store.contract.resolvedPreview()">
+  <header class="flex flex-col gap-2 border-b border-slate-100 pb-4">
+    <h2 class="text-lg font-semibold text-slate-900">Preview</h2>
+    <p class="text-sm text-slate-600">Rendered contract with variables merged. Final export honours this layout.</p>
+  </header>
+  <article class="mt-4 space-y-6 text-sm leading-relaxed text-slate-700">
+    <section class="space-y-2">
+      <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Parties</h3>
+      <p>
+        <strong x-text="$store.contract.builder.variables.ProviderName"></strong>
+        of
+        <span x-text="$store.contract.builder.variables.ProviderAddress"></span>
+        and
+        <strong x-text="$store.contract.builder.variables.ClientName"></strong>
+        of
+        <span x-text="$store.contract.builder.variables.ClientAddress"></span>.
+      </p>
+      <p>
+        Commencing on
+        <span class="font-medium" x-text="$store.contract.builder.variables.StartDate"></span>
+        with optional end date
+        <span class="font-medium" x-text="$store.contract.builder.variables.EndDate || 'TBD'"></span>.
+      </p>
+    </section>
+    <section class="space-y-2">
+      <h3 class="text-sm font-semibold text-slate-900">Preamble</h3>
+      <p x-text="preview.preamble"></p>
+    </section>
+    <section class="space-y-2">
+      <h3 class="text-sm font-semibold text-slate-900">Services</h3>
+      <p x-text="preview.services"></p>
+    </section>
+    <section class="space-y-2">
+      <h3 class="text-sm font-semibold text-slate-900">Deliverables</h3>
+      <p x-text="preview.deliverables"></p>
+    </section>
+    <section class="space-y-2">
+      <h3 class="text-sm font-semibold text-slate-900">Payment</h3>
+      <p>
+        Fee:
+        <span class="font-medium">
+          <span x-text="$store.contract.builder.variables.Currency"></span>
+          <span x-text="$store.contract.builder.variables.ServiceFee"></span>
+        </span>
+      </p>
+      <p x-text="preview.payment"></p>
+      <p x-text="preview.expenses"></p>
+    </section>
+    <section class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-2">
+        <h3 class="text-sm font-semibold text-slate-900">Intellectual property</h3>
+        <p x-text="preview.intellectual_property"></p>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-sm font-semibold text-slate-900">Confidentiality</h3>
+        <p x-text="preview.confidentiality"></p>
+      </div>
+    </section>
+    <section class="grid gap-4 md:grid-cols-2">
+      <div class="space-y-2">
+        <h3 class="text-sm font-semibold text-slate-900">Liability</h3>
+        <p x-text="preview.liability"></p>
+      </div>
+      <div class="space-y-2">
+        <h3 class="text-sm font-semibold text-slate-900">Termination</h3>
+        <p x-text="preview.termination"></p>
+      </div>
+    </section>
+    <section class="space-y-2">
+      <h3 class="text-sm font-semibold text-slate-900">Dispute resolution & governing law</h3>
+      <p x-text="preview.dispute_resolution"></p>
+      <p x-text="preview.governing_law"></p>
+    </section>
+    <section class="space-y-3 border-t border-slate-100 pt-4">
+      <h3 class="text-sm font-semibold text-slate-900">Signatures</h3>
+      <p x-text="preview.signatures"></p>
+      <div class="grid gap-4 md:grid-cols-2">
+        <div class="rounded-2xl border border-dashed border-slate-200 p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Client</p>
+          <p class="mt-3 h-8 border-b border-slate-200"></p>
+          <p class="mt-2 text-xs text-slate-500" x-text="$store.contract.builder.variables.ClientName"></p>
+        </div>
+        <div class="rounded-2xl border border-dashed border-slate-200 p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Provider</p>
+          <p class="mt-3 h-8 border-b border-slate-200"></p>
+          <p class="mt-2 text-xs text-slate-500" x-text="$store.contract.builder.variables.ProviderName"></p>
+        </div>
+      </div>
+    </section>
+  </article>
+</section>

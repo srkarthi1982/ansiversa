@@ -5,6 +5,7 @@ import { quizTables } from './quiz/tables';
 import { resumeTables } from './resume/tables';
 import { flashnoteTables } from './flashnote/tables';
 import { proposalTables } from './proposal/tables';
+import { contractTables } from './contract/tables';
 
 export default defineDb({
   tables: {
@@ -13,5 +14,6 @@ export default defineDb({
     ...resumeTables,
     ...flashnoteTables,
     ...proposalTables,
+    ...contractTables,
   },
 });

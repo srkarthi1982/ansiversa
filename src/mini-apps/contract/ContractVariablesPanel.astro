@@ -1,0 +1,43 @@
+<section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+  <header class="flex flex-col gap-2">
+    <h2 class="text-lg font-semibold text-slate-900">Variables</h2>
+    <p class="text-sm text-slate-600">Update party names, scope and commercial details. Changes flow through every clause automatically.</p>
+  </header>
+  <div class="mt-5 grid gap-4 md:grid-cols-2">
+    <template x-for="field in [
+      { key: 'ClientName', label: 'Client name' },
+      { key: 'ClientAddress', label: 'Client address' },
+      { key: 'ProviderName', label: 'Provider name' },
+      { key: 'ProviderAddress', label: 'Provider address' },
+      { key: 'StartDate', label: 'Start date', type: 'date' },
+      { key: 'EndDate', label: 'End date', type: 'date' },
+      { key: 'ServiceFee', label: 'Service fee' },
+      { key: 'Currency', label: 'Currency' },
+      { key: 'PaymentSchedule', label: 'Payment schedule' },
+      { key: 'ScopeSummary', label: 'Scope summary', textarea: true },
+      { key: 'DeliverableSummary', label: 'Deliverable summary', textarea: true },
+      { key: 'Jurisdiction', label: 'Jurisdiction' },
+      { key: 'NoticeEmail', label: 'Notice email' }
+    ]" :key="field.key">
+      <label class="flex flex-col gap-1 text-xs font-semibold uppercase tracking-wide text-slate-500">
+        <span x-text="field.label"></span>
+        <template x-if="field.textarea">
+          <textarea
+            rows="3"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            :value="$store.contract.builder.variables[field.key]"
+            @input="$store.contract.updateVariable(field.key, $event.target.value)"
+          ></textarea>
+        </template>
+        <template x-if="!field.textarea">
+          <input
+            :type="field.type ?? 'text'"
+            class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            :value="$store.contract.builder.variables[field.key]"
+            @input="$store.contract.updateVariable(field.key, $event.target.value)"
+          />
+        </template>
+      </label>
+    </template>
+  </div>
+</section>
