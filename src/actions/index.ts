@@ -5,6 +5,7 @@ import { quiz } from './quiz';
 import { resume } from './resume';
 import { proposal } from './proposal';
 import { contract } from './contract';
+import { minutes } from './minutes';
 
 export const server = {
   auth,
@@ -13,4 +14,5 @@ export const server = {
   resume,
   proposal,
   contract,
+  minutes,
 };

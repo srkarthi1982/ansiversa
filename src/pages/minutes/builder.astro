@@ -1,0 +1,480 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+
+const minutesId = Astro.url.searchParams.get('id');
+const builderInit = JSON.stringify({ id: minutesId });
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ minutes: $store.minutes })"
+    x-init={`minutes.initBuilder(${builderInit})`}
+  >
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 py-6 sm:px-6 lg:max-w-6xl lg:flex-row lg:items-center lg:justify-between lg:py-8">
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span>Minutes builder</span>
+            <span class="h-1 w-1 rounded-full bg-slate-300"></span>
+            <span x-text="minutes.builder.plan === 'pro' ? 'Pro plan' : 'Free plan'"></span>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <input
+              type="text"
+              class="min-w-[220px] rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-lg font-semibold text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Meeting title"
+              :value="minutes.builder.title"
+              @input="minutes.updateTitle($event.target.value)"
+            />
+            <label class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <i class="fas fa-calendar-day text-xs text-slate-400"></i>
+              <span class="sr-only">Meeting date</span>
+              <input
+                type="date"
+                class="bg-transparent focus:outline-none"
+                :value="minutes.builder.meetingDate"
+                @change="minutes.updateMeetingDate($event.target.value)"
+              />
+            </label>
+            <label class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <i class="fas fa-shield text-xs text-slate-400"></i>
+              <span class="sr-only">Privacy</span>
+              <select
+                class="bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="minutes.builder.privacy"
+                @change="minutes.setPrivacy($event.target.value)"
+              >
+                <option value="standard">Retain transcript</option>
+                <option value="ephemeral">Ephemeral (delete after summary)</option>
+              </select>
+            </label>
+          </div>
+          <p class="text-xs text-slate-500">
+            Last saved <span x-text="minutes.builder.lastSavedLabel ?? 'moments ago'"></span>
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <Button
+            type="button"
+            variant="ghost"
+            class="text-sm"
+            :class="minutes.builder.aiBusy ? 'pointer-events-none opacity-60' : ''"
+            @click.prevent="minutes.summarize()"
+          >
+            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+            AI summarize
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            class="text-sm"
+            :class="minutes.builder.transcribing ? 'pointer-events-none opacity-60' : ''"
+            @click.prevent="minutes.transcribe()"
+          >
+            <i class="fas fa-waveform-lines text-xs"></i>
+            Transcribe audio
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            class="text-sm"
+            :class="minutes.builder.exportBusy ? 'pointer-events-none opacity-60' : ''"
+            @click.prevent="minutes.export('pdf')"
+          >
+            <i class="fas fa-file-arrow-down text-xs"></i>
+            Export PDF
+          </Button>
+          <Button type="button" class="text-sm" @click.prevent="minutes.publish()">
+            <i class="fas fa-earth-americas text-xs"></i>
+            Publish
+          </Button>
+        </div>
+      </div>
+    </header>
+
+    <div class="mx-auto grid max-w-6xl gap-6 px-4 pb-20 pt-8 sm:px-6 lg:grid-cols-[1.2fr_0.8fr] lg:px-8">
+      <div class="space-y-6">
+        <nav class="flex flex-wrap items-center gap-2 rounded-2xl border border-slate-200 bg-white p-2 shadow-sm">
+          <template x-for="tab in ['summary', 'transcript', 'actions', 'meta']" :key="tab">
+            <button
+              type="button"
+              class="flex-1 rounded-xl px-3 py-2 text-sm font-semibold capitalize"
+              :class="minutes.builder.tab === tab ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+              @click="minutes.setTab(tab)"
+              x-text="tab"
+            ></button>
+          </template>
+        </nav>
+
+        <section
+          x-show="minutes.builder.tab === 'summary'"
+          x-cloak
+          class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <header class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">AI summary</h2>
+            <p class="text-xs text-slate-500">Agenda, key points, decisions, and parking lot captured for quick sharing.</p>
+          </header>
+          <div class="space-y-6">
+            <template x-for="section in [
+              { key: 'agenda', label: 'Agenda' },
+              { key: 'keyPoints', label: 'Key Points' },
+              { key: 'decisions', label: 'Decisions' },
+              { key: 'risks', label: 'Risks' },
+              { key: 'parkingLot', label: 'Parking Lot' },
+            ]" :key="section.key">
+              <div>
+                <div class="flex items-center justify-between">
+                  <h3 class="text-sm font-semibold text-slate-800" x-text="section.label"></h3>
+                  <button
+                    type="button"
+                    class="text-xs font-semibold text-indigo-600"
+                    @click="minutes.addSummaryItem(section.key)"
+                  >
+                    <i class="fas fa-plus mr-1 text-[10px]"></i>
+                    Add
+                  </button>
+                </div>
+                <template x-if="(minutes.builder.summary[section.key] ?? []).length === 0">
+                  <p class="mt-2 text-xs text-slate-400">No entries yet. Add a bullet to summarize this section.</p>
+                </template>
+                <template x-for="(entry, index) in minutes.builder.summary[section.key]" :key="`${section.key}-${index}`">
+                  <div class="mt-2 flex items-start gap-2">
+                    <textarea
+                      rows="2"
+                      class="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="entry"
+                      @input="minutes.updateSummaryItem(section.key, index, $event.target.value)"
+                    ></textarea>
+                    <button
+                      type="button"
+                      class="mt-1 rounded-full bg-slate-100 p-2 text-slate-500 hover:bg-slate-200"
+                      @click="minutes.removeSummaryItem(section.key, index)"
+                    >
+                      <i class="fas fa-trash text-[10px]"></i>
+                      <span class="sr-only">Remove</span>
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <section
+          x-show="minutes.builder.tab === 'actions'"
+          x-cloak
+          class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <header class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">Action items</h2>
+            <Button type="button" variant="ghost" size="sm" @click.prevent="minutes.addSummaryItem('actionItems')">
+              <i class="fas fa-plus text-[10px]"></i>
+              Add item
+            </Button>
+          </header>
+          <template x-if="minutes.builder.summary.actionItems.length === 0">
+            <p class="text-sm text-slate-500">No tasks captured yet. Add assignments to keep follow-ups accountable.</p>
+          </template>
+          <div class="space-y-4">
+            <template x-for="(item, index) in minutes.builder.summary.actionItems" :key="item.id">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex flex-col gap-3 sm:flex-row">
+                  <div class="flex-1">
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Task</label>
+                    <textarea
+                      rows="2"
+                      class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="item.task"
+                      @input="minutes.updateActionItem(index, 'task', $event.target.value)"
+                    ></textarea>
+                  </div>
+                  <div class="flex w-full flex-col gap-3 sm:w-56">
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Assignee</label>
+                    <input
+                      type="text"
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Owner"
+                      :value="item.assignee"
+                      @input="minutes.updateActionItem(index, 'assignee', $event.target.value)"
+                    />
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Due</label>
+                    <input
+                      type="date"
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="item.due ?? ''"
+                      @change="minutes.updateActionItem(index, 'due', $event.target.value)"
+                    />
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
+                    <select
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="item.status"
+                      @change="minutes.updateActionItem(index, 'status', $event.target.value)"
+                    >
+                      <option value="open">Open</option>
+                      <option value="in-progress">In Progress</option>
+                      <option value="done">Done</option>
+                    </select>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Priority</label>
+                    <select
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="item.priority"
+                      @change="minutes.updateActionItem(index, 'priority', $event.target.value)"
+                    >
+                      <option value="low">Low</option>
+                      <option value="med">Medium</option>
+                      <option value="high">High</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-4 flex items-center justify-between">
+                  <button
+                    type="button"
+                    class="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-300"
+                    @click="minutes.toggleActionStatus(index)"
+                  >
+                    <i class="fas fa-check text-[10px] mr-1"></i>
+                    Toggle done
+                  </button>
+                  <button type="button" class="text-xs text-red-500" @click="minutes.removeActionItem(index)">
+                    <i class="fas fa-trash mr-1 text-[10px]"></i>
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <section
+          x-show="minutes.builder.tab === 'transcript'"
+          x-cloak
+          class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <header class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">Transcript</h2>
+            <p class="text-xs text-slate-500">Edit speaker labels or paste manual notes for summarization.</p>
+          </header>
+          <template x-if="minutes.builder.transcript.segments.length === 0">
+            <p class="text-sm text-slate-500">No transcript captured yet. Upload audio or paste meeting notes.</p>
+          </template>
+          <div class="space-y-4">
+            <template x-for="(segment, index) in minutes.builder.transcript.segments" :key="segment.id">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex flex-col gap-2 sm:flex-row sm:items-center">
+                  <input
+                    type="text"
+                    class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:w-32"
+                    :value="segment.speaker"
+                    @input="segment.speaker = $event.target.value; minutes.commitTranscript()"
+                  />
+                  <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <i class="fas fa-clock text-[10px]"></i>
+                    <span x-text="`${Math.round(segment.t0)}s - ${Math.round(segment.t1)}s`"></span>
+                  </div>
+                </div>
+                <textarea
+                  rows="3"
+                  class="mt-3 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  :value="segment.text"
+                  @input="segment.text = $event.target.value; minutes.commitTranscript()"
+                ></textarea>
+              </div>
+            </template>
+          </div>
+        </section>
+
+        <section
+          x-show="minutes.builder.tab === 'meta'"
+          x-cloak
+          class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+        >
+          <header class="mb-4">
+            <h2 class="text-lg font-semibold text-slate-900">Attendees & metadata</h2>
+            <p class="text-xs text-slate-500">Capture stakeholder info and choose the best template for this meeting.</p>
+          </header>
+          <div class="space-y-6">
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Template</label>
+              <div class="mt-2 flex flex-wrap gap-2">
+                <template x-for="template in minutes.templates" :key="template.key">
+                  <button
+                    type="button"
+                    class="rounded-xl px-4 py-2 text-sm font-semibold"
+                    :class="minutes.builder.templateKey === template.key ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600'"
+                    @click="minutes.setTemplate(template.key)"
+                  >
+                    <i class="fas fa-layer-group mr-2 text-[10px]"></i>
+                    <span x-text="template.label"></span>
+                  </button>
+                </template>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-slate-800">Attendees</h3>
+                <Button type="button" variant="ghost" size="sm" @click.prevent="minutes.addAttendee()">
+                  <i class="fas fa-user-plus text-[10px]"></i>
+                  Add attendee
+                </Button>
+              </div>
+              <template x-if="minutes.builder.attendees.length === 0">
+                <p class="mt-2 text-sm text-slate-500">No attendees listed. Add names to track who joined the meeting.</p>
+              </template>
+              <div class="mt-4 space-y-3">
+                <template x-for="(attendee, index) in minutes.builder.attendees" :key="attendee.id">
+                  <div class="grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 sm:grid-cols-[1.1fr_1fr_0.6fr_auto]">
+                    <input
+                      type="text"
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Name"
+                      :value="attendee.name"
+                      @input="minutes.updateAttendee(index, 'name', $event.target.value)"
+                    />
+                    <input
+                      type="email"
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Email"
+                      :value="attendee.email ?? ''"
+                      @input="minutes.updateAttendee(index, 'email', $event.target.value)"
+                    />
+                    <input
+                      type="text"
+                      class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      placeholder="Role"
+                      :value="attendee.role ?? ''"
+                      @input="minutes.updateAttendee(index, 'role', $event.target.value)"
+                    />
+                    <button
+                      type="button"
+                      class="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold text-slate-600 hover:bg-slate-300"
+                      @click="minutes.removeAttendee(index)"
+                    >
+                      <i class="fas fa-user-minus text-[10px]"></i>
+                      Remove
+                    </button>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <aside class="space-y-6">
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="mb-4 flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">Preview</h2>
+              <p class="text-xs text-slate-500">Live public view snapshot (transcript hidden by default).</p>
+            </div>
+            <template x-if="minutes.builder.shareUrl">
+              <a
+                class="text-xs font-semibold text-indigo-600 hover:underline"
+                :href="minutes.builder.shareUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                View live
+              </a>
+            </template>
+          </header>
+          <article class="space-y-4">
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900" x-text="minutes.builder.title"></h3>
+              <p class="text-xs text-slate-500">
+                <i class="fas fa-calendar text-[10px] mr-1"></i>
+                <span x-text="minutes.formatMeetingDate(minutes.builder.meetingDate)"></span>
+                &nbsp;•&nbsp;
+                <span x-text="minutes.getTemplateLabel(minutes.builder.templateKey)"></span>
+              </p>
+            </div>
+            <div class="space-y-3">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Key points</h4>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <template x-for="(point, index) in minutes.builder.summary.keyPoints" :key="`preview-key-${index}`">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                    <span x-text="point"></span>
+                  </li>
+                </template>
+                <template x-if="minutes.builder.summary.keyPoints.length === 0">
+                  <li class="text-xs text-slate-400">No highlights captured yet.</li>
+                </template>
+              </ul>
+            </div>
+            <div class="space-y-3">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Decisions</h4>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <template x-for="(decision, index) in minutes.builder.summary.decisions" :key="`preview-dec-${index}`">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-scale-balanced text-[10px] text-emerald-500"></i>
+                    <span x-text="decision"></span>
+                  </li>
+                </template>
+                <template x-if="minutes.builder.summary.decisions.length === 0">
+                  <li class="text-xs text-slate-400">Awaiting decisions.</li>
+                </template>
+              </ul>
+            </div>
+            <div class="space-y-3">
+              <h4 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Action items</h4>
+              <ul class="space-y-2 text-sm text-slate-700">
+                <template x-for="(action, index) in minutes.builder.summary.actionItems" :key="`preview-action-${index}`">
+                  <li class="flex flex-col gap-1 rounded-xl bg-slate-50 p-3">
+                    <div class="flex items-center justify-between text-xs text-slate-500">
+                      <span>
+                        <i class="fas fa-user text-[10px] mr-1"></i>
+                        <span x-text="action.assignee || 'Unassigned'"></span>
+                      </span>
+                      <span>
+                        <i class="fas fa-calendar-day text-[10px] mr-1"></i>
+                        <span x-text="action.due ? action.due : 'No due date'"></span>
+                      </span>
+                    </div>
+                    <p class="text-sm text-slate-800" x-text="action.task"></p>
+                  </li>
+                </template>
+                <template x-if="minutes.builder.summary.actionItems.length === 0">
+                  <li class="text-xs text-slate-400">No action items recorded.</li>
+                </template>
+              </ul>
+            </div>
+          </article>
+        </section>
+
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-sm font-semibold text-slate-900">Workspace tips</h2>
+          <ul class="mt-3 space-y-3 text-xs text-slate-600">
+            <li class="flex gap-2">
+              <i class="fas fa-robot mt-1 text-[10px] text-indigo-500"></i>
+              <span>Use AI summarize to refresh key points after editing transcript or agenda.</span>
+            </li>
+            <li class="flex gap-2">
+              <i class="fas fa-shield-halved mt-1 text-[10px] text-slate-500"></i>
+              <span>Toggle ephemeral privacy to purge transcripts once summaries are finalized.</span>
+            </li>
+            <li class="flex gap-2">
+              <i class="fas fa-file-export mt-1 text-[10px] text-slate-500"></i>
+              <span>Exports respect plan limits—upgrade to remove watermarks and unlock DOCX/CSV.</span>
+            </li>
+          </ul>
+        </section>
+      </aside>
+    </div>
+
+    <div
+      x-show="minutes.builder.toast"
+      x-transition
+      class="fixed bottom-6 left-1/2 z-40 w-[min(90vw,360px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg"
+      x-cloak
+    >
+      <div class="flex items-center gap-3" :class="minutes.builder.toast?.type === 'error' ? 'text-red-600' : 'text-emerald-600'">
+        <i class="fas" :class="minutes.builder.toast?.type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
+        <span x-text="minutes.builder.toast?.message"></span>
+      </div>
+    </div>
+  </main>
+</Layout>

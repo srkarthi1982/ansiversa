@@ -23,3 +23,4 @@ import './miniApps';
 import './portfolioCreator';
 import './proposal';
 import './contract';
+import './minutes';
