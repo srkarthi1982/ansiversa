@@ -1,13 +1,341 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section data-mini-app-landing class="py-16" x-data="() => ({ loader: $store.loader, app: $store['blog-writer'] ?? {} })">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Blog Writer
-        </h1>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#blog-writer-dashboard"
+  >
+    Skip to blog writer workspace
+  </a>
+  <main
+    id="blog-writer-dashboard"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ blog: $store['blog-writer'] })"
+    x-init="blog.initDashboard()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-pen-nib text-xs"></i>
+              AI-assisted long-form publishing
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Plan, draft, and publish blogs your readers bookmark
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Generate high-signal ideas, transform outlines into polished drafts, and ship SEO-ready articles in one focused workspace.
+              Publish to Ansiversa blog with a single click.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" @click.prevent="blog.createDraft()">
+                <i class="fas fa-plus text-xs"></i>
+                New post
+              </Button>
+              <Button href="/blog-writer/editor" variant="outline">
+                <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                Open editor
+              </Button>
+              <Button type="button" variant="ghost" @click.prevent="blog.setPlan(blog.state.plan === 'free' ? 'pro' : 'free')">
+                <i class="fas fa-arrow-up-right-dots text-xs"></i>
+                <span x-text="blog.state.plan === 'free' ? 'Unlock pro' : 'Pro active'"></span>
+              </Button>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-xl"></div>
+            <div class="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <header class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-slate-900">Content snapshot</h2>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-circle-dot text-[10px]" :class="blog.state.metrics.drafts ? 'text-amber-500' : 'text-emerald-500'"></i>
+                  <span x-text="blog.state.metrics.drafts ? 'Drafts in progress' : 'Ready to publish'"></span>
+                </span>
+              </header>
+              <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Drafts</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="blog.state.metrics.drafts"></span>
+                    <span class="text-xs font-medium text-slate-500">in queue</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Published</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="blog.state.metrics.published"></span>
+                    <span class="text-xs font-medium text-slate-500">live</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Words shipped</dt>
+                  <dd class="mt-2 text-lg font-semibold text-slate-900" x-text="blog.state.metrics.totalWords.toLocaleString()"></dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Avg read time</dt>
+                  <dd class="mt-2 text-lg font-semibold text-slate-900">
+                    <span x-text="blog.state.metrics.avgRead"></span>
+                    <span class="ml-1 text-xs font-medium text-slate-500">mins</span>
+                  </dd>
+                </div>
+              </dl>
+              <div class="mt-6 space-y-2 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                <div class="flex items-center justify-between">
+                  <span>Current plan</span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-700">
+                    <i class="fas fa-bolt text-[10px]"></i>
+                    <span class="capitalize" x-text="blog.state.plan"></span>
+                  </span>
+                </div>
+                <p>
+                  <strong>Free</strong>: 5 drafts, 1 publish/month. Upgrade to Pro for unlimited posts, advanced SEO, and watermark-free exports.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <header class="flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <h2 class="text-2xl font-semibold text-slate-900">Your posts</h2>
+            <p class="text-sm text-slate-600">
+              Track draft health, duplicate winning formats, and jump back into the editor without losing context.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Filter template</span>
+              <i class="fas fa-layer-group text-xs"></i>
+              <select
+                class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="blog.state.filters.template"
+                @change="blog.setFilter('template', $event.target.value)"
+              >
+                <option value="all">All templates</option>
+                <template x-for="template in blog.templates" :key="`tpl-${template.key}`">
+                  <option :value="template.key" x-text="template.label"></option>
+                </template>
+              </select>
+            </label>
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Filter status</span>
+              <i class="fas fa-traffic-light text-xs"></i>
+              <select
+                class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="blog.state.filters.status"
+                @change="blog.setFilter('status', $event.target.value)"
+              >
+                <option value="all">All statuses</option>
+                <option value="draft">Draft</option>
+                <option value="published">Published</option>
+              </select>
+            </label>
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Search posts</span>
+              <i class="fas fa-search text-xs"></i>
+              <input
+                type="search"
+                placeholder="Search by title or keyword"
+                class="w-48 bg-transparent text-sm focus:outline-none"
+                :value="blog.state.filters.search"
+                @input.debounce.250ms="blog.setFilter('search', $event.target.value)"
+              />
+            </label>
+          </div>
+        </header>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <template x-if="blog.state.loading">
+            <div class="lg:col-span-2 grid gap-6 sm:grid-cols-2">
+              <template x-for="placeholder in 4" :key="`blog-skeleton-${placeholder}`">
+                <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <div class="space-y-3">
+                    <div class="h-6 w-40 rounded bg-slate-200"></div>
+                    <div class="h-4 w-32 rounded bg-slate-100"></div>
+                    <div class="h-[72px] rounded bg-slate-50"></div>
+                  </div>
+                  <div class="mt-6 flex items-center justify-between">
+                    <div class="h-6 w-24 rounded-full bg-slate-100"></div>
+                    <div class="h-10 w-28 rounded-full bg-slate-200"></div>
+                  </div>
+                </article>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="!blog.state.loading && blog.state.filtered.length === 0">
+            <div class="lg:col-span-2 rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
+              <i class="fas fa-feather text-3xl text-slate-300"></i>
+              <h3 class="mt-4 text-lg font-semibold text-slate-900">No posts yet</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Generate ideas with the AI assistant or start from a template to kick off your first story.
+              </p>
+              <div class="mt-4 flex justify-center">
+                <Button type="button" @click.prevent="blog.createDraft()">
+                  <i class="fas fa-plus text-xs"></i>
+                  Create post
+                </Button>
+              </div>
+            </div>
+          </template>
+
+          <template x-for="post in blog.state.filtered" :key="post.id">
+            <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+              <div class="space-y-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <h3 class="text-xl font-semibold text-slate-900" x-text="post.title || 'Untitled post'"></h3>
+                    <p class="mt-1 text-sm text-slate-600" x-text="post.summary || 'Add a summary to help teammates scan quickly.'"></p>
+                  </div>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                    <i class="fas fa-layer-group text-[11px]"></i>
+                    <span class="capitalize" x-text="post.templateKey.replace('-', ' ')"></span>
+                  </span>
+                </div>
+                <dl class="grid grid-cols-2 gap-3 text-sm text-slate-500">
+                  <div>
+                    <dt class="font-medium text-slate-500">Status</dt>
+                    <dd>
+                      <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold" :class="post.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'">
+                        <i class="fas" :class="post.status === 'published' ? 'fa-earth-americas' : 'fa-pen'"></i>
+                        <span class="capitalize" x-text="post.status"></span>
+                      </span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium text-slate-500">Last saved</dt>
+                    <dd class="text-slate-700" x-text="blog.formatRelative(post.lastSavedAt)"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium text-slate-500">Word count</dt>
+                    <dd class="text-slate-700">
+                      <span x-text="post.wordCount || blog.builder.stats.wordCount"></span>
+                      <span class="ml-1 text-xs text-slate-500">words</span>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium text-slate-500">SEO score</dt>
+                    <dd class="text-slate-700">
+                      <span x-text="post.seo?.score ?? 0"></span>
+                      <span class="ml-1 text-xs text-slate-500">/100</span>
+                    </dd>
+                  </div>
+                </dl>
+                <div class="flex flex-wrap gap-2">
+                  <template x-for="tag in post.tags" :key="`${post.id}-tag-${tag}`">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                      <i class="fas fa-hashtag text-[9px]"></i>
+                      <span x-text="tag"></span>
+                    </span>
+                  </template>
+                </div>
+              </div>
+              <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <div class="text-xs text-slate-500">
+                  <span class="font-semibold text-slate-600">Outline:</span>
+                  <template x-for="heading in post.outline.slice(0, 3)" :key="`${post.id}-heading-${heading.id}`">
+                    <span class="ml-2 inline-flex items-center gap-1 text-[11px] text-slate-600">
+                      <i class="fas fa-circle text-[5px]"></i>
+                      <span x-text="heading.title"></span>
+                    </span>
+                  </template>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <Button type="button" size="sm" variant="light" @click.prevent="blog.openEditor(post.id)">
+                    <i class="fas fa-pen-to-square text-xs"></i>
+                    Edit
+                  </Button>
+                  <Button type="button" size="sm" variant="ghost" @click.prevent="blog.duplicateDraft(post.id)">
+                    <i class="fas fa-copy text-xs"></i>
+                    Duplicate
+                  </Button>
+                  <Button type="button" size="sm" variant="ghost" class="text-rose-600 hover:bg-rose-50" @click.prevent="blog.deleteDraft(post.id)">
+                    <i class="fas fa-trash-can text-xs"></i>
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            </article>
+          </template>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[0.55fr_0.45fr]">
+          <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900">Template library</h3>
+                <p class="text-sm text-slate-600">Jump-start your draft with structures tuned for tone, outcomes, and campaign goals.</p>
+              </div>
+              <Button href="/blog-writer/editor" size="sm" variant="outline">
+                <i class="fas fa-play text-xs"></i>
+                Start from blank
+              </Button>
+            </header>
+            <div class="mt-6 space-y-4">
+              <template x-for="template in blog.templates" :key="`template-${template.key}`">
+                <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-indigo-200 hover:shadow-md">
+                  <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <h4 class="text-base font-semibold text-slate-900" x-text="template.label"></h4>
+                      <p class="text-sm text-slate-600" x-text="template.description"></p>
+                      <p class="mt-2 text-xs text-slate-500" x-text="blog.describeTemplate(template)"></p>
+                      <div class="mt-3 flex flex-wrap gap-2">
+                        <template x-for="tag in template.defaultTags" :key="`template-${template.key}-tag-${tag}`">
+                          <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-medium text-slate-600">
+                            <i class="fas fa-tag text-[9px]"></i>
+                            <span x-text="tag"></span>
+                          </span>
+                        </template>
+                      </div>
+                    </div>
+                    <Button type="button" size="sm" @click.prevent="blog.createDraft(template.key)">
+                      <i class="fas fa-plus text-xs"></i>
+                      Use template
+                    </Button>
+                  </div>
+                </article>
+              </template>
+            </div>
+          </section>
+
+          <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-col gap-2">
+              <h3 class="text-lg font-semibold text-slate-900">Recent activity</h3>
+              <p class="text-sm text-slate-600">Autosaves, publishes, and AI assists across your workspace.</p>
+            </header>
+            <ul class="mt-6 space-y-4">
+              <template x-if="blog.state.activity.length === 0">
+                <li class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                  Activity will appear here as you draft and publish.
+                </li>
+              </template>
+              <template x-for="event in blog.state.activity" :key="event.id">
+                <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                  <span class="mt-1 inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50" :class="event.color">
+                    <i class="fas" :class="event.icon"></i>
+                  </span>
+                  <div class="space-y-1 text-sm">
+                    <p class="font-medium text-slate-900" x-text="event.label"></p>
+                    <p class="text-xs text-slate-500" x-text="blog.formatRelative(event.timestamp)"></p>
+                  </div>
+                </li>
+              </template>
+            </ul>
+            <div class="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-xs text-slate-600">
+              <p>
+                <strong>SEO tip:</strong> aim for at least one internal link and hero image per story. The AI assistant highlights missing metadata in the editor.
+              </p>
+            </div>
+          </section>
+        </div>
       </div>
     </section>
   </main>
