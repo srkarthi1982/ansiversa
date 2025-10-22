@@ -18,7 +18,7 @@ const miniApps = [
   { slug: 'color-palette-generator', name: 'Color Palette Generator' },
   { slug: 'comic-storyboarder', name: 'Comic Storyboarder' },
   { slug: 'concept-explainer', name: 'Concept Explainer' },
-  { slug: 'contract-generator', name: 'Contract Generator' },
+  { slug: 'contract', name: 'Contract Generator' },
   { slug: 'course-tracker', name: 'Course Tracker' },
   { slug: 'cover-letter-writer', name: 'Cover Letter Writer' },
   { slug: 'creative-title-maker', name: 'Creative Title Maker' },

@@ -1,0 +1,69 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ContractBuilderToolbar from '../../mini-apps/contract/ContractBuilderToolbar.astro';
+import ContractVariablesPanel from '../../mini-apps/contract/ContractVariablesPanel.astro';
+import ContractClauseEditor from '../../mini-apps/contract/ContractClauseEditor.astro';
+import ContractClauseLibrary from '../../mini-apps/contract/ContractClauseLibrary.astro';
+import ContractPreview from '../../mini-apps/contract/ContractPreview.astro';
+import ContractVersionsPanel from '../../mini-apps/contract/ContractVersionsPanel.astro';
+
+const contractId = Astro.url.searchParams.get('id');
+const builderInit = JSON.stringify({ id: contractId });
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ contract: $store.contract })"
+    x-init={`contract.initBuilder(${builderInit})`}
+  >
+    <ContractBuilderToolbar />
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+      <div class="space-y-6">
+        <ContractVariablesPanel />
+        <ContractClauseEditor />
+      </div>
+      <div class="space-y-6">
+        <ContractPreview />
+        <ContractClauseLibrary />
+        <ContractVersionsPanel />
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-col gap-2">
+            <h3 class="text-sm font-semibold text-slate-900">Notes & reminders</h3>
+            <p class="text-xs text-slate-500">Private notes. Not included in exports.</p>
+          </header>
+          <textarea
+            rows="4"
+            class="mt-3 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            placeholder="Add negotiation notes, next steps, or custom instructions"
+            :value="$store.contract.builder.notes"
+            @input="$store.contract.updateNotes($event.target.value)"
+          ></textarea>
+          <template x-if="$store.contract.builder.shareUrl">
+            <p class="mt-3 text-xs text-emerald-600">
+              <i class="fas fa-link text-[10px]"></i>
+              Shareable link:
+              <a
+                class="font-semibold underline"
+                :href="$store.contract.builder.shareUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                x-text="$store.contract.builder.shareUrl"
+              ></a>
+            </p>
+          </template>
+        </section>
+      </div>
+    </div>
+    <div
+      x-show="$store.contract.builder.toast"
+      x-transition
+      class="fixed bottom-6 left-1/2 z-40 w-[min(90vw,360px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg"
+      x-cloak
+    >
+      <div class="flex items-center gap-3" :class="$store.contract.builder.toast?.type === 'error' ? 'text-red-600' : 'text-emerald-600'">
+        <i class="fas" :class="$store.contract.builder.toast?.type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
+        <span x-text="$store.contract.builder.toast?.message"></span>
+      </div>
+    </div>
+  </main>
+</Layout>

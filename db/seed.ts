@@ -3,6 +3,7 @@ import { seedQuiz } from './quiz/seed';
 import { seedResume } from './resume/seed';
 import { seedFlashnote } from './flashnote/seed';
 import { seedProposal } from './proposal/seed';
+import { seedContract } from './contract/seed';
 
 export default async function seed() {
   console.log('Seeding auth...');
@@ -15,4 +16,6 @@ export default async function seed() {
   await seedFlashnote();
   console.log('Seeding proposal...');
   await seedProposal();
+  console.log('Seeding contract...');
+  await seedContract();
 }
