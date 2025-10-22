@@ -6,6 +6,7 @@ import { resumeTables } from './resume/tables';
 import { flashnoteTables } from './flashnote/tables';
 import { proposalTables } from './proposal/tables';
 import { contractTables } from './contract/tables';
+import { minutesTables } from './minutes/tables';
 
 export default defineDb({
   tables: {
@@ -15,5 +16,6 @@ export default defineDb({
     ...flashnoteTables,
     ...proposalTables,
     ...contractTables,
+    ...minutesTables,
   },
 });
