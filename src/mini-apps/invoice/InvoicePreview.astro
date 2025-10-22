@@ -1,0 +1,140 @@
+<section class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl">
+  <header
+    class="relative flex flex-wrap items-start justify-between gap-6 px-8 py-10 text-white"
+    :style="`background: linear-gradient(140deg, ${$store.invoice.builder.record.branding.accentColor}, #1e1b4b)`"
+  >
+    <div class="space-y-2">
+      <p class="text-xs uppercase tracking-[0.3em] text-white/70">Invoice</p>
+      <h1 class="text-3xl font-bold" x-text="$store.invoice.builder.record.branding.businessName || 'Your company'"></h1>
+      <p class="text-sm text-white/80" x-text="$store.invoice.builder.record.branding.businessAddress"></p>
+      <div class="flex flex-wrap gap-4 text-xs text-white/70">
+        <span x-text="$store.invoice.builder.record.branding.businessEmail"></span>
+        <span x-text="$store.invoice.builder.record.branding.businessPhone"></span>
+        <span x-text="$store.invoice.builder.record.branding.website"></span>
+      </div>
+    </div>
+    <div class="flex flex-1 flex-col items-end gap-4 text-right text-sm text-white/80 sm:flex-none">
+      <template x-if="$store.invoice.builder.record.branding.logoUrl">
+        <img
+          :src="$store.invoice.builder.record.branding.logoUrl"
+          alt="Logo"
+          class="h-16 w-16 rounded-xl border border-white/30 object-cover"
+        />
+      </template>
+      <div class="rounded-2xl bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wide">
+        <span class="text-white/80">Invoice #</span>
+        <span class="ml-2 text-white" x-text="$store.invoice.builder.record.number"></span>
+      </div>
+      <dl class="grid gap-1 text-xs text-white/80">
+        <div class="flex items-center justify-between gap-4">
+          <dt>Issue date</dt>
+          <dd class="font-semibold text-white" x-text="$store.invoice.builder.record.issueDate"></dd>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <dt>Due date</dt>
+          <dd class="font-semibold text-white" x-text="$store.invoice.builder.record.dueDate"></dd>
+        </div>
+        <div class="flex items-center justify-between gap-4">
+          <dt>Status</dt>
+          <dd class="font-semibold text-white" x-text="$store.invoice.builder.record.status.toUpperCase()"></dd>
+        </div>
+      </dl>
+    </div>
+  </header>
+
+  <div class="space-y-10 px-8 py-10">
+    <section class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5">
+        <h2 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Bill to</h2>
+        <p class="mt-3 text-base font-semibold text-slate-900" x-text="$store.invoice.builder.record.client.company || $store.invoice.builder.record.client.name"></p>
+        <p class="text-sm text-slate-600" x-text="$store.invoice.builder.record.client.name"></p>
+        <p class="text-sm text-slate-600" x-text="$store.invoice.builder.record.client.address"></p>
+        <div class="mt-2 text-xs text-slate-500">
+          <span x-text="$store.invoice.builder.record.client.email"></span>
+          <template x-if="$store.invoice.builder.record.client.taxId">
+            <span class="ml-2"> · Tax ID: <span x-text="$store.invoice.builder.record.client.taxId"></span></span>
+          </template>
+        </div>
+      </div>
+      <div class="rounded-2xl border border-slate-100 bg-white p-5">
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Summary</h3>
+        <dl class="mt-3 space-y-2 text-sm text-slate-600">
+          <div class="flex items-center justify-between">
+            <dt>Subtotal</dt>
+            <dd class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.subtotal)"></dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt>Tax</dt>
+            <dd class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.taxTotal)"></dd>
+          </div>
+          <div class="flex items-center justify-between">
+            <dt>Discount</dt>
+            <dd class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.discountTotal)"></dd>
+          </div>
+          <div class="flex items-center justify-between text-base font-semibold text-slate-900">
+            <dt>Total due</dt>
+            <dd x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.grandTotal)"></dd>
+          </div>
+          <div class="flex items-center justify-between text-xs text-slate-500">
+            <dt>Balance</dt>
+            <dd class="font-semibold" :class="$store.invoice.builder.record.totals.balanceDue <= 0 ? 'text-emerald-600' : 'text-slate-700'" x-text="$store.invoice.formatCurrency($store.invoice.builder.record.totals.balanceDue)"></dd>
+          </div>
+        </dl>
+      </div>
+    </section>
+
+    <section class="overflow-hidden rounded-2xl border border-slate-100">
+      <table class="w-full text-sm">
+        <thead class="bg-slate-100 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-4 py-3 text-left">Item</th>
+            <th class="px-4 py-3 text-right">Qty</th>
+            <th class="px-4 py-3 text-right">Unit</th>
+            <th class="px-4 py-3 text-right">Tax</th>
+            <th class="px-4 py-3 text-right">Total</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+          <template x-for="item in $store.invoice.builder.record.items" :key="item.id">
+            <tr>
+              <td class="px-4 py-3 text-left text-slate-700">
+                <p class="font-semibold text-slate-900" x-text="item.description || 'Line item'"></p>
+                <p class="text-xs text-slate-500" x-text="`Tax ${item.taxPct || 0}% · Discount ${item.discountPct || 0}%`"></p>
+              </td>
+              <td class="px-4 py-3 text-right text-slate-600" x-text="item.quantity"></td>
+              <td class="px-4 py-3 text-right text-slate-600" x-text="$store.invoice.formatCurrency(item.unitPrice)"></td>
+              <td class="px-4 py-3 text-right text-slate-600" x-text="`${item.taxPct || 0}%`"></td>
+              <td class="px-4 py-3 text-right font-semibold text-slate-900" x-text="$store.invoice.formatCurrency((item.quantity || 0) * (item.unitPrice || 0) * (1 + (item.taxPct || 0) / 100) - ((item.quantity || 0) * (item.unitPrice || 0) * (item.discountPct || 0) / 100))"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="grid gap-6 lg:grid-cols-2">
+      <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-sm text-slate-600">
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Notes</h3>
+        <p class="mt-2 whitespace-pre-line" x-text="$store.invoice.builder.record.notes"></p>
+      </div>
+      <div class="rounded-2xl border border-slate-100 bg-slate-50 p-5 text-sm text-slate-600">
+        <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Terms</h3>
+        <p class="mt-2 whitespace-pre-line" x-text="$store.invoice.builder.record.terms"></p>
+      </div>
+    </section>
+
+    <section class="rounded-2xl border border-dashed border-slate-200 bg-white px-5 py-4 text-xs text-slate-500">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <span>Make payment to the bank account on file. Please include the invoice number in the transfer memo.</span>
+        <template x-if="$store.invoice.builder.record.branding.footerNote">
+          <span class="font-semibold text-slate-600" x-text="$store.invoice.builder.record.branding.footerNote"></span>
+        </template>
+      </div>
+      <template x-if="$store.invoice.builder.record.watermark">
+        <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-500">
+          <i class="fas fa-droplet text-[9px]"></i>
+          Generated with Ansiversa — upgrade to remove watermark
+        </p>
+      </template>
+    </section>
+  </div>
+</section>

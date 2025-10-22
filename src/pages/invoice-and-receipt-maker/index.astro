@@ -1,13 +1,22 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section data-mini-app-landing class="py-16" x-data="() => ({ loader: $store.loader, app: $store['invoice-and-receipt-maker'] ?? {} })">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Invoice & Receipt Maker
-        </h1>
+    <section class="py-16">
+      <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Invoice & Receipt Maker</h1>
+        <p class="mt-4 text-base text-slate-600">
+          We've moved to a refreshed workspace with dashboards, builder, and share links.
+          Use the button below to access the new experience.
+        </p>
+        <div class="mt-6 flex justify-center">
+          <Button href="/invoice">
+            <i class="fas fa-up-right-from-square text-xs"></i>
+            Go to /invoice
+          </Button>
+        </div>
       </div>
     </section>
   </main>

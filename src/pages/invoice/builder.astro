@@ -1,0 +1,64 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import InvoiceBuilderToolbar from '../../mini-apps/invoice/InvoiceBuilderToolbar.astro';
+import InvoiceBuilderForm from '../../mini-apps/invoice/InvoiceBuilderForm.astro';
+import InvoicePreview from '../../mini-apps/invoice/InvoicePreview.astro';
+
+const invoiceId = Astro.url.searchParams.get('id');
+const builderInit = JSON.stringify({ id: invoiceId });
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ invoice: $store.invoice })"
+    x-init={`invoice.initBuilder(${builderInit})`}
+  >
+    <InvoiceBuilderToolbar />
+    <div class="mx-auto grid max-w-6xl gap-8 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
+      <div class="space-y-6">
+        <InvoiceBuilderForm />
+      </div>
+      <div class="space-y-6">
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-col gap-2">
+            <h2 class="text-lg font-semibold text-slate-900">Live preview</h2>
+            <p class="text-sm text-slate-600">Styled according to the selected template and brand settings.</p>
+          </header>
+          <div class="mt-4">
+            <InvoicePreview />
+          </div>
+        </section>
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-col gap-2">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Share link</h3>
+            <template x-if="$store.invoice.builder.shareUrl">
+              <a
+                class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+                :href="$store.invoice.builder.shareUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <i class="fas fa-link text-xs"></i>
+                <span x-text="$store.invoice.builder.shareUrl"></span>
+              </a>
+            </template>
+            <template x-if="!$store.invoice.builder.shareUrl">
+              <p class="text-xs text-slate-500">Mark the invoice as sent to generate a shareable link.</p>
+            </template>
+          </header>
+        </section>
+      </div>
+    </div>
+    <div
+      x-show="$store.invoice.builder.toast"
+      x-transition
+      class="fixed bottom-6 left-1/2 z-40 w-[min(90vw,360px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg"
+      x-cloak
+    >
+      <div class="flex items-center gap-3" :class="$store.invoice.builder.toast?.type === 'error' ? 'text-rose-600' : 'text-emerald-600'">
+        <i class="fas" :class="$store.invoice.builder.toast?.type === 'error' ? 'fa-circle-xmark' : 'fa-circle-check'"></i>
+        <span x-text="$store.invoice.builder.toast?.message"></span>
+      </div>
+    </div>
+  </main>
+</Layout>
