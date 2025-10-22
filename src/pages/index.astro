@@ -4,6 +4,15 @@ import Layout from "../layouts/Layout.astro";
 const mission =
   "Ansiversa is an AI-powered universe of 100 web-based mini-apps engineered for learning, creativity, productivity, and everyday life — all unified under one subscription.";
 
+const availableMiniApps = new Map<string, string>([
+  ['/quiz', '/quiz'],
+  ['/flashnote', '/flashnote'],
+  ['/resume-builder', '/resume-builder'],
+  ['/portfolio-creator', '/portfolio-creator'],
+  ['/proposal-writer', '/proposal'],
+  ['/contract-generator', '/contract'],
+]);
+
 const miniAppCategories = [
   {
     name: "Learning & Knowledge",
@@ -149,6 +158,19 @@ const miniAppCategories = [
   },
 ];
 
+const categorizedMiniApps = miniAppCategories.map((category) => ({
+  ...category,
+  apps: category.apps.map((app) => {
+    const resolvedHref = app.href ? availableMiniApps.get(app.href) : undefined;
+
+    return {
+      ...app,
+      href: resolvedHref,
+      available: Boolean(resolvedHref),
+    };
+  }),
+}));
+
 const plans = [
   {
     name: "Free",
@@ -248,7 +270,7 @@ const plans = [
           </p>
         </div>
         <div class="mt-12 grid gap-6">
-          {miniAppCategories.map((category) => (
+          {categorizedMiniApps.map((category) => (
             <article class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-xl">
               <div class={`absolute inset-x-6 top-0 h-1.5 bg-gradient-to-r ${category.accent} opacity-90`}></div>
               <div class="mt-5 flex flex-col gap-3">
@@ -257,17 +279,40 @@ const plans = [
               </div>
               <ul class="mt-6 grid gap-2 text-sm font-medium text-slate-700 sm:grid-cols-2 lg:grid-cols-3">
                 {category.apps.map((app) => (
-                  <li class="flex items-center gap-3 rounded-2xl bg-slate-50/80 px-3 py-2 transition group-hover:bg-slate-100">
+                  <li
+                    class={`flex items-center gap-3 rounded-2xl px-3 py-2 transition ${
+                      app.available
+                        ? 'bg-slate-50/80 text-slate-700 group-hover:bg-slate-100'
+                        : 'bg-slate-100 text-slate-400'
+                    }`}
+                  >
                     <span class={`inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-gradient-to-r ${category.accent}`}></span>
-                    {app.href ? (
-                      <a href={app.href} class="inline-flex items-center gap-2 text-slate-700 hover:text-indigo-600">
+                    {app.available && app.href ? (
+                      <a
+                        href={app.href}
+                        class="inline-flex items-center gap-2 text-slate-700 hover:text-indigo-600"
+                      >
                         <span>{app.name}</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" focusable="false">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3.5 w-3.5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
                           <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
                         </svg>
                       </a>
                     ) : (
-                      <span>{app.name}</span>
+                      <span class="inline-flex items-center gap-2 text-slate-400">
+                        <span>{app.name}</span>
+                        <span class="inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                          Coming soon
+                        </span>
+                      </span>
                     )}
                   </li>
                 ))}
