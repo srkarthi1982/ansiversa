@@ -62,13 +62,44 @@ const normalizeRoute = (href: string | undefined) => {
 const resolveMiniAppHref = (href: string | undefined) => {
   const normalized = normalizeRoute(href);
   if (!normalized) return undefined;
+
   const resolved = aliasMiniApps.get(normalized) ?? normalized;
-  if (availableRoutes.has(resolved)) {
-    return resolved;
+  const candidateRoutes = new Set<string>();
+
+  const addCandidate = (value: string | undefined) => {
+    const candidate = normalizeRoute(value);
+    if (candidate) {
+      candidateRoutes.add(candidate);
+    }
+  };
+
+  addCandidate(resolved);
+  if (resolved !== "/") {
+    addCandidate(`${resolved}/pages`);
   }
 
-  const requirementSlug = normalized.replace(/^\//, "");
-  return requirementLookup.get(requirementSlug);
+  for (const candidate of candidateRoutes) {
+    if (availableRoutes.has(candidate)) {
+      return candidate;
+    }
+  }
+
+  const requirementSlugs = Array.from(candidateRoutes).flatMap((candidate) => {
+    const slug = candidate.replace(/^\//, "");
+    return slug.endsWith("/pages") ? [slug, slug.replace(/\/pages$/, "")] : [slug];
+  });
+
+  requirementSlugs.unshift(resolved.replace(/^\//, ""));
+  requirementSlugs.unshift(normalized.replace(/^\//, ""));
+
+  for (const slug of new Set(requirementSlugs.filter(Boolean))) {
+    const requirementPath = requirementLookup.get(slug);
+    if (requirementPath) {
+      return requirementPath;
+    }
+  }
+
+  return undefined;
 };
 
 const miniAppCategories = [
