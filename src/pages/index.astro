@@ -63,19 +63,26 @@ const resolveMiniAppHref = (href: string | undefined) => {
   const normalized = normalizeRoute(href);
   if (!normalized) return undefined;
 
-  const resolved = aliasMiniApps.get(normalized) ?? normalized;
-  const candidateRoutes = new Set<string>();
+  const aliasTarget = aliasMiniApps.get(normalized);
+  const candidateRoutes: string[] = [];
 
   const addCandidate = (value: string | undefined) => {
     const candidate = normalizeRoute(value);
-    if (candidate) {
-      candidateRoutes.add(candidate);
+    if (!candidate) return;
+    if (!candidateRoutes.includes(candidate)) {
+      candidateRoutes.push(candidate);
     }
   };
 
-  addCandidate(resolved);
-  if (resolved !== "/") {
-    addCandidate(`${resolved}/pages`);
+  if (aliasTarget) {
+    addCandidate(aliasTarget);
+  }
+  addCandidate(normalized);
+
+  for (const candidate of [...candidateRoutes]) {
+    if (candidate !== "/") {
+      addCandidate(`${candidate}/pages`);
+    }
   }
 
   for (const candidate of candidateRoutes) {
@@ -84,12 +91,13 @@ const resolveMiniAppHref = (href: string | undefined) => {
     }
   }
 
-  const requirementSlugs = Array.from(candidateRoutes).flatMap((candidate) => {
-    const slug = candidate.replace(/^\//, "");
-    return slug.endsWith("/pages") ? [slug, slug.replace(/\/pages$/, "")] : [slug];
-  });
+  const requirementSlugs = candidateRoutes
+    .map((candidate) => candidate.replace(/^\//, ""))
+    .flatMap((slug) => (slug.endsWith("/pages") ? [slug, slug.replace(/\/pages$/, "")] : [slug]));
 
-  requirementSlugs.unshift(resolved.replace(/^\//, ""));
+  if (aliasTarget) {
+    requirementSlugs.unshift(aliasTarget.replace(/^\//, ""));
+  }
   requirementSlugs.unshift(normalized.replace(/^\//, ""));
 
   for (const slug of new Set(requirementSlugs.filter(Boolean))) {
