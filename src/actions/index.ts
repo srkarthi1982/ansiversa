@@ -6,6 +6,7 @@ import { resume } from './resume';
 import { proposal } from './proposal';
 import { contract } from './contract';
 import { minutes } from './minutes';
+import { email } from './email';
 
 export const server = {
   auth,
@@ -15,4 +16,5 @@ export const server = {
   proposal,
   contract,
   minutes,
+  email,
 };

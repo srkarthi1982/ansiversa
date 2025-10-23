@@ -1,0 +1,564 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#email-workspace"
+  >
+    Skip to Email Polisher
+  </a>
+  <main
+    id="email-workspace"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ email: $store.email })"
+    x-init="email.initDashboard()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent opacity-80"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-feather text-xs"></i>
+              Career & professional communications
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Email Polisher workspace
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Rewrite, fine-tune, and translate your emails in seconds. Generate polished replies, summarize long threads, and
+              reuse branded templates — all within Ansiversa’s cohesive studio experience.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" @click.prevent="email.polish()">
+                <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                Polish current email
+              </Button>
+              <Button variant="outline" type="button" @click.prevent="email.openEditor()">
+                <i class="fas fa-pen-to-square text-xs"></i>
+                Open advanced editor
+              </Button>
+              <Button variant="ghost" href="/email/templates">
+                <i class="fas fa-layer-group text-xs"></i>
+                Browse templates
+              </Button>
+            </div>
+            <p class="text-xs text-slate-500">
+              Ephemeral mode keeps drafts local. Toggle on to prevent saving once you are done refining.
+            </p>
+          </div>
+          <aside class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-xl"></div>
+            <div class="relative space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <header class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Workspace snapshot</p>
+                  <p class="text-xs text-slate-500">Track polishes, replies, and saved templates.</p>
+                </div>
+                <span
+                  class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                  :class="email.plan === 'pro' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'"
+                >
+                  <i class="fas" :class="email.plan === 'pro' ? 'fa-star' : 'fa-circle'" class="text-[10px]"></i>
+                  <span x-text="email.plan === 'pro' ? 'Pro plan' : 'Free plan'"></span>
+                </span>
+              </header>
+              <dl class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Saved drafts</dt>
+                  <dd class="mt-2 flex items-baseline gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="email.drafts.items.length"></span>
+                    <span class="text-xs font-medium text-slate-500">total</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Templates</dt>
+                  <dd class="mt-2 flex items-baseline gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="email.templates.items.length"></span>
+                    <span class="text-xs font-medium text-slate-500">available</span>
+                  </dd>
+                </div>
+              </dl>
+              <p class="rounded-2xl bg-indigo-50 px-4 py-3 text-xs text-indigo-700" x-show="email.requiresWatermark">
+                Free plan exports include a subtle “Polished with Ansiversa” watermark.
+              </p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8" x-data="{ tab: 'editor' }">
+        <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <article class="rounded-3xl border border-slate-200 bg-white shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-4 border-b border-slate-100 px-6 py-4">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Input</h2>
+                <p class="text-xs text-slate-500">Paste or write your draft. Keyboard shortcut: Cmd/Ctrl + Enter to polish.</p>
+              </div>
+              <div class="flex flex-wrap gap-2 text-xs">
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                  <i class="fas fa-align-left text-[10px]"></i>
+                  <span x-text="`${email.quickWordCount} words`"></span>
+                </span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                  <i class="fas fa-clock text-[10px]"></i>
+                  <span x-text="`${email.quickReadingTime} min read`"></span>
+                </span>
+              </div>
+            </header>
+            <div class="space-y-6 p-6">
+              <div class="flex flex-wrap items-center gap-3">
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <span>Tone</span>
+                  <select
+                    class="bg-transparent text-sm font-semibold text-slate-800 focus:outline-none"
+                    x-model="email.quick.tone"
+                  >
+                    <template x-for="option in email.toneOptions" :key="option.value">
+                      <option :value="option.value" x-text="option.label"></option>
+                    </template>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <span>Formality</span>
+                  <select
+                    class="bg-transparent text-sm font-semibold text-slate-800 focus:outline-none"
+                    x-model="email.quick.formality"
+                  >
+                    <template x-for="option in email.formalityOptions" :key="option.value">
+                      <option :value="option.value" x-text="option.label"></option>
+                    </template>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <span>Language</span>
+                  <select
+                    class="bg-transparent text-sm font-semibold text-slate-800 focus:outline-none"
+                    x-model="email.quick.language"
+                  >
+                    <template x-for="option in email.languageOptions" :key="option.value">
+                      <option :value="option.value" x-text="option.label"></option>
+                    </template>
+                  </select>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600" x-model="email.quick.needSubject" />
+                  <span>Suggest subject</span>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600" x-model="email.quick.signatureEnabled" />
+                  <span>Include signature</span>
+                </label>
+                <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600">
+                  <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600" x-model="email.quick.ephemeral" />
+                  <span>Ephemeral</span>
+                </label>
+              </div>
+              <textarea
+                class="min-h-[220px] w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-800 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                placeholder="Paste your email draft here..."
+                x-model="email.quick.input"
+                @keydown.meta.enter.prevent="email.polish()"
+                @keydown.ctrl.enter.prevent="email.polish()"
+              ></textarea>
+              <div class="flex flex-wrap items-center gap-3">
+                <Button type="button" @click.prevent="email.polish()" :disabled="email.quick.loading">
+                  <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                  Polish
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="email.rewrite('shorten')" :disabled="email.quick.loading">
+                  <i class="fas fa-compress text-xs"></i>
+                  Shorten
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="email.rewrite('expand')" :disabled="email.quick.loading">
+                  <i class="fas fa-up-right-and-down-left-from-center text-xs"></i>
+                  Expand
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="email.rewrite('polite')" :disabled="email.quick.loading">
+                  <i class="fas fa-handshake text-xs"></i>
+                  Make polite
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="email.rewrite('clarify')" :disabled="email.quick.loading">
+                  <i class="fas fa-lightbulb text-xs"></i>
+                  Clarify
+                </Button>
+                <Button type="button" variant="ghost" @click.prevent="email.saveDraft()">
+                  <i class="fas fa-floppy-disk text-xs"></i>
+                  Save draft
+                </Button>
+              </div>
+              <p class="text-xs text-rose-500" x-show="email.quick.error" x-text="email.quick.error"></p>
+            </div>
+          </article>
+
+          <aside class="space-y-6">
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-start justify-between gap-4">
+                <div>
+                  <h2 class="text-lg font-semibold text-slate-900">Output preview</h2>
+                  <p class="text-xs text-slate-500">Copy, export, or open in the full editor when you are ready.</p>
+                </div>
+                <Button variant="ghost" type="button" class="text-xs" @click.prevent="email.copyOutput()">
+                  <i class="fas fa-copy text-[10px]"></i>
+                  Copy
+                </Button>
+              </header>
+              <div class="mt-4 space-y-4">
+                <div class="space-y-2">
+                  <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Subject</label>
+                  <input
+                    type="text"
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-800 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    placeholder="Subject line"
+                    x-model="email.quick.subject"
+                  />
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-700">
+                  <pre class="whitespace-pre-wrap font-sans" x-text="email.quick.output || 'Polished email will appear here.'"></pre>
+                </div>
+                <div class="grid gap-2 text-xs text-slate-500 sm:grid-cols-2">
+                  <p>
+                    Tone:
+                    <span class="font-semibold text-slate-700" x-text="email.toneOptions.find((option) => option.value === email.quick.tone)?.label"></span>
+                  </p>
+                  <p>
+                    Formality:
+                    <span class="font-semibold text-slate-700" x-text="email.formalityOptions.find((option) => option.value === email.quick.formality)?.label"></span>
+                  </p>
+                  <p>
+                    Language:
+                    <span class="font-semibold text-slate-700" x-text="email.languageOptions.find((option) => option.value === email.quick.language)?.label"></span>
+                  </p>
+                  <p>
+                    Last action:
+                    <span class="font-semibold text-slate-700" x-text="email.quick.lastAction ?? '—'"></span>
+                  </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1">
+                    <i class="fas fa-shield-halved text-[10px]"></i>
+                    Ephemeral mode
+                  </span>
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full px-3 py-1"
+                    :class="email.quick.signatureEnabled ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+                  >
+                    <i class="fas fa-signature text-[10px]"></i>
+                    <span x-text="email.quick.signatureEnabled ? 'Signature on' : 'Signature off'"></span>
+                  </span>
+                </div>
+              </div>
+            </article>
+
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold text-slate-900">Saved drafts</h3>
+                <Button
+                  variant="ghost"
+                  type="button"
+                  class="text-xs"
+                  @click.prevent="email.saveDraft()"
+                >
+                  <i class="fas fa-plus text-[10px]"></i>
+                  Save current
+                </Button>
+              </header>
+              <div class="mt-4 space-y-3">
+                <template x-if="email.drafts.loading">
+                  <p class="text-xs text-slate-500">Loading drafts...</p>
+                </template>
+                <template x-if="!email.drafts.loading && email.drafts.items.length === 0">
+                  <p class="text-xs text-slate-500">No drafts yet. Save one to get started.</p>
+                </template>
+                <template x-for="draft in email.drafts.items" :key="draft.id">
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl border px-4 py-3 text-left text-sm transition"
+                    :class="email.drafts.activeId === draft.id ? 'border-indigo-300 bg-indigo-50 text-indigo-900' : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-200 hover:bg-indigo-50 hover:text-indigo-700'"
+                    @click="email.selectDraft(draft.id)"
+                  >
+                    <p class="font-semibold" x-text="draft.title"></p>
+                    <p class="text-xs text-slate-500" x-text="draft.subject || 'No subject yet'"></p>
+                    <div class="mt-2 flex flex-wrap gap-2 text-[11px] uppercase tracking-wide text-slate-400">
+                      <span x-text="draft.status"></span>
+                      <span x-text="draft.language"></span>
+                    </div>
+                  </button>
+                </template>
+              </div>
+              <div class="mt-4 flex flex-wrap gap-2 text-xs">
+                <Button
+                  type="button"
+                  variant="outline"
+                  class="text-xs"
+                  @click.prevent="email.duplicateDraft(email.drafts.activeId)"
+                  :disabled="!email.drafts.activeId"
+                >
+                  <i class="fas fa-copy text-[10px]"></i>
+                  Duplicate
+                </Button>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  class="text-xs text-rose-600 hover:text-rose-700"
+                  @click.prevent="email.deleteDraft(email.drafts.activeId)"
+                  :disabled="!email.drafts.activeId"
+                >
+                  <i class="fas fa-trash text-[10px]"></i>
+                  Delete
+                </Button>
+              </div>
+            </article>
+          </aside>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-[0.75fr_0.75fr_0.5fr]">
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-start justify-between">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900">Reply suggestions</h3>
+                <p class="text-xs text-slate-500">Paste the incoming message and get draft responses.</p>
+              </div>
+            </header>
+            <textarea
+              class="mt-4 min-h-[140px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="Paste the original email here..."
+              x-model="email.reply.incoming"
+            ></textarea>
+            <div class="mt-3 flex flex-wrap items-center gap-3 text-xs">
+              <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-600">
+                <span>Tone</span>
+                <select class="bg-transparent font-semibold text-slate-700 focus:outline-none" x-model="email.reply.tone">
+                  <template x-for="option in email.toneOptions" :key="option.value">
+                    <option :value="option.value" x-text="option.label"></option>
+                  </template>
+                </select>
+              </label>
+              <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-600">
+                <span>Relationship</span>
+                <select class="bg-transparent font-semibold text-slate-700 focus:outline-none" x-model="email.reply.relationship">
+                  <option value="existing">Existing</option>
+                  <option value="new">New</option>
+                </select>
+              </label>
+              <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium text-slate-600">
+                <span>Urgency</span>
+                <select class="bg-transparent font-semibold text-slate-700 focus:outline-none" x-model="email.reply.urgency">
+                  <option value="low">Low</option>
+                  <option value="normal">Normal</option>
+                  <option value="high">High</option>
+                </select>
+              </label>
+            </div>
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+              <Button type="button" class="text-xs" @click.prevent="email.generateReplies()" :disabled="email.reply.loading">
+                <i class="fas fa-reply text-[10px]"></i>
+                Generate replies
+              </Button>
+              <p class="text-xs text-rose-500" x-show="email.reply.error" x-text="email.reply.error"></p>
+            </div>
+            <div class="mt-4 space-y-3">
+              <template x-for="reply in email.reply.replies" :key="reply.subject">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                  <p class="font-semibold text-slate-900" x-text="reply.subject"></p>
+                  <pre class="mt-2 whitespace-pre-wrap font-sans" x-text="reply.body"></pre>
+                </div>
+              </template>
+            </div>
+          </article>
+
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-start justify-between">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900">Thread summary</h3>
+                <p class="text-xs text-slate-500">Rollup key points, actions, and questions.</p>
+              </div>
+              <span
+                class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold"
+                :class="email.canUseSummaries ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+              >
+                <i class="fas fa-crown text-[9px]"></i>
+                Pro feature
+              </span>
+            </header>
+            <textarea
+              class="mt-4 min-h-[140px] w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="Paste the email thread here..."
+              x-model="email.summary.thread"
+            ></textarea>
+            <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-slate-600">
+              <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
+                <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600" x-model="email.summary.includeActions" />
+                Action items
+              </label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5">
+                <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600" x-model="email.summary.includeQuestions" />
+                Open questions
+              </label>
+            </div>
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+              <Button
+                type="button"
+                class="text-xs"
+                @click.prevent="email.summarizeThread()"
+                :disabled="email.summary.loading"
+              >
+                <i class="fas fa-list-check text-[10px]"></i>
+                Summarize thread
+              </Button>
+              <p class="text-xs text-rose-500" x-show="email.summary.error" x-text="email.summary.error"></p>
+            </div>
+            <div class="mt-4 space-y-3" x-show="email.summary.result" x-cloak>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Highlights</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5">
+                  <template x-for="item in email.summary.result?.bullets ?? []" :key="item">
+                    <li x-text="item"></li>
+                  </template>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700" x-show="email.summary.result?.actionItems?.length">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Action items</p>
+                <ul class="mt-2 space-y-1">
+                  <template x-for="item in email.summary.result?.actionItems ?? []" :key="item.id">
+                    <li>
+                      <span class="font-semibold" x-text="item.task"></span>
+                      <span class="text-xs text-slate-500" x-text="item.owner ? ` — @${item.owner}` : ''"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+          </article>
+
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-start justify-between">
+              <div>
+                <h3 class="text-sm font-semibold text-slate-900">Translate</h3>
+                <p class="text-xs text-slate-500">Share polished drafts in additional languages.</p>
+              </div>
+              <span
+                class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold"
+                :class="email.canUseTranslate ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'"
+              >
+                <i class="fas fa-language text-[10px]"></i>
+                Pro feature
+              </span>
+            </header>
+            <div class="mt-4 space-y-3 text-xs text-slate-600">
+              <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium">
+                <span>Target</span>
+                <select class="bg-transparent font-semibold text-slate-700 focus:outline-none" x-model="email.translate.target">
+                  <template x-for="option in email.languageOptions" :key="option.value">
+                    <option :value="option.value" x-text="option.label"></option>
+                  </template>
+                </select>
+              </label>
+              <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 font-medium">
+                <input type="checkbox" class="h-3.5 w-3.5 rounded border-slate-300 text-indigo-600" x-model="email.translate.preserveTone" />
+                Preserve tone
+              </label>
+            </div>
+            <div class="mt-4 flex flex-wrap items-center gap-3">
+              <Button
+                type="button"
+                class="text-xs"
+                variant="outline"
+                @click.prevent="email.translateOutput()"
+                :disabled="email.translate.loading"
+              >
+                <i class="fas fa-language text-[10px]"></i>
+                Translate output
+              </Button>
+              <p class="text-xs text-rose-500" x-show="email.translate.error" x-text="email.translate.error"></p>
+            </div>
+            <div class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+              <pre class="whitespace-pre-wrap font-sans" x-text="email.translate.output || 'Translated text will appear here.'"></pre>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-slate-200 bg-white py-12">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-8 lg:grid-cols-[1fr_1fr]">
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-slate-900">Personalization variables</h3>
+            <p class="text-sm text-slate-600">
+              Define placeholders once and reuse them across templates and polishes. Missing values are highlighted when you try
+              to export or copy.
+            </p>
+            <div class="grid gap-3 text-sm sm:grid-cols-2">
+              <template x-for="(value, key) in email.quick.variables" :key="key">
+                <label class="flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-3">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500" x-text="key"></span>
+                  <input
+                    type="text"
+                    class="w-full bg-transparent text-sm text-slate-800 focus:outline-none"
+                    :placeholder="key"
+                    :value="value"
+                    @input="email.updateVariable(key, $event.target.value)"
+                  />
+                </label>
+              </template>
+            </div>
+          </div>
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-slate-900">Templates</h3>
+            <p class="text-sm text-slate-600">
+              Jump-start outreach, follow-ups, and status updates. Render with your variables and polish instantly.
+            </p>
+            <div class="flex flex-wrap gap-2 text-xs">
+              <template x-for="category in email.templateCategories" :key="category">
+                <button
+                  type="button"
+                  class="rounded-full px-3 py-1.5 font-semibold transition"
+                  :class="email.templates.category === category ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'"
+                  @click="email.setCategory(category)"
+                >
+                  <span x-text="category"></span>
+                </button>
+              </template>
+            </div>
+            <div class="grid gap-3">
+              <template x-for="template in email.filteredTemplates" :key="template.id">
+                <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <header class="flex items-start justify-between gap-3">
+                    <div>
+                      <h4 class="text-sm font-semibold text-slate-900" x-text="template.name"></h4>
+                      <p class="text-xs text-slate-500" x-text="template.subject ?? 'No subject preset'"></p>
+                    </div>
+                    <Button type="button" variant="ghost" class="text-xs" @click.prevent="email.useTemplate(template)">
+                      Use
+                    </Button>
+                  </header>
+                  <p class="mt-3 text-xs text-slate-600 line-clamp-3" x-text="template.body"></p>
+                </article>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <template x-if="email.toast">
+      <div class="fixed inset-x-4 bottom-4 z-50 mx-auto max-w-md rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-indigo-900/10">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <p class="text-sm font-semibold text-slate-900" x-text="email.toast?.message"></p>
+          </div>
+          <button type="button" class="text-slate-400 transition hover:text-slate-600" @click="email.dismissToast()">
+            <i class="fas fa-xmark"></i>
+            <span class="sr-only">Dismiss notification</span>
+          </button>
+        </div>
+      </div>
+    </template>
+  </main>
+</Layout>
