@@ -16,6 +16,27 @@ const pageFiles = Object.keys(
   import.meta.glob("../pages/**/*.{astro,md,mdx}", { eager: false })
 );
 
+const requirementFiles = Object.keys(
+  import.meta.glob("../../public/requirements/*.md", { eager: false })
+);
+
+const requirementLookup = requirementFiles.reduce<Map<string, string>>(
+  (acc, filePath) => {
+    const fileName = filePath.split("/").pop();
+    if (!fileName) return acc;
+
+    const withoutExtension = fileName.replace(/\.md$/i, "");
+    const slug = withoutExtension
+      .toLowerCase()
+      .replace(/_/g, "-")
+      .replace(/^flash-note$/, "flashnote");
+
+    acc.set(slug, `/requirements/${withoutExtension}.md`);
+    return acc;
+  },
+  new Map()
+);
+
 const availableRoutes = new Set(
   pageFiles.map((filePath) => {
     const routePath = filePath
@@ -42,7 +63,12 @@ const resolveMiniAppHref = (href: string | undefined) => {
   const normalized = normalizeRoute(href);
   if (!normalized) return undefined;
   const resolved = aliasMiniApps.get(normalized) ?? normalized;
-  return availableRoutes.has(resolved) ? resolved : undefined;
+  if (availableRoutes.has(resolved)) {
+    return resolved;
+  }
+
+  const requirementSlug = normalized.replace(/^\//, "");
+  return requirementLookup.get(requirementSlug);
 };
 
 const miniAppCategories = [
