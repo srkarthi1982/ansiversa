@@ -1,13 +1,148 @@
 ---
 import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section class="py-16" x-data="() => ({ loader: $store.loader, admin: $store.admin ?? {} })">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Blog Writer Admin
-        </h1>
+  <main
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ blog: $store['blog-writer'] })"
+    x-init="blog.initDashboard()"
+  >
+    <section class="py-16">
+      <div class="mx-auto max-w-5xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <header class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+          <div class="space-y-2">
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Blog Writer Admin</h1>
+            <p class="text-sm text-slate-600">
+              Monitor AI usage, publishing velocity, and content categories across the blog workspace.
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <Button href="/blog-writer" variant="light">
+              <i class="fas fa-arrow-left text-xs"></i>
+              View dashboard
+            </Button>
+            <Button type="button" variant="outline" @click.prevent="blog.refreshAdmin()">
+              <i class="fas fa-rotate text-xs"></i>
+              Refresh data
+            </Button>
+          </div>
+        </header>
+
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <template x-for="metric in [
+            { label: 'Total posts', value: blog.admin.metrics.total, icon: 'fa-file-lines', color: 'text-indigo-600' },
+            { label: 'Published', value: blog.admin.metrics.published, icon: 'fa-earth-americas', color: 'text-emerald-600' },
+            { label: 'Drafts', value: blog.admin.metrics.drafts, icon: 'fa-pen', color: 'text-amber-600' },
+            { label: 'Avg SEO score', value: blog.admin.metrics.avgSeo + '/100', icon: 'fa-gauge-high', color: 'text-sky-600' },
+          ]" :key="metric.label">
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-slate-100" :class="metric.color">
+                  <i class="fas" :class="metric.icon"></i>
+                </span>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500" x-text="metric.label"></p>
+                  <p class="text-xl font-bold text-slate-900" x-text="metric.value"></p>
+                </div>
+              </div>
+            </article>
+          </template>
+        </div>
+
+        <div class="grid gap-8 lg:grid-cols-[0.6fr_0.4fr]">
+          <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-900">Top tags</h2>
+                <p class="text-sm text-slate-600">Trending categories across drafts and published posts.</p>
+              </div>
+              <span class="text-xs text-slate-500" x-text="`${blog.admin.topTags.length} tracked`"></span>
+            </header>
+            <ul class="mt-6 space-y-3">
+              <template x-if="blog.admin.topTags.length === 0">
+                <li class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                  Tags will appear after content is created.
+                </li>
+              </template>
+              <template x-for="tag in blog.admin.topTags" :key="tag.tag">
+                <li class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-50 text-indigo-600">
+                      <i class="fas fa-hashtag text-sm"></i>
+                    </span>
+                    <div>
+                      <p class="text-sm font-semibold text-slate-900" x-text="tag.tag"></p>
+                      <p class="text-xs text-slate-500">Keyword in drafts &amp; published posts.</p>
+                    </div>
+                  </div>
+                  <span class="text-sm font-semibold text-slate-700" x-text="tag.count"></span>
+                </li>
+              </template>
+            </ul>
+          </section>
+          <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-slate-900">Plan breakdown</h2>
+              <span class="text-xs text-slate-500">Seats</span>
+            </header>
+            <ul class="mt-6 space-y-3">
+              <template x-for="seat in blog.admin.planBreakdown" :key="seat.label">
+                <li class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white p-3 shadow-sm">
+                  <div class="flex items-center gap-3">
+                    <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-slate-100" :class="seat.color">
+                      <i class="fas" :class="seat.icon"></i>
+                    </span>
+                    <p class="text-sm font-semibold text-slate-900" x-text="seat.label"></p>
+                  </div>
+                  <span class="text-sm font-semibold text-slate-700" x-text="seat.value"></span>
+                </li>
+              </template>
+            </ul>
+            <div class="mt-6 rounded-2xl border border-slate-100 bg-slate-50 p-4 text-xs text-slate-600">
+              <p>
+                <strong>AI usage:</strong> ideas
+                <span class="font-semibold text-slate-900" x-text="blog.state.aiUsage.ideas"></span>, outline
+                <span class="font-semibold text-slate-900" x-text="blog.state.aiUsage.outline"></span>, SEO
+                <span class="font-semibold text-slate-900" x-text="blog.state.aiUsage.seo"></span> calls today.
+              </p>
+            </div>
+          </section>
+        </div>
+
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">Recent activity</h2>
+              <p class="text-sm text-slate-600">Autosaves, publishes, and AI assists pulled from the main workspace.</p>
+            </div>
+            <Button href="/blog-writer" size="sm" variant="ghost">
+              <i class="fas fa-up-right-from-square text-xs"></i>
+              Open workspace
+            </Button>
+          </header>
+          <ul class="mt-6 space-y-3">
+            <template x-if="blog.admin.latestActivity.length === 0">
+              <li class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4 text-sm text-slate-500">
+                No activity logged yet.
+              </li>
+            </template>
+            <template x-for="event in blog.admin.latestActivity" :key="event.id">
+              <li class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex h-9 w-9 items-center justify-center rounded-full bg-slate-100" :class="event.color">
+                    <i class="fas" :class="event.icon"></i>
+                  </span>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900" x-text="event.label"></p>
+                    <p class="text-xs text-slate-500" x-text="blog.formatRelative(event.timestamp)"></p>
+                  </div>
+                </div>
+                <span class="text-xs text-slate-500">Workspace</span>
+              </li>
+            </template>
+          </ul>
+        </section>
       </div>
     </section>
   </main>

@@ -25,3 +25,4 @@ import './proposal';
 import './contract';
 import './minutes';
 import './invoice';
+import './blogWriter';

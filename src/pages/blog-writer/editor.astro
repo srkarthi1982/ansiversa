@@ -1,0 +1,51 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import BlogWriterToolbar from "../../mini-apps/blog-writer/BlogWriterToolbar.astro";
+import BlogWriterIdeaPanel from "../../mini-apps/blog-writer/BlogWriterIdeaPanel.astro";
+import BlogWriterOutlinePanel from "../../mini-apps/blog-writer/BlogWriterOutlinePanel.astro";
+import BlogWriterEditor from "../../mini-apps/blog-writer/BlogWriterEditor.astro";
+import BlogWriterSeoPanel from "../../mini-apps/blog-writer/BlogWriterSeoPanel.astro";
+import BlogWriterMediaPanel from "../../mini-apps/blog-writer/BlogWriterMediaPanel.astro";
+import BlogWriterVersionsPanel from "../../mini-apps/blog-writer/BlogWriterVersionsPanel.astro";
+
+const postId = Astro.url.searchParams.get("id");
+const builderInit = JSON.stringify({ id: postId });
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ blog: $store['blog-writer'] })"
+    x-init={`blog.initEditor(${builderInit})`}
+  >
+    <BlogWriterToolbar />
+    <div class="mx-auto grid max-w-6xl gap-6 px-4 pb-20 pt-10 sm:px-6 lg:grid-cols-[0.9fr_1.2fr_0.85fr] lg:px-8">
+      <div class="space-y-6">
+        <BlogWriterIdeaPanel />
+        <BlogWriterOutlinePanel />
+      </div>
+      <div class="space-y-6">
+        <BlogWriterEditor />
+      </div>
+      <div class="space-y-6">
+        <BlogWriterSeoPanel />
+        <BlogWriterMediaPanel />
+        <BlogWriterVersionsPanel />
+      </div>
+    </div>
+    <div
+      x-show="$store['blog-writer'].builder.toast"
+      x-transition
+      class="fixed bottom-6 left-1/2 z-40 w-[min(90vw,360px)] -translate-x-1/2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg"
+      x-cloak
+    >
+      <div class="flex items-center gap-3" :class="$store['blog-writer'].builder.toast?.type === 'error' ? 'text-rose-600' : ($store['blog-writer'].builder.toast?.type === 'success' ? 'text-emerald-600' : 'text-indigo-600')">
+        <i class="fas" :class="{
+            'fa-circle-xmark': $store['blog-writer'].builder.toast?.type === 'error',
+            'fa-circle-check': $store['blog-writer'].builder.toast?.type === 'success',
+            'fa-circle-info': $store['blog-writer'].builder.toast?.type === 'info'
+          }"></i>
+        <span x-text="$store['blog-writer'].builder.toast?.message"></span>
+      </div>
+    </div>
+  </main>
+</Layout>
