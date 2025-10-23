@@ -16,27 +16,6 @@ const pageFiles = Object.keys(
   import.meta.glob("../pages/**/*.{astro,md,mdx}", { eager: false })
 );
 
-const requirementFiles = Object.keys(
-  import.meta.glob("../../public/requirements/*.md", { eager: false })
-);
-
-const requirementLookup = requirementFiles.reduce<Map<string, string>>(
-  (acc, filePath) => {
-    const fileName = filePath.split("/").pop();
-    if (!fileName) return acc;
-
-    const withoutExtension = fileName.replace(/\.md$/i, "");
-    const slug = withoutExtension
-      .toLowerCase()
-      .replace(/_/g, "-")
-      .replace(/^flash-note$/, "flashnote");
-
-    acc.set(slug, `/requirements/${withoutExtension}.md`);
-    return acc;
-  },
-  new Map()
-);
-
 const availableRoutes = new Set(
   pageFiles.map((filePath) => {
     const routePath = filePath
@@ -91,23 +70,7 @@ const resolveMiniAppHref = (href: string | undefined) => {
     }
   }
 
-  const requirementSlugs = candidateRoutes
-    .map((candidate) => candidate.replace(/^\//, ""))
-    .flatMap((slug) => (slug.endsWith("/pages") ? [slug, slug.replace(/\/pages$/, "")] : [slug]));
-
-  if (aliasTarget) {
-    requirementSlugs.unshift(aliasTarget.replace(/^\//, ""));
-  }
-  requirementSlugs.unshift(normalized.replace(/^\//, ""));
-
-  for (const slug of new Set(requirementSlugs.filter(Boolean))) {
-    const requirementPath = requirementLookup.get(slug);
-    if (requirementPath) {
-      return requirementPath;
-    }
-  }
-
-  return undefined;
+  return candidateRoutes[0];
 };
 
 const miniAppCategories = [
