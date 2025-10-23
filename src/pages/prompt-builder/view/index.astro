@@ -1,0 +1,26 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
+---
+
+<Layout>
+  <main class="flex min-h-screen items-center justify-center bg-slate-50">
+    <section class="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+      <h1 class="text-2xl font-bold text-slate-900">Select a shared prompt</h1>
+      <p class="mt-3 text-sm text-slate-600">
+        This page displays read-only prompt workspaces created with the builder. Choose a shared link or explore available
+        templates to get started.
+      </p>
+      <div class="mt-6 flex flex-wrap justify-center gap-3">
+        <Button href="/prompt-builder" variant="secondary">
+          <i class="fas fa-grid text-sm"></i>
+          Prompt Builder
+        </Button>
+        <Button href="/prompt-builder/templates" variant="outline">
+          <i class="fas fa-layer-group text-sm"></i>
+          Templates
+        </Button>
+      </div>
+    </section>
+  </main>
+</Layout>

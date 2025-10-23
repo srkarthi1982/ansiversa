@@ -1,0 +1,511 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
+import {
+  samplePromptBuilderProjects,
+  type PromptBuilderRun,
+  type PromptBuilderVariant,
+  type PromptBuilderVariable,
+} from "../../../data/promptBuilderSamples";
+
+const { slug } = Astro.params;
+const projects = samplePromptBuilderProjects();
+const project =
+  projects.find((item) => item.shareSlug === slug || item.slug === slug) ?? null;
+
+if (!project) {
+  Astro.response.status = 404;
+}
+
+const formatDateTime = (value?: string | null) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleString("en-US", { dateStyle: "medium", timeStyle: "short" });
+};
+
+const formatDate = (value?: string | null) => {
+  if (!value) return "—";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "—";
+  return date.toLocaleDateString("en-US", { dateStyle: "medium" });
+};
+
+const formatNumber = (value?: number | null, digits = 0) => {
+  if (typeof value !== "number") return (0).toFixed(digits);
+  return value.toLocaleString("en-US", {
+    maximumFractionDigits: digits,
+    minimumFractionDigits: digits,
+  });
+};
+
+const planLabel = project?.plan === "pro" ? "Pro plan" : "Free plan";
+const planBadgeClass = project?.plan === "pro" ? "bg-amber-100 text-amber-700" : "bg-white/15 text-white";
+const totalVariants = project?.variants?.length ?? 0;
+const totalVariables = project?.variables?.length ?? 0;
+const totalRuns = project?.runs?.length ?? 0;
+const totalTestCases = project?.testCases?.length ?? 0;
+const enabledExamples = project
+  ? project.variants.reduce(
+      (count: number, variant: PromptBuilderVariant) =>
+        count + (variant.blocks.examples?.filter((example) => example.enabled).length ?? 0),
+      0,
+    )
+  : 0;
+
+const heroStats = project
+  ? [
+      { label: "Last saved", value: formatDateTime(project.lastSavedAt) },
+      { label: "Runs", value: `${formatNumber(project.runsTotal ?? 0)} total` },
+      { label: "Test cases", value: `${totalTestCases}` },
+    ]
+  : [];
+
+const watermarkNote = project?.watermark ?? project?.plan === "free";
+const shareUrl = project ? `/prompt-builder/view/${project.shareSlug ?? project.slug}` : "";
+---
+
+<Layout>
+  {project ? (
+    <main class="min-h-screen bg-slate-50">
+      <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-sky-500 to-purple-600 py-16 text-white">
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_rgba(79,70,229,0.1))]"></div>
+        <div class="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+          <div class="flex-1 space-y-6">
+            <span class={`inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] ${planBadgeClass}`}>
+              <i class="fas fa-bolt text-xs"></i>
+              {planLabel}
+            </span>
+            <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">{project.title}</h1>
+            <p class="max-w-2xl text-white/80">{project.description}</p>
+            <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-white/80">
+              {project.tags.map((tag) => (
+                <span class="rounded-full bg-white/10 px-2 py-1">{tag}</span>
+              ))}
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <Button href={`/prompt-builder/builder?id=${project.id}`} variant="secondary">
+                <i class="fas fa-wand-magic-sparkles text-sm"></i>
+                Open in builder
+              </Button>
+              <Button href="/prompt-builder/templates" variant="outline">
+                <i class="fas fa-layer-group text-sm"></i>
+                Browse templates
+              </Button>
+              <Button href="/prompt-builder" variant="ghost">
+                <i class="fas fa-grid text-sm"></i>
+                View projects
+              </Button>
+            </div>
+          </div>
+          <div class="grid w-full max-w-md gap-4 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+            {heroStats.map((stat) => (
+              <div class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-white/70">{stat.label}</p>
+                <p class="mt-2 text-3xl font-bold">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section class="mx-auto max-w-6xl space-y-10 px-4 py-16 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-2xl font-semibold text-slate-900">Prompt variants</h2>
+                <p class="text-sm text-slate-600">
+                  {totalVariants} variant{totalVariants === 1 ? "" : "s"} • {enabledExamples} example{enabledExamples === 1 ? "" : "s"}
+                </p>
+              </div>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                  <i class="fas fa-clock text-[10px]"></i>
+                  Updated {formatDate(project.lastSavedAt)}
+                </span>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                  <i class="fas fa-rotate text-[10px]"></i>
+                  Active {project.activeVariantId}
+                </span>
+              </div>
+            </header>
+            <div class="mt-6 space-y-6">
+              {project.variants.map((variant) => (
+                <section class="rounded-2xl border border-slate-200 bg-slate-50 p-5">
+                  <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 class="text-xl font-semibold text-slate-900">Variant {variant.id}</h3>
+                      <p class="text-sm text-slate-600">{variant.description}</p>
+                    </div>
+                    <span class={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${variant.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+                      <i class={`fas ${variant.enabled ? "fa-circle-check" : "fa-circle"}`}></i>
+                      {variant.enabled ? "Enabled" : "Disabled"}
+                    </span>
+                  </header>
+                  <div class="mt-4 space-y-4">
+                    <div>
+                      <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">System</h4>
+                      <pre class="mt-2 whitespace-pre-wrap rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">{variant.blocks.system}</pre>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Instruction</h4>
+                      <pre class="mt-2 whitespace-pre-wrap rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">{variant.blocks.instruction}</pre>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tool hints</h4>
+                      <pre class="mt-2 whitespace-pre-wrap rounded-2xl border border-slate-200 bg-white p-4 text-sm text-slate-700">{variant.blocks.toolHints}</pre>
+                    </div>
+                    <div>
+                      <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Examples</h4>
+                      {variant.blocks.examples && variant.blocks.examples.length > 0 ? (
+                        <div class="mt-3 space-y-3">
+                          {variant.blocks.examples.map((example) => (
+                            <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                              <header class="flex flex-wrap items-center justify-between gap-2">
+                                <h5 class="text-sm font-semibold text-slate-900">{example.label}</h5>
+                                <span class={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${example.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+                                  <i class={`fas ${example.enabled ? "fa-check" : "fa-circle"}`}></i>
+                                  {example.enabled ? "Enabled" : "Disabled"}
+                                </span>
+                              </header>
+                              <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                                <div>
+                                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Input</p>
+                                  <pre class="mt-1 whitespace-pre-wrap rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">{example.input}</pre>
+                                </div>
+                                <div>
+                                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Output</p>
+                                  <pre class="mt-1 whitespace-pre-wrap rounded-xl border border-slate-200 bg-slate-50 p-3 text-sm text-slate-700">{example.output}</pre>
+                                </div>
+                              </div>
+                            </article>
+                          ))}
+                        </div>
+                      ) : (
+                        <p class="mt-2 rounded-2xl border border-dashed border-slate-200 bg-white px-4 py-6 text-sm text-slate-600">
+                          No examples provided for this variant.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </section>
+              ))}
+            </div>
+          </article>
+
+          <aside class="flex flex-col gap-6">
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 class="text-xl font-semibold text-slate-900">Model settings</h2>
+              <dl class="mt-4 grid gap-3 text-sm text-slate-600">
+                <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Model</dt>
+                  <dd class="font-semibold text-slate-900">{project.model.model}</dd>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Temperature</dt>
+                  <dd class="font-semibold text-slate-900">{formatNumber(project.model.temperature, 2)}</dd>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Max output tokens</dt>
+                  <dd class="font-semibold text-slate-900">{formatNumber(project.model.maxOutputTokens)}</dd>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Top P</dt>
+                  <dd class="font-semibold text-slate-900">{formatNumber(project.model.topP, 2)}</dd>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Frequency penalty</dt>
+                  <dd class="font-semibold text-slate-900">{formatNumber(project.model.frequencyPenalty, 2)}</dd>
+                </div>
+                <div class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Presence penalty</dt>
+                  <dd class="font-semibold text-slate-900">{formatNumber(project.model.presencePenalty, 2)}</dd>
+                </div>
+              </dl>
+            </article>
+
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 class="text-xl font-semibold text-slate-900">Share link</h2>
+              <p class="mt-2 text-sm text-slate-600">
+                This read-only view can be shared with teammates. Duplicate it into the builder to extend or edit the prompt.
+              </p>
+              <div class="mt-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-4 text-sm text-slate-600">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">URL</p>
+                <p class="mt-1 break-all font-semibold text-slate-900">{shareUrl}</p>
+                {watermarkNote ? (
+                  <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                    <i class="fas fa-water text-[10px]"></i>
+                    Ansiversa watermark enabled on Free plans
+                  </p>
+                ) : null}
+              </div>
+            </article>
+          </aside>
+        </div>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-900">Variables</h2>
+              <p class="text-sm text-slate-600">{totalVariables} variable{totalVariables === 1 ? "" : "s"} defined for runtime substitution.</p>
+            </div>
+          </header>
+          {project.variables.length > 0 ? (
+            <div class="mt-6 space-y-4">
+              {project.variables.map((variable: PromptBuilderVariable) => (
+                <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 class="text-lg font-semibold text-slate-900">{variable.label}</h3>
+                      <p class="text-xs uppercase tracking-wide text-slate-500">{variable.name} • {variable.type}</p>
+                    </div>
+                    <span class={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${variable.required ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+                      <i class={`fas ${variable.required ? "fa-lock" : "fa-unlock"}`}></i>
+                      {variable.required ? "Required" : "Optional"}
+                    </span>
+                  </header>
+                  <p class="mt-3 text-sm text-slate-600">{variable.description}</p>
+                  <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Default value</p>
+                      <p class="mt-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">{variable.defaultValue || "—"}</p>
+                    </div>
+                    {variable.options ? (
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Options</p>
+                        <div class="mt-1 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                          {variable.options.map((option) => (
+                            <span class="rounded-full bg-white px-2 py-1 text-slate-600">{option.label}</span>
+                          ))}
+                        </div>
+                      </div>
+                    ) : null}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+              No variables configured yet.
+            </p>
+          )}
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-900">Test bench</h2>
+              <p class="text-sm text-slate-600">{totalTestCases} scenario{totalTestCases === 1 ? "" : "s"} tracked for regression checks.</p>
+            </div>
+          </header>
+          {project.testCases.length > 0 ? (
+            <div class="mt-6 space-y-4">
+              {project.testCases.map((testCase) => (
+                <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+                  <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div>
+                      <h3 class="text-lg font-semibold text-slate-900">{testCase.label}</h3>
+                      <p class="text-sm text-slate-600">{testCase.persona}</p>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                      <span class={`inline-flex items-center gap-2 rounded-full px-3 py-1 font-semibold uppercase tracking-wide ${testCase.enabled ? "bg-emerald-100 text-emerald-700" : "bg-slate-200 text-slate-600"}`}>
+                        <i class={`fas ${testCase.enabled ? "fa-circle-check" : "fa-circle"}`}></i>
+                        {testCase.enabled ? "Enabled" : "Disabled"}
+                      </span>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 font-semibold uppercase tracking-wide text-slate-600">
+                        <i class="fas fa-clock text-[10px]"></i>
+                        Last run {testCase.lastRunAt ? formatDateTime(testCase.lastRunAt) : "Never"}
+                      </span>
+                    </div>
+                  </header>
+                  <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                    <div>
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Expected traits</p>
+                      <div class="mt-1 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        {testCase.expectedTraits.map((trait) => (
+                          <span class="rounded-full bg-white px-2 py-1 text-slate-600">{trait}</span>
+                        ))}
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tags</p>
+                      <div class="mt-1 flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        {testCase.tags.map((tag) => (
+                          <span class="rounded-full bg-white px-2 py-1 text-slate-600">{tag}</span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mt-3 grid gap-2 sm:grid-cols-2">
+                    {project.variables.map((variable) => (
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{variable.name}</p>
+                        <p class="mt-1 rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700">
+                          {testCase.input?.[variable.name] ?? "—"}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+              No test scenarios documented for this prompt yet.
+            </p>
+          )}
+        </article>
+
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-2xl font-semibold text-slate-900">Run history</h2>
+              <p class="text-sm text-slate-600">{totalRuns} recorded run{totalRuns === 1 ? "" : "s"} shared in this snapshot.</p>
+            </div>
+          </header>
+          {project.runs.length > 0 ? (
+            <div class="mt-6 space-y-4">
+              {project.runs.map((run: PromptBuilderRun) => (
+                <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+                  <header class="flex flex-wrap items-center justify-between gap-3">
+                    <div class="flex flex-wrap items-center gap-2 text-sm font-semibold text-slate-700">
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs uppercase tracking-wide">
+                        Variant {run.variantId}
+                      </span>
+                      <span class={`inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase ${run.pass ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}>
+                        <i class={`fas ${run.pass ? "fa-circle-check" : "fa-circle-exclamation"}`}></i>
+                        {run.pass ? "Pass" : "Needs review"}
+                      </span>
+                    </div>
+                    <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                      <span>Prompt {run.tokensPrompt} tokens</span>
+                      <span>Output {run.tokensOutput} tokens</span>
+                      <span>${formatNumber(run.cost, 3)}</span>
+                      <span>{run.latencyMs} ms</span>
+                      <span>{formatDateTime(run.createdAt)}</span>
+                    </div>
+                  </header>
+                  <p class="mt-3 whitespace-pre-line rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700">{run.output}</p>
+                  <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                    <span class="font-semibold uppercase tracking-wide text-slate-500">Tags:</span>
+                    {run.tags.map((tag) => (
+                      <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600">{tag}</span>
+                    ))}
+                    <span class="ml-auto text-[11px] uppercase tracking-wide">Input: {run.inputSummary}</span>
+                  </div>
+                </article>
+              ))}
+            </div>
+          ) : (
+            <p class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+              No runs captured for this prompt yet.
+            </p>
+          )}
+        </article>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-2xl font-semibold text-slate-900">Prompt lint</h2>
+            {project.lintIssues.length > 0 ? (
+              <ul class="mt-4 space-y-3">
+                {project.lintIssues.map((issue) => (
+                  <li class={`rounded-2xl border px-4 py-3 text-sm ${
+                    issue.severity === "error"
+                      ? "border-rose-200 bg-rose-50 text-rose-700"
+                      : issue.severity === "warn"
+                      ? "border-amber-200 bg-amber-50 text-amber-700"
+                      : "border-indigo-200 bg-indigo-50 text-indigo-700"
+                  }`}>
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="font-semibold uppercase tracking-wide">{issue.field}</span>
+                      <span class="text-xs uppercase tracking-wide">{issue.severity}</span>
+                    </div>
+                    <p class="mt-2 text-sm">{issue.message}</p>
+                    {issue.quickFix ? (
+                      <p class="mt-2 text-xs text-slate-600">Suggested fix: {issue.quickFix}</p>
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p class="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+                No lint findings reported in the latest analysis.
+              </p>
+            )}
+          </article>
+
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-2xl font-semibold text-slate-900">Versions</h2>
+            {project.versions.length > 0 ? (
+              <div class="mt-4 space-y-3">
+                {project.versions.map((version) => (
+                  <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <header class="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <h3 class="text-lg font-semibold text-slate-900">{version.label}</h3>
+                        <p class="text-sm text-slate-600">{version.notes}</p>
+                      </div>
+                      <div class="text-xs text-slate-500">
+                        <p>
+                          <span class="font-semibold uppercase tracking-wide">Author:</span> {version.author}
+                        </p>
+                        <p>
+                          <span class="font-semibold uppercase tracking-wide">Created:</span> {formatDateTime(version.createdAt)}
+                        </p>
+                      </div>
+                    </header>
+                    <p class="mt-3 text-sm text-slate-600">{version.diffSummary}</p>
+                  </article>
+                ))}
+              </div>
+            ) : (
+              <p class="mt-4 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+                No historical versions captured for this prompt yet.
+              </p>
+            )}
+          </article>
+        </div>
+      </section>
+
+      <section class="bg-white py-16">
+        <div class="mx-auto max-w-5xl space-y-6 px-4 text-center sm:px-6 lg:px-8">
+          <h2 class="text-2xl font-bold text-slate-900">Build on this prompt</h2>
+          <p class="text-sm text-slate-600">
+            Duplicate the workspace to customize blocks, variables, and test cases. Export JSON or code directly from the builder.
+          </p>
+          <div class="flex flex-wrap justify-center gap-4">
+            <Button href={`/prompt-builder/builder?id=${project.id}`} variant="secondary">
+              <i class="fas fa-wand-magic-sparkles text-sm"></i>
+              Continue in builder
+            </Button>
+            <Button href="/prompt-builder/templates" variant="outline">
+              <i class="fas fa-layer-group text-sm"></i>
+              Explore more templates
+            </Button>
+          </div>
+        </div>
+      </section>
+    </main>
+  ) : (
+    <main class="flex min-h-screen items-center justify-center bg-slate-50">
+      <section class="mx-auto max-w-xl rounded-3xl border border-slate-200 bg-white p-8 text-center shadow-sm">
+        <h1 class="text-2xl font-bold text-slate-900">Prompt not found</h1>
+        <p class="mt-3 text-sm text-slate-600">
+          The shared prompt you are looking for is unavailable or the link has expired. Return to the Prompt Builder to browse
+          available workspaces.
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <Button href="/prompt-builder" variant="secondary">
+            <i class="fas fa-grid text-sm"></i>
+            Prompt Builder
+          </Button>
+          <Button href="/prompt-builder/templates" variant="outline">
+            <i class="fas fa-layer-group text-sm"></i>
+            Templates
+          </Button>
+        </div>
+      </section>
+    </main>
+  )}
+</Layout>

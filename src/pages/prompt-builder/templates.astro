@@ -1,0 +1,317 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import { samplePromptBuilderTemplates } from "../../data/promptBuilderSamples";
+
+const templates = samplePromptBuilderTemplates();
+const categories = Array.from(new Set(templates.map((template) => template.category))).sort();
+const tags = Array.from(new Set(templates.flatMap((template) => template.tags))).sort();
+const averageTokens = Math.round(
+  templates.reduce((total, template) => total + template.estimatedTokens, 0) / templates.length,
+);
+
+const heroHighlights = [
+  { label: "Templates", value: templates.length },
+  { label: "Categories", value: categories.length },
+  { label: "Avg. tokens", value: `${averageTokens.toLocaleString()} tokens` },
+];
+---
+
+<Layout>
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="promptBuilderTemplateGallery($el.dataset.templates)"
+    x-init="init()"
+    data-templates={JSON.stringify(templates)}
+  >
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-sky-500 to-purple-600 py-16 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_rgba(79,70,229,0.1))]"></div>
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+        <div class="flex-1 space-y-6">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+            Template library
+          </span>
+          <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+            Kick-start prompts with ready-to-run blueprints
+          </h1>
+          <p class="max-w-2xl text-white/80">
+            Browse curated prompt systems for marketing, support, engineering, and more. Each template includes variables,
+            guidance, and test cases so you can launch a workspace in seconds.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <Button href="/prompt-builder/builder" variant="secondary">
+              <i class="fas fa-wand-magic-sparkles text-sm"></i>
+              Open builder
+            </Button>
+            <Button href="/prompt-builder" variant="outline">
+              <i class="fas fa-grid text-sm"></i>
+              View projects
+            </Button>
+          </div>
+        </div>
+        <div class="grid w-full max-w-md gap-4 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+          {heroHighlights.map((stat) => (
+            <div class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3">
+              <p class="text-xs font-semibold uppercase tracking-wide text-white/70">{stat.label}</p>
+              <p class="mt-2 text-3xl font-bold">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 class="text-3xl font-bold text-slate-900">Template gallery</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Filter by category, tag, or keyword to discover the right prompt foundation.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <i class="fas fa-search text-xs text-slate-500"></i>
+            <input
+              type="search"
+              class="w-40 bg-transparent focus:outline-none"
+              placeholder="Search"
+              x-model="search"
+            />
+          </label>
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Category</span>
+            <select class="bg-transparent focus:outline-none" x-model="category">
+              <option value="all">All</option>
+              {categories.map((category) => (
+                <option value={category}>{category}</option>
+              ))}
+            </select>
+          </label>
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tag</span>
+            <select class="bg-transparent focus:outline-none" x-model="tag">
+              <option value="all">All</option>
+              {tags.map((tag) => (
+                <option value={tag}>{tag}</option>
+              ))}
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="mt-10 grid gap-6 lg:grid-cols-2">
+        <template x-if="filtered.length === 0">
+          <div class="lg:col-span-2 rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center">
+            <i class="fas fa-sparkles text-2xl text-slate-300"></i>
+            <h3 class="mt-4 text-lg font-semibold text-slate-900">No templates match your filters</h3>
+            <p class="mt-2 text-sm text-slate-600">
+              Adjust the category, tag, or keyword filters to reveal more blueprints.
+            </p>
+          </div>
+        </template>
+
+        <template x-for="template in filtered" :key="template.key">
+          <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-slate-900" x-text="template.title"></h3>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                  <i class="fas fa-folder-open text-[10px]"></i>
+                  <span x-text="template.category"></span>
+                </span>
+              </div>
+              <p class="text-sm text-slate-600" x-text="template.description"></p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <template x-for="tag in template.tags" :key="tag">
+                  <span class="rounded-full bg-slate-100 px-2 py-1" x-text="tag"></span>
+                </template>
+              </div>
+            </div>
+            <div class="mt-6 space-y-4">
+              <dl class="grid gap-3 text-xs font-semibold uppercase tracking-wide text-slate-500 sm:grid-cols-3">
+                <div class="rounded-2xl bg-slate-100 px-3 py-2 text-slate-700">
+                  Tokens
+                  <div class="text-base font-semibold" x-text="formatNumber(template.estimatedTokens)"></div>
+                </div>
+                <div class="rounded-2xl bg-slate-100 px-3 py-2 text-slate-700">
+                  Variables
+                  <div class="text-base font-semibold" x-text="template.variables.length"></div>
+                </div>
+                <div class="rounded-2xl bg-slate-100 px-3 py-2 text-slate-700">
+                  Model
+                  <div class="text-base font-semibold" x-text="template.recommendedModel"></div>
+                </div>
+              </dl>
+              <div class="space-y-2 text-sm text-slate-600">
+                <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Use cases</h4>
+                <ul class="list-disc space-y-1 pl-5">
+                  <template x-for="useCase in template.useCases" :key="useCase">
+                    <li x-text="useCase"></li>
+                  </template>
+                </ul>
+              </div>
+              <div class="flex flex-wrap gap-3">
+                <a
+                  :href="`/prompt-builder/builder?template=${template.key}`"
+                  class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                >
+                  <i class="fas fa-rocket text-xs"></i>
+                  Use template
+                </a>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+                  @click="viewDetails(template)"
+                >
+                  <i class="fas fa-eye text-xs"></i>
+                  Preview blocks
+                </button>
+              </div>
+            </div>
+          </article>
+        </template>
+      </div>
+    </section>
+
+    <section
+      x-show="overlay.open"
+      x-transition.opacity
+      class="fixed inset-0 z-40 flex items-end justify-center bg-slate-900/40 px-4 py-10 sm:items-center sm:px-6"
+    >
+      <div class="w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-slate-900" x-text="overlay.template?.title ?? 'Template preview'"></h3>
+          <button type="button" class="text-slate-500 hover:text-slate-700" @click="closeOverlay()">
+            <i class="fas fa-xmark text-lg"></i>
+          </button>
+        </div>
+        <p class="mt-2 text-sm text-slate-600" x-text="overlay.template?.description"></p>
+        <div class="mt-4 grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tokens</p>
+            <p class="mt-1 text-base font-semibold text-slate-900" x-text="formatNumber(overlay.template?.estimatedTokens)"></p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Variables</p>
+            <p class="mt-1 text-base font-semibold text-slate-900" x-text="overlay.template?.variables.length"></p>
+          </div>
+          <div class="rounded-2xl bg-slate-50 p-4 text-sm text-slate-600">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Model</p>
+            <p class="mt-1 text-base font-semibold text-slate-900" x-text="overlay.template?.recommendedModel"></p>
+          </div>
+        </div>
+        <div class="mt-6 space-y-6">
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">System</h4>
+            <pre class="whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" x-text="overlay.template?.blocks.system"></pre>
+          </div>
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Instruction</h4>
+            <pre class="whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" x-text="overlay.template?.blocks.instruction"></pre>
+          </div>
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tool hints</h4>
+            <pre class="whitespace-pre-wrap rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700" x-text="overlay.template?.blocks.toolHints"></pre>
+          </div>
+          <div class="space-y-2">
+            <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Variables</h4>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <template x-for="variable in overlay.template?.variables ?? []" :key="variable.id">
+                <li class="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+                  <p class="text-sm font-semibold text-slate-900" x-text="variable.label"></p>
+                  <p class="text-xs uppercase tracking-wide text-slate-500" x-text="`${variable.name} • ${variable.type}`"></p>
+                  <p class="mt-2 text-sm text-slate-600" x-text="variable.description"></p>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <a
+            :href="overlay.template ? `/prompt-builder/builder?template=${overlay.template.key}` : '/prompt-builder/builder'"
+            class="inline-flex items-center gap-2 rounded-full bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+          >
+            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+            Open in builder
+          </a>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:border-slate-300 hover:text-slate-800"
+            @click="closeOverlay()"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-5xl px-4 text-center sm:px-6 lg:px-8">
+        <h2 class="text-2xl font-bold text-slate-900">Need something more custom?</h2>
+        <p class="mt-3 text-sm text-slate-600">
+          Start from a blank workspace or mix-and-match blocks to design your own prompt systems.
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-4">
+          <Button href="/prompt-builder/builder" variant="secondary">
+            <i class="fas fa-plus text-sm"></i>
+            New blank project
+          </Button>
+          <Button href="/contact" variant="outline">
+            <i class="fas fa-comments text-sm"></i>
+            Request bespoke template
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+<script is:inline>
+  window.promptBuilderTemplateGallery = (payload) => {
+    const parseTemplates = (raw) => {
+      if (!raw) return [];
+      try {
+        return JSON.parse(raw);
+      } catch (error) {
+        console.warn("Unable to parse prompt template payload", error);
+        return [];
+      }
+    };
+
+    return {
+      templates: parseTemplates(payload),
+      search: "",
+      category: "all",
+      tag: "all",
+      overlay: { open: false, template: null },
+      init() {
+        // no-op placeholder for future async loading
+      },
+      get filtered() {
+        const query = this.search.trim().toLowerCase();
+        return this.templates.filter((template) => {
+          const matchesCategory = this.category === "all" || template.category === this.category;
+          const matchesTag = this.tag === "all" || (template.tags ?? []).includes(this.tag);
+          const matchesSearch =
+            !query ||
+            template.title.toLowerCase().includes(query) ||
+            template.description.toLowerCase().includes(query) ||
+            (template.tags ?? []).some((tag) => tag.toLowerCase().includes(query)) ||
+            (template.useCases ?? []).some((useCase) => useCase.toLowerCase().includes(query));
+          return matchesCategory && matchesTag && matchesSearch;
+        });
+      },
+      viewDetails(template) {
+        this.overlay.template = template;
+        this.overlay.open = true;
+      },
+      closeOverlay() {
+        this.overlay.open = false;
+        this.overlay.template = null;
+      },
+      formatNumber(value) {
+        if (typeof value !== "number") return "0";
+        return new Intl.NumberFormat("en-US").format(value);
+      },
+    };
+  };
+</script>

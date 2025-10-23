@@ -1,0 +1,1196 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+---
+
+<Layout>
+  <main
+    id="prompt-builder-workspace"
+    class="min-h-screen bg-slate-50"
+    x-data="promptBuilderWorkspace()"
+    x-init="init()"
+    x-cloak
+  >
+    <template x-if="builder.toast">
+      <div class="fixed inset-x-0 top-4 z-50 flex justify-center px-4" role="status">
+        <div
+          class="flex items-center gap-3 rounded-full border border-slate-200 bg-white px-4 py-3 text-sm shadow-lg"
+          :class="builder.toast?.type === 'success' ? 'border-emerald-200 text-emerald-700' : builder.toast?.type === 'error' ? 'border-rose-200 text-rose-700' : 'border-indigo-200 text-indigo-700'"
+        >
+          <i class="fas" :class="builder.toast?.type === 'success' ? 'fa-circle-check' : builder.toast?.type === 'error' ? 'fa-triangle-exclamation' : 'fa-sparkles'"></i>
+          <span x-text="builder.toast?.message"></span>
+        </div>
+      </div>
+    </template>
+
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-sky-500 to-purple-600 py-14 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_rgba(79,70,229,0.15))]"></div>
+      <div class="relative mx-auto max-w-5xl space-y-6 px-4 sm:px-6">
+        <div class="space-y-4">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+            Prompt Builder
+          </span>
+          <input
+            type="text"
+            class="w-full rounded-2xl border border-white/20 bg-white/15 px-4 py-3 text-3xl font-bold text-white shadow-inner placeholder:text-white/60 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/70"
+            placeholder="Untitled prompt project"
+            :value="project?.title ?? ''"
+            @input="updateTitle($event.target.value)"
+          />
+          <textarea
+            rows="2"
+            class="w-full rounded-2xl border border-white/15 bg-white/10 px-4 py-3 text-sm text-white/90 shadow-inner placeholder:text-white/70 focus:border-white focus:outline-none focus:ring-2 focus:ring-white/60"
+            placeholder="Describe what this prompt accomplishes..."
+            :value="project?.description ?? ''"
+            @input="updateDescription($event.target.value)"
+          ></textarea>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
+            <i class="fas fa-layer-group text-xs"></i>
+            <span x-text="project?.plan === 'pro' ? 'Pro plan' : 'Free plan'"></span>
+          </span>
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
+            <i class="fas fa-rotate text-xs"></i>
+            <span x-text="builder.lastSavedAt ? 'Last saved ' + formatRelative(builder.lastSavedAt) : 'Unsaved draft'"></span>
+          </span>
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-3 py-1">
+            <i class="fas fa-chart-line text-xs"></i>
+            <span x-text="(project?.runsTotal ?? 0) + ' runs • ' + (project?.runsToday ?? 0) + ' today'"></span>
+          </span>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <Button type="button" @click="saveProject()" :class="builder.saving ? 'pointer-events-none opacity-70' : ''">
+            <i class="fas fa-floppy-disk text-xs"></i>
+            <span x-text="builder.saving ? 'Saving…' : 'Save workspace'"></span>
+          </Button>
+          <Button type="button" variant="secondary" @click="runBench()" :class="builder.running ? 'pointer-events-none opacity-70' : ''">
+            <i class="fas fa-play text-xs"></i>
+            <span x-text="builder.running ? 'Running…' : 'Run test bench'"></span>
+          </Button>
+          <Button type="button" variant="outline" @click="lintProject()" :class="builder.linting ? 'pointer-events-none opacity-70' : ''">
+            <i class="fas fa-shield-halved text-xs"></i>
+            Lint prompt
+          </Button>
+          <Button type="button" variant="ghost" @click="showExport('json')">
+            <i class="fas fa-file-export text-xs"></i>
+            Export
+          </Button>
+          <Button type="button" variant="ghost" @click="publishShare()">
+            <i class="fas fa-link text-xs"></i>
+            Share link
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto mt-12 max-w-5xl space-y-8 px-4 sm:px-6">
+      <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <header class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-xl font-semibold text-slate-900">Compose prompt</h2>
+          <div class="flex flex-wrap gap-2">
+            <template x-for="variant in project?.variants ?? []" :key="variant.id">
+              <button
+                type="button"
+                class="rounded-full border px-3 py-1 text-sm font-semibold"
+                :class="variant.id === builder.activeVariantId ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-200 bg-white text-slate-600'"
+                @click="setActiveVariant(variant.id)"
+              >
+                <span x-text="variant.label"></span>
+              </button>
+            </template>
+            <Button type="button" size="sm" variant="outline" @click="duplicateVariant()">
+              <i class="fas fa-clone text-xs"></i>
+              Duplicate
+            </Button>
+          </div>
+        </header>
+        <template x-if="!activeVariant()">
+          <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+            No variants found. Add a variant from the settings.
+          </p>
+        </template>
+        <template x-if="activeVariant()">
+          <div class="space-y-4">
+            <label class="flex flex-col gap-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">System</span>
+              <textarea
+                rows="4"
+                class="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                :value="activeVariant().blocks.system"
+                @input="updateBlock('system', $event.target.value)"
+              ></textarea>
+            </label>
+            <label class="flex flex-col gap-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Instruction</span>
+              <textarea
+                rows="5"
+                class="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                :value="activeVariant().blocks.instruction"
+                @input="updateBlock('instruction', $event.target.value)"
+              ></textarea>
+            </label>
+            <label class="flex flex-col gap-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tool hints</span>
+              <textarea
+                rows="3"
+                class="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                :value="activeVariant().blocks.toolHints"
+                @input="updateBlock('toolHints', $event.target.value)"
+              ></textarea>
+            </label>
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Examples</h3>
+                <Button type="button" size="sm" variant="outline" @click="addExample()">
+                  <i class="fas fa-plus text-xs"></i>
+                  Add example
+                </Button>
+              </div>
+              <template x-if="(activeVariant().blocks.examples ?? []).length === 0">
+                <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+                  No examples yet. Add a pair to guide the model.
+                </p>
+              </template>
+              <div class="space-y-4">
+                <template x-for="example in activeVariant().blocks.examples" :key="example.id">
+                  <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                      <input
+                        type="text"
+                        class="w-full max-w-xs rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        :value="example.label"
+                        @input="updateExample(example.id, 'label', $event.target.value)"
+                      />
+                      <label class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" :checked="example.enabled" @change="toggleExample(example.id)" />
+                        Enabled
+                      </label>
+                    </div>
+                    <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                      <label class="flex flex-col gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Input</span>
+                        <textarea
+                          rows="3"
+                          class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          :value="example.input"
+                          @input="updateExample(example.id, 'input', $event.target.value)"
+                        ></textarea>
+                      </label>
+                      <label class="flex flex-col gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Ideal output</span>
+                        <textarea
+                          rows="3"
+                          class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                          :value="example.output"
+                          @input="updateExample(example.id, 'output', $event.target.value)"
+                        ></textarea>
+                      </label>
+                    </div>
+                  </article>
+                </template>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+
+      <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Variables</h2>
+          <Button type="button" size="sm" variant="outline" @click="addVariable()">
+            <i class="fas fa-plus text-xs"></i>
+            Add variable
+          </Button>
+        </div>
+        <template x-if="(project?.variables ?? []).length === 0">
+          <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+            Define a variable to parameterize your prompt.
+          </p>
+        </template>
+        <div class="space-y-4">
+          <template x-for="variable in project?.variables ?? []" :key="variable.id">
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+              <div class="flex flex-wrap items-center gap-3">
+                <input
+                  type="text"
+                  class="w-32 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  :value="variable.name"
+                  @input="renameVariable(variable, $event.target.value)"
+                />
+                <input
+                  type="text"
+                  class="w-48 rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  placeholder="Label"
+                  x-model="variable.label"
+                  @input="markDirty()"
+                />
+                <select
+                  class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  x-model="variable.type"
+                  @change="updateVariableType(variable, $event.target.value)"
+                >
+                  <option value="string">String</option>
+                  <option value="enum">Enum</option>
+                  <option value="number">Number</option>
+                </select>
+                <label class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                  <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" :checked="variable.required" @change="toggleVariableRequired(variable)" />
+                  Required
+                </label>
+                <button type="button" class="text-sm font-semibold text-rose-500 hover:text-rose-600" @click="removeVariable(variable.id)">
+                  Remove
+                </button>
+              </div>
+              <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                <label class="flex flex-col gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Description</span>
+                  <textarea
+                    rows="2"
+                    class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    x-model="variable.description"
+                    @input="markDirty()"
+                  ></textarea>
+                </label>
+                <label class="flex flex-col gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Default</span>
+                  <input
+                    type="text"
+                    class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    :value="variable.defaultValue"
+                    @input="updateVariableDefault(variable, $event.target.value)"
+                  />
+                </label>
+              </div>
+              <template x-if="variable.type === 'enum'">
+                <label class="mt-3 flex flex-col gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Options (comma separated)</span>
+                  <input
+                    type="text"
+                    class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    :value="(variable.options ?? []).map((item) => item.label).join(', ')"
+                    @input="updateVariableOptions(variable, $event.target.value)"
+                  />
+                </label>
+              </template>
+              <div class="mt-3">
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Runtime value</span>
+                <input
+                  type="text"
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  :value="builder.runtimeInputs[variable.name] ?? ''"
+                  @input="setRuntimeInput(variable.name, $event.target.value)"
+                />
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+
+      <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Test bench</h2>
+          <Button type="button" size="sm" variant="outline" @click="addTestCase()">
+            <i class="fas fa-plus text-xs"></i>
+            Add case
+          </Button>
+        </div>
+        <template x-if="(project?.testCases ?? []).length === 0">
+          <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+            Add a test case to simulate how the prompt behaves.
+          </p>
+        </template>
+        <div class="space-y-4">
+          <template x-for="testCase in project?.testCases ?? []" :key="testCase.id">
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <input
+                  type="text"
+                  class="w-48 rounded-xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                  :value="testCase.label"
+                  @input="updateTestCaseField(testCase.id, 'label', $event.target.value)"
+                />
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                  <label class="inline-flex items-center gap-2">
+                    <input type="checkbox" class="h-4 w-4 rounded border-slate-300 text-indigo-600 focus:ring-indigo-500" :checked="testCase.enabled" @change="toggleTestCase(testCase.id)" />
+                    Enabled
+                  </label>
+                  <button type="button" class="text-sm font-semibold text-rose-500 hover:text-rose-600" @click="removeTestCase(testCase.id)">
+                    Remove
+                  </button>
+                </div>
+              </div>
+              <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                <label class="flex flex-col gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Persona</span>
+                  <input
+                    type="text"
+                    class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    :value="testCase.persona"
+                    @input="updateTestCaseField(testCase.id, 'persona', $event.target.value)"
+                  />
+                </label>
+                <label class="flex flex-col gap-2">
+                  <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Expected traits</span>
+                  <input
+                    type="text"
+                    class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                    :value="testCase.expectedTraits.join(', ')"
+                    @input="updateTestCaseList(testCase.id, 'expectedTraits', $event.target.value)"
+                  />
+                </label>
+              </div>
+              <div class="mt-3">
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Overrides</span>
+                <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                  <template x-for="variable in project?.variables ?? []" :key="variable.id">
+                    <label class="flex flex-col gap-1 text-xs">
+                      <span class="font-semibold text-slate-500" x-text="variable.name"></span>
+                      <input
+                        type="text"
+                        class="rounded-lg border border-slate-200 px-3 py-1.5 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                        :value="testCase.input?.[variable.name] ?? ''"
+                        @input="updateTestCaseInput(testCase.id, variable.name, $event.target.value)"
+                      />
+                    </label>
+                  </template>
+                </div>
+              </div>
+              <div class="mt-3 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                <span>Last run: <span x-text="testCase.lastRunAt ? formatRelative(testCase.lastRunAt) : 'never'"></span></span>
+                <Button type="button" size="sm" variant="outline" @click="runBench('active', testCase.id)">
+                  <i class="fas fa-play text-xs"></i>
+                  Run
+                </Button>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+
+      <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Run history</h2>
+          <Button type="button" size="sm" variant="outline" @click="runBench()">
+            <i class="fas fa-play text-xs"></i>
+            Run all
+          </Button>
+        </div>
+        <template x-if="(project?.runs ?? []).length === 0">
+          <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+            Run the test bench to capture outputs and metrics.
+          </p>
+        </template>
+        <div class="space-y-4">
+          <template x-for="run in project?.runs ?? []" :key="run.id">
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div class="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs uppercase tracking-wide">
+                    Variant <span x-text="run.variantId"></span>
+                  </span>
+                  <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold uppercase" :class="run.pass ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'">
+                    <i class="fas" :class="run.pass ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+                    <span x-text="run.pass ? 'Pass' : 'Needs review'"></span>
+                  </span>
+                </div>
+                <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                  <span x-text="'Prompt ' + run.tokensPrompt + ' tokens'"></span>
+                  <span x-text="'Output ' + run.tokensOutput + ' tokens'"></span>
+                  <span x-text="'$' + formatNumber(run.cost)"></span>
+                  <span x-text="run.latencyMs + ' ms'"></span>
+                  <span x-text="formatRelative(run.createdAt)"></span>
+                </div>
+              </div>
+              <p class="mt-3 whitespace-pre-line rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm text-slate-700" x-text="run.output"></p>
+              <div class="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                <span class="font-semibold uppercase tracking-wide text-slate-500">Tags:</span>
+                <template x-for="tag in run.tags" :key="tag">
+                  <span class="rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-wide text-slate-600" x-text="tag"></span>
+                </template>
+                <span class="ml-auto text-[11px] uppercase tracking-wide">Input: <span x-text="run.inputSummary"></span></span>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+
+      <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Versions</h2>
+          <div class="flex items-center gap-2">
+            <input
+              type="text"
+              class="w-56 rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="Snapshot note"
+              x-model="builder.versionNote"
+            />
+            <Button type="button" size="sm" variant="outline" @click="createVersion()">
+              <i class="fas fa-camera text-xs"></i>
+              Snapshot
+            </Button>
+          </div>
+        </div>
+        <template x-if="(project?.versions ?? []).length === 0">
+          <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-sm text-slate-600">
+            No versions yet. Capture a snapshot after major edits.
+          </p>
+        </template>
+        <div class="space-y-4">
+          <template x-for="version in project?.versions ?? []" :key="version.id">
+            <article class="rounded-2xl border border-slate-200 bg-slate-50 p-4 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900" x-text="version.label"></h3>
+                  <p class="text-sm text-slate-600" x-text="version.notes"></p>
+                </div>
+                <div class="text-sm text-slate-500">
+                  <p><span class="font-semibold">Author:</span> <span x-text="version.author"></span></p>
+                  <p><span class="font-semibold">Created:</span> <span x-text="formatRelative(version.createdAt)"></span></p>
+                </div>
+              </div>
+              <p class="mt-2 text-sm text-slate-500" x-text="version.diffSummary"></p>
+              <Button type="button" size="sm" variant="outline" class="mt-3" @click="restoreVersion(version.id)">
+                <i class="fas fa-rotate-left text-xs"></i>
+                Restore
+              </Button>
+            </article>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <div
+      x-show="builder.export.open"
+      class="fixed inset-0 z-40 flex items-end justify-center bg-slate-900/40 px-4 py-10 sm:items-center sm:px-6"
+      x-transition.opacity
+    >
+      <div class="w-full max-w-3xl rounded-3xl border border-slate-200 bg-white p-6 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold text-slate-900" x-text="'Export · ' + builder.export.format.toUpperCase()"></h3>
+          <button type="button" class="text-slate-500 hover:text-slate-700" @click="closeExport()">
+            <i class="fas fa-xmark text-lg"></i>
+          </button>
+        </div>
+        <div class="mt-4 flex flex-wrap items-center gap-3 text-sm">
+          <label class="flex items-center gap-2">
+            Format
+            <select class="rounded-lg border border-slate-200 px-3 py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" x-model="builder.export.format" @change="generateExport()">
+              <option value="json">JSON</option>
+              <option value="prompt">.prompt</option>
+              <option value="markdown">Markdown</option>
+              <option value="code">Code</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-2" x-show="builder.export.format === 'code'">
+            Language
+            <select class="rounded-lg border border-slate-200 px-3 py-1.5 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200" x-model="builder.export.language" @change="generateExport()">
+              <option value="js">JavaScript</option>
+              <option value="ts">TypeScript</option>
+              <option value="py">Python</option>
+            </select>
+          </label>
+          <Button type="button" size="sm" variant="outline" @click="copyExport()">
+            <i class="fas fa-copy text-xs"></i>
+            Copy
+          </Button>
+        </div>
+        <pre class="mt-4 max-h-96 overflow-y-auto rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-700" x-text="builder.export.content"></pre>
+      </div>
+    </div>
+  </main>
+</Layout>
+<script is:inline>
+  window.promptBuilderWorkspace = function () {
+    const store = Alpine.store("promptBuilder");
+    const clone = (value) => JSON.parse(JSON.stringify(value ?? null));
+    const estimateTokens = (text) => {
+      const normalized = (text ?? "").toString().replace(/\s+/g, " ").trim();
+      if (!normalized) return 32;
+      return Math.max(32, Math.round(normalized.length / 4));
+    };
+    const slugify = (value) =>
+      (value ?? "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "") || "prompt";
+
+    return {
+      store,
+      builder: {
+        project: null,
+        activeVariantId: "A",
+        runtimeInputs: {},
+        toast: null,
+        saving: false,
+        running: false,
+        linting: false,
+        hasUnsavedChanges: false,
+        versionNote: "",
+        export: { open: false, format: "json", language: "js", content: "" },
+        lastSavedAt: null,
+        shareUrl: null,
+      },
+      get project() {
+        return this.builder.project;
+      },
+      init() {
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get("id");
+        const template = params.get("template");
+        let project = id ? this.store.getProjectById(id) : null;
+        if (!project && template) {
+          project = this.store.createFromTemplate(template);
+        }
+        if (!project) {
+          project = this.store.createBlankProject();
+        }
+        this.loadProject(project);
+        this.generateExport();
+      },
+      loadProject(project) {
+        const snapshot = clone(project);
+        this.builder.project = snapshot;
+        this.builder.activeVariantId = snapshot.activeVariantId ?? "A";
+        this.ensureRuntime();
+        this.builder.lastSavedAt = snapshot.lastSavedAt ?? null;
+        this.builder.shareUrl = snapshot.shareSlug
+          ? `${window.location.origin}/prompt-builder/view/${snapshot.shareSlug}`
+          : null;
+        this.builder.hasUnsavedChanges = false;
+      },
+      ensureRuntime() {
+        const runtime = {};
+        (this.project?.variables ?? []).forEach((variable) => {
+          runtime[variable.name] = variable.defaultValue ?? "";
+        });
+        this.builder.runtimeInputs = runtime;
+      },
+      markDirty() {
+        this.builder.hasUnsavedChanges = true;
+      },
+      updateTitle(value) {
+        if (!this.project) return;
+        this.project.title = value || "Untitled prompt";
+        this.markDirty();
+      },
+      updateDescription(value) {
+        if (!this.project) return;
+        this.project.description = value || "";
+        this.markDirty();
+      },
+      activeVariant() {
+        if (!this.project) return null;
+        return (
+          this.project.variants.find((variant) => variant.id === this.builder.activeVariantId) ??
+          this.project.variants[0] ??
+          null
+        );
+      },
+      setActiveVariant(id) {
+        if (!this.project) return;
+        const variant = this.project.variants.find((item) => item.id === id);
+        if (!variant) return;
+        this.project.activeVariantId = id;
+        this.builder.activeVariantId = id;
+        this.markDirty();
+      },
+      duplicateVariant() {
+        const variant = this.activeVariant();
+        if (!variant || !this.project) return;
+        const copy = clone(variant);
+        copy.id = this.createId("variant").toUpperCase();
+        copy.label = `${variant.label} Copy`;
+        copy.enabled = false;
+        this.project.variants.push(copy);
+        this.markDirty();
+      },
+      updateBlock(field, value) {
+        const variant = this.activeVariant();
+        if (!variant) return;
+        variant.blocks[field] = value;
+        this.markDirty();
+      },
+      addExample() {
+        const variant = this.activeVariant();
+        if (!variant) return;
+        variant.blocks.examples = variant.blocks.examples ?? [];
+        variant.blocks.examples.push({
+          id: this.createId("example"),
+          label: "New example",
+          enabled: true,
+          input: "",
+          output: "",
+        });
+        this.markDirty();
+      },
+      updateExample(id, field, value) {
+        const variant = this.activeVariant();
+        if (!variant) return;
+        const example = variant.blocks.examples?.find((item) => item.id === id);
+        if (!example) return;
+        example[field] = value;
+        this.markDirty();
+      },
+      toggleExample(id) {
+        const variant = this.activeVariant();
+        if (!variant) return;
+        const example = variant.blocks.examples?.find((item) => item.id === id);
+        if (!example) return;
+        example.enabled = !example.enabled;
+        this.markDirty();
+      },
+      addVariable() {
+        if (!this.project) return;
+        const variable = {
+          id: this.createId("var"),
+          name: this.ensureVariableName(`variable_${(this.project.variables?.length ?? 0) + 1}`),
+          label: "New variable",
+          type: "string",
+          defaultValue: "",
+          description: "Describe how this variable should be used.",
+          required: true,
+        };
+        this.project.variables.push(variable);
+        this.builder.runtimeInputs[variable.name] = "";
+        this.markDirty();
+      },
+      removeVariable(id) {
+        if (!this.project) return;
+        const variable = this.project.variables.find((item) => item.id === id);
+        this.project.variables = this.project.variables.filter((item) => item.id !== id);
+        if (variable) {
+          delete this.builder.runtimeInputs[variable.name];
+          (this.project.testCases ?? []).forEach((testCase) => {
+            if (testCase.input) delete testCase.input[variable.name];
+          });
+        }
+        this.markDirty();
+      },
+      ensureVariableName(value, excludeId = null) {
+        const base =
+          (value ?? "")
+            .toString()
+            .toLowerCase()
+            .replace(/[^a-z0-9_]+/g, "_")
+            .replace(/^_+|_+$/g, "") || "variable";
+        let candidate = base;
+        let suffix = 1;
+        while (
+          this.project?.variables?.some(
+            (item) => item.id !== excludeId && item.name.toLowerCase() === candidate.toLowerCase(),
+          )
+        ) {
+          candidate = `${base}_${suffix}`;
+          suffix += 1;
+        }
+        return candidate;
+      },
+      renameVariable(variable, value) {
+        if (!this.project) return;
+        const sanitized = this.ensureVariableName(value, variable.id);
+        if (sanitized === variable.name) return;
+        const previous = variable.name;
+        variable.name = sanitized;
+        if (this.builder.runtimeInputs[previous] !== undefined) {
+          this.builder.runtimeInputs[sanitized] = this.builder.runtimeInputs[previous];
+          delete this.builder.runtimeInputs[previous];
+        } else {
+          this.builder.runtimeInputs[sanitized] = variable.defaultValue ?? "";
+        }
+        (this.project.testCases ?? []).forEach((testCase) => {
+          testCase.input = testCase.input ?? {};
+          if (testCase.input[previous] !== undefined) {
+            testCase.input[sanitized] = testCase.input[previous];
+            delete testCase.input[previous];
+          }
+        });
+        this.markDirty();
+      },
+      updateVariableType(variable, value) {
+        variable.type = value;
+        if (value !== "enum") {
+          delete variable.options;
+        }
+        this.markDirty();
+      },
+      toggleVariableRequired(variable) {
+        variable.required = !variable.required;
+        this.markDirty();
+      },
+      updateVariableDefault(variable, value) {
+        variable.defaultValue = value;
+        this.builder.runtimeInputs[variable.name] = value;
+        this.markDirty();
+      },
+      updateVariableOptions(variable, raw) {
+        const items = (raw ?? "")
+          .split(",")
+          .map((entry) => entry.trim())
+          .filter(Boolean);
+        if (items.length === 0) {
+          delete variable.options;
+        } else {
+          variable.options = items.map((label) => ({ label, value: slugify(label) }));
+        }
+        this.markDirty();
+      },
+      setRuntimeInput(name, value) {
+        this.builder.runtimeInputs[name] = value;
+      },
+      addTestCase() {
+        if (!this.project) return;
+        const input = { ...this.builder.runtimeInputs };
+        const testCase = {
+          id: this.createId("case"),
+          label: "New test case",
+          persona: "Target persona",
+          input,
+          expectedTraits: ["Clear"],
+          tags: ["sample"],
+          enabled: true,
+          lastRunAt: null,
+        };
+        this.project.testCases.unshift(testCase);
+        this.markDirty();
+      },
+      updateTestCaseField(id, field, value) {
+        const testCase = this.project?.testCases?.find((item) => item.id === id);
+        if (!testCase) return;
+        testCase[field] = value;
+        this.markDirty();
+      },
+      updateTestCaseList(id, field, raw) {
+        const testCase = this.project?.testCases?.find((item) => item.id === id);
+        if (!testCase) return;
+        testCase[field] = (raw ?? "")
+          .split(",")
+          .map((entry) => entry.trim())
+          .filter(Boolean);
+        this.markDirty();
+      },
+      updateTestCaseInput(id, variable, value) {
+        const testCase = this.project?.testCases?.find((item) => item.id === id);
+        if (!testCase) return;
+        testCase.input = testCase.input ?? {};
+        testCase.input[variable] = value;
+        this.markDirty();
+      },
+      toggleTestCase(id) {
+        const testCase = this.project?.testCases?.find((item) => item.id === id);
+        if (!testCase) return;
+        testCase.enabled = !testCase.enabled;
+        this.markDirty();
+      },
+      removeTestCase(id) {
+        if (!this.project) return;
+        this.project.testCases = this.project.testCases.filter((item) => item.id !== id);
+        this.markDirty();
+      },
+      runBench(scope = "active", caseId = null) {
+        if (!this.project) return;
+        const cases = (this.project.testCases ?? []).filter((testCase) => {
+          if (caseId) return testCase.id === caseId;
+          return testCase.enabled;
+        });
+        if (cases.length === 0) {
+          this.toast("No test cases selected.", "info");
+          return;
+        }
+        const variants = (this.project.variants ?? []).filter((variant) => {
+          if (!variant.enabled) return false;
+          if (scope === "active") return variant.id === this.builder.activeVariantId;
+          return true;
+        });
+        if (variants.length === 0) {
+          this.toast("Enable a variant to run.", "info");
+          return;
+        }
+        this.builder.running = true;
+        const created = [];
+        cases.forEach((testCase) => {
+          const runtime = this.compileRuntime(testCase);
+          variants.forEach((variant) => {
+            const run = this.createRunRecord(variant, testCase, runtime);
+            this.project.runs.unshift(run);
+            if (this.project.runs.length > 30) {
+              this.project.runs = this.project.runs.slice(0, 30);
+            }
+            testCase.lastRunAt = run.createdAt;
+            created.push(run);
+          });
+        });
+        if (created.length > 0) {
+          const newest = created[0];
+          this.project.lastRunAt = newest.createdAt;
+          this.project.runsToday = (this.project.runsToday ?? 0) + created.length;
+          this.project.runsTotal = (this.project.runsTotal ?? 0) + created.length;
+        }
+        this.builder.running = false;
+        this.markDirty();
+        this.syncProject();
+        this.toast(`Created ${created.length} run${created.length === 1 ? "" : "s"}.`, "success");
+      },
+      compileRuntime(testCase) {
+        const runtime = { ...this.builder.runtimeInputs };
+        Object.entries(testCase.input ?? {}).forEach(([key, value]) => {
+          runtime[key] = value ?? "";
+        });
+        return runtime;
+      },
+      createRunRecord(variant, testCase, runtime) {
+        const promptText = [
+          variant.blocks.system,
+          variant.blocks.instruction,
+          variant.blocks.toolHints,
+        ]
+          .filter(Boolean)
+          .join("
+
+");
+        const promptTokens = estimateTokens(promptText);
+        const output = this.composeOutput(variant, testCase, runtime);
+        const outputTokens = estimateTokens(output) + (testCase.expectedTraits?.length ?? 0) * 12;
+        const costRate = this.project?.plan === "pro" ? 0.000018 : 0.00002;
+        const pass = (testCase.expectedTraits ?? []).every((trait) => !/fail|missing/i.test(trait));
+        const tags = Array.from(new Set([...(testCase.tags ?? []), pass ? "passes" : "needs-review"]));
+        return {
+          id: this.createId("run"),
+          caseId: testCase.id,
+          variantId: variant.id,
+          output,
+          tokensPrompt: promptTokens,
+          tokensOutput: outputTokens,
+          cost: Number(((promptTokens + outputTokens) * costRate).toFixed(3)),
+          latencyMs: 900 + outputTokens * 4,
+          pass,
+          createdAt: new Date().toISOString(),
+          modelName: this.project?.model?.model ?? "gpt-4o-mini",
+          tags,
+          inputSummary: this.buildInputSummary(runtime),
+        };
+      },
+      buildInputSummary(runtime) {
+        const entries = Object.entries(runtime ?? {});
+        if (entries.length === 0) return "No overrides";
+        const preview = entries
+          .slice(0, 3)
+          .map(([key, value]) => `${key}=${value}`)
+          .join(", ");
+        return entries.length > 3 ? `${preview}, …` : preview;
+      },
+      composeOutput(variant, testCase, runtime) {
+        const traits =
+          (testCase.expectedTraits ?? []).length > 0
+            ? (testCase.expectedTraits ?? []).map((trait) => `• ${trait}`).join("
+")
+            : "• General quality expectations";
+        const variables = Object.entries(runtime ?? {})
+          .map(([key, value]) => `- ${key}: ${value || "—"}`)
+          .join("
+");
+        const callToAction =
+          runtime.call_to_action || runtime.cta || "Share the output with the review channel.";
+        return [
+          `${this.project?.title ?? "Prompt"} · Variant ${variant.id}`,
+          `Persona: ${testCase.persona}`,
+          "",
+          "Key expectations:",
+          traits,
+          "",
+          "Runtime variables:",
+          variables,
+          "",
+          `Next step: ${callToAction}`,
+        ].join("
+");
+      },
+      lintProject() {
+        if (!this.project) return;
+        this.builder.linting = true;
+        const issues = [];
+        const haystack = (variant) =>
+          `${variant.blocks.system} ${variant.blocks.instruction} ${variant.blocks.toolHints}`.toLowerCase();
+        (this.project.variables ?? []).forEach((variable) => {
+          const referenced = (this.project.variants ?? []).some((variant) =>
+            haystack(variant).includes(variable.name.toLowerCase()),
+          );
+          if (!referenced) {
+            issues.push({
+              id: this.createId("lint"),
+              severity: "warn",
+              field: "variables",
+              message: `Variable {${variable.name}} is never referenced.`,
+            });
+          }
+          if (variable.required && !variable.defaultValue) {
+            issues.push({
+              id: this.createId("lint"),
+              severity: "error",
+              field: "variables",
+              message: `Required variable {${variable.name}} has no default.`,
+            });
+          }
+        });
+        (this.project.variants ?? []).forEach((variant) => {
+          const enabledExamples = variant.blocks.examples?.filter((example) => example.enabled) ?? [];
+          if (enabledExamples.length === 0) {
+            issues.push({
+              id: this.createId("lint"),
+              severity: "info",
+              field: "examples",
+              message: `Variant ${variant.id} has no enabled examples.`,
+            });
+          }
+        });
+        this.project.lintIssues = issues;
+        this.builder.linting = false;
+        this.syncProject();
+        this.toast(
+          issues.length === 0 ? "No lint issues detected." : `Found ${issues.length} lint issue${issues.length === 1 ? "" : "s"}.`,
+          issues.length === 0 ? "success" : "info",
+        );
+      },
+      saveProject() {
+        if (!this.project) return;
+        this.builder.saving = true;
+        this.project.lastSavedAt = new Date().toISOString();
+        this.builder.lastSavedAt = this.project.lastSavedAt;
+        this.syncProject();
+        this.builder.hasUnsavedChanges = false;
+        this.builder.saving = false;
+        this.toast("Workspace saved.", "success");
+      },
+      createVersion() {
+        if (!this.project) return;
+        const next =
+          Math.max(0, ...(this.project.versions ?? []).map((version) => version.version ?? 0)) + 1;
+        const snapshot = {
+          id: this.createId("version"),
+          version: next,
+          label: this.builder.versionNote ? `v${next} · ${this.builder.versionNote}` : `v${next}`,
+          notes: this.builder.versionNote || "Snapshot captured from builder.",
+          createdAt: new Date().toISOString(),
+          author: "You",
+          diffSummary: this.builder.versionNote || "Saved directly from workspace.",
+          payload: clone({
+            variants: this.project.variants,
+            variables: this.project.variables,
+            model: this.project.model,
+            activeVariantId: this.builder.activeVariantId,
+          }),
+        };
+        this.project.versions.unshift(snapshot);
+        this.builder.versionNote = "";
+        this.markDirty();
+        this.syncProject();
+        this.toast(`Version v${next} created.`, "success");
+      },
+      restoreVersion(id) {
+        if (!this.project) return;
+        const version = this.project.versions?.find((item) => item.id === id);
+        if (!version) return;
+        const payload = version.payload ?? {};
+        this.project.variants = clone(payload.variants ?? this.project.variants);
+        this.project.variables = clone(payload.variables ?? this.project.variables);
+        this.project.model = clone(payload.model ?? this.project.model);
+        this.project.activeVariantId = payload.activeVariantId ?? "A";
+        this.builder.activeVariantId = this.project.activeVariantId;
+        this.ensureRuntime();
+        this.markDirty();
+        this.syncProject();
+        this.toast(`Restored version v${version.version}.`, "info");
+      },
+      publishShare() {
+        if (!this.project) return;
+        if (!this.project.shareSlug) {
+          const suffix = this.createId("share").slice(-6);
+          this.project.shareSlug = `${slugify(this.project.title)}-${suffix}`;
+        }
+        this.builder.shareUrl = `${window.location.origin}/prompt-builder/view/${this.project.shareSlug}`;
+        this.syncProject();
+        this.toast("Share link ready.", "success");
+      },
+      showExport(format = "json", language = "js") {
+        this.builder.export.format = format;
+        this.builder.export.language = language;
+        this.generateExport();
+        this.builder.export.open = true;
+      },
+      generateExport() {
+        if (!this.project) return;
+        const format = this.builder.export.format;
+        const variant = this.activeVariant();
+        let content = "";
+        if (format === "json") {
+          content = JSON.stringify(
+            {
+              id: this.project.id,
+              title: this.project.title,
+              plan: this.project.plan,
+              model: this.project.model,
+              variants: this.project.variants,
+              variables: this.project.variables,
+              testCases: this.project.testCases,
+            },
+            null,
+            2,
+          );
+        } else if (format === "prompt") {
+          const examples =
+            variant?.blocks.examples
+              ?.filter((example) => example.enabled)
+              .map((example) => `Example: ${example.label}
+Input: ${example.input}
+Output: ${example.output}`)
+              .join("
+
+") ?? "No enabled examples.";
+          content = `# System
+${variant?.blocks.system ?? ""}
+
+# Instruction
+${variant?.blocks.instruction ?? ""}
+
+# Tool hints
+${variant?.blocks.toolHints ?? ""}
+
+# Examples
+${examples}`;
+        } else if (format === "markdown") {
+          const variables =
+            (this.project.variables ?? [])
+              .map((variable) => `- **${variable.name}** (${variable.type}) — ${variable.description}`)
+              .join("
+") || "- No variables yet.";
+          content = `# ${this.project.title}
+
+${this.project.description}
+
+## Active variant (${variant?.id ?? "A"})
+
+### System
+${variant?.blocks.system ?? ""}
+
+### Instruction
+${variant?.blocks.instruction ?? ""}
+
+### Tool hints
+${variant?.blocks.toolHints ?? ""}
+
+## Variables
+${variables}`;
+        } else {
+          content = this.buildCodeSnippet();
+        }
+        this.builder.export.content = content;
+      },
+      buildCodeSnippet() {
+        const variant = this.activeVariant();
+        const runtime = JSON.stringify(this.builder.runtimeInputs, null, 2);
+        const instruction = (variant?.blocks.instruction ?? "").replace(/`/g, "\`");
+        const modelName = this.project?.model?.model ?? "gpt-4o-mini";
+        const temperature = this.project?.model?.temperature ?? 0.5;
+        if (this.builder.export.language === "py") {
+          return [
+            "from openai import OpenAI",
+            "",
+            "client = OpenAI()",
+            "",
+            `variables = ${runtime}`,
+            `prompt = f"""${instruction}"""`,
+            "",
+            "response = client.responses.create(",
+            `    model="${modelName}",`,
+            "    input=prompt.format(**variables),",
+            `    temperature=${temperature},`,
+            ")",
+            "",
+            "print(response.output_text)",
+          ].join("
+");
+        }
+        const header = [
+          `const variables = ${runtime};`,
+          `const prompt = \`${instruction}\`;`,
+          "",
+          "const rendered = prompt.replace(/\{(\w+)\}/g, (_, key) => variables[key] ?? "");",
+        ].join("
+");
+        const body = [
+          "const response = await client.responses.create({",
+          `  model: "${modelName}",`,
+          "  input: rendered,",
+          `  temperature: ${temperature},`,
+          "});",
+          "",
+          "console.log(response.output_text);",
+        ].join("
+");
+        if (this.builder.export.language === "ts") {
+          return [
+            "import OpenAI from "openai";",
+            "",
+            "const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });",
+            header,
+            "",
+            body,
+          ].join("
+");
+        }
+        return [
+          "import OpenAI from "openai";",
+          "",
+          "const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });",
+          header,
+          "",
+          body,
+        ].join("
+");
+      },
+      closeExport() {
+        this.builder.export.open = false;
+      },
+      copyExport() {
+        if (!this.builder.export.content) return;
+        navigator.clipboard
+          .writeText(this.builder.export.content)
+          .then(() => this.toast("Copied export to clipboard.", "success"))
+          .catch(() => this.toast("Unable to copy export.", "error"));
+      },
+      formatRelative(value) {
+        if (!value) return "never";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return "invalid";
+        const diff = date.getTime() - Date.now();
+        const minutes = Math.round(diff / (1000 * 60));
+        const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+        if (Math.abs(minutes) < 60) return rtf.format(minutes, "minute");
+        const hours = Math.round(minutes / 60);
+        if (Math.abs(hours) < 48) return rtf.format(hours, "hour");
+        const days = Math.round(hours / 24);
+        return rtf.format(days, "day");
+      },
+      formatNumber(value) {
+        return Number(value ?? 0).toFixed(3);
+      },
+      toast(message, type = "info") {
+        this.builder.toast = { message, type };
+        window.setTimeout(() => {
+          if (this.builder.toast?.message === message) {
+            this.builder.toast = null;
+          }
+        }, 3600);
+      },
+      syncProject() {
+        if (!this.project) return;
+        this.store.upsertProject(this.project);
+      },
+      createId(prefix) {
+        return `${prefix}-${Math.random().toString(36).slice(2, 10)}`;
+      },
+    };
+  };
+</script>
