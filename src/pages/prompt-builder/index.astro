@@ -1,13 +1,228 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import {
+  promptBuilderPlans,
+  samplePromptBuilderProjects,
+  samplePromptBuilderTemplates,
+} from "../../data/promptBuilderSamples";
+
+const projects = samplePromptBuilderProjects();
+const plans = promptBuilderPlans();
+const templates = samplePromptBuilderTemplates();
+
+const heroStats = [
+  {
+    label: "Active projects",
+    value: projects.length,
+  },
+  {
+    label: "Templates",
+    value: templates.length,
+  },
+  {
+    label: "Runs today",
+    value: projects.reduce((total, project) => total + project.runsToday, 0),
+  },
+];
 ---
+
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section data-mini-app-landing class="py-16" x-data="() => ({ loader: $store.loader, app: $store['prompt-builder'] ?? {} })">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Prompt Builder
-        </h1>
+  <main class="min-h-screen bg-slate-50">
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-sky-500 to-purple-600 py-16 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_rgba(79,70,229,0.1))]"></div>
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+        <div class="flex-1 space-y-6">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+            Prompt Builder
+          </span>
+          <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+            Compose, test, and share AI prompts with confidence
+          </h1>
+          <p class="max-w-2xl text-white/80">
+            Build reusable prompt systems with variables, few-shot examples, linting, and an integrated test bench. Snapshot versions, compare variants, and export to your apps in seconds.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <Button href="/prompt-builder/builder" variant="secondary">
+              <i class="fas fa-pen-to-square text-sm"></i>
+              Open builder
+            </Button>
+            <Button href="/prompt-builder/templates" variant="outline">
+              <i class="fas fa-layer-group text-sm"></i>
+              Browse templates
+            </Button>
+            <Button href="#mini-app-projects" variant="ghost">
+              <i class="fas fa-grid text-sm"></i>
+              Explore projects
+            </Button>
+          </div>
+        </div>
+        <div class="grid w-full max-w-md gap-4 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+          {heroStats.map((stat) => (
+            <div class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3">
+              <p class="text-xs font-semibold uppercase tracking-wide text-white/70">{stat.label}</p>
+              <p class="mt-2 text-3xl font-bold">{stat.value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="mini-app-projects"
+      class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8"
+      x-data="{
+        store: $store.promptBuilder,
+        search: '',
+        status: 'all',
+        plan: 'all',
+        get filtered() {
+          const query = this.search.trim().toLowerCase();
+          return this.store.projects.filter((project) => {
+            const matchesSearch =
+              !query ||
+              project.title.toLowerCase().includes(query) ||
+              project.description.toLowerCase().includes(query) ||
+              project.tags.some((tag) => tag.toLowerCase().includes(query));
+            const matchesStatus = this.status === 'all' || project.status === this.status;
+            const matchesPlan = this.plan === 'all' || project.plan === this.plan;
+            return matchesSearch && matchesStatus && matchesPlan;
+          });
+        },
+      }"
+    >
+      <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h2 class="text-3xl font-bold text-slate-900">Your prompt projects</h2>
+          <p class="mt-2 text-sm text-slate-600">
+            Organize marketing copy, support workflows, data analysis prompts, and more from a single workspace.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <i class="fas fa-search text-xs text-slate-500"></i>
+            <input
+              type="search"
+              class="w-40 bg-transparent focus:outline-none"
+              placeholder="Search"
+              x-model="search"
+            />
+          </label>
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</span>
+            <select class="bg-transparent focus:outline-none" x-model="status">
+              <option value="all">All</option>
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Plan</span>
+            <select class="bg-transparent focus:outline-none" x-model="plan">
+              <option value="all">All</option>
+              <option value="free">Free</option>
+              <option value="pro">Pro</option>
+            </select>
+          </label>
+        </div>
+      </div>
+
+      <div class="mt-10 grid gap-6 lg:grid-cols-2">
+        <template x-if="filtered.length === 0">
+          <div class="lg:col-span-2 rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center">
+            <i class="fas fa-sparkles text-2xl text-slate-300"></i>
+            <h3 class="mt-4 text-lg font-semibold text-slate-900">No projects match your filters</h3>
+            <p class="mt-2 text-sm text-slate-600">
+              Try adjusting your search or status filters to reveal more prompt workspaces.
+            </p>
+          </div>
+        </template>
+
+        <template x-for="project in filtered" :key="project.id">
+          <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between">
+                <h3 class="text-xl font-semibold text-slate-900" x-text="project.title"></h3>
+                <span
+                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold uppercase tracking-wide"
+                  :class="project.status === 'published' ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-600'"
+                  x-text="project.status === 'published' ? 'Published' : 'Draft'"
+                ></span>
+              </div>
+              <p class="text-sm text-slate-600" x-text="project.description"></p>
+              <div class="flex flex-wrap gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <template x-for="tag in project.tags" :key="tag">
+                  <span class="rounded-full bg-slate-100 px-2 py-1" x-text="tag"></span>
+                </template>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+              <dl class="flex flex-wrap gap-3 text-xs">
+                <div class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+                  <span class="text-slate-500">Runs</span>
+                  <span class="ml-2" x-text="project.runsTotal"></span>
+                </div>
+                <div class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+                  <span class="text-slate-500">Updated</span>
+                  <span class="ml-2" x-text="new Date(project.lastSavedAt).toLocaleDateString()"></span>
+                </div>
+              </dl>
+              <div class="flex flex-wrap gap-2">
+                <Button :href="`/prompt-builder/builder?id=${project.id}`" size="sm">
+                  <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                  Builder
+                </Button>
+                <Button :href="project.shareSlug ? `/prompt-builder/view/${project.shareSlug}` : '/prompt-builder/view'" size="sm" variant="outline" :class="project.shareSlug ? '' : 'pointer-events-none opacity-60'">
+                  <i class="fas fa-link text-xs"></i>
+                  Share link
+                </Button>
+              </div>
+            </div>
+          </article>
+        </template>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <h2 class="text-2xl font-bold text-slate-900">Plans & limits</h2>
+            <p class="mt-2 text-sm text-slate-600">
+              Scale from prototype to production with generous runs, exports, and model profiles.
+            </p>
+          </div>
+          <Button href="/pricing" variant="secondary">
+            View pricing details
+          </Button>
+        </div>
+        <div class="mt-8 grid gap-6 md:grid-cols-2">
+          {plans.map((plan) => (
+            <article class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">{plan.label}</h3>
+                <span class="text-sm font-semibold text-slate-500">{plan.projects}</span>
+              </header>
+              <p class="mt-2 text-sm text-slate-600">Runs: {plan.runsPerDay}</p>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {plan.features.map((feature) => (
+                  <li class="flex items-center gap-2">
+                    <i class="fas fa-check text-emerald-500"></i>
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+              <ul class="mt-4 space-y-2 text-xs text-slate-500">
+                {plan.perks.map((perk) => (
+                  <li class="flex items-center gap-2">
+                    <i class="fas fa-sparkles"></i>
+                    <span>{perk}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   </main>

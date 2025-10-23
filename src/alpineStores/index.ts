@@ -27,3 +27,4 @@ import './minutes';
 import './invoice';
 import './blogWriter';
 import './email';
+import './promptBuilder';
