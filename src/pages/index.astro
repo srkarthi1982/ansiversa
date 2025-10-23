@@ -1,18 +1,41 @@
 ---
+import { existsSync } from "node:fs";
+import { join } from "node:path";
+import { fileURLToPath } from "node:url";
 import Layout from "../layouts/Layout.astro";
 
 const mission =
   "Ansiversa is an AI-powered universe of 100 web-based mini-apps engineered for learning, creativity, productivity, and everyday life — all unified under one subscription.";
 
-const availableMiniApps = new Map<string, string>([
-  ['/quiz', '/quiz'],
-  ['/flashnote', '/flashnote'],
-  ['/resume-builder', '/resume-builder'],
-  ['/portfolio-creator', '/portfolio-creator'],
-  ['/proposal-writer', '/proposal'],
-  ['/contract-generator', '/contract'],
-  ['/meeting-minutes-ai', '/meeting-minutes-ai'],
+const pagesDir = fileURLToPath(new URL("../pages", import.meta.url));
+
+const aliasMiniApps = new Map<string, string>([
+  ["/proposal-writer", "/proposal"],
+  ["/contract-generator", "/contract"],
+  ["/invoice-and-receipt-maker", "/invoice"],
+  ["/meeting-minutes-ai", "/minutes"],
+  ["/email-polisher", "/email"],
 ]);
+
+const hasMiniAppRoute = (href: string | undefined) => {
+  if (!href) return false;
+  const normalized = href.startsWith("/") ? href.slice(1) : href;
+  if (!normalized) return false;
+
+  const directFile = join(pagesDir, `${normalized}.astro`);
+  const indexFile = join(pagesDir, normalized, "index.astro");
+
+  return existsSync(directFile) || existsSync(indexFile);
+};
+
+const resolveMiniAppHref = (href: string | undefined) => {
+  if (!href) return undefined;
+
+  const normalized = href.startsWith("/") ? href : `/${href}`;
+  const resolved = aliasMiniApps.get(normalized) ?? normalized;
+
+  return hasMiniAppRoute(resolved) ? resolved : undefined;
+};
 
 const miniAppCategories = [
   {
@@ -53,11 +76,11 @@ const miniAppCategories = [
       { name: "Interview Coach", href: "/interview-coach" },
       { name: "Job Description Analyzer", href: "/job-description-analyzer" },
       { name: "Portfolio Creator", href: "/portfolio-creator" },
-      { name: "Meeting Minutes AI", href: "/meeting-minutes-ai" },
-      { name: "Email Polisher", href: "/email-polisher" },
-      { name: "Proposal Writer", href: "/proposal-writer" },
+      { name: "Meeting Minutes AI", href: "/minutes" },
+      { name: "Email Polisher", href: "/email" },
+      { name: "Proposal Writer", href: "/proposal" },
       { name: "Invoice & Receipt Maker", href: "/invoice" },
-      { name: "Contract Generator", href: "/contract-generator" },
+      { name: "Contract Generator", href: "/contract" },
       { name: "Presentation Designer", href: "/presentation-designer" },
       { name: "Career Planner", href: "/career-planner" },
       { name: "LinkedIn Bio Optimizer", href: "/linkedin-bio-optimizer" },
@@ -162,7 +185,7 @@ const miniAppCategories = [
 const categorizedMiniApps = miniAppCategories.map((category) => ({
   ...category,
   apps: category.apps.map((app) => {
-    const resolvedHref = app.href ? availableMiniApps.get(app.href) : undefined;
+    const resolvedHref = resolveMiniAppHref(app.href);
 
     return {
       ...app,

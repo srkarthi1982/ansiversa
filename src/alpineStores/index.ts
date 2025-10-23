@@ -26,3 +26,4 @@ import './contract';
 import './minutes';
 import './invoice';
 import './blogWriter';
+import './email';

@@ -5,6 +5,7 @@ import { seedFlashnote } from './flashnote/seed';
 import { seedProposal } from './proposal/seed';
 import { seedContract } from './contract/seed';
 import { seedMinutes } from './minutes/seed';
+import { seedEmail } from './email/seed';
 
 export default async function seed() {
   console.log('Seeding auth...');
@@ -21,4 +22,6 @@ export default async function seed() {
   await seedContract();
   console.log('Seeding meeting minutes...');
   await seedMinutes();
+  console.log('Seeding email workspace...');
+  await seedEmail();
 }

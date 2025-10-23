@@ -1,0 +1,96 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Layout>
+  <main
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ email: $store.email, query: '' })"
+    x-init="email.initDashboard()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent opacity-80"></div>
+      <div class="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6 text-center">
+          <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Email templates gallery</h1>
+          <p class="text-base text-slate-600 sm:text-lg">
+            Curated outreach, follow-up, and status update templates ready to personalize. Merge your saved variables and polish
+            in one click.
+          </p>
+          <div class="flex flex-wrap justify-center gap-3">
+            <Button href="/email">
+              <i class="fas fa-arrow-left text-xs"></i>
+              Back to workspace
+            </Button>
+            <Button type="button" variant="outline" @click.prevent="email.saveDraft()">
+              <i class="fas fa-floppy-disk text-xs"></i>
+              Save current draft
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-wrap gap-2 text-xs">
+            <template x-for="category in email.templateCategories" :key="category">
+              <button
+                type="button"
+                class="rounded-full px-3 py-1.5 font-semibold transition"
+                :class="email.templates.category === category ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600 hover:bg-indigo-50 hover:text-indigo-600'"
+                @click="email.setCategory(category)"
+              >
+                <span x-text="category"></span>
+              </button>
+            </template>
+          </div>
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+            <i class="fas fa-search text-xs"></i>
+            <input
+              type="search"
+              placeholder="Search templates"
+              class="w-48 bg-transparent text-sm focus:outline-none"
+              x-model="query"
+            />
+          </label>
+        </div>
+        <div class="grid gap-6 lg:grid-cols-2">
+          <template
+            x-for="template in email.filteredTemplates.filter((item) => item.name.toLowerCase().includes(query.toLowerCase()) || (item.subject ?? '').toLowerCase().includes(query.toLowerCase()))"
+            :key="template.id"
+          >
+            <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md">
+              <div class="space-y-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-[11px] font-semibold text-indigo-700">
+                  <i class="fas fa-tag text-[9px]"></i>
+                  <span x-text="template.category"></span>
+                </span>
+                <h2 class="text-lg font-semibold text-slate-900" x-text="template.name"></h2>
+                <p class="text-xs text-slate-500" x-text="template.subject ?? 'No subject preset'"></p>
+                <p class="text-sm text-slate-600 line-clamp-4" x-text="template.body"></p>
+              </div>
+              <div class="mt-4 flex flex-wrap items-center gap-3 text-xs">
+                <Button type="button" class="text-xs" @click.prevent="email.useTemplate(template)">
+                  <i class="fas fa-play text-[10px]"></i>
+                  Use template
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  class="text-xs"
+                  @click.prevent="email.saveDraft()"
+                >
+                  <i class="fas fa-plus text-[10px]"></i>
+                  Save to draft
+                </Button>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
