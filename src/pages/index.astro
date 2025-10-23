@@ -1,13 +1,8 @@
 ---
-import { existsSync } from "node:fs";
-import { join } from "node:path";
-import { fileURLToPath } from "node:url";
 import Layout from "../layouts/Layout.astro";
 
 const mission =
   "Ansiversa is an AI-powered universe of 100 web-based mini-apps engineered for learning, creativity, productivity, and everyday life — all unified under one subscription.";
-
-const pagesDir = fileURLToPath(new URL("../pages", import.meta.url));
 
 const aliasMiniApps = new Map<string, string>([
   ["/proposal-writer", "/proposal"],
@@ -17,24 +12,37 @@ const aliasMiniApps = new Map<string, string>([
   ["/email-polisher", "/email"],
 ]);
 
-const hasMiniAppRoute = (href: string | undefined) => {
-  if (!href) return false;
-  const normalized = href.startsWith("/") ? href.slice(1) : href;
-  if (!normalized) return false;
+const pageFiles = Object.keys(
+  import.meta.glob("../pages/**/*.{astro,md,mdx}", { eager: false })
+);
 
-  const directFile = join(pagesDir, `${normalized}.astro`);
-  const indexFile = join(pagesDir, normalized, "index.astro");
+const availableRoutes = new Set(
+  pageFiles.map((filePath) => {
+    const routePath = filePath
+      .replace("../pages", "")
+      .replace(/\/index\.(astro|mdx?|md)$/, "/")
+      .replace(/\.(astro|mdx?|md)$/, "");
 
-  return existsSync(directFile) || existsSync(indexFile);
+    if (!routePath || routePath === "/") {
+      return "/";
+    }
+
+    return routePath.endsWith("/") ? routePath.slice(0, -1) : routePath;
+  })
+);
+
+const normalizeRoute = (href: string | undefined) => {
+  if (!href) return undefined;
+  const withLeadingSlash = href.startsWith("/") ? href : `/${href}`;
+  if (withLeadingSlash === "/") return "/";
+  return withLeadingSlash.replace(/\/+$/, "");
 };
 
 const resolveMiniAppHref = (href: string | undefined) => {
-  if (!href) return undefined;
-
-  const normalized = href.startsWith("/") ? href : `/${href}`;
+  const normalized = normalizeRoute(href);
+  if (!normalized) return undefined;
   const resolved = aliasMiniApps.get(normalized) ?? normalized;
-
-  return hasMiniAppRoute(resolved) ? resolved : undefined;
+  return availableRoutes.has(resolved) ? resolved : undefined;
 };
 
 const miniAppCategories = [
@@ -333,9 +341,6 @@ const plans = [
                     ) : (
                       <span class="inline-flex items-center gap-2 text-slate-400">
                         <span>{app.name}</span>
-                        <span class="inline-flex items-center rounded-full bg-slate-200 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-500">
-                          Coming soon
-                        </span>
                       </span>
                     )}
                   </li>
