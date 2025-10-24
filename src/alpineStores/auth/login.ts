@@ -1,13 +1,13 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 
-class Login {
+class Login extends BaseStore {
   isLoading = false;
   identifier = '';
   password = '';
 
   onInit(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 2000);
+    this.showLoaderBriefly(2000);
   }
 
   async onSubmit(): Promise<void> {

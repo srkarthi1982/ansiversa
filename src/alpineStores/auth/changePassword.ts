@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 
 type ChangePasswordForm = {
   identifier: string;
@@ -14,12 +15,12 @@ const DEFAULT_FORM: ChangePasswordForm = {
   confirm: '',
 };
 
-class ChangePassword {
+class ChangePassword extends BaseStore {
   isSubmitting = false;
   form: ChangePasswordForm = { ...DEFAULT_FORM };
 
   onInit(): void {
-    this.showLoaderBriefly();
+    this.showLoaderBriefly(400);
   }
 
   updateField<K extends keyof ChangePasswordForm>(field: K, value: ChangePasswordForm[K]): void {
@@ -38,10 +39,6 @@ class ChangePassword {
     this.isSubmitting = false;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 400);
-  }
 }
 
 export type ChangePasswordStore = ChangePassword;

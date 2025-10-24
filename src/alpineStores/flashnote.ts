@@ -1,9 +1,8 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 import { actions } from 'astro:actions';
 import type { FlashNote, FlashNoteAIMode, FlashNoteDraft, FlashNoteReviewCard } from '../types/flashnote';
 import { readJSON, writeJSON } from '../utils/storage';
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 const STORAGE_KEYS = {
   activeNote: 'flashnote:last-active',
@@ -43,7 +42,7 @@ const sampleNotes: FlashNote[] = [
   },
 ];
 
-class FlashNoteStore {
+class FlashNoteStore extends BaseStore {
   state: {
     notes: FlashNote[];
     filteredNotes: FlashNote[];
@@ -115,7 +114,7 @@ class FlashNoteStore {
 
   async fetchNotes(): Promise<void> {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       const { data, error } = await actions.flashnote.list({});
       if (error) throw error;
@@ -140,7 +139,7 @@ class FlashNoteStore {
       this.state.error = 'Unable to load your notes right now. Sample data is displayed.';
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
@@ -233,7 +232,7 @@ class FlashNoteStore {
     if (!this.state.draft) return;
     const draft = clone(this.state.draft);
     this.state.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       if (this.state.activeNoteId) {
         const { data, error } = await actions.flashnote.update({
@@ -286,7 +285,7 @@ class FlashNoteStore {
       }
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
@@ -306,7 +305,7 @@ class FlashNoteStore {
     const targetId = id ?? this.state.activeNoteId;
     if (!targetId) return;
     this.state.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       const { error } = await actions.flashnote.delete({ id: targetId });
       if (error) throw error;
@@ -323,7 +322,7 @@ class FlashNoteStore {
       this.state.error = 'Deleting the note failed. Please try again later.';
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 

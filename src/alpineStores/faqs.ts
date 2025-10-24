@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
 type FaqKey = 'uiKit' | 'astroDb' | 'stripeSetup' | 'support';
 
@@ -11,7 +12,7 @@ const DEFAULT_STATE: FaqState = {
   support: false,
 };
 
-class Faqs {
+class Faqs extends BaseStore {
   openItems: FaqState = { ...DEFAULT_STATE };
 
   onInit(): void {
@@ -35,10 +36,6 @@ class Faqs {
     this.openItems[item] = true;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
-  }
 }
 
 export type FaqsStore = Faqs;

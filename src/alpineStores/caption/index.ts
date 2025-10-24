@@ -1,4 +1,5 @@
 import Alpine from "alpinejs";
+import { BaseStore } from "../base";
 import {
   captionBrandVoices,
   captionCampaigns,
@@ -35,7 +36,7 @@ const ensureArray = <T>(value: T[] | undefined | null): T[] =>
 const sumBy = (values: number[]) =>
   values.reduce((total, current) => total + current, 0);
 
-class CaptionStore {
+class CaptionStore extends BaseStore {
   private plan: CaptionPlan = "pro";
   private platforms: CaptionPlatform[] = captionPlatforms();
   private voices = captionBrandVoices();
@@ -79,6 +80,7 @@ class CaptionStore {
   };
 
   constructor() {
+    super();
     this.ensureVariantSelection();
   }
 

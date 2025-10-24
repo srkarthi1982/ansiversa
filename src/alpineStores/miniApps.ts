@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
 const miniApps = [
   { slug: 'ad-copy-assistant', name: 'Ad Copy Assistant' },
@@ -102,13 +103,9 @@ const miniApps = [
   { slug: 'would-you-rather', name: 'Would You Rather' },
 ];
 
-type LoaderLike = { show?: () => void; hide?: () => void };
-
-class DefaultMiniAppStore {
+class DefaultMiniAppStore extends BaseStore {
   onInit(): void {
-    const loader = Alpine.store('loader') as LoaderLike | undefined;
-    loader?.show?.();
-    setTimeout(() => loader?.hide?.(), 300);
+    this.showLoaderBriefly();
   }
 }
 

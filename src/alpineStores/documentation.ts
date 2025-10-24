@@ -1,8 +1,9 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
 type DocsSection = 'overview' | 'guides' | 'api' | 'deployment';
 
-class Documentation {
+class Documentation extends BaseStore {
   activeSection: DocsSection = 'overview';
 
   onInit(): void {
@@ -13,10 +14,6 @@ class Documentation {
     this.activeSection = section;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
-  }
 }
 
 export type DocumentationStore = Documentation;

@@ -1,13 +1,9 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
-class FeaturesStoreImpl {
+class FeaturesStoreImpl extends BaseStore {
   onInit(): void {
     this.showLoaderBriefly();
-  }
-
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
   }
 }
 

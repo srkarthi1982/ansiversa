@@ -1,11 +1,11 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
-class Home {
+class Home extends BaseStore {
   isLoading = false;
 
   onInit(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 2000);
+    this.showLoaderBriefly(2000);
   }
 }
 

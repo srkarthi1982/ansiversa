@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 import { actions } from 'astro:actions';
 import type {
   EmailDraft,
@@ -80,8 +81,6 @@ type TemplateCollection = {
   category: string;
 };
 
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
-
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const defaultQuickState = (): QuickState => ({
@@ -101,7 +100,7 @@ const defaultQuickState = (): QuickState => ({
   lastAction: null,
 });
 
-class EmailStore {
+class EmailStore extends BaseStore {
   plan: 'free' | 'pro' = 'free';
   toast: ToastState = null;
 
@@ -231,7 +230,7 @@ class EmailStore {
 
   private async loadWorkspace(): Promise<void> {
     this.drafts.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       const [{ data: listData, error: listError }, { data: templateData }, { data: signatureData }] = await Promise.all([
         actions.email.list({}),
@@ -265,7 +264,7 @@ class EmailStore {
       this.quick = defaultQuickState();
     } finally {
       this.drafts.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
@@ -508,7 +507,7 @@ class EmailStore {
     };
 
     try {
-      loaderStore()?.show?.();
+      this.loader?.show();
       if (!this.drafts.activeId) {
         const { data, error } = await actions.email.create({ title: payload.title, tone: payload.tone, formality: payload.formality, language: payload.language, subject: payload.subject });
         if (error) throw error;
@@ -537,14 +536,14 @@ class EmailStore {
       console.error('Unable to save draft', error);
       this.toast = { message: 'Could not save draft. Try again later.', type: 'error' };
     } finally {
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
   async deleteDraft(id: string) {
     if (!id) return;
     try {
-      loaderStore()?.show?.();
+      this.loader?.show();
       const { error } = await actions.email.delete({ id });
       if (error) throw error;
       this.drafts.items = this.drafts.items.filter((item) => item.id !== id);
@@ -561,13 +560,13 @@ class EmailStore {
       console.error('Unable to delete draft', error);
       this.toast = { message: 'Could not delete draft.', type: 'error' };
     } finally {
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
   async duplicateDraft(id: string) {
     try {
-      loaderStore()?.show?.();
+      this.loader?.show();
       const { data, error } = await actions.email.duplicate({ id });
       if (error) throw error;
       const draft = data?.draft as EmailDraft | undefined;
@@ -581,7 +580,7 @@ class EmailStore {
       console.error('Unable to duplicate draft', error);
       this.toast = { message: 'Could not duplicate draft.', type: 'error' };
     } finally {
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 

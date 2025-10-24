@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 import { getSampleCourseTrackerData } from '../lib/course-tracker/sample';
 import type {
   CourseRecord,
@@ -10,10 +11,6 @@ import type {
   ReminderSetting,
   StudySessionRecord,
 } from '../types/course-tracker';
-
-type LoaderLike = { show?: () => void; hide?: () => void };
-
-const loaderStore = () => Alpine.store('loader') as LoaderLike | undefined;
 
 type StatusFilter = 'all' | 'active' | 'completed' | 'planning' | 'archived';
 
@@ -36,7 +33,7 @@ interface DashboardMetrics {
   remindersDueToday: number;
 }
 
-class CourseTrackerStore {
+class CourseTrackerStore extends BaseStore {
   state: {
     loading: boolean;
     courses: CourseRecord[];
@@ -111,7 +108,7 @@ class CourseTrackerStore {
 
   async loadWorkspace(): Promise<void> {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       const sample = getSampleCourseTrackerData();
       this.state.courses = sample.courses;
@@ -126,7 +123,7 @@ class CourseTrackerStore {
       }
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 

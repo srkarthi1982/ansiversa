@@ -1,13 +1,14 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 
 export type VerifyEmailStatus = 'missing' | 'invalid' | 'expired' | 'used' | 'user_missing' | 'success';
 
-class VerifyEmail {
+class VerifyEmail extends BaseStore {
   status: VerifyEmailStatus = 'missing';
   isProcessing = false;
 
   onInit(): void {
-    this.showLoaderBriefly();
+    this.showLoaderBriefly(400);
   }
 
   setStatus(status: VerifyEmailStatus): void {
@@ -22,10 +23,6 @@ class VerifyEmail {
     this.isProcessing = false;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 400);
-  }
 }
 
 export type VerifyEmailStore = VerifyEmail;

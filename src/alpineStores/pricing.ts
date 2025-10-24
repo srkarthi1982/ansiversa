@@ -1,8 +1,9 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
 type BillingCycle = 'monthly' | 'annual';
 
-class Pricing {
+class Pricing extends BaseStore {
   billingCycle: BillingCycle = 'monthly';
 
   onInit(): void {
@@ -17,10 +18,6 @@ class Pricing {
     this.billingCycle = this.billingCycle === 'monthly' ? 'annual' : 'monthly';
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
-  }
 }
 
 export type PricingStore = Pricing;

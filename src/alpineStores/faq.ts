@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from './base';
 
 type FaqKey = 'onboarding' | 'submitApp' | 'membership' | 'cadence' | 'support';
 
@@ -12,7 +13,7 @@ const DEFAULT_STATE: FaqState = {
   support: false,
 };
 
-class FaqStoreImpl {
+class FaqStoreImpl extends BaseStore {
   openItems: FaqState = { ...DEFAULT_STATE };
 
   onInit(): void {
@@ -37,10 +38,6 @@ class FaqStoreImpl {
     this.openItems[item] = true;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
-  }
 }
 
 export type FaqStore = FaqStoreImpl;

@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 import {
   createEmptyInvoiceRecord,
   createInvoiceItem,
@@ -73,7 +74,7 @@ type ViewerState = {
   notFound: boolean;
 };
 
-class InvoiceStore {
+class InvoiceStore extends BaseStore {
   state = {
     loading: false,
     invoices: [] as InvoiceRecord[],
@@ -129,6 +130,7 @@ class InvoiceStore {
   private isLoaded = false;
 
   constructor() {
+    super();
     if (typeof window !== 'undefined') {
       this.loadProfile();
       this.loadFromStorage();

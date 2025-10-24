@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 
 type ForgotPasswordForm = {
   email: string;
@@ -8,12 +9,12 @@ const DEFAULT_FORM: ForgotPasswordForm = {
   email: '',
 };
 
-class ForgotPassword {
+class ForgotPassword extends BaseStore {
   isSubmitting = false;
   form: ForgotPasswordForm = { ...DEFAULT_FORM };
 
   onInit(): void {
-    this.showLoaderBriefly();
+    this.showLoaderBriefly(400);
   }
 
   updateEmail(value: string): void {
@@ -32,10 +33,6 @@ class ForgotPassword {
     this.isSubmitting = false;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 400);
-  }
 }
 
 export type ForgotPasswordStore = ForgotPassword;
