@@ -1,8 +1,9 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, PasswordResetToken, User, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { findUserByEmail, hashPassword, randomBytes } from './helpers';
 import { sendTemporaryPasswordEmail } from '../../utils/email.server';
+import { passwordResetRepository, userRepository } from './repositories';
 
 function generateTemporaryPassword(length = 12) {
   const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz23456789';
@@ -24,8 +25,8 @@ export const forgotPassword = defineAction({
     if (user) {
       const temporaryPassword = generateTemporaryPassword();
       const newHash = hashPassword(temporaryPassword);
-      await db.update(User).set({ passwordHash: newHash }).where(eq(User.id, user.id));
-      await db.delete(PasswordResetToken).where(eq(PasswordResetToken.userId, user.id));
+      await userRepository.update({ passwordHash: newHash }, (table) => eq(table.id, user.id));
+      await passwordResetRepository.delete((table) => eq(table.userId, user.id));
       await sendTemporaryPasswordEmail({
         to: email,
         username: user.username,

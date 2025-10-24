@@ -1,6 +1,5 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, User } from 'astro:db';
 import {
   randomUUID,
   createSession,
@@ -12,6 +11,7 @@ import {
 } from './helpers';
 import type { SessionUser } from '../../types/session-user';
 import { sendVerificationEmail } from '../../utils/email.server';
+import { userRepository } from './repositories';
 
 export const register = defineAction({
   accept: 'form',
@@ -42,7 +42,7 @@ export const register = defineAction({
 
     const userId = randomUUID();
     const passwordHash = hashPassword(password);
-    await db.insert(User).values({ id: userId, username, email, passwordHash });
+    await userRepository.insert({ id: userId, username, email, passwordHash });
 
     const sessionUser: SessionUser = {
       id: userId,

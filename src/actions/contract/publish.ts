@@ -1,7 +1,8 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Contract, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { requireUser, findContractOrThrow, ensureContractSlug, normalizeContractRow } from './utils';
+import { contractRepository } from './repositories';
 import { slugifyContractTitle } from '../../lib/contract/utils';
 
 export const publish = defineAction({
@@ -20,15 +21,15 @@ export const publish = defineAction({
     const desiredSlug = slug ? slugifyContractTitle(slug) : slugifyContractTitle(contract.title);
     const finalSlug = await ensureContractSlug(desiredSlug, user.id, id);
 
-    await db
-      .update(Contract)
-      .set({
+    await contractRepository.update(
+      {
         slug: finalSlug,
         status: 'published',
         publishedAt: now,
         lastSavedAt: now,
-      })
-      .where(eq(Contract.id, id));
+      },
+      (table) => eq(table.id, id),
+    );
 
     const updated = await findContractOrThrow(id, user.id);
     return {

@@ -1,7 +1,12 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Minutes, MinutesActionItem, MinutesMedia, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { requireUser, findMinutesOrThrow } from './utils';
+import {
+  minutesActionItemRepository,
+  minutesMediaRepository,
+  minutesRepository,
+} from './repositories';
 
 export const remove = defineAction({
   accept: 'json',
@@ -10,9 +15,9 @@ export const remove = defineAction({
     const user = await requireUser(ctx);
     await findMinutesOrThrow(id, user.id);
 
-    await db.delete(MinutesActionItem).where(eq(MinutesActionItem.minutesId, id));
-    await db.delete(MinutesMedia).where(eq(MinutesMedia.minutesId, id));
-    await db.delete(Minutes).where(eq(Minutes.id, id));
+    await minutesActionItemRepository.delete((table) => eq(table.minutesId, id));
+    await minutesMediaRepository.delete((table) => eq(table.minutesId, id));
+    await minutesRepository.delete((table) => eq(table.id, id));
 
     return { ok: true };
   },

@@ -1,6 +1,5 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Minutes, eq } from 'astro:db';
 import {
   buildDemoSummary,
   buildDemoTranscript,
@@ -8,6 +7,7 @@ import {
 } from '../../lib/minutes/utils';
 import { minutesPlanLimits } from '../../lib/minutes/schema';
 import { listMinutesForUser, normalizeMinutesRow, requireUser, templateKeyEnum, syncActionItems } from './utils';
+import { minutesRepository } from './repositories';
 
 export const create = defineAction({
   accept: 'json',
@@ -37,7 +37,7 @@ export const create = defineAction({
     const summary = buildDemoSummary(templateKey);
     const transcript = buildDemoTranscript(templateKey);
 
-    await db.insert(Minutes).values({
+    const inserted = await minutesRepository.insert({
       id,
       userId: user.id,
       title: sanitizeMinutesTitle(payload.title),
@@ -57,8 +57,7 @@ export const create = defineAction({
 
     await syncActionItems(id, summary);
 
-    const rows = await db.select().from(Minutes).where(eq(Minutes.id, id));
-    const minutes = rows[0] ? normalizeMinutesRow(rows[0]) : null;
+    const minutes = inserted[0] ? normalizeMinutesRow(inserted[0]) : null;
 
     return { minutes };
   },

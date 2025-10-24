@@ -1,5 +1,5 @@
 import { ActionError } from 'astro:actions';
-import { db, EmailDraft, EmailTemplate, EmailSignature, EmailHistory, and, desc, eq } from 'astro:db';
+import { EmailDraft, EmailTemplate, EmailSignature, EmailHistory, and, desc, eq } from 'astro:db';
 import { z } from 'astro:schema';
 import {
   EmailDraftSchema,
@@ -19,6 +19,12 @@ import {
 } from '../../lib/email/schema';
 import { systemEmailTemplates } from '../../lib/email/templates';
 import { getSessionWithUser } from '../../utils/session.server';
+import {
+  emailDraftRepository,
+  emailHistoryRepository,
+  emailSignatureRepository,
+  emailTemplateRepository,
+} from './repositories';
 
 export const toneEnum = z.enum(emailToneOptions);
 export const formalityEnum = z.enum(emailFormalityLevels);
@@ -79,17 +85,19 @@ export const normalizeTemplateRow = (row: EmailTemplateRow) =>
   });
 
 export async function listDraftsForUser(userId: string, plan: 'free' | 'pro') {
-  const rows = await db
-    .select()
-    .from(EmailDraft)
-    .where(eq(EmailDraft.userId, userId))
-    .orderBy(desc(EmailDraft.lastSavedAt), desc(EmailDraft.createdAt));
+  const rows = await emailDraftRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => [desc(table.lastSavedAt), desc(table.createdAt)],
+  });
 
   return rows.map((row) => normalizeDraftRow(row, plan));
 }
 
 export async function findDraftOrThrow(id: string, userId: string) {
-  const rows = await db.select().from(EmailDraft).where(and(eq(EmailDraft.id, id), eq(EmailDraft.userId, userId)));
+  const rows = await emailDraftRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
   const draft = rows[0];
   if (!draft) {
     throw new ActionError({ code: 'NOT_FOUND', message: 'Draft not found' });
@@ -98,46 +106,48 @@ export async function findDraftOrThrow(id: string, userId: string) {
 }
 
 export async function upsertDraft(row: EmailDraftRow) {
-  await db
-    .insert(EmailDraft)
-    .values(row)
-    .onConflictDoUpdate({
-      target: EmailDraft.id,
-      set: {
-        title: row.title,
-        status: row.status,
-        subject: row.subject,
-        input: row.input,
-        output: row.output,
-        language: row.language,
-        tone: row.tone,
-        formality: row.formality,
-        variables: row.variables,
-        signatureEnabled: row.signatureEnabled,
-        ephemeral: row.ephemeral,
-        plan: row.plan,
-        lastSavedAt: row.lastSavedAt,
-      },
-    });
+  const existing = await emailDraftRepository.getById((table) => table.id, row.id);
+
+  if (!existing) {
+    await emailDraftRepository.insert(row);
+    return;
+  }
+
+  await emailDraftRepository.update(
+    {
+      title: row.title,
+      status: row.status,
+      subject: row.subject,
+      input: row.input,
+      output: row.output,
+      language: row.language,
+      tone: row.tone,
+      formality: row.formality,
+      variables: row.variables,
+      signatureEnabled: row.signatureEnabled,
+      ephemeral: row.ephemeral,
+      plan: row.plan,
+      lastSavedAt: row.lastSavedAt,
+    },
+    (table) => eq(table.id, row.id),
+  );
 }
 
 export async function listTemplatesForUser(userId: string) {
-  const rows = await db
-    .select()
-    .from(EmailTemplate)
-    .where(eq(EmailTemplate.userId, userId))
-    .orderBy(desc(EmailTemplate.updatedAt));
+  const rows = await emailTemplateRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => desc(table.updatedAt),
+  });
 
   const userTemplates = rows.map((row) => normalizeTemplateRow(row));
   return [...systemEmailTemplates, ...userTemplates];
 }
 
 export async function findTemplateForUser(id: string, userId: string) {
-  const userRows = await db
-    .select()
-    .from(EmailTemplate)
-    .where(and(eq(EmailTemplate.id, id), eq(EmailTemplate.userId, userId)))
-    .limit(1);
+  const userRows = await emailTemplateRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
 
   const record = userRows[0];
   if (record) {
@@ -153,11 +163,14 @@ export async function findTemplateForUser(id: string, userId: string) {
 }
 
 export async function findSignatureForUser(userId: string) {
-  const rows = await db.select().from(EmailSignature).where(eq(EmailSignature.userId, userId)).limit(1);
+  const rows = await emailSignatureRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    limit: 1,
+  });
   const signature = rows[0];
   if (!signature) {
     const fallback = createSignature({ userId });
-    await db.insert(EmailSignature).values({
+    await emailSignatureRepository.insert({
       id: fallback.id,
       userId,
       display: fallback.display,
@@ -187,7 +200,7 @@ export async function recordHistory(entry: {
   cost?: number;
 }) {
   try {
-    await db.insert(EmailHistory).values({
+    await emailHistoryRepository.insert({
       id: crypto.randomUUID(),
       draftId: entry.draftId,
       action: entry.action,

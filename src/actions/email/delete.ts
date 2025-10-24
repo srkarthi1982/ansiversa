@@ -1,7 +1,8 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, EmailDraft, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { requireUser, findDraftOrThrow } from './utils';
+import { emailDraftRepository } from './repositories';
 
 export const remove = defineAction({
   accept: 'json',
@@ -9,7 +10,7 @@ export const remove = defineAction({
   async handler({ id }, ctx) {
     const user = await requireUser(ctx);
     await findDraftOrThrow(id, user.id);
-    await db.delete(EmailDraft).where(eq(EmailDraft.id, id));
+    await emailDraftRepository.delete((table) => eq(table.id, id));
     return { ok: true };
   },
 });

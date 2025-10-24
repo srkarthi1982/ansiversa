@@ -1,7 +1,8 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Minutes, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { requireUser, findMinutesOrThrow, ensureMinutesSlug, normalizeMinutesRow } from './utils';
+import { minutesRepository } from './repositories';
 
 export const publish = defineAction({
   accept: 'json',
@@ -30,15 +31,15 @@ export const publish = defineAction({
 
     const slug = await ensureMinutesSlug(payload.slug ?? minutes.title, user.id, minutes.id);
 
-    await db
-      .update(Minutes)
-      .set({
+    await minutesRepository.update(
+      {
         slug,
         status: 'published',
         publishedAt: new Date(),
         lastSavedAt: new Date(),
-      })
-      .where(eq(Minutes.id, minutes.id));
+      },
+      (table) => eq(table.id, minutes.id),
+    );
 
     return {
       slug,

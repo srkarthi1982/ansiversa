@@ -1,5 +1,5 @@
 import { ActionError } from 'astro:actions';
-import { db, Proposal, and, desc, eq } from 'astro:db';
+import { Proposal, and, desc, eq } from 'astro:db';
 import { z } from 'astro:schema';
 import {
   ProposalDataSchema,
@@ -10,6 +10,7 @@ import {
 } from '../../lib/proposal/schema';
 import { slugifyProposalTitle } from '../../lib/proposal/utils';
 import { getSessionWithUser } from '../../utils/session.server';
+import { proposalRepository } from './repositories';
 
 export const templateKeyEnum = z.enum(proposalTemplateKeys);
 export const statusEnum = z.enum(proposalStatuses);
@@ -39,7 +40,10 @@ export const requireUser = async (ctx: { cookies: unknown }) => {
 };
 
 export async function findProposalOrThrow(id: string, userId: string) {
-  const rows = await db.select().from(Proposal).where(and(eq(Proposal.id, id), eq(Proposal.userId, userId)));
+  const rows = await proposalRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
   const proposal = rows[0];
   if (!proposal) {
     throw new ActionError({ code: 'NOT_FOUND', message: 'Proposal not found' });
@@ -48,11 +52,10 @@ export async function findProposalOrThrow(id: string, userId: string) {
 }
 
 export async function listProposalsForUser(userId: string) {
-  const rows = await db
-    .select()
-    .from(Proposal)
-    .where(eq(Proposal.userId, userId))
-    .orderBy(desc(Proposal.lastSavedAt), desc(Proposal.createdAt));
+  const rows = await proposalRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => [desc(table.lastSavedAt), desc(table.createdAt)],
+  });
   return rows.map(normalizeProposalRow);
 }
 
@@ -61,7 +64,9 @@ export async function ensureProposalSlug(title: string, userId: string, currentI
   let candidate = base;
   let attempt = 1;
   while (true) {
-    const matches = await db.select({ id: Proposal.id, userId: Proposal.userId }).from(Proposal).where(eq(Proposal.slug, candidate));
+    const matches = await proposalRepository.getData({
+      where: (table) => eq(table.slug, candidate),
+    });
     const conflict = matches.find((row) => row.userId !== userId || (currentId && row.id !== currentId));
     if (!conflict) {
       return candidate;

@@ -1,5 +1,5 @@
 import { db, eq, Platform, Question, Roadmap, Subject, Topic } from 'astro:db';
-import { BaseRepository } from './baseRepository';
+import { BaseRepository } from '../baseRepository';
 
 type PlatformRow = typeof Platform.$inferSelect;
 

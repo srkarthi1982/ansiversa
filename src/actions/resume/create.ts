@@ -1,15 +1,11 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Resume, count, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import {
   createEmptyResumeData,
 } from '../../lib/resume/schema';
-import {
-  templateKeyEnum,
-  localeEnum,
-  requireUser,
-  normalizeResumeRow,
-} from './utils';
+import { templateKeyEnum, localeEnum, requireUser, normalizeResumeRow } from './utils';
+import { resumeRepository } from './repositories';
 
 export const create = defineAction({
   accept: 'json',
@@ -26,10 +22,11 @@ export const create = defineAction({
     const now = new Date();
     const resumeId = crypto.randomUUID();
 
-    const existingDefault = await db
-      .select({ count: count() })
-      .from(Resume)
-      .where(eq(Resume.userId, user.id));
+    const existingDefault = await resumeRepository.getPaginatedData({
+      where: (table) => eq(table.userId, user.id),
+      page: 1,
+      pageSize: 1,
+    });
 
     const title = payload.title?.trim() || 'Untitled resume';
     const record = {
@@ -42,12 +39,10 @@ export const create = defineAction({
       data: createEmptyResumeData(),
       lastSavedAt: now,
       createdAt: now,
-      isDefault: existingDefault[0]?.count === 0,
+      isDefault: existingDefault.total === 0,
     };
 
-    await db.insert(Resume).values(record);
-
-    const inserted = await db.select().from(Resume).where(eq(Resume.id, resumeId));
+    const inserted = await resumeRepository.insert(record);
     return { resume: normalizeResumeRow(inserted[0]) };
   },
 });

@@ -1,5 +1,5 @@
 import type { AstroCookies } from 'astro';
-import { db, User, Session, EmailVerificationToken, eq, or } from 'astro:db';
+import { User, eq, or } from 'astro:db';
 
 const { randomUUID, randomBytes, scryptSync, timingSafeEqual } = await import('node:crypto');
 import {
@@ -10,6 +10,11 @@ import {
   setUserCookie,
 } from '../../utils/session.server';
 import type { SessionUser } from '../../types/session-user';
+import {
+  emailVerificationRepository,
+  sessionRepository,
+  userRepository,
+} from './repositories';
 
 const SESSION_TTL_SECONDS = 60 * 60 * 24;
 const SESSION_TTL_REMEMBER_SECONDS = SESSION_TTL_SECONDS * 30;
@@ -35,20 +40,26 @@ export function toBool(v: unknown) {
 }
 
 export async function findUserByIdentifier(identifier: string) {
-  const rows = await db
-    .select()
-    .from(User)
-    .where(or(eq(User.username, identifier), eq(User.email, identifier)));
+  const rows = await userRepository.getData({
+    where: (table) => or(eq(table.username, identifier), eq(table.email, identifier)),
+    limit: 1,
+  });
   return rows[0];
 }
 
 export async function findUserByUsername(username: string) {
-  const rows = await db.select().from(User).where(eq(User.username, username));
+  const rows = await userRepository.getData({
+    where: (table) => eq(table.username, username),
+    limit: 1,
+  });
   return rows[0];
 }
 
 export async function findUserByEmail(email: string) {
-  const rows = await db.select().from(User).where(eq(User.email, email));
+  const rows = await userRepository.getData({
+    where: (table) => eq(table.email, email),
+    limit: 1,
+  });
   return rows[0];
 }
 
@@ -63,7 +74,7 @@ export async function createSession(user: SessionUser, remember: boolean, ctx: {
   const maxAge = remember ? SESSION_TTL_REMEMBER_SECONDS : SESSION_TTL_SECONDS;
   const expiresAt = new Date(Date.now() + maxAge * 1000);
 
-  await db.insert(Session).values({
+  await sessionRepository.insert({
     id: randomUUID(),
     userId: user.id,
     tokenHash,
@@ -94,12 +105,12 @@ export { randomUUID, randomBytes };
 
 export async function createEmailVerificationToken(userId: string) {
   // Remove any existing unused tokens for this user
-  await db.delete(EmailVerificationToken).where(eq(EmailVerificationToken.userId, userId));
+  await emailVerificationRepository.delete((table) => eq(table.userId, userId));
 
   const token = randomUUID();
   const expiresAt = new Date(Date.now() + EMAIL_VERIFICATION_TTL_MS);
 
-  await db.insert(EmailVerificationToken).values({
+  await emailVerificationRepository.insert({
     id: randomUUID(),
     userId,
     token,
@@ -114,10 +125,10 @@ type VerifyEmailResult =
   | { ok: false; reason: 'invalid' | 'expired' | 'used' | 'user_missing' };
 
 export async function consumeEmailVerificationToken(token: string): Promise<VerifyEmailResult> {
-  const rows = await db
-    .select()
-    .from(EmailVerificationToken)
-    .where(eq(EmailVerificationToken.token, token));
+  const rows = await emailVerificationRepository.getData({
+    where: (table) => eq(table.token, token),
+    limit: 1,
+  });
   const record = rows[0];
 
   if (!record) {
@@ -132,19 +143,19 @@ export async function consumeEmailVerificationToken(token: string): Promise<Veri
     return { ok: false, reason: 'expired' };
   }
 
-  const userRows = await db.select().from(User).where(eq(User.id, record.userId));
+  const userRows = await userRepository.getData({
+    where: (table) => eq(table.id, record.userId),
+    limit: 1,
+  });
   const user = userRows[0];
   if (!user) {
-    await db.delete(EmailVerificationToken).where(eq(EmailVerificationToken.id, record.id));
+    await emailVerificationRepository.delete((table) => eq(table.id, record.id));
     return { ok: false, reason: 'user_missing' };
   }
 
   const now = new Date();
-  await db.update(User).set({ emailVerifiedAt: now }).where(eq(User.id, user.id));
-  await db
-    .update(EmailVerificationToken)
-    .set({ usedAt: now })
-    .where(eq(EmailVerificationToken.id, record.id));
+  await userRepository.update({ emailVerifiedAt: now }, (table) => eq(table.id, user.id));
+  await emailVerificationRepository.update({ usedAt: now }, (table) => eq(table.id, record.id));
 
   return { ok: true, userId: user.id };
 }
