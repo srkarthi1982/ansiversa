@@ -1,0 +1,402 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
+import SectionHeading from "../../../components/SectionHeading.astro";
+---
+<Layout>
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#job-analyzer-report">
+    Skip to content
+  </a>
+  <main
+    id="job-analyzer-report"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ jobAnalyzer: $store.jobAnalyzer, activeTab: 'overview' })"
+    x-init="jobAnalyzer.initReport($el.ownerDocument?.defaultView?.location)"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div class="space-y-4">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-chart-gauge text-xs"></i>
+              Match report
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl" x-text="jobAnalyzer.state.activeReport.jd.title"></h1>
+            <p class="text-base text-slate-600" x-text="jobAnalyzer.state.activeReport.jd.company"></p>
+            <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+              <span>
+                <i class="fas fa-location-dot mr-1 text-[10px]"></i>
+                <span x-text="jobAnalyzer.state.activeReport.jd.location"></span>
+              </span>
+              <span>
+                <i class="fas fa-calendar-check mr-1 text-[10px]"></i>
+                Saved
+                <span class="font-semibold" x-text="new Date(jobAnalyzer.state.activeReport.savedAt).toLocaleString()"></span>
+              </span>
+              <span>
+                <i class="fas fa-file-signature mr-1 text-[10px]"></i>
+                <span x-text="jobAnalyzer.state.activeReport.resumeTitle"></span>
+              </span>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <Button href="/job-analyzer/history" variant="outline">
+                <i class="fas fa-clock-rotate-left text-xs"></i>
+                History
+              </Button>
+              <Button href="/job-analyzer/upload" variant="ghost">
+                <i class="fas fa-rotate text-xs"></i>
+                Re-run analyzer
+              </Button>
+            </div>
+          </div>
+          <aside class="w-full max-w-sm rounded-3xl border border-indigo-100 bg-white/80 p-6 text-center shadow-lg backdrop-blur">
+            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Match score</p>
+            <p class="mt-3 text-5xl font-bold text-indigo-900" x-text="`${jobAnalyzer.state.activeReport.scoreTotal}%`"></p>
+            <p class="text-sm font-semibold text-indigo-700" x-text="jobAnalyzer.state.activeReport.scoreLabel"></p>
+            <div class="mt-4 grid gap-2 text-left text-xs text-slate-500">
+              <template x-for="breakdown in jobAnalyzer.state.activeReport.scoreBreakdown" :key="breakdown.key">
+                <div class="flex items-center justify-between gap-2 rounded-full bg-slate-100 px-3 py-2">
+                  <span class="font-semibold text-slate-700" x-text="breakdown.label"></span>
+                  <span class="text-indigo-600" x-text="`${breakdown.score}%`"></span>
+                </div>
+              </template>
+            </div>
+            <div class="mt-4 flex flex-wrap justify-center gap-2 text-xs text-slate-500">
+              <Button type="button" variant="outline" @click.prevent="jobAnalyzer.requestExport('pdf')">
+                <i class="fas fa-file-export text-xs"></i>
+                Export PDF
+              </Button>
+              <Button type="button" variant="outline" @click.prevent="jobAnalyzer.requestExport('markdown')">
+                <i class="fas fa-file-lines text-xs"></i>
+                Export MD
+              </Button>
+              <Button type="button" variant="ghost" @click.prevent="jobAnalyzer.requestExport('json')">
+                <i class="fas fa-code text-xs"></i>
+                Export JSON
+              </Button>
+            </div>
+            <Button type="button" class="mt-4 w-full" @click.prevent="jobAnalyzer.publishActiveReport()">
+              <i class="fas fa-share-nodes text-xs"></i>
+              Publish link
+            </Button>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <nav class="flex flex-wrap gap-2 rounded-3xl border border-slate-200 bg-white p-2 shadow-sm" aria-label="Report sections">
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition"
+            :class="activeTab === 'overview' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+            @click="activeTab = 'overview'"
+          >
+            Overview
+          </button>
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition"
+            :class="activeTab === 'skills' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+            @click="activeTab = 'skills'"
+          >
+            Skills
+          </button>
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition"
+            :class="activeTab === 'keywords' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+            @click="activeTab = 'keywords'"
+          >
+            Keywords
+          </button>
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition"
+            :class="activeTab === 'bullets' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+            @click="activeTab = 'bullets'"
+          >
+            Resume bullets
+          </button>
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition"
+            :class="activeTab === 'gaps' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+            @click="activeTab = 'gaps'"
+          >
+            Gap plan
+          </button>
+          <button
+            type="button"
+            class="rounded-2xl px-4 py-2 text-sm font-semibold transition"
+            :class="activeTab === 'json' ? 'bg-indigo-600 text-white' : 'text-slate-600 hover:bg-slate-100'"
+            @click="activeTab = 'json'"
+          >
+            JSON
+          </button>
+        </nav>
+
+        <template x-if="activeTab === 'overview'">
+          <div class="space-y-8">
+            <SectionHeading
+              eyebrow="Summary"
+              title="Snapshot"
+              description="Match score, coverage, ATS priorities, and integration actions for quick review."
+            />
+            <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h2 class="text-lg font-semibold text-slate-900">Coverage</h2>
+                <div class="mt-4 space-y-4 text-sm">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Matched</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.activeReport.coverage.matched" :key="`report-matched-${item}`">
+                        <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-amber-600">Partial</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.activeReport.coverage.partial" :key="`report-partial-${item}`">
+                        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-rose-600">Missing</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.activeReport.coverage.missing" :key="`report-missing-${item}`">
+                        <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </article>
+              <article class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-sm">
+                <h2 class="text-lg font-semibold text-slate-900">ATS highlights</h2>
+                <div class="mt-4 space-y-4 text-sm">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">High priority</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.activeReport.atsHighlights.high" :key="`ats-high-${item}`">
+                        <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-amber-600">Medium priority</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.activeReport.atsHighlights.medium" :key="`ats-medium-${item}`">
+                        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Emerging</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.activeReport.atsHighlights.low" :key="`ats-low-${item}`">
+                        <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+            <div class="grid gap-6 lg:grid-cols-3">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Resume Builder</h3>
+                <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.activeReport.integrations.resumeBuilder"></p>
+              </article>
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Career Planner</h3>
+                <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.activeReport.integrations.careerPlanner"></p>
+              </article>
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Cover Letter focus</h3>
+                <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.activeReport.integrations.coverLetter"></p>
+              </article>
+            </div>
+          </div>
+        </template>
+
+        <template x-if="activeTab === 'skills'">
+          <div class="space-y-8">
+            <SectionHeading
+              eyebrow="JD breakdown"
+              title="Sections & skills"
+              description="Normalized content captured during ingest. Edit inside the upload workflow when re-running analyses."
+            />
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h2 class="text-lg font-semibold text-slate-900">Sections</h2>
+                <dl class="mt-4 space-y-4 text-sm text-slate-600">
+                  <div>
+                    <dt class="font-semibold text-slate-900">Summary</dt>
+                    <dd class="mt-1" x-text="jobAnalyzer.state.activeReport.jd.normalized.summary"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold text-slate-900">Responsibilities</dt>
+                    <dd>
+                      <ul class="mt-2 space-y-2">
+                        <template x-for="item in jobAnalyzer.state.activeReport.jd.normalized.responsibilities" :key="`resp-${item}`">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                            <span x-text="item"></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold text-slate-900">Requirements</dt>
+                    <dd>
+                      <ul class="mt-2 space-y-2">
+                        <template x-for="item in jobAnalyzer.state.activeReport.jd.normalized.requirements" :key="`req-${item}`">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                            <span x-text="item"></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold text-slate-900">Nice to have</dt>
+                    <dd>
+                      <ul class="mt-2 space-y-2">
+                        <template x-for="item in jobAnalyzer.state.activeReport.jd.normalized.niceToHave" :key="`nice-${item}`">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                            <span x-text="item"></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt class="font-semibold text-slate-900">Benefits</dt>
+                    <dd>
+                      <ul class="mt-2 space-y-2">
+                        <template x-for="item in jobAnalyzer.state.activeReport.jd.normalized.benefits" :key="`benefit-${item}`">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                            <span x-text="item"></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </dd>
+                  </div>
+                </dl>
+              </article>
+              <article class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-sm">
+                <h2 class="text-lg font-semibold text-slate-900">Skill taxonomy</h2>
+                <div class="mt-4 grid gap-3 md:grid-cols-2">
+                  <template x-for="category in jobAnalyzer.state.activeReport.jd.skills" :key="category.label">
+                    <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600" x-text="category.label"></p>
+                      <div class="mt-2 flex flex-wrap gap-2">
+                        <template x-for="item in category.items" :key="`${category.label}-${item}`">
+                          <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700" x-text="item"></span>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+                <div class="mt-4 space-y-2 text-sm text-slate-600">
+                  <p><span class="font-semibold">Visa:</span> <span x-text="jobAnalyzer.state.activeReport.jd.constraints.visa.join(', ') || 'None detected'"></span></p>
+                  <p><span class="font-semibold">Travel:</span> <span x-text="jobAnalyzer.state.activeReport.jd.constraints.travel.join(', ') || 'Not specified'"></span></p>
+                  <p><span class="font-semibold">Onsite %:</span> <span x-text="jobAnalyzer.state.activeReport.jd.constraints.onsitePercent ?? 'Not provided'"></span></p>
+                </div>
+              </article>
+            </div>
+          </div>
+        </template>
+
+        <template x-if="activeTab === 'keywords'">
+          <div class="space-y-8">
+            <SectionHeading
+              eyebrow="ATS focus"
+              title="Keyword suggestions"
+              description="Prioritised keywords with recommended frequency and context."
+            />
+            <div class="grid gap-6 lg:grid-cols-2">
+              <template x-for="keyword in jobAnalyzer.state.activeReport.keywordSuggestions" :key="`kw-${keyword.term}`">
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <header class="flex items-center justify-between gap-3">
+                    <h3 class="text-lg font-semibold text-slate-900" x-text="keyword.term"></h3>
+                    <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold" :class="keyword.priority === 'required' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'">
+                      <i class="fas fa-circle-dot text-[10px]"></i>
+                      <span x-text="keyword.priority === 'required' ? 'Required' : 'Optional'"></span>
+                    </span>
+                  </header>
+                  <p class="mt-3 text-xs font-semibold text-indigo-600" x-text="keyword.frequency"></p>
+                  <p class="mt-2 text-sm text-slate-600" x-text="keyword.context"></p>
+                </article>
+              </template>
+            </div>
+          </div>
+        </template>
+
+        <template x-if="activeTab === 'bullets'">
+          <div class="space-y-8">
+            <SectionHeading
+              eyebrow="Resume actions"
+              title="Tailored bullet suggestions"
+              description="STAR-style bullets ready to push into Resume Builder drafts."
+            />
+            <div class="grid gap-6 lg:grid-cols-2">
+              <template x-for="bullet in jobAnalyzer.state.activeReport.bullets" :key="`bullet-${bullet.text}`">
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <p class="text-sm font-semibold text-slate-900" x-text="bullet.text"></p>
+                  <p class="mt-2 text-xs uppercase tracking-wide text-indigo-600" x-text="bullet.context"></p>
+                  <p class="text-xs text-slate-500" x-text="bullet.emphasis"></p>
+                </article>
+              </template>
+            </div>
+          </div>
+        </template>
+
+        <template x-if="activeTab === 'gaps'">
+          <div class="space-y-8">
+            <SectionHeading
+              eyebrow="Learning plan"
+              title="Close the gaps"
+              description="Recommended modules, estimated hours, and quick links to resources."
+            />
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <p class="text-sm text-slate-600" x-text="jobAnalyzer.state.activeReport.gapPlan.summary"></p>
+              <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                <template x-for="module in jobAnalyzer.state.activeReport.gapPlan.modules" :key="`module-${module.title}`">
+                  <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="font-semibold text-slate-900" x-text="module.title"></span>
+                      <span class="text-xs font-semibold text-indigo-600" x-text="`${module.hours}h`"></span>
+                    </div>
+                    <p class="text-xs text-slate-500" x-text="module.resource"></p>
+                    <a class="text-xs font-semibold text-indigo-600 hover:text-indigo-700" :href="module.link" target="_blank" rel="noopener">
+                      View resource
+                    </a>
+                  </li>
+                </template>
+              </ul>
+            </article>
+          </div>
+        </template>
+
+        <template x-if="activeTab === 'json'">
+          <div class="space-y-6">
+            <SectionHeading
+              eyebrow="Raw data"
+              title="Match report JSON"
+              description="Use the JSON export to integrate with applicant tracking systems or custom dashboards."
+            />
+            <pre class="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-xs text-slate-100 overflow-x-auto" x-text="JSON.stringify(jobAnalyzer.state.activeReport, null, 2)"></pre>
+          </div>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>

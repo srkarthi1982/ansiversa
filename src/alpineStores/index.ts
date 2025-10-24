@@ -32,3 +32,4 @@ import './lessonBuilder';
 import './career';
 import './caption';
 import './courseTracker';
+import './jobAnalyzer';

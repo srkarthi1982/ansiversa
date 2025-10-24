@@ -1,0 +1,405 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+
+const inputOptions: Array<{ type: 'text' | 'pdf' | 'url'; label: string; icon: string; description: string }> = [
+  { type: 'text', label: 'Paste JD', icon: 'fas fa-pen-to-square', description: 'Ideal for quick copy/paste from boards or internal docs.' },
+  { type: 'pdf', label: 'Upload PDF', icon: 'fas fa-file-pdf', description: 'Supports PDF up to 5 MB with automatic text extraction.' },
+  { type: 'url', label: 'Fetch URL', icon: 'fas fa-link', description: 'Grab public listings and strip headers, navigation, and ads.' },
+];
+
+const profileHighlights = [
+  'Syncs with skills & experiences stored in your Ansiversa profile.',
+  'Auto refreshes when you update Resume Builder drafts.',
+  'Applies privacy filters before sending to the analyzer.',
+];
+---
+<Layout>
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#job-analyzer-upload">
+    Skip to content
+  </a>
+  <main
+    id="job-analyzer-upload"
+    class="min-h-screen bg-slate-50"
+    x-data={`() => ({ jobAnalyzer: $store.jobAnalyzer, inputOptions: ${JSON.stringify(inputOptions)}, profileHighlights: ${JSON.stringify(profileHighlights)} })`}
+    x-init="jobAnalyzer.initUpload()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="space-y-6 text-center">
+          <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+            <i class="fas fa-diagram-project text-xs"></i>
+            Three-step workflow
+          </span>
+          <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Upload & analyze a job description</h1>
+          <p class="mx-auto max-w-2xl text-base text-slate-600 sm:text-lg">
+            Bring a JD in any format, compare it to a resume or your Ansiversa profile, and receive a match report with keyword, bullet, and gap plan suggestions.
+          </p>
+        </div>
+        <nav class="mt-12 grid gap-4 md:grid-cols-3" aria-label="Steps">
+          <template x-for="(step, index) in ['Job details', 'Resume or profile', 'Results']" :key="step">
+            <div class="flex items-center gap-3 rounded-3xl border border-slate-200 bg-white/90 p-4 shadow-sm" :class="jobAnalyzer.state.step === index + 1 ? 'border-indigo-300 ring-1 ring-indigo-200' : ''">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full text-sm font-semibold" :class="jobAnalyzer.state.step === index + 1 ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'">
+                <span x-text="index + 1"></span>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-slate-900" x-text="step"></p>
+                <p class="text-xs text-slate-500" x-show="index === 0">Paste, upload, or fetch the JD</p>
+                <p class="text-xs text-slate-500" x-show="index === 1">Select resumes or your profile</p>
+                <p class="text-xs text-slate-500" x-show="index === 2">Review the report & exports</p>
+              </div>
+            </div>
+          </template>
+        </nav>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-5xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <template x-if="jobAnalyzer.state.toast">
+          <div
+            class="flex items-start gap-3 rounded-3xl border border-slate-200 bg-white p-4 text-sm shadow-sm"
+            role="alert"
+            :class="jobAnalyzer.state.toast.type === 'error' ? 'border-rose-200 bg-rose-50/80 text-rose-700' : 'border-emerald-200 bg-emerald-50/80 text-emerald-700'"
+          >
+            <i :class="jobAnalyzer.state.toast.type === 'error' ? 'fas fa-circle-exclamation mt-1' : 'fas fa-circle-check mt-1'"></i>
+            <div class="flex-1">
+              <p class="font-semibold" x-text="jobAnalyzer.state.toast.message"></p>
+            </div>
+            <button class="text-xs font-semibold uppercase tracking-wide" type="button" @click="jobAnalyzer.clearToast()">
+              Dismiss
+            </button>
+          </div>
+        </template>
+
+        <template x-if="jobAnalyzer.state.step === 1">
+          <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="space-y-1">
+              <h2 class="text-2xl font-semibold text-slate-900">Step 1 · Job description intake</h2>
+              <p class="text-sm text-slate-600">Switch between paste, PDF, or URL. We normalise the content and make the sections editable in the next step.</p>
+            </header>
+            <div class="flex flex-wrap gap-3">
+              <template x-for="option in inputOptions" :key="option.type">
+                <button
+                  type="button"
+                  class="flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
+                  :class="option.type === jobAnalyzer.state.analyzeForm.inputType ? 'border-indigo-300 bg-white text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-indigo-200 hover:text-indigo-700'"
+                  @click="jobAnalyzer.setInputType(option.type)"
+                >
+                  <i class="text-xs" :class="option.icon"></i>
+                  <span x-text="option.label"></span>
+                </button>
+              </template>
+            </div>
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div class="space-y-4">
+                <template x-if="jobAnalyzer.state.analyzeForm.inputType === 'text'">
+                  <label class="block text-sm">
+                    <span class="font-semibold text-slate-900">Paste or type the JD</span>
+                    <textarea
+                      class="mt-2 h-64 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 shadow-inner focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      x-model="jobAnalyzer.state.analyzeForm.text"
+                      placeholder="Paste the job description here..."
+                    ></textarea>
+                  </label>
+                </template>
+                <template x-if="jobAnalyzer.state.analyzeForm.inputType === 'pdf'">
+                  <div class="flex flex-col items-center justify-center gap-4 rounded-2xl border border-dashed border-slate-300 bg-slate-50 p-10 text-center">
+                    <i class="fas fa-file-import text-3xl text-indigo-500"></i>
+                    <p class="text-sm text-slate-600">Upload a PDF up to 5 MB. We extract text, keep headings, and flag parsing issues.</p>
+                    <input type="file" accept="application/pdf" class="sr-only" x-ref="fileInput" @change="jobAnalyzer.handleFileUpload($event)" />
+                    <div class="flex flex-wrap justify-center gap-2">
+                      <Button type="button" variant="outline" @click.prevent="$refs.fileInput.click()">
+                        <i class="fas fa-upload text-xs"></i>
+                        Choose file
+                      </Button>
+                      <template x-if="jobAnalyzer.state.analyzeForm.fileName">
+                        <Button type="button" variant="ghost" @click.prevent="jobAnalyzer.removeUpload()">
+                          <i class="fas fa-circle-xmark text-xs"></i>
+                          Remove
+                        </Button>
+                      </template>
+                    </div>
+                    <template x-if="jobAnalyzer.state.analyzeForm.fileName">
+                      <p class="text-xs font-semibold text-slate-600" x-text="`${jobAnalyzer.state.analyzeForm.fileName} · ${jobAnalyzer.state.analyzeForm.pdfSizeMb ?? 0} MB`"></p>
+                    </template>
+                  </div>
+                </template>
+                <template x-if="jobAnalyzer.state.analyzeForm.inputType === 'url'">
+                  <label class="block text-sm">
+                    <span class="font-semibold text-slate-900">Paste a public job URL</span>
+                    <input
+                      type="url"
+                      class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                      placeholder="https://company.com/careers/job"
+                      x-model="jobAnalyzer.state.analyzeForm.url"
+                    />
+                    <p class="mt-2 text-xs text-slate-500">We respect robots.txt and only fetch publicly available content.</p>
+                  </label>
+                </template>
+              </div>
+              <aside class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-sm font-semibold text-slate-900">Normalization checklist</h3>
+                <ul class="space-y-3 text-sm text-slate-600">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-wand-magic-sparkles mt-1 text-indigo-500"></i>
+                    Remove headers, footers, navigation, and boilerplate.
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-list-check mt-1 text-indigo-500"></i>
+                    Detect summary, responsibilities, requirements, nice-to-haves, and benefits automatically.
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-scale-balanced mt-1 text-indigo-500"></i>
+                    Pull constraints such as visa, clearance, travel, and onsite expectations.
+                  </li>
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-gauge-high mt-1 text-indigo-500"></i>
+                    Estimate seniority by years of experience and leadership signals.
+                  </li>
+                </ul>
+                <Button type="button" class="w-full" @click.prevent="jobAnalyzer.goToStep(2)">
+                  Continue to resume/profile
+                </Button>
+              </aside>
+            </div>
+          </div>
+        </template>
+
+        <template x-if="jobAnalyzer.state.step === 2">
+          <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="space-y-1">
+              <h2 class="text-2xl font-semibold text-slate-900">Step 2 · Compare with resume or profile</h2>
+              <p class="text-sm text-slate-600">Pick one of your resume drafts or use the Ansiversa profile to simulate a quick check. Pro plan unlocks A/B comparisons.</p>
+            </header>
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div class="space-y-4">
+                <template x-for="option in jobAnalyzer.state.resumeOptions" :key="option.id">
+                  <article
+                    class="cursor-pointer rounded-3xl border px-5 py-4 transition"
+                    :class="option.id === jobAnalyzer.state.selectedResumeId ? 'border-indigo-300 bg-indigo-50/60 shadow-md' : 'border-slate-200 bg-white hover:border-indigo-200'"
+                    @click="jobAnalyzer.selectResume(option.id)"
+                  >
+                    <div class="flex items-center justify-between gap-3">
+                      <h3 class="text-lg font-semibold text-slate-900" x-text="option.title"></h3>
+                      <span class="text-xs font-semibold text-slate-500" x-text="`Updated ${option.lastUpdated}`"></span>
+                    </div>
+                    <p class="mt-1 text-xs uppercase tracking-wide text-indigo-600" x-text="option.focus"></p>
+                    <p class="mt-2 text-sm text-slate-600" x-text="option.summary"></p>
+                    <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+                      <span>
+                        <i class="fas fa-check-double mr-1 text-[10px]"></i>
+                        Skills auto-tagged for coverage
+                      </span>
+                      <span>
+                        <i class="fas fa-clock mr-1 text-[10px]"></i>
+                        Autosaves enabled
+                      </span>
+                    </div>
+                  </article>
+                </template>
+              </div>
+              <aside class="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                <h3 class="text-sm font-semibold text-slate-900">Use Ansiversa profile instead</h3>
+                <p class="text-sm text-slate-600">Ideal when you do not have a tailored resume yet. We pull skills, experience summaries, and highlight missing details.</p>
+                <ul class="space-y-3 text-sm text-slate-600">
+                  <template x-for="highlight in profileHighlights" :key="highlight">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-shield-check mt-1 text-indigo-500"></i>
+                      <span x-text="highlight"></span>
+                    </li>
+                  </template>
+                </ul>
+                <button
+                  type="button"
+                  class="w-full rounded-full border px-4 py-2 text-sm font-semibold transition"
+                  :class="jobAnalyzer.state.analyzeForm.usingProfile ? 'border-indigo-300 bg-white text-indigo-700' : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:text-indigo-700'"
+                  @click="jobAnalyzer.toggleProfile()"
+                >
+                  <i class="fas fa-user-astronaut text-xs"></i>
+                  <span class="ml-2" x-text="jobAnalyzer.state.analyzeForm.usingProfile ? 'Using profile for comparison' : 'Use Ansiversa profile'" ></span>
+                </button>
+                <div class="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs text-slate-500">
+                  Free plan compares one resume at a time. Upgrade to Pro to queue multiple resumes and experiment with weight adjustments.
+                </div>
+              </aside>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <Button type="button" variant="ghost" @click.prevent="jobAnalyzer.goToStep(1)">
+                <i class="fas fa-arrow-left text-xs"></i>
+                Back
+              </Button>
+              <div class="flex flex-wrap items-center gap-3">
+                <template x-if="jobAnalyzer.state.busy">
+                  <div class="rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-700">
+                    <i class="fas fa-circle-notch mr-2 animate-spin"></i>
+                    <span x-text="jobAnalyzer.state.progressLabel || 'Running analysis...'"></span>
+                  </div>
+                </template>
+                <Button type="button" @click.prevent="jobAnalyzer.startAnalysis()" :disabled="jobAnalyzer.state.busy">
+                  <i class="fas fa-gauge-high text-xs"></i>
+                  Run analysis
+                </Button>
+              </div>
+            </div>
+            <template x-if="jobAnalyzer.state.busy || jobAnalyzer.state.analysisSteps.some((step) => step.status !== 'pending')">
+              <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6">
+                <h3 class="text-sm font-semibold text-slate-900">Analysis progress</h3>
+                <ol class="mt-4 space-y-3 text-sm text-slate-600">
+                  <template x-for="step in jobAnalyzer.state.analysisSteps" :key="step.key">
+                    <li class="flex items-center justify-between gap-3 rounded-2xl border border-white/50 bg-white/70 px-4 py-3">
+                      <span class="font-semibold text-slate-900" x-text="step.label"></span>
+                      <span class="text-xs font-semibold" :class="step.status === 'done' ? 'text-emerald-600' : step.status === 'running' ? 'text-indigo-600' : 'text-slate-400'" x-text="step.status === 'done' ? 'Complete' : step.status === 'running' ? 'In progress' : 'Pending'"></span>
+                    </li>
+                  </template>
+                </ol>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <template x-if="jobAnalyzer.state.step === 3">
+          <div class="space-y-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-2xl font-semibold text-slate-900">Step 3 · Match results</h2>
+                <p class="text-sm text-slate-600">
+                  Review the match score, coverage, keyword suggestions, and gap plan. Export the report or publish a read-only link for collaborators.
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <Button type="button" variant="outline" @click.prevent="jobAnalyzer.requestExport('pdf')">
+                  <i class="fas fa-file-export text-xs"></i>
+                  Export PDF
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="jobAnalyzer.requestExport('markdown')">
+                  <i class="fas fa-file-lines text-xs"></i>
+                  Export Markdown
+                </Button>
+                <Button type="button" variant="ghost" @click.prevent="jobAnalyzer.requestExport('json')">
+                  <i class="fas fa-code text-xs"></i>
+                  Export JSON
+                </Button>
+              </div>
+            </header>
+            <div class="grid gap-6 lg:grid-cols-3">
+              <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6 text-center">
+                <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Match score</p>
+                <p class="mt-2 text-4xl font-bold text-indigo-900" x-text="`${jobAnalyzer.state.matchReport.scoreTotal}%`"></p>
+                <p class="text-sm font-semibold text-indigo-700" x-text="jobAnalyzer.state.matchReport.scoreLabel"></p>
+              </div>
+              <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Resume or profile</p>
+                <p class="mt-2 text-lg font-semibold text-slate-900" x-text="jobAnalyzer.state.analyzeForm.usingProfile ? 'Ansiversa profile' : jobAnalyzer.state.matchReport.resumeTitle"></p>
+                <p class="mt-1 text-xs text-slate-500">
+                  <i class="fas fa-briefcase text-[10px]"></i>
+                  <span x-text="jobAnalyzer.state.matchReport.jd.title"></span>
+                </p>
+              </div>
+              <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Location & constraints</p>
+                <p class="mt-2 text-sm font-semibold text-slate-900" x-text="jobAnalyzer.state.matchReport.jd.location"></p>
+                <p class="text-xs text-slate-500" x-text="jobAnalyzer.state.matchReport.jd.remote"></p>
+                <p class="mt-2 text-xs text-slate-500" x-text="jobAnalyzer.state.matchReport.jd.constraints.visa.join(', ') || 'No visa constraints'"></p>
+              </div>
+            </div>
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Score breakdown</h3>
+                <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                  <template x-for="breakdown in jobAnalyzer.state.matchReport.scoreBreakdown" :key="breakdown.key">
+                    <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                      <div class="flex items-center justify-between gap-3">
+                        <span class="font-semibold text-slate-900" x-text="breakdown.label"></span>
+                        <span class="text-xs font-semibold text-indigo-600" x-text="`${breakdown.score}%`"></span>
+                      </div>
+                      <p class="text-xs text-slate-500" x-text="breakdown.description"></p>
+                    </li>
+                  </template>
+                </ul>
+              </article>
+              <article class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Coverage</h3>
+                <div class="mt-4 space-y-4 text-sm">
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Matched</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.matchReport.coverage.matched" :key="`summary-matched-${item}`">
+                        <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-amber-600">Partial</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.matchReport.coverage.partial" :key="`summary-partial-${item}`">
+                        <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-wide text-rose-600">Missing</p>
+                    <div class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in jobAnalyzer.state.matchReport.coverage.missing" :key="`summary-missing-${item}`">
+                        <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700" x-text="item"></span>
+                      </template>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+            <div class="grid gap-6 lg:grid-cols-2">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Keyword priorities</h3>
+                <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                  <template x-for="keyword in jobAnalyzer.state.matchReport.keywordSuggestions" :key="`summary-keyword-${keyword.term}`">
+                    <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                      <div class="flex items-center justify-between gap-3">
+                        <span class="font-semibold text-slate-900" x-text="keyword.term"></span>
+                        <span class="text-xs font-semibold" :class="keyword.priority === 'required' ? 'text-rose-600' : 'text-amber-600'" x-text="keyword.priority === 'required' ? 'Required' : 'Optional'"></span>
+                      </div>
+                      <p class="text-xs text-slate-500" x-text="keyword.frequency"></p>
+                      <p class="text-xs text-slate-500" x-text="keyword.context"></p>
+                    </li>
+                  </template>
+                </ul>
+              </article>
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-lg font-semibold text-slate-900">Gap plan</h3>
+                <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.matchReport.gapPlan.summary"></p>
+                <ul class="mt-3 space-y-3 text-sm text-slate-600">
+                  <template x-for="module in jobAnalyzer.state.matchReport.gapPlan.modules" :key="`summary-gap-${module.title}`">
+                    <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                      <div class="flex items-center justify-between gap-3">
+                        <span class="font-semibold text-slate-900" x-text="module.title"></span>
+                        <span class="text-xs font-semibold text-indigo-600" x-text="`${module.hours}h`"></span>
+                      </div>
+                      <p class="text-xs text-slate-500" x-text="module.resource"></p>
+                    </li>
+                  </template>
+                </ul>
+                <p class="mt-4 text-xs text-slate-500">Send directly to Career Planner to schedule study blocks.</p>
+              </article>
+            </div>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div class="text-xs text-slate-500">
+                Publish a share link to collaborate or duplicate the report for A/B testing.
+              </div>
+              <div class="flex flex-wrap items-center gap-3">
+                <Button type="button" variant="ghost" @click.prevent="jobAnalyzer.publishActiveReport()">
+                  <i class="fas fa-share-nodes text-xs"></i>
+                  Publish share link
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="jobAnalyzer.goToStep(2)">
+                  <i class="fas fa-rotate-left text-xs"></i>
+                  Re-run analysis
+                </Button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>
