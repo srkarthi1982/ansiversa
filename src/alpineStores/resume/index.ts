@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 import { actions } from 'astro:actions';
 import { createEmptyResumeData, resumeTemplateKeys, skillLevels } from '../../lib/resume/schema';
 import type {
@@ -47,9 +48,7 @@ const describeSummary = (data: ResumeData) => {
   return segments.length > 0 ? segments.join(' · ') : 'Start adding experience, education, and skills.';
 };
 
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
-
-class ResumeStoreImpl {
+class ResumeStoreImpl extends BaseStore {
   state: {
     loading: boolean;
     hasUnsavedChanges: boolean;
@@ -135,7 +134,7 @@ class ResumeStoreImpl {
 
   async loadList(): Promise<void> {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       const { data, error } = await actions.resume.list({});
       if (error) {
@@ -151,7 +150,7 @@ class ResumeStoreImpl {
       this.state.filteredResumes = [];
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
@@ -206,7 +205,7 @@ class ResumeStoreImpl {
   }
 
   async createDraft(): Promise<void> {
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       const { data, error } = await actions.resume.create({});
       if (error) {
@@ -219,7 +218,7 @@ class ResumeStoreImpl {
       console.error('Unable to create resume', error);
       window.alert('Unable to create resume. Please try again.');
     } finally {
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 
@@ -273,11 +272,11 @@ class ResumeStoreImpl {
   async initBuilder({ id }: BuilderInitInput = {}): Promise<void> {
     if (this.builderState.loading) return;
     this.builderState.loading = true;
-    loaderStore()?.show?.();
+    this.loader?.show();
     try {
       if (this.state.resumes.length === 0 && !this.state.loading) {
         await this.loadList();
-        loaderStore()?.show?.();
+        this.loader?.show();
       }
       let target: ResumeListItem | undefined = id
         ? this.state.resumes.find((item) => item.id === id)
@@ -321,7 +320,7 @@ class ResumeStoreImpl {
       window.alert('Unable to load resume right now.');
     } finally {
       this.builderState.loading = false;
-      loaderStore()?.hide?.();
+      this.loader?.hide();
     }
   }
 

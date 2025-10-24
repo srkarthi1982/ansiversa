@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 import {
   buildAssessmentSummary,
   createDraftPlan,
@@ -20,8 +21,6 @@ import type {
   CareerSprintPlan,
   CareerTrackerState,
 } from '../../types/career';
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 const clone = <T>(value: T): T => structuredClone(value);
 
@@ -51,7 +50,7 @@ type BuilderInitOptions = {
   id?: string | null;
 };
 
-class CareerStore {
+class CareerStore extends BaseStore {
   dashboard: {
     initialized: boolean;
     loading: boolean;
@@ -137,8 +136,8 @@ class CareerStore {
 
   async createPlan(title?: string): Promise<void> {
     if (this.dashboard.loading) return;
-    const loader = loaderStore();
-    loader?.show?.();
+    const loader = this.loader;
+    loader?.show();
     try {
       const body = title ? { title } : {};
       const response = await this.callCareerApi<{ plan: CareerPlanSummary; redirectTo: string }>('/career/api/create', body);
@@ -150,13 +149,13 @@ class CareerStore {
     } catch (error) {
       console.error('Unable to create career plan', error);
     } finally {
-      loader?.hide?.();
+      loader?.hide();
     }
   }
 
   async duplicatePlan(planId: string): Promise<void> {
-    const loader = loaderStore();
-    loader?.show?.();
+    const loader = this.loader;
+    loader?.show();
     try {
       const data = await this.callCareerApi<{ plan: CareerPlanSummary }>(
         '/career/api/duplicate',
@@ -170,7 +169,7 @@ class CareerStore {
     } catch (error) {
       console.error('Unable to duplicate plan', error);
     } finally {
-      loader?.hide?.();
+      loader?.hide();
     }
   }
 

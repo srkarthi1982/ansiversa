@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
@@ -411,7 +412,7 @@ const templates: TemplateRecord[] = [
   },
 ];
 
-class JobAnalyzerStore {
+class JobAnalyzerStore extends BaseStore {
   state = {
     plan: 'free' as 'free' | 'pro',
     usage: {

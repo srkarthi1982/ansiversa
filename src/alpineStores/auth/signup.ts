@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { BaseStore } from '../base';
 
 type SignupForm = {
   username: string;
@@ -18,12 +19,12 @@ const DEFAULT_FORM: SignupForm = {
   terms: false,
 };
 
-class Signup {
+class Signup extends BaseStore {
   isSubmitting = false;
   form: SignupForm = { ...DEFAULT_FORM };
 
   onInit(): void {
-    this.showLoaderBriefly();
+    this.showLoaderBriefly(400);
   }
 
   updateField<K extends keyof SignupForm>(field: K, value: SignupForm[K]): void {
@@ -42,10 +43,6 @@ class Signup {
     this.isSubmitting = false;
   }
 
-  private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 400);
-  }
 }
 
 export type SignupStore = Signup;

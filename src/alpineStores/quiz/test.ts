@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import type { LoaderStore } from '../loader';
+import { BaseStore } from '../base';
 
 type OptionRecord = {
   id: number;
@@ -58,7 +58,7 @@ const LEVELS: LevelOption[] = [
   },
 ];
 
-class QuizTestStore {
+class QuizTestStore extends BaseStore {
   step = 1;
   loading = false;
   error: string | null = null;
@@ -82,10 +82,8 @@ class QuizTestStore {
     levelId: '',
     answers: [],
   };
-  private readonly loader: LoaderStore;
-
   constructor() {
-    this.loader = Alpine.store('loader') as LoaderStore;
+    super();
   }
 
   async onInit(): Promise<void> {
@@ -196,11 +194,10 @@ class QuizTestStore {
 
   private setLoading(state: boolean): void {
     this.loading = state;
-    if (!this.loader) return;
     if (state) {
-      this.loader.show?.();
+      this.loader?.show();
     } else {
-      this.loader.hide?.();
+      this.loader?.hide();
     }
   }
 

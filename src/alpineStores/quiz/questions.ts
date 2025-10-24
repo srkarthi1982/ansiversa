@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import type { LoaderStore } from '../loader';
+import { BaseStore } from '../base';
 
 type QuestionRecord = {
   id: number;
@@ -109,7 +109,7 @@ const parseNumber = (value: string): number | null => {
   return floored > 0 ? floored : null;
 };
 
-class QuestionsStoreImpl {
+class QuestionsStoreImpl extends BaseStore {
   questions: QuestionRecord[] = [];
   loading = false;
   error: string | null = null;
@@ -147,10 +147,9 @@ class QuestionsStoreImpl {
   private filterSubjectOptionsCache = new Map<number, SubjectOption[]>();
   private filterTopicOptionsCache = new Map<number, TopicOption[]>();
   private filterRoadmapOptionsCache = new Map<number, RoadmapOption[]>();
-  private readonly loader: LoaderStore;
 
   constructor() {
-    this.loader = Alpine.store('loader') as LoaderStore;
+    super();
     this.form = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
   }
@@ -909,13 +908,10 @@ class QuestionsStoreImpl {
 
   private setLoading(state: boolean): void {
     this.loading = state;
-    const loader = this.loader;
-    if (loader && typeof loader.show === 'function' && typeof loader.hide === 'function') {
-      if (state) {
-        loader.show();
-      } else {
-        loader.hide();
-      }
+    if (state) {
+      this.loader?.show();
+    } else {
+      this.loader?.hide();
     }
   }
 

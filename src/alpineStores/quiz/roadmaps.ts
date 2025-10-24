@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import type { LoaderStore } from '../loader';
+import { BaseStore } from '../base';
 
 type RoadmapRecord = {
   id: number;
@@ -61,7 +61,7 @@ type SortState = {
   direction: 'asc' | 'desc';
 };
 
-class RoadmapsStoreImpl {
+class RoadmapsStoreImpl extends BaseStore {
   roadmaps: RoadmapRecord[] = [];
   loading = false;
   error: string | null = null;
@@ -88,10 +88,9 @@ class RoadmapsStoreImpl {
     'status',
     'id',
   ];
-  private readonly loader: LoaderStore;
 
   constructor() {
-    this.loader = Alpine.store('loader') as LoaderStore;
+    super();
     this.form = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
   }
@@ -408,13 +407,10 @@ class RoadmapsStoreImpl {
 
   private setLoading(state: boolean): void {
     this.loading = state;
-    const loader = this.loader;
-    if (loader && typeof loader.show === 'function' && typeof loader.hide === 'function') {
-      if (state) {
-        loader.show();
-      } else {
-        loader.hide();
-      }
+    if (state) {
+      this.loader?.show();
+    } else {
+      this.loader?.hide();
     }
   }
 
