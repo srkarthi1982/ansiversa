@@ -1,11 +1,7 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Resume, eq } from 'astro:db';
-import {
-  requireUser,
-  findResumeOrThrow,
-  normalizeResumeRow,
-} from './utils';
+import { requireUser, findResumeOrThrow, normalizeResumeRow } from './utils';
+import { resumeRepository } from './repositories';
 
 export const duplicate = defineAction({
   accept: 'json',
@@ -18,7 +14,7 @@ export const duplicate = defineAction({
     const now = new Date();
     const cloneId = crypto.randomUUID();
 
-    await db.insert(Resume).values({
+    const inserted = await resumeRepository.insert({
       id: cloneId,
       userId: user.id,
       title: `${resume.title} (Copy)`,
@@ -31,7 +27,6 @@ export const duplicate = defineAction({
       isDefault: false,
     });
 
-    const inserted = await db.select().from(Resume).where(eq(Resume.id, cloneId));
     return { resume: normalizeResumeRow(inserted[0]) };
   },
 });

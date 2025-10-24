@@ -1,9 +1,10 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Minutes, MinutesMedia, eq } from 'astro:db';
+import { Minutes, MinutesMedia, eq } from 'astro:db';
 import { minutesPlanLimits } from '../../lib/minutes/schema';
 import { buildDemoTranscript } from '../../lib/minutes/utils';
 import { requireUser, findMinutesOrThrow, normalizeMinutesRow } from './utils';
+import { minutesMediaRepository, minutesRepository } from './repositories';
 
 export const transcribe = defineAction({
   accept: 'json',
@@ -30,17 +31,17 @@ export const transcribe = defineAction({
     const minutes = normalizeMinutesRow(row);
     const transcript = buildDemoTranscript(minutes.templateKey);
 
-    await db
-      .update(Minutes)
-      .set({
+    await minutesRepository.update(
+      {
         transcript,
         durationSec: durationSec ?? minutes.durationSec ?? null,
         lastSavedAt: new Date(),
-      })
-      .where(eq(Minutes.id, id));
+      },
+      (table) => eq(table.id, id),
+    );
 
     if (durationSec) {
-      await db.insert(MinutesMedia).values({
+      await minutesMediaRepository.insert({
         id: crypto.randomUUID(),
         minutesId: id,
         type: 'audio',

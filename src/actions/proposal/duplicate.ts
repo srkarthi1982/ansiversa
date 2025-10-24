@@ -1,7 +1,7 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Proposal, eq } from 'astro:db';
 import { requireUser, findProposalOrThrow, normalizeProposalRow, sanitizeTitle } from './utils';
+import { proposalRepository } from './repositories';
 
 export const duplicate = defineAction({
   accept: 'json',
@@ -14,7 +14,7 @@ export const duplicate = defineAction({
 
     const duplicatedTitle = title ? sanitizeTitle(title) : `${original.title} (Copy)`;
 
-    await db.insert(Proposal).values({
+    const inserted = await proposalRepository.insert({
       id: duplicateId,
       userId: user.id,
       title: duplicatedTitle,
@@ -26,7 +26,6 @@ export const duplicate = defineAction({
       createdAt: now,
     });
 
-    const rows = await db.select().from(Proposal).where(eq(Proposal.id, duplicateId));
-    return { proposal: normalizeProposalRow(rows[0]) };
+    return { proposal: normalizeProposalRow(inserted[0]) };
   },
 });

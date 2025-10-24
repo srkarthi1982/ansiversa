@@ -1,7 +1,8 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { MinutesActionItem, db, eq } from 'astro:db';
+import { MinutesActionItem, eq } from 'astro:db';
 import { requireUser, findMinutesOrThrow, normalizeMinutesRow } from './utils';
+import { minutesActionItemRepository } from './repositories';
 
 export const get = defineAction({
   accept: 'json',
@@ -11,10 +12,9 @@ export const get = defineAction({
     const row = await findMinutesOrThrow(id, user.id);
     const minutes = normalizeMinutesRow(row);
 
-    const items = await db
-      .select()
-      .from(MinutesActionItem)
-      .where(eq(MinutesActionItem.minutesId, id));
+    const items = await minutesActionItemRepository.getData({
+      where: (table) => eq(table.minutesId, id),
+    });
 
     const actionItems = items.map((item) => ({
       id: item.id,

@@ -1,8 +1,9 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Proposal, eq } from 'astro:db';
+import { Proposal, eq } from 'astro:db';
 import { ProposalDataSchema, calculateBudgetTotals } from '../../lib/proposal/schema';
 import { requireUser, findProposalOrThrow, templateKeyEnum, statusEnum, sanitizeTitle, normalizeProposalRow } from './utils';
+import { proposalRepository } from './repositories';
 
 const patchSchema = z.object({
   path: z.string(),
@@ -78,7 +79,7 @@ export const save = defineAction({
 
     updates.data = ProposalDataSchema.parse(nextData);
 
-    await db.update(Proposal).set(updates).where(eq(Proposal.id, id));
+    await proposalRepository.update(updates, (table) => eq(table.id, id));
     const updated = await findProposalOrThrow(id, user.id);
     return { proposal: normalizeProposalRow(updated) };
   },

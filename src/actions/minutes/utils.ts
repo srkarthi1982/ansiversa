@@ -1,5 +1,5 @@
 import { ActionError } from 'astro:actions';
-import { db, Minutes, MinutesActionItem, and, desc, eq } from 'astro:db';
+import { Minutes, MinutesActionItem, and, desc, eq } from 'astro:db';
 import { z } from 'astro:schema';
 import type { MinutesRecord, MinutesSummary } from '../../lib/minutes/schema';
 import {
@@ -18,6 +18,10 @@ import {
   toMinutesTranscript,
 } from '../../lib/minutes/utils';
 import { getSessionWithUser } from '../../utils/session.server';
+import {
+  minutesActionItemRepository,
+  minutesRepository,
+} from './repositories';
 
 export const templateKeyEnum = z.enum(minutesTemplateKeys);
 export const statusEnum = z.enum(minutesStatuses);
@@ -60,7 +64,10 @@ export const requireUser = async (ctx: { cookies: unknown }) => {
 };
 
 export async function findMinutesOrThrow(id: string, userId: string) {
-  const rows = await db.select().from(Minutes).where(and(eq(Minutes.id, id), eq(Minutes.userId, userId)));
+  const rows = await minutesRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
   const record = rows[0];
   if (!record) {
     throw new ActionError({ code: 'NOT_FOUND', message: 'Meeting not found' });
@@ -69,11 +76,10 @@ export async function findMinutesOrThrow(id: string, userId: string) {
 }
 
 export async function listMinutesForUser(userId: string) {
-  const rows = await db
-    .select()
-    .from(Minutes)
-    .where(eq(Minutes.userId, userId))
-    .orderBy(desc(Minutes.lastSavedAt), desc(Minutes.createdAt));
+  const rows = await minutesRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => [desc(table.lastSavedAt), desc(table.createdAt)],
+  });
   return rows.map(normalizeMinutesRow);
 }
 
@@ -82,7 +88,9 @@ export async function ensureMinutesSlug(title: string, userId: string, currentId
   let candidate = base;
   let attempt = 1;
   while (true) {
-    const matches = await db.select({ id: Minutes.id }).from(Minutes).where(eq(Minutes.slug, candidate));
+    const matches = await minutesRepository.getData({
+      where: (table) => eq(table.slug, candidate),
+    });
     const conflict = matches.find((row) => !currentId || row.id !== currentId);
     if (!conflict) {
       return candidate;
@@ -93,11 +101,11 @@ export async function ensureMinutesSlug(title: string, userId: string, currentId
 }
 
 export async function syncActionItems(minutesId: string, summary: MinutesSummary) {
-  await db.delete(MinutesActionItem).where(eq(MinutesActionItem.minutesId, minutesId));
+  await minutesActionItemRepository.delete((table) => eq(table.minutesId, minutesId));
   if (!summary.actionItems.length) {
     return;
   }
-  await db.insert(MinutesActionItem).values(
+  await minutesActionItemRepository.insert(
     summary.actionItems.map((item) => ({
       id: item.id,
       minutesId,

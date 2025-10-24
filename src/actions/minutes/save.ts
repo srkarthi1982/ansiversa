@@ -1,6 +1,6 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Minutes, eq } from 'astro:db';
+import { Minutes, eq } from 'astro:db';
 import {
   MinutesAttendeeSchema,
   MinutesSummarySchema,
@@ -20,6 +20,7 @@ import {
   normalizeMinutesRow,
 } from './utils';
 import { sanitizeMinutesTitle } from '../../lib/minutes/utils';
+import { minutesRepository } from './repositories';
 
 const UpdateSchema = z.object({
   title: z.string().optional(),
@@ -125,9 +126,8 @@ export const save = defineAction({
       draft.title = sanitizeMinutesTitle(draft.title);
     }
 
-    await db
-      .update(Minutes)
-      .set({
+    await minutesRepository.update(
+      {
         title: draft.title,
         meetingDate: draft.meetingDate ? new Date(draft.meetingDate) : null,
         templateKey: draft.templateKey,
@@ -138,12 +138,16 @@ export const save = defineAction({
         status: draft.status,
         durationSec: draft.durationSec ?? null,
         lastSavedAt: new Date(),
-      })
-      .where(eq(Minutes.id, id));
+      },
+      (table) => eq(table.id, id),
+    );
 
     await syncActionItems(id, draft.summary);
 
-    const updated = await db.select().from(Minutes).where(eq(Minutes.id, id));
+    const updated = await minutesRepository.getData({
+      where: (table) => eq(table.id, id),
+      limit: 1,
+    });
     const minutes = updated[0] ? normalizeMinutesRow(updated[0]) : draft;
 
     return { minutes };

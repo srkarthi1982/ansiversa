@@ -1,6 +1,6 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Resume, eq } from 'astro:db';
+import { Resume, eq } from 'astro:db';
 import {
   ResumeDataSchema,
 } from '../../lib/resume/schema';
@@ -13,6 +13,7 @@ import {
   normalizeResumeRow,
   setDefaultResume,
 } from './utils';
+import { resumeRepository } from './repositories';
 
 export const save = defineAction({
   accept: 'json',
@@ -50,7 +51,7 @@ export const save = defineAction({
     }
 
     if (Object.keys(updates).length > 0) {
-      await db.update(Resume).set(updates).where(eq(Resume.id, id));
+      await resumeRepository.update(updates, (table) => eq(table.id, id));
     }
 
     if (setDefault) {

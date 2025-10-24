@@ -1,5 +1,5 @@
 import { ActionError } from 'astro:actions';
-import { db, Resume, ResumeExport, eq, desc, and, ne } from 'astro:db';
+import { Resume, ResumeExport, eq, desc, and, ne } from 'astro:db';
 import { z } from 'astro:schema';
 import {
   ResumeDataSchema,
@@ -9,6 +9,7 @@ import {
   createEmptyResumeData,
 } from '../../lib/resume/schema';
 import { getSessionWithUser } from '../../utils/session.server';
+import { resumeExportRepository, resumeRepository } from './repositories';
 
 export const templateKeyEnum = z.enum(resumeTemplateKeys);
 export const localeEnum = z.enum(resumeLocales);
@@ -38,7 +39,10 @@ export const requireUser = async (ctx: { cookies: unknown }) => {
 };
 
 export async function findResumeOrThrow(id: string, userId: string) {
-  const rows = await db.select().from(Resume).where(and(eq(Resume.id, id), eq(Resume.userId, userId)));
+  const rows = await resumeRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
   const resume = rows[0];
   if (!resume) {
     throw new ActionError({ code: 'NOT_FOUND', message: 'Resume not found' });
@@ -47,23 +51,22 @@ export async function findResumeOrThrow(id: string, userId: string) {
 }
 
 export async function setDefaultResume(id: string, userId: string) {
-  await db
-    .update(Resume)
-    .set({ isDefault: false })
-    .where(and(eq(Resume.userId, userId), ne(Resume.id, id)));
-  await db.update(Resume).set({ isDefault: true }).where(and(eq(Resume.id, id), eq(Resume.userId, userId)));
+  await resumeRepository.update(
+    { isDefault: false },
+    (table) => and(eq(table.userId, userId), ne(table.id, id)),
+  );
+  await resumeRepository.update({ isDefault: true }, (table) => and(eq(table.id, id), eq(table.userId, userId)));
 }
 
 export async function deleteResumeCascade(id: string, userId: string) {
-  await db.delete(ResumeExport).where(eq(ResumeExport.resumeId, id));
-  await db.delete(Resume).where(and(eq(Resume.id, id), eq(Resume.userId, userId)));
+  await resumeExportRepository.delete((table) => eq(table.resumeId, id));
+  await resumeRepository.delete((table) => and(eq(table.id, id), eq(table.userId, userId)));
 }
 
 export async function listResumesForUser(userId: string) {
-  const rows = await db
-    .select()
-    .from(Resume)
-    .where(eq(Resume.userId, userId))
-    .orderBy(desc(Resume.lastSavedAt), desc(Resume.createdAt));
+  const rows = await resumeRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => [desc(table.lastSavedAt), desc(table.createdAt)],
+  });
   return rows.map(normalizeResumeRow);
 }

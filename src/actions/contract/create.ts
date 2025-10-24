@@ -1,8 +1,8 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Contract, eq } from 'astro:db';
 import { createEmptyContractData, contractTemplateKeys } from '../../lib/contract/schema';
 import { requireUser, templateKeyEnum, normalizeContractRow, listContractsForUser, sanitizeContractTitle } from './utils';
+import { contractRepository } from './repositories';
 
 export const create = defineAction({
   accept: 'json',
@@ -30,7 +30,7 @@ export const create = defineAction({
     const templateKey = payload.templateKey ?? contractTemplateKeys[0];
     const data = createEmptyContractData(templateKey);
 
-    await db.insert(Contract).values({
+    const inserted = await contractRepository.insert({
       id,
       userId: user.id,
       title: sanitizeContractTitle(payload.title),
@@ -46,8 +46,7 @@ export const create = defineAction({
       createdAt: new Date(),
     });
 
-    const rows = await db.select().from(Contract).where(eq(Contract.id, id));
-    const contract = rows[0];
+    const contract = inserted[0];
     return {
       contract: contract ? normalizeContractRow(contract) : null,
     };

@@ -1,9 +1,10 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Minutes, eq } from 'astro:db';
+import { Minutes, eq } from 'astro:db';
 import { MinutesSummarySchema, MinutesTranscriptSchema } from '../../lib/minutes/schema';
 import { buildDemoSummary } from '../../lib/minutes/utils';
 import { requireUser, findMinutesOrThrow, normalizeMinutesRow } from './utils';
+import { minutesRepository } from './repositories';
 
 const truncate = (value: string, max = 140) => {
   const trimmed = value.trim();
@@ -46,14 +47,14 @@ export const summarize = defineAction({
       parkingLot: minutes.summary.parkingLot.length ? minutes.summary.parkingLot : templateSummary.parkingLot,
     });
 
-    await db
-      .update(Minutes)
-      .set({
+    await minutesRepository.update(
+      {
         summary,
         transcript,
         lastSavedAt: new Date(),
-      })
-      .where(eq(Minutes.id, payload.id));
+      },
+      (table) => eq(table.id, payload.id),
+    );
 
     return { summary, transcript };
   },

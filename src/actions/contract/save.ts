@@ -1,6 +1,6 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Contract, eq } from 'astro:db';
+import { Contract, eq } from 'astro:db';
 import {
   ContractClausesSchema,
   ContractDataSchema,
@@ -15,6 +15,7 @@ import {
   sanitizeContractTitle,
   normalizeContractRow,
 } from './utils';
+import { contractRepository } from './repositories';
 
 const patchSchema = z.object({
   path: z.string(),
@@ -116,7 +117,7 @@ export const save = defineAction({
       updates.status = status;
     }
 
-    await db.update(Contract).set(updates).where(eq(Contract.id, id));
+    await contractRepository.update(updates, (table) => eq(table.id, id));
     const updated = await findContractOrThrow(id, user.id);
     return { contract: normalizeContractRow(updated) };
   },

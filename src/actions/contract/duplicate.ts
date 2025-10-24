@@ -1,7 +1,7 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Contract, eq } from 'astro:db';
 import { requireUser, findContractOrThrow, normalizeContractRow, sanitizeContractTitle } from './utils';
+import { contractRepository } from './repositories';
 
 export const duplicate = defineAction({
   accept: 'json',
@@ -12,7 +12,7 @@ export const duplicate = defineAction({
     const now = new Date();
     const duplicateId = crypto.randomUUID();
 
-    await db.insert(Contract).values({
+    const inserted = await contractRepository.insert({
       id: duplicateId,
       userId: user.id,
       title: sanitizeContractTitle(`${existing.title} copy`),
@@ -28,8 +28,7 @@ export const duplicate = defineAction({
       createdAt: now,
     });
 
-    const rows = await db.select().from(Contract).where(eq(Contract.id, duplicateId));
-    const contract = rows[0];
+    const contract = inserted[0];
     return { contract: contract ? normalizeContractRow(contract) : null };
   },
 });

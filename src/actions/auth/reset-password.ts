@@ -1,7 +1,8 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, PasswordResetToken, User, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { hashPassword } from './helpers';
+import { passwordResetRepository, userRepository } from './repositories';
 
 export const resetPassword = defineAction({
   accept: 'form',
@@ -16,28 +17,28 @@ export const resetPassword = defineAction({
       message: 'Passwords do not match',
     }),
   async handler({ token, password }) {
-    const rows = await db
-      .select()
-      .from(PasswordResetToken)
-      .where(eq(PasswordResetToken.token, token));
+    const rows = await passwordResetRepository.getData({
+      where: (table) => eq(table.token, token),
+      limit: 1,
+    });
     const record = rows[0];
 
     if (!record || record.usedAt || record.expiresAt < new Date()) {
       throw new ActionError({ code: 'UNAUTHORIZED', message: 'Invalid or expired token' });
     }
 
-    const userRows = await db.select().from(User).where(eq(User.id, record.userId));
+    const userRows = await userRepository.getData({
+      where: (table) => eq(table.id, record.userId),
+      limit: 1,
+    });
     const user = userRows[0];
     if (!user) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'User not found' });
     }
 
     const newHash = hashPassword(password);
-    await db.update(User).set({ passwordHash: newHash }).where(eq(User.id, user.id));
-    await db
-      .update(PasswordResetToken)
-      .set({ usedAt: new Date() })
-      .where(eq(PasswordResetToken.id, record.id));
+    await userRepository.update({ passwordHash: newHash }, (table) => eq(table.id, user.id));
+    await passwordResetRepository.update({ usedAt: new Date() }, (table) => eq(table.id, record.id));
 
     return { ok: true };
   },

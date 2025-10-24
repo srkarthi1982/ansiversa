@@ -1,7 +1,8 @@
 import { defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Proposal, eq } from 'astro:db';
+import { eq } from 'astro:db';
 import { requireUser, findProposalOrThrow, ensureProposalSlug, normalizeProposalRow } from './utils';
+import { proposalRepository } from './repositories';
 import { slugifyProposalTitle } from '../../lib/proposal/utils';
 
 export const publish = defineAction({
@@ -20,15 +21,15 @@ export const publish = defineAction({
     const desiredSlug = slug ? slugifyProposalTitle(slug) : slugifyProposalTitle(proposal.title);
     const finalSlug = await ensureProposalSlug(desiredSlug, user.id, id);
 
-    await db
-      .update(Proposal)
-      .set({
+    await proposalRepository.update(
+      {
         slug: finalSlug,
         status: 'published',
         publishedAt: now,
         lastSavedAt: now,
-      })
-      .where(eq(Proposal.id, id));
+      },
+      (table) => eq(table.id, id),
+    );
 
     const updated = await findProposalOrThrow(id, user.id);
     return {

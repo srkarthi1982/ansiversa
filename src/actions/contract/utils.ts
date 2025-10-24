@@ -1,5 +1,5 @@
 import { ActionError } from 'astro:actions';
-import { db, Contract, ContractClauseLibrary, and, desc, eq } from 'astro:db';
+import { Contract, and, desc, eq } from 'astro:db';
 import { z } from 'astro:schema';
 import {
   ContractClausesSchema,
@@ -14,6 +14,7 @@ import {
 import type { ContractData } from '../../lib/contract/schema';
 import { slugifyContractTitle } from '../../lib/contract/utils';
 import { getSessionWithUser } from '../../utils/session.server';
+import { contractClauseLibraryRepository, contractRepository } from './repositories';
 
 export const templateKeyEnum = z.enum(contractTemplateKeys);
 export const statusEnum = z.enum(contractStatuses);
@@ -54,7 +55,10 @@ export const requireUser = async (ctx: { cookies: unknown }) => {
 };
 
 export async function findContractOrThrow(id: string, userId: string) {
-  const rows = await db.select().from(Contract).where(and(eq(Contract.id, id), eq(Contract.userId, userId)));
+  const rows = await contractRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
   const contract = rows[0];
   if (!contract) {
     throw new ActionError({ code: 'NOT_FOUND', message: 'Contract not found' });
@@ -63,11 +67,10 @@ export async function findContractOrThrow(id: string, userId: string) {
 }
 
 export async function listContractsForUser(userId: string) {
-  const rows = await db
-    .select()
-    .from(Contract)
-    .where(eq(Contract.userId, userId))
-    .orderBy(desc(Contract.lastSavedAt), desc(Contract.createdAt));
+  const rows = await contractRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => [desc(table.lastSavedAt), desc(table.createdAt)],
+  });
   return rows.map(normalizeContractRow);
 }
 
@@ -76,7 +79,9 @@ export async function ensureContractSlug(title: string, userId: string, currentI
   let candidate = base;
   let attempt = 1;
   while (true) {
-    const matches = await db.select({ id: Contract.id, userId: Contract.userId }).from(Contract).where(eq(Contract.slug, candidate));
+    const matches = await contractRepository.getData({
+      where: (table) => eq(table.slug, candidate),
+    });
     const conflict = matches.find((row) => row.userId !== userId || (currentId && row.id !== currentId));
     if (!conflict) {
       return candidate;
@@ -99,11 +104,10 @@ export function mergeContractData(original: ContractData | null | undefined, pat
 }
 
 export async function loadClauseLibrary(locale = 'en') {
-  const rows = await db
-    .select()
-    .from(ContractClauseLibrary)
-    .where(eq(ContractClauseLibrary.locale, locale))
-    .orderBy(ContractClauseLibrary.title);
+  const rows = await contractClauseLibraryRepository.getData({
+    where: (table) => eq(table.locale, locale),
+    orderBy: (table) => table.title,
+  });
   return rows.map((row) => ({
     id: row.id,
     category: row.category,

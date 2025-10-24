@@ -1,5 +1,5 @@
 import { ActionError } from 'astro:actions';
-import { db, FlashNote, and, desc, eq, inArray } from 'astro:db';
+import { FlashNote, and, desc, eq, inArray } from 'astro:db';
 import type { z } from 'astro:schema';
 import { getSessionWithUser } from '../../utils/session.server';
 import type { FlashNote as FlashNoteDTO } from '../../types/flashnote';
@@ -14,6 +14,7 @@ import {
   summariseInputSchema,
   updateInputSchema,
 } from './schemas';
+import { flashNoteRepository } from './repositories';
 
 const { randomUUID } = await import('node:crypto');
 
@@ -53,11 +54,10 @@ export const requireUser = async (
 };
 
 export const ensureOwnership = async (id: string, userId: string) => {
-  const rows = await db
-    .select()
-    .from(FlashNote)
-    .where(and(eq(FlashNote.id, id), eq(FlashNote.userId, userId)))
-    .limit(1);
+  const rows = await flashNoteRepository.getData({
+    where: (table) => and(eq(table.id, id), eq(table.userId, userId)),
+    limit: 1,
+  });
   const note = rows[0];
   if (!note) {
     throw new ActionError({ code: 'NOT_FOUND', message: 'Flash note not found' });
@@ -66,11 +66,10 @@ export const ensureOwnership = async (id: string, userId: string) => {
 };
 
 export const listNotes = async (userId: string) => {
-  const rows = await db
-    .select()
-    .from(FlashNote)
-    .where(eq(FlashNote.userId, userId))
-    .orderBy(desc(FlashNote.updatedAt));
+  const rows = await flashNoteRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => desc(table.updatedAt),
+  });
   return rows.map(normalizeFlashNote);
 };
 
@@ -162,7 +161,7 @@ export const createNoteRecord = async (
 ) => {
   const id = randomUUID();
   const now = new Date();
-  await db.insert(FlashNote).values({
+  const inserted = await flashNoteRepository.insert({
     id,
     userId,
     title: payload.title,
@@ -172,8 +171,7 @@ export const createNoteRecord = async (
     createdAt: now,
     updatedAt: now,
   });
-  const rows = await db.select().from(FlashNote).where(eq(FlashNote.id, id)).limit(1);
-  return normalizeFlashNote(rows[0]!);
+  return normalizeFlashNote(inserted[0]!);
 };
 
 export const updateNoteRecord = async (
@@ -188,17 +186,17 @@ export const updateNoteRecord = async (
     summary: payload.summary ?? existing.summary,
     updatedAt: new Date(),
   };
-  await db
-    .update(FlashNote)
-    .set(updated)
-    .where(and(eq(FlashNote.id, payload.id), eq(FlashNote.userId, userId)));
-  const rows = await db.select().from(FlashNote).where(eq(FlashNote.id, payload.id)).limit(1);
+  await flashNoteRepository.update(updated, (table) => and(eq(table.id, payload.id), eq(table.userId, userId)));
+  const rows = await flashNoteRepository.getData({
+    where: (table) => eq(table.id, payload.id),
+    limit: 1,
+  });
   return normalizeFlashNote(rows[0]!);
 };
 
 export const deleteNoteRecord = async (userId: string, id: string) => {
   await ensureOwnership(id, userId);
-  await db.delete(FlashNote).where(and(eq(FlashNote.id, id), eq(FlashNote.userId, userId)));
+  await flashNoteRepository.delete((table) => and(eq(table.id, id), eq(table.userId, userId)));
 };
 
 export const createReviewDeck = async (
@@ -206,12 +204,11 @@ export const createReviewDeck = async (
   options: z.infer<typeof reviewInputSchema>,
 ) => {
   const limit = options.limit ?? 20;
-  const rows = await db
-    .select()
-    .from(FlashNote)
-    .where(eq(FlashNote.userId, userId))
-    .orderBy(desc(FlashNote.updatedAt))
-    .limit(limit * 2);
+  const rows = await flashNoteRepository.getData({
+    where: (table) => eq(table.userId, userId),
+    orderBy: (table) => desc(table.updatedAt),
+    limit: limit * 2,
+  });
   const notes = rows.map(normalizeFlashNote);
   const filtered = options.tag
     ? notes.filter((note) => note.tags.some((tag) => tag.toLowerCase() === options.tag!.toLowerCase()))
@@ -252,10 +249,9 @@ export const createExportArtifact = async (
   userId: string,
   payload: z.infer<typeof exportInputSchema>,
 ) => {
-  const rows = await db
-    .select()
-    .from(FlashNote)
-    .where(and(eq(FlashNote.userId, userId), inArray(FlashNote.id, payload.noteIds)));
+  const rows = await flashNoteRepository.getData({
+    where: (table) => and(eq(table.userId, userId), inArray(table.id, payload.noteIds)),
+  });
 
   const lookup = new Map(rows.map((row) => [row.id, normalizeFlashNote(row)]));
   const notes = payload.noteIds
