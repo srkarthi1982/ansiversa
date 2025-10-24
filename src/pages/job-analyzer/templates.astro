@@ -1,0 +1,167 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+---
+<Layout>
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#job-analyzer-templates">
+    Skip to content
+  </a>
+  <main
+    id="job-analyzer-templates"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ jobAnalyzer: $store.jobAnalyzer, difficultyFilter: 'all' })"
+    x-init="jobAnalyzer.initTemplates()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-layer-group text-xs"></i>
+              Role presets
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Job analyzer templates</h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Jump-start analyses with curated role presets. Each template includes expected skills, hiring signals, and focus areas so your match report highlights what recruiters care about.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button href="/job-analyzer/upload">
+                <i class="fas fa-gauge-high text-xs"></i>
+                Analyze a JD
+              </Button>
+              <Button href="/career-planner" variant="outline">
+                <i class="fas fa-graduation-cap text-xs"></i>
+                Send gaps to planner
+              </Button>
+            </div>
+          </div>
+          <aside class="rounded-3xl border border-indigo-100 bg-white/80 p-6 shadow-lg backdrop-blur">
+            <h2 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">How presets help</h2>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-wand-magic-sparkles mt-1 text-indigo-500"></i>
+                Auto-fill JD summary, responsibilities, and requirements.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-key mt-1 text-indigo-500"></i>
+                Seed ATS keyword lists with proven phrases per role.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-rocket mt-1 text-indigo-500"></i>
+                Align Career Planner gap modules with curated resources.
+              </li>
+            </ul>
+            <p class="mt-4 text-xs text-slate-500">
+              Templates are configurable per user. Tweaks persist when you duplicate them for client or internal roles.
+            </p>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Library"
+          title="Curated role presets"
+          description="Filter by difficulty to explore starter, mid, or senior-level roles."
+        />
+        <div class="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+            :class="difficultyFilter === 'all' ? 'border-indigo-300 bg-white text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-indigo-200 hover:text-indigo-700'"
+            @click="difficultyFilter = 'all'"
+          >
+            <i class="fas fa-layer-group text-xs"></i>
+            <span class="ml-2">All</span>
+          </button>
+          <button
+            type="button"
+            class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+            :class="difficultyFilter === 'entry' ? 'border-indigo-300 bg-white text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-indigo-200 hover:text-indigo-700'"
+            @click="difficultyFilter = 'entry'"
+          >
+            <i class="fas fa-seedling text-xs"></i>
+            <span class="ml-2">Entry</span>
+          </button>
+          <button
+            type="button"
+            class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+            :class="difficultyFilter === 'mid' ? 'border-indigo-300 bg-white text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-indigo-200 hover:text-indigo-700'"
+            @click="difficultyFilter = 'mid'"
+          >
+            <i class="fas fa-people-group text-xs"></i>
+            <span class="ml-2">Mid</span>
+          </button>
+          <button
+            type="button"
+            class="rounded-full border px-4 py-2 text-sm font-semibold transition"
+            :class="difficultyFilter === 'senior' ? 'border-indigo-300 bg-white text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-indigo-200 hover:text-indigo-700'"
+            @click="difficultyFilter = 'senior'"
+          >
+            <i class="fas fa-star text-xs"></i>
+            <span class="ml-2">Senior</span>
+          </button>
+        </div>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <template x-for="template in jobAnalyzer.state.templates" :key="template.id">
+            <article
+              class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md"
+              x-show="difficultyFilter === 'all' || template.difficulty === difficultyFilter"
+            >
+              <div class="space-y-4">
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <h2 class="text-xl font-semibold text-slate-900" x-text="template.role"></h2>
+                    <p class="text-sm text-slate-600" x-text="template.focus"></p>
+                  </div>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                    <i class="fas fa-signal text-[10px]"></i>
+                    <span class="capitalize" x-text="template.difficulty"></span>
+                  </span>
+                </div>
+                <p class="text-sm text-slate-600" x-text="template.summary"></p>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Keywords</p>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <template x-for="keyword in template.keywords" :key="keyword">
+                      <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700" x-text="keyword"></span>
+                    </template>
+                  </div>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-600">Hiring signals</p>
+                  <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                    <template x-for="signal in template.hiringSignals" :key="signal">
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                        <span x-text="signal"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </div>
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <Button variant="outline" :href="`/job-analyzer/upload?template=${template.id}`">
+                  <i class="fas fa-bolt text-xs"></i>
+                  Use template
+                </Button>
+                <Button variant="ghost" :href="`/job-analyzer/upload?template=${template.id}&mode=duplicate`">
+                  <i class="fas fa-copy text-xs"></i>
+                  Duplicate & edit
+                </Button>
+              </div>
+            </article>
+          </template>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 text-sm text-slate-600">
+          Looking for something else? Suggest a role inside the workspace — we prioritise new templates based on community demand and hiring trends we observe across Ansiversa.
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

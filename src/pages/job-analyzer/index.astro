@@ -1,0 +1,524 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const featureHighlights = [
+  {
+    icon: "fas fa-file-magnifying-glass",
+    title: "Normalize every JD",
+    description:
+      "Paste text, upload PDFs, or drop in a URL. We clean formatting, remove boilerplate, and detect sections like summary, requirements, responsibilities, and benefits automatically.",
+  },
+  {
+    icon: "fas fa-chart-simple",
+    title: "Transparent match scoring",
+    description:
+      "See the exact weights across skills, seniority, domain fit, responsibilities, and location or legal constraints. Toggle weights on Pro to experiment with scenarios.",
+  },
+  {
+    icon: "fas fa-key",
+    title: "ATS keyword intelligence",
+    description:
+      "Generate high-priority keywords with frequency targets, context sentences, and coverage indicators to keep Applicant Tracking Systems happy.",
+  },
+  {
+    icon: "fas fa-people-arrows",
+    title: "Resume + profile comparison",
+    description:
+      "Upload resumes or leverage your Ansiversa profile to spot overlaps, gaps, and wins. Pro supports multi-resume A/B testing.",
+  },
+  {
+    icon: "fas fa-layer-group",
+    title: "Gap analysis to action",
+    description:
+      "Push gap plans to Career Planner, send refined bullets to Resume Builder, and hand Cover Letter Writer the focus areas that matter most.",
+  },
+  {
+    icon: "fas fa-share-nodes",
+    title: "Export & share securely",
+    description:
+      "Export PDF/Markdown instantly, queue JSON exports for integrations, and publish a watermark-free read-only link on Pro plans.",
+  },
+];
+
+const workflow = [
+  {
+    step: "Ingest",
+    title: "Bring in the job",
+    description: "Paste text, upload a PDF, or fetch a URL. We normalize formatting, detect sections, and extract structured context.",
+  },
+  {
+    step: "Extract",
+    title: "Surface requirements",
+    description:
+      "Skills, tools, responsibilities, constraints, seniority, and compensation hints get parsed into ready-to-use datasets.",
+  },
+  {
+    step: "Compare",
+    title: "Match against your profile",
+    description:
+      "Select a resume draft or your Ansiversa profile. We measure coverage, partial matches, and gaps with weight breakdowns.",
+  },
+  {
+    step: "Act",
+    title: "Ship deliverables",
+    description:
+      "Send bullets to Resume Builder, push gaps into Career Planner, export reports, and prep Cover Letter Writer focus areas.",
+  },
+];
+
+const planRows = [
+  { feature: "Analyses / month", free: "10", pro: "200" },
+  { feature: "Saved reports", free: "1 (watermark)", pro: "Unlimited" },
+  { feature: "Exports", free: "PDF & Markdown", pro: "PDF, Markdown, JSON" },
+  { feature: "Compare modes", free: "Single resume", pro: "Multi-resume A/B, custom weights" },
+  { feature: "Share page", free: "Watermarked", pro: "No watermark + analytics" },
+  { feature: "Gap planner sync", free: "Top 2 modules", pro: "Full curriculum push" },
+];
+
+const apiContracts = [
+  { method: "POST", path: "/job-analyzer/api/analyze", description: "Normalize JD input and return sections, skills, and constraints." },
+  { method: "POST", path: "/job-analyzer/api/compare-resume", description: "Compute match score and coverage against a resume or profile." },
+  { method: "POST", path: "/job-analyzer/api/keywords", description: "Return required/optional keywords with frequency guidance." },
+  { method: "POST", path: "/job-analyzer/api/resume-bullets", description: "Generate STAR-style bullet suggestions ready for Resume Builder." },
+  { method: "POST", path: "/job-analyzer/api/gap-plan", description: "Recommend resources for missing skills with study hour estimates." },
+  { method: "POST", path: "/job-analyzer/api/save", description: "Persist match reports for history and sharing." },
+  { method: "POST", path: "/job-analyzer/api/export", description: "Queue PDF/MD/JSON exports with plan validation." },
+  { method: "POST", path: "/job-analyzer/api/publish", description: "Create read-only share links with watermarking rules." },
+];
+
+const securityPoints = [
+  {
+    title: "Private by default",
+    description: "Reports stay private until you explicitly publish. Shared links strip PII such as emails, phone numbers, and addresses.",
+  },
+  {
+    title: "Ephemeral AI mode",
+    description: "Optionally discard JD and resume content after analysis completes while retaining structured insights only.",
+  },
+  {
+    title: "Sanitised exports",
+    description: "All markdown and HTML output is escaped to prevent injection. Public JSON responses include read-only data only.",
+  },
+  {
+    title: "Audit-friendly logs",
+    description: "Every analyze, compare, export, publish, and delete event is tracked for compliance-ready audit trails.",
+  },
+];
+---
+<Layout>
+  <a class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500" href="#job-analyzer-content">
+    Skip to content
+  </a>
+  <main
+    id="job-analyzer-content"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ jobAnalyzer: $store.jobAnalyzer })"
+    x-init="jobAnalyzer.initLanding()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-briefcase text-xs"></i>
+              Career intelligence workspace
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Job Description Analyzer
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Break down job descriptions, compare them with your resumes or Ansiversa profile, and receive a transparent match report with keyword, resume bullet, and learning path suggestions.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button href="/job-analyzer/upload">
+                <i class="fas fa-gauge-high text-xs"></i>
+                Launch analyzer
+              </Button>
+              <Button href="/job-analyzer/history" variant="outline">
+                <i class="fas fa-clock-rotate-left text-xs"></i>
+                View history
+              </Button>
+              <Button href="/job-analyzer/templates" variant="ghost">
+                <i class="fas fa-layer-group text-xs"></i>
+                Templates & presets
+              </Button>
+            </div>
+            <p class="text-xs text-slate-500">
+              <span class="font-semibold text-slate-700" x-text="`Free plan · ${jobAnalyzer.state.usage.analysesUsed}/${jobAnalyzer.state.usage.analysesLimit} analyses used`"></span>
+              · Last analysis
+              <span class="font-semibold text-slate-700" x-text="new Date(jobAnalyzer.state.usage.lastAnalyzedAt).toLocaleString()"></span>
+            </p>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-40 blur-xl"></div>
+            <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl backdrop-blur">
+              <header class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Latest match report</p>
+                  <p class="text-xs text-slate-500" x-text="jobAnalyzer.state.matchReport.jd.company"></p>
+                </div>
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  <i class="fas fa-circle-check text-[10px]"></i>
+                  Ready to export
+                </span>
+              </header>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl bg-indigo-50 px-4 py-3 text-center">
+                  <p class="text-xs font-medium uppercase tracking-wide text-indigo-600">Match score</p>
+                  <p class="mt-2 text-3xl font-semibold text-indigo-900" x-text="`${jobAnalyzer.state.matchReport.scoreTotal}%`"></p>
+                  <p class="text-xs font-medium text-indigo-700" x-text="jobAnalyzer.state.matchReport.scoreLabel"></p>
+                </div>
+                <div class="rounded-2xl bg-slate-100 px-4 py-3">
+                  <p class="text-xs font-medium uppercase tracking-wide text-slate-600">Resume used</p>
+                  <p class="mt-2 text-sm font-semibold text-slate-900" x-text="jobAnalyzer.state.matchReport.resumeTitle"></p>
+                  <p class="text-xs text-slate-500">
+                    <i class="fas fa-file-signature mr-1 text-[10px]"></i>
+                    <span x-text="jobAnalyzer.state.matchReport.jd.title"></span>
+                  </p>
+                </div>
+              </div>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <template x-for="breakdown in jobAnalyzer.state.matchReport.scoreBreakdown" :key="breakdown.key">
+                  <li class="flex items-start gap-3 rounded-2xl border border-slate-100 px-4 py-3">
+                    <div class="mt-1 h-2 w-2 rounded-full bg-indigo-500"></div>
+                    <div class="flex-1">
+                      <div class="flex items-center justify-between gap-3">
+                        <p class="font-semibold text-slate-900" x-text="breakdown.label"></p>
+                        <span class="text-xs font-semibold text-indigo-600" x-text="`${breakdown.score}%`"></span>
+                      </div>
+                      <p class="text-xs text-slate-500" x-text="breakdown.description"></p>
+                    </div>
+                  </li>
+                </template>
+              </ul>
+              <footer class="flex items-center justify-between text-xs text-slate-500">
+                <span>
+                  <i class="fas fa-scale-balanced mr-1 text-[10px]"></i>
+                  Weighted scoring visible to candidates
+                </span>
+                <a class="font-semibold text-indigo-600 hover:text-indigo-700" href="/job-analyzer/upload">
+                  View workflow
+                </a>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Why teams rely on it"
+          title="From JD chaos to guided next steps"
+          description="We combine deterministic parsing with AI prompts so you always see what changed, why it matters, and how to respond."
+        />
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {featureHighlights.map((feature) => (
+            <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md" key={feature.title}>
+              <div class="space-y-4">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i class={feature.icon}></i>
+                </span>
+                <h3 class="text-lg font-semibold text-slate-900">{feature.title}</h3>
+                <p class="text-sm text-slate-600">{feature.description}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Structured insights"
+          title="What gets captured during analysis"
+          description="Every analysis stores a normalized JD, skill taxonomy, constraints, and cross-module actions so you can revisit or hand off the data confidently."
+        />
+        <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-center justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900">Normalized JD sections</h3>
+                <p class="text-sm text-slate-500">Editable in the upload flow with audit history.</p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
+                AI assisted
+              </span>
+            </header>
+            <dl class="mt-6 space-y-4 text-sm text-slate-600">
+              <dt class="font-semibold text-slate-900">Summary</dt>
+              <dd x-text="jobAnalyzer.state.matchReport.jd.normalized.summary"></dd>
+              <template x-for="(items, key) in { Responsibilities: jobAnalyzer.state.matchReport.jd.normalized.responsibilities, Requirements: jobAnalyzer.state.matchReport.jd.normalized.requirements, 'Nice to have': jobAnalyzer.state.matchReport.jd.normalized.niceToHave, Benefits: jobAnalyzer.state.matchReport.jd.normalized.benefits }" :key="key">
+                <div>
+                  <dt class="mt-4 font-semibold text-slate-900" x-text="key"></dt>
+                  <dd>
+                    <ul class="mt-2 space-y-2">
+                      <template x-for="item in items" :key="item">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                          <span x-text="item"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </dd>
+                </div>
+              </template>
+            </dl>
+          </article>
+          <div class="space-y-8">
+            <article class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-sm">
+              <h3 class="text-lg font-semibold text-slate-900">Skill taxonomy</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Required, nice-to-have, tools, soft skills, certifications, and education are tagged for every JD. Partial matches appear in amber for quick editing.
+              </p>
+              <div class="mt-4 grid gap-3 md:grid-cols-2">
+                <template x-for="category in jobAnalyzer.state.matchReport.jd.skills" :key="category.label">
+                  <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600" x-text="category.label"></p>
+                    <ul class="mt-2 flex flex-wrap gap-2">
+                      <template x-for="item in category.items" :key="item">
+                        <li class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700" x-text="item"></li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
+              </div>
+            </article>
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-lg font-semibold text-slate-900">Constraints & alerts</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Visa, clearance, travel, onsite expectations, and location fit checks run automatically. Hard fails highlight blockers before you apply.
+              </p>
+              <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-plane-departure mt-1 text-indigo-500"></i>
+                  <span x-text="jobAnalyzer.state.matchReport.jd.constraints.travel.join(', ') || 'No travel mentioned'"></span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-passport mt-1 text-indigo-500"></i>
+                  <span x-text="jobAnalyzer.state.matchReport.jd.constraints.visa.length ? jobAnalyzer.state.matchReport.jd.constraints.visa.join(', ') : 'No visa requirements detected'"></span>
+                </li>
+                <li class="flex items-start gap-3">
+                  <i class="fas fa-building mt-1 text-indigo-500"></i>
+                  <span x-text="jobAnalyzer.state.matchReport.jd.remote"></span>
+                </li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workflow"
+          title="A guided flow from intake to action"
+          description="Each step runs in real-time with autosave and audit logs. Free plan covers the core experience; Pro unlocks multi-resume testing and analytics."
+        />
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {workflow.map((item) => (
+            <article class="h-full rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm" key={item.step}>
+              <div class="flex items-center justify-between">
+                <span class="text-xs font-semibold uppercase tracking-wide text-indigo-600">{item.step}</span>
+                <i class="fas fa-arrow-trend-up text-sm text-indigo-500"></i>
+              </div>
+              <h3 class="mt-4 text-lg font-semibold text-slate-900">{item.title}</h3>
+              <p class="mt-2 text-sm text-slate-600">{item.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Actionable outcomes"
+          title="Match breakdown, suggestions, and integrations"
+          description="Every report provides quantified insights, keyword recommendations, resume bullet drafts, and a ready-to-ship learning plan."
+        />
+        <div class="grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <article class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Coverage summary</h3>
+            <p class="mt-2 text-sm text-slate-600">Matched, partial, and missing skills are grouped for quick edits. Tap a chip in the upload flow to edit tags.</p>
+            <div class="mt-4 space-y-4 text-sm">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">Matched</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <template x-for="item in jobAnalyzer.state.matchReport.coverage.matched" :key="`matched-${item}`">
+                    <span class="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700" x-text="item"></span>
+                  </template>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-amber-600">Partial</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <template x-for="item in jobAnalyzer.state.matchReport.coverage.partial" :key="`partial-${item}`">
+                    <span class="rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-700" x-text="item"></span>
+                  </template>
+                </div>
+              </div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-rose-600">Missing</p>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <template x-for="item in jobAnalyzer.state.matchReport.coverage.missing" :key="`missing-${item}`">
+                    <span class="rounded-full bg-rose-100 px-3 py-1 text-xs font-semibold text-rose-700" x-text="item"></span>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </article>
+          <article class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div>
+              <h3 class="text-lg font-semibold text-slate-900">Keyword priorities</h3>
+              <p class="mt-2 text-sm text-slate-600">We group keywords by priority and show target frequency with usage suggestions for ATS scanners.</p>
+              <ul class="mt-4 space-y-3">
+                <template x-for="keyword in jobAnalyzer.state.matchReport.keywordSuggestions" :key="keyword.term">
+                  <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                    <div class="flex items-center justify-between gap-3">
+                      <p class="font-semibold text-slate-900" x-text="keyword.term"></p>
+                      <span class="text-xs font-semibold" :class="keyword.priority === 'required' ? 'text-rose-600' : 'text-amber-600'" x-text="keyword.priority === 'required' ? 'Required' : 'Optional'"></span>
+                    </div>
+                    <p class="text-xs text-slate-500" x-text="keyword.frequency"></p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="keyword.context"></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-slate-900">Resume bullet suggestions</h3>
+              <p class="mt-2 text-sm text-slate-600">Send to Resume Builder with one click, then customise metrics or impact phrases.</p>
+              <ul class="mt-3 space-y-3">
+                <template x-for="bullet in jobAnalyzer.state.matchReport.bullets" :key="bullet.text">
+                  <li class="rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-sm">
+                    <p class="text-sm font-semibold text-slate-900" x-text="bullet.text"></p>
+                    <p class="mt-1 text-xs uppercase tracking-wide text-indigo-600" x-text="bullet.context"></p>
+                    <p class="text-xs text-slate-500" x-text="bullet.emphasis"></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-slate-900">Gap plan preview</h3>
+              <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.matchReport.gapPlan.summary"></p>
+              <ul class="mt-3 space-y-3 text-sm text-slate-600">
+                <template x-for="module in jobAnalyzer.state.matchReport.gapPlan.modules" :key="module.title">
+                  <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                    <div class="flex items-center justify-between gap-3">
+                      <p class="font-semibold text-slate-900" x-text="module.title"></p>
+                      <span class="text-xs font-semibold text-indigo-600" x-text="`${module.hours}h`"></span>
+                    </div>
+                    <p class="text-xs text-slate-500" x-text="module.resource"></p>
+                    <a class="text-xs font-semibold text-indigo-600 hover:text-indigo-700" :href="module.link" target="_blank" rel="noopener">
+                      View resource
+                    </a>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </article>
+        </div>
+        <div class="grid gap-6 lg:grid-cols-3">
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Resume Builder integration</h3>
+            <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.matchReport.integrations.resumeBuilder"></p>
+          </article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Career Planner sync</h3>
+            <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.matchReport.integrations.careerPlanner"></p>
+          </article>
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Cover letter focus</h3>
+            <p class="mt-2 text-sm text-slate-600" x-text="jobAnalyzer.state.matchReport.integrations.coverLetter"></p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plans"
+          title="Free to start, Pro for power users"
+          description="Usage is tracked per user per month with soft limits and friendly reminders before hard stops."
+        />
+        <div class="overflow-hidden rounded-3xl border border-slate-200">
+          <table class="min-w-full divide-y divide-slate-200 bg-white text-left text-sm">
+            <thead class="bg-slate-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 font-semibold text-slate-600">Feature</th>
+                <th scope="col" class="px-6 py-3 font-semibold text-slate-600">Free</th>
+                <th scope="col" class="px-6 py-3 font-semibold text-slate-600">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-600">
+              {planRows.map((row) => (
+                <tr key={row.feature}>
+                  <td class="px-6 py-4 font-semibold text-slate-900">{row.feature}</td>
+                  <td class="px-6 py-4">{row.free}</td>
+                  <td class="px-6 py-4">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Developers & ops"
+          title="API contracts"
+          description="SSR API routes power the analyzer so you can integrate with existing dashboards or automation."
+        />
+        <div class="grid gap-4 lg:grid-cols-2">
+          {apiContracts.map((route) => (
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm" key={route.path}>
+              <div class="flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-code text-[10px]"></i>
+                  {route.method}
+                </span>
+                <code class="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">{route.path}</code>
+              </div>
+              <p class="mt-3 text-sm text-slate-600">{route.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-slate-200 bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Security & privacy"
+          title="Built for trust"
+          description="JD and resume data stays private. You decide when to publish, what to export, and how long to retain content."
+          containerClass="text-white"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-slate-200"
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {securityPoints.map((point) => (
+            <article class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur" key={point.title}>
+              <h3 class="text-lg font-semibold">{point.title}</h3>
+              <p class="mt-2 text-sm text-slate-200">{point.description}</p>
+            </article>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/10 p-6 text-sm text-slate-100">
+          Rate limiting: analyze & compare routes are limited per user per day. Export and publish routes enforce monthly plan allocations and respond with actionable errors before throttling.
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

@@ -47,7 +47,7 @@ const miniApps = [
   { slug: 'image-background-remover', name: 'Image Background Remover' },
   { slug: 'interview-coach', name: 'Interview Coach' },
   { slug: 'invoice', name: 'Invoice & Receipt Maker' },
-  { slug: 'job-description-analyzer', name: 'Job Description Analyzer' },
+  { slug: 'job-analyzer', name: 'Job Description Analyzer' },
   { slug: 'json-formatter', name: 'JSON Formatter' },
   { slug: 'knowledge-duel', name: 'Knowledge Duel' },
   { slug: 'language-flashcards', name: 'Language Flashcards' },
