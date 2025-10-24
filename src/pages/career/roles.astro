@@ -1,0 +1,133 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#career-roles"
+  >
+    Skip to content
+  </a>
+  <main
+    id="career-roles"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ career: $store.career })"
+    x-init="career.initRoles()"
+  >
+    <section class="border-b border-slate-200 bg-white/90 py-12">
+      <div class="mx-auto flex max-w-5xl flex-col gap-6 px-4 sm:px-6 lg:px-8">
+        <div class="space-y-3 text-center lg:text-left">
+          <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-xs font-semibold text-indigo-700">
+            <i class="fas fa-briefcase text-[11px]"></i>
+            Role Explorer
+          </span>
+          <h1 class="text-3xl font-bold text-slate-900 sm:text-4xl">Discover target roles &amp; skills demand</h1>
+          <p class="text-sm text-slate-600 sm:text-base">
+            Shortlist roles seeded by Ansiversa. Each card includes top skills, demand signals, and salary ranges so you can prioritise your next transition path.
+          </p>
+        </div>
+        <div class="grid gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm lg:grid-cols-[minmax(0,1fr)_240px]">
+          <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_200px]">
+            <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              <i class="fas fa-magnifying-glass text-xs"></i>
+              <input
+                type="search"
+                class="w-full bg-transparent focus:outline-none"
+                placeholder="Search by role, skill, or summary"
+                x-model="career.roles.filters.query"
+                @input.debounce.300ms="career.applyRoleFilters()"
+              />
+            </label>
+            <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+              <i class="fas fa-sitemap text-xs"></i>
+              <select
+                class="w-full bg-transparent focus:outline-none"
+                x-model="career.roles.filters.category"
+                @change="career.applyRoleFilters()"
+              >
+                <option value="all">All categories</option>
+                <template x-for="category in Array.from(new Set(career.roles.items.map((role) => role.category))).sort()" :key="category">
+                  <option :value="category" x-text="category"></option>
+                </template>
+              </select>
+            </label>
+          </div>
+          <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+            <i class="fas fa-signal text-xs"></i>
+            <select
+              class="w-full bg-transparent focus:outline-none"
+              x-model="career.roles.filters.demand"
+              @change="career.applyRoleFilters()"
+            >
+              <option value="all">All demand</option>
+              <option value="high">High demand</option>
+              <option value="med">Medium demand</option>
+              <option value="low">Emerging</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="mx-auto max-w-5xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <p class="text-sm text-slate-600" x-text="`${career.roles.filtered.length} roles available`"></p>
+        <div class="grid gap-6 md:grid-cols-2">
+          <template x-for="role in career.roles.filtered" :key="role.id">
+            <article class="flex h-full flex-col rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-start justify-between gap-3">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900" x-text="role.title"></h2>
+                  <p class="text-xs uppercase tracking-wide text-slate-500" x-text="role.category"></p>
+                </div>
+                <span
+                  class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                  :class="{
+                    'bg-emerald-100 text-emerald-700': role.demandLevel === 'high',
+                    'bg-amber-100 text-amber-700': role.demandLevel === 'med',
+                    'bg-slate-100 text-slate-600': role.demandLevel === 'low',
+                  }"
+                >
+                  <i class="fas fa-chart-line text-[11px]"></i>
+                  <span class="capitalize" x-text="role.demandLevel"></span>
+                </span>
+              </header>
+              <p class="mt-3 text-sm text-slate-600" x-text="role.summary"></p>
+              <dl class="mt-4 grid gap-3 text-xs text-slate-600">
+                <div class="flex items-center justify-between">
+                  <dt>Salary range</dt>
+                  <dd class="font-semibold" x-text="`${role.medianRange.currency} ${role.medianRange.low.toLocaleString()}–${role.medianRange.high.toLocaleString()}`"></dd>
+                </div>
+                <div>
+                  <dt class="font-semibold text-slate-900">Core skills</dt>
+                  <ul class="mt-2 flex flex-wrap gap-2">
+                    <template x-for="skill in role.skills" :key="skill">
+                      <li class="rounded-full bg-slate-100 px-3 py-1 text-slate-700" x-text="skill.replace('-', ' ')"></li>
+                    </template>
+                  </ul>
+                </div>
+                <div>
+                  <dt class="font-semibold text-slate-900">Related roles</dt>
+                  <p class="mt-1" x-text="role.relatedRoles.join(', ')"></p>
+                </div>
+              </dl>
+              <div class="mt-5 flex items-center justify-between text-xs text-slate-500">
+                <span>Level: <span class="font-semibold capitalize" x-text="role.level"></span></span>
+                <Button :href="`/career/builder?role=${role.id}`" size="sm">
+                  <i class="fas fa-arrow-right text-[11px]"></i>
+                  Choose role
+                </Button>
+              </div>
+            </article>
+          </template>
+          <template x-if="career.roles.filtered.length === 0">
+            <p class="col-span-full rounded-3xl border border-dashed border-slate-200 bg-white p-6 text-center text-sm text-slate-600">
+              No roles match your filters yet. Clear filters or explore emerging roles for inspiration.
+            </p>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
