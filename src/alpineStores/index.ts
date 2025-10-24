@@ -29,3 +29,4 @@ import './blogWriter';
 import './email';
 import './promptBuilder';
 import './lessonBuilder';
+import './career';
