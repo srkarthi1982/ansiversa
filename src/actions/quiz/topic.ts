@@ -1,6 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Topic, Subject, Platform, and, asc, count, desc, eq, gte, lte, sql } from 'astro:db';
+import { Topic, Subject, Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
+import { platformRepository, subjectRepository, topicQueryRepository, topicRepository } from './repositories';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -136,19 +137,6 @@ export const fetchTopics = defineAction({
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    let totalQuery = db.select({ value: count() }).from(Topic);
-    if (whereClause) {
-      totalQuery = totalQuery.where(whereClause);
-    }
-    const totalResult = await totalQuery;
-    const total = totalResult[0]?.value ?? 0;
-
-    const safePageSize = pageSize;
-    const totalPages = total > 0 ? Math.ceil(total / safePageSize) : 0;
-    const maxPage = totalPages > 0 ? totalPages : 1;
-    const currentPage = Math.min(Math.max(page, 1), maxPage);
-    const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
-
     const sortColumnMap: Record<TopicSortInput['column'], any> = {
       id: Topic.id,
       name: Topic.name,
@@ -159,21 +147,6 @@ export const fetchTopics = defineAction({
       qCount: Topic.qCount,
       status: Topic.isActive,
     };
-
-    let query = db
-      .select({
-        topic: Topic,
-        subjectName: Subject.name,
-        platformName: Platform.name,
-      })
-      .from(Topic)
-      .leftJoin(Subject, eq(Topic.subjectId, Subject.id))
-      .leftJoin(Platform, eq(Topic.platformId, Platform.id));
-
-    if (whereClause) {
-      query = query.where(whereClause);
-    }
-
     const orderExpressions: any[] = [];
     if (normalizedSort) {
       const columnExpr = sortColumnMap[normalizedSort.column];
@@ -186,17 +159,22 @@ export const fetchTopics = defineAction({
       orderExpressions.push(asc(Topic.id));
     }
 
-    const topics = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
+    const result = await topicQueryRepository.getPaginatedData({
+      page,
+      pageSize,
+      where: () => whereClause,
+      orderBy: () => orderExpressions,
+    });
 
-    const items = topics.map(({ topic, subjectName, platformName }) =>
+    const items = result.data.map(({ topic, subjectName, platformName }) =>
       normalizeTopic({ ...topic, subjectName: subjectName ?? null, platformName: platformName ?? null })
     );
 
     return {
       items,
-      total,
-      page: total === 0 ? 1 : currentPage,
-      pageSize: safePageSize,
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     };
   },
 });
@@ -206,23 +184,13 @@ export const createTopic = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const platform = await db
-      .select({ id: Platform.id, name: Platform.name })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platform[0]) {
+    if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subject = await db
-      .select({ id: Subject.id, platformId: Subject.platformId, name: Subject.name })
-      .from(Subject)
-      .where(eq(Subject.id, payload.subjectId))
-      .limit(1);
-
-    const subjectRow = subject[0];
+    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
 
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
@@ -232,32 +200,40 @@ export const createTopic = defineAction({
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
     }
 
-    const platformRow = platform[0];
-
-    const inserted = await db
-      .insert(Topic)
-      .values({
+    try {
+      const inserted = await topicRepository.insert({
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      })
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to create topic' });
       });
 
-    const record = inserted?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create topic' });
-    }
+      const record = inserted?.[0];
+      if (!record) {
+        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create topic' });
+      }
 
-    return normalizeTopic({
-      ...record,
-      subjectName: subjectRow.name ?? null,
-      platformName: platformRow?.name ?? null,
-    });
+      const enriched = await topicQueryRepository.getById((table) => table.id, record.id);
+      const result =
+        enriched ??
+        ({
+          topic: record,
+          subjectName: subjectRow.name ?? null,
+          platformName: platform.name ?? null,
+        } as const);
+
+      return normalizeTopic({
+        ...result.topic,
+        subjectName: result.subjectName ?? null,
+        platformName: result.platformName ?? null,
+      });
+    } catch (err: unknown) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to create topic',
+      });
+    }
   },
 });
 
@@ -269,23 +245,13 @@ export const updateTopic = defineAction({
     const payload = normalizeInput(input);
     const { id } = input;
 
-    const platform = await db
-      .select({ id: Platform.id, name: Platform.name })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platform[0]) {
+    if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subject = await db
-      .select({ id: Subject.id, platformId: Subject.platformId, name: Subject.name })
-      .from(Subject)
-      .where(eq(Subject.id, payload.subjectId))
-      .limit(1);
-
-    const subjectRow = subject[0];
+    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
 
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
@@ -295,29 +261,35 @@ export const updateTopic = defineAction({
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
     }
 
-    const platformRow = platform[0];
-
-    const updated = await db
-      .update(Topic)
-      .set({
+    const updated = await topicRepository.update(
+      {
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      })
-      .where(eq(Topic.id, id))
-      .returning();
+      },
+      (table) => eq(table.id, id),
+    );
 
     const record = updated?.[0];
     if (!record) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });
     }
 
+    const enriched = await topicQueryRepository.getById((table) => table.id, record.id);
+    const result =
+      enriched ??
+      ({
+        topic: record,
+        subjectName: subjectRow.name ?? null,
+        platformName: platform.name ?? null,
+      } as const);
+
     return normalizeTopic({
-      ...record,
-      subjectName: subjectRow.name ?? null,
-      platformName: platformRow?.name ?? null,
+      ...result.topic,
+      subjectName: result.subjectName ?? null,
+      platformName: result.platformName ?? null,
     });
   },
 });
@@ -327,10 +299,7 @@ export const deleteTopic = defineAction({
     id: z.number().int().min(1, 'Topic id is required'),
   }),
   async handler({ id }) {
-    const deleted = await db
-      .delete(Topic)
-      .where(eq(Topic.id, id))
-      .returning({ id: Topic.id });
+    const deleted = await topicRepository.delete((table) => eq(table.id, id));
 
     if (!deleted?.[0]) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });

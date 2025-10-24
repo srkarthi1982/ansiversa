@@ -1,6 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Subject, Platform, and, asc, count, desc, eq, gte, lte, sql } from 'astro:db';
+import { Subject, Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
+import { platformRepository, subjectQueryRepository, subjectRepository } from './repositories';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -119,19 +120,6 @@ export const fetchSubjects = defineAction({
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    let totalQuery = db.select({ value: count() }).from(Subject);
-    if (whereClause) {
-      totalQuery = totalQuery.where(whereClause);
-    }
-    const totalResult = await totalQuery;
-    const total = totalResult[0]?.value ?? 0;
-
-    const safePageSize = pageSize;
-    const totalPages = total > 0 ? Math.ceil(total / safePageSize) : 0;
-    const maxPage = totalPages > 0 ? totalPages : 1;
-    const currentPage = Math.min(Math.max(page, 1), maxPage);
-    const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
-
     const sortColumnMap: Record<SubjectSortInput['column'], any> = {
       id: Subject.id,
       name: Subject.name,
@@ -140,15 +128,6 @@ export const fetchSubjects = defineAction({
       qCount: Subject.qCount,
       status: Subject.isActive,
     };
-
-    let query = db
-      .select({ subject: Subject, platformName: Platform.name })
-      .from(Subject)
-      .leftJoin(Platform, eq(Subject.platformId, Platform.id));
-
-    if (whereClause) {
-      query = query.where(whereClause);
-    }
 
     const orderExpressions: any[] = [];
     if (normalizedSort) {
@@ -162,17 +141,22 @@ export const fetchSubjects = defineAction({
       orderExpressions.push(asc(Subject.id));
     }
 
-    const subjects = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
+    const result = await subjectQueryRepository.getPaginatedData({
+      page,
+      pageSize,
+      where: () => whereClause,
+      orderBy: () => orderExpressions,
+    });
 
-    const items = subjects.map(({ subject, platformName }) =>
+    const items = result.data.map(({ subject, platformName }) =>
       normalizeSubject({ ...subject, platformName: platformName ?? null })
     );
 
     return {
       items,
-      total,
-      page: total === 0 ? 1 : currentPage,
-      pageSize: safePageSize,
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     };
   },
 });
@@ -182,35 +166,35 @@ export const createSubject = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const platform = await db
-      .select({ id: Platform.id })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platform[0]) {
+    if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const inserted = await db
-      .insert(Subject)
-      .values({
+    try {
+      const inserted = await subjectRepository.insert({
         platformId: payload.platformId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      })
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to create subject' });
       });
 
-    const record = inserted?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create subject' });
-    }
+      const record = inserted?.[0];
+      if (!record) {
+        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create subject' });
+      }
 
-    return normalizeSubject({ ...record });
+      const enriched = await subjectQueryRepository.getById((table) => table.id, record.id);
+      const result = enriched ?? { subject: record, platformName: platform.name ?? null };
+
+      return normalizeSubject({ ...result.subject, platformName: result.platformName ?? null });
+    } catch (err: unknown) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to create subject',
+      });
+    }
   },
 });
 
@@ -222,33 +206,31 @@ export const updateSubject = defineAction({
     const payload = normalizeInput(input);
     const { id } = input;
 
-    const platform = await db
-      .select({ id: Platform.id })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platform[0]) {
+    if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const updated = await db
-      .update(Subject)
-      .set({
+    const updated = await subjectRepository.update(
+      {
         platformId: payload.platformId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      })
-      .where(eq(Subject.id, id))
-      .returning();
+      },
+      (table) => eq(table.id, id),
+    );
 
     const record = updated?.[0];
     if (!record) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Subject not found' });
     }
 
-    return normalizeSubject({ ...record });
+    const enriched = await subjectQueryRepository.getById((table) => table.id, record.id);
+    const result = enriched ?? { subject: record, platformName: platform.name ?? null };
+
+    return normalizeSubject({ ...result.subject, platformName: result.platformName ?? null });
   },
 });
 
@@ -257,10 +239,7 @@ export const deleteSubject = defineAction({
     id: z.number().int().min(1, 'Subject id is required'),
   }),
   async handler({ id }) {
-    const deleted = await db
-      .delete(Subject)
-      .where(eq(Subject.id, id))
-      .returning({ id: Subject.id });
+    const deleted = await subjectRepository.delete((table) => eq(table.id, id));
 
     if (!deleted?.[0]) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Subject not found' });
