@@ -1,6 +1,13 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Roadmap, Topic, Subject, Platform, and, asc, count, desc, eq, gte, lte, sql } from 'astro:db';
+import { Roadmap, Topic, Subject, Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
+import {
+  platformRepository,
+  roadmapQueryRepository,
+  roadmapRepository,
+  subjectRepository,
+  topicRepository,
+} from './repositories';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -168,19 +175,6 @@ export const fetchRoadmaps = defineAction({
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    let totalQuery = db.select({ value: count() }).from(Roadmap);
-    if (whereClause) {
-      totalQuery = totalQuery.where(whereClause);
-    }
-    const totalResult = await totalQuery;
-    const total = totalResult[0]?.value ?? 0;
-
-    const safePageSize = pageSize;
-    const totalPages = total > 0 ? Math.ceil(total / safePageSize) : 0;
-    const maxPage = totalPages > 0 ? totalPages : 1;
-    const currentPage = Math.min(Math.max(page, 1), maxPage);
-    const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
-
     const sortColumnMap: Record<RoadmapSortInput['column'], any> = {
       id: Roadmap.id,
       name: Roadmap.name,
@@ -193,23 +187,6 @@ export const fetchRoadmaps = defineAction({
       qCount: Roadmap.qCount,
       status: Roadmap.isActive,
     };
-
-    let query = db
-      .select({
-        roadmap: Roadmap,
-        platformName: Platform.name,
-        subjectName: Subject.name,
-        topicName: Topic.name,
-      })
-      .from(Roadmap)
-      .leftJoin(Platform, eq(Roadmap.platformId, Platform.id))
-      .leftJoin(Subject, eq(Roadmap.subjectId, Subject.id))
-      .leftJoin(Topic, eq(Roadmap.topicId, Topic.id));
-
-    if (whereClause) {
-      query = query.where(whereClause);
-    }
-
     const orderExpressions: any[] = [];
     if (normalizedSort) {
       const columnExpr = sortColumnMap[normalizedSort.column];
@@ -222,9 +199,14 @@ export const fetchRoadmaps = defineAction({
       orderExpressions.push(asc(Roadmap.id));
     }
 
-    const roadmaps = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
+    const result = await roadmapQueryRepository.getPaginatedData({
+      page,
+      pageSize,
+      where: () => whereClause,
+      orderBy: () => orderExpressions,
+    });
 
-    const items = roadmaps.map(({ roadmap, platformName, subjectName, topicName }) =>
+    const items = result.data.map(({ roadmap, platformName, subjectName, topicName }) =>
       normalizeRoadmap({
         ...roadmap,
         platformName: platformName ?? null,
@@ -235,9 +217,9 @@ export const fetchRoadmaps = defineAction({
 
     return {
       items,
-      total,
-      page: total === 0 ? 1 : currentPage,
-      pageSize: safePageSize,
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     };
   },
 });
@@ -247,23 +229,13 @@ export const createRoadmap = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const platform = await db
-      .select({ id: Platform.id, name: Platform.name })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platform[0]) {
+    if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subject = await db
-      .select({ id: Subject.id, platformId: Subject.platformId, name: Subject.name })
-      .from(Subject)
-      .where(eq(Subject.id, payload.subjectId))
-      .limit(1);
-
-    const subjectRow = subject[0];
+    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
     }
@@ -272,13 +244,7 @@ export const createRoadmap = defineAction({
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
     }
 
-    const topic = await db
-      .select({ id: Topic.id, platformId: Topic.platformId, subjectId: Topic.subjectId, name: Topic.name })
-      .from(Topic)
-      .where(eq(Topic.id, payload.topicId))
-      .limit(1);
-
-    const topicRow = topic[0];
+    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
     if (!topicRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
     }
@@ -287,32 +253,43 @@ export const createRoadmap = defineAction({
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic does not align with the selected platform and subject' });
     }
 
-    const inserted = await db
-      .insert(Roadmap)
-      .values({
+    try {
+      const inserted = await roadmapRepository.insert({
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      })
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to create roadmap' });
       });
 
-    const record = inserted?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create roadmap' });
-    }
+      const record = inserted?.[0];
+      if (!record) {
+        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create roadmap' });
+      }
 
-    return normalizeRoadmap({
-      ...record,
-      platformName: platform[0]?.name ?? null,
-      subjectName: subjectRow?.name ?? null,
-      topicName: topicRow?.name ?? null,
-    });
+      const enriched = await roadmapQueryRepository.getById((table) => table.id, record.id);
+      const result =
+        enriched ??
+        ({
+          roadmap: record,
+          platformName: platform.name ?? null,
+          subjectName: subjectRow.name ?? null,
+          topicName: topicRow.name ?? null,
+        } as const);
+
+      return normalizeRoadmap({
+        ...result.roadmap,
+        platformName: result.platformName ?? null,
+        subjectName: result.subjectName ?? null,
+        topicName: result.topicName ?? null,
+      });
+    } catch (err: unknown) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to create roadmap',
+      });
+    }
   },
 });
 
@@ -324,23 +301,13 @@ export const updateRoadmap = defineAction({
     const payload = normalizeInput(input);
     const { id } = input;
 
-    const platform = await db
-      .select({ id: Platform.id, name: Platform.name })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platform[0]) {
+    if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subject = await db
-      .select({ id: Subject.id, platformId: Subject.platformId, name: Subject.name })
-      .from(Subject)
-      .where(eq(Subject.id, payload.subjectId))
-      .limit(1);
-
-    const subjectRow = subject[0];
+    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
     }
@@ -349,13 +316,7 @@ export const updateRoadmap = defineAction({
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
     }
 
-    const topic = await db
-      .select({ id: Topic.id, platformId: Topic.platformId, subjectId: Topic.subjectId, name: Topic.name })
-      .from(Topic)
-      .where(eq(Topic.id, payload.topicId))
-      .limit(1);
-
-    const topicRow = topic[0];
+    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
     if (!topicRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
     }
@@ -364,29 +325,38 @@ export const updateRoadmap = defineAction({
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic does not align with the selected platform and subject' });
     }
 
-    const updated = await db
-      .update(Roadmap)
-      .set({
+    const updated = await roadmapRepository.update(
+      {
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      })
-      .where(eq(Roadmap.id, id))
-      .returning();
+      },
+      (table) => eq(table.id, id),
+    );
 
     const record = updated?.[0];
     if (!record) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });
     }
 
+    const enriched = await roadmapQueryRepository.getById((table) => table.id, record.id);
+    const result =
+      enriched ??
+      ({
+        roadmap: record,
+        platformName: platform.name ?? null,
+        subjectName: subjectRow.name ?? null,
+        topicName: topicRow.name ?? null,
+      } as const);
+
     return normalizeRoadmap({
-      ...record,
-      platformName: platform[0]?.name ?? null,
-      subjectName: subjectRow?.name ?? null,
-      topicName: topicRow?.name ?? null,
+      ...result.roadmap,
+      platformName: result.platformName ?? null,
+      subjectName: result.subjectName ?? null,
+      topicName: result.topicName ?? null,
     });
   },
 });
@@ -396,7 +366,7 @@ export const deleteRoadmap = defineAction({
     id: z.number().int().min(1, 'Roadmap id is required'),
   }),
   async handler({ id }) {
-    const deleted = await db.delete(Roadmap).where(eq(Roadmap.id, id)).returning({ id: Roadmap.id });
+    const deleted = await roadmapRepository.delete((table) => eq(table.id, id));
 
     if (!deleted?.[0]) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });

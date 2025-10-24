@@ -1,6 +1,7 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { db, Platform, and, asc, count, desc, eq, gte, lte, sql } from 'astro:db';
+import { Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
+import { platformRepository } from './repositories';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -136,21 +137,6 @@ export const fetchPlatforms = defineAction({
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    let totalQuery = db.select({ value: count() }).from(Platform);
-    if (whereClause) {
-      totalQuery = totalQuery.where(whereClause);
-    }
-
-    const totalResult = await totalQuery;
-    const rawTotal = totalResult[0]?.value ?? 0;
-    const total = typeof rawTotal === 'number' ? rawTotal : Number(rawTotal);
-
-    const safePageSize = pageSize;
-    const totalPages = total > 0 ? Math.ceil(total / safePageSize) : 0;
-    const maxPage = totalPages > 0 ? totalPages : 1;
-    const currentPage = Math.min(Math.max(page, 1), maxPage);
-    const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
-
     const sortColumnMap: Record<PlatformSortInput['column'], any> = {
       id: Platform.id,
       name: Platform.name,
@@ -159,11 +145,6 @@ export const fetchPlatforms = defineAction({
       qCount: Platform.qCount,
       status: Platform.isActive,
     };
-
-    let query = db.select().from(Platform);
-    if (whereClause) {
-      query = query.where(whereClause);
-    }
 
     const orderExpressions: any[] = [];
     if (normalizedSort) {
@@ -177,14 +158,18 @@ export const fetchPlatforms = defineAction({
       orderExpressions.push(asc(Platform.id));
     }
 
-    const platforms = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
-    const items = platforms.map(normalizePlatform);
+    const result = await platformRepository.getPaginatedData({
+      page,
+      pageSize,
+      where: () => whereClause,
+      orderBy: () => orderExpressions,
+    });
 
     return {
-      items,
-      total,
-      page: total === 0 ? 1 : currentPage,
-      pageSize: safePageSize,
+      items: result.data.map(normalizePlatform),
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     };
   },
 });
@@ -194,22 +179,23 @@ export const createPlatform = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const inserted = await db
-      .insert(Platform)
-      .values({
+    try {
+      const inserted = await platformRepository.insert({
         name: payload.name,
         description: payload.description,
         icon: payload.icon,
         type: payload.type,
         qCount: payload.qCount,
         isActive: payload.isActive,
-      })
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to create platform' });
       });
 
-    return normalizePlatform(inserted[0]);
+      return normalizePlatform(inserted[0]);
+    } catch (err: unknown) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to create platform',
+      });
+    }
   },
 });
 
@@ -221,46 +207,54 @@ export const updatePlatform = defineAction({
   async handler({ id, data }) {
     const payload = normalizeInput(data);
 
-    const existing = await db.select({ id: Platform.id }).from(Platform).where(eq(Platform.id, id)).limit(1);
-    if (!existing[0]) {
+    const existing = await platformRepository.getById((table) => table.id, id);
+    if (!existing) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
     }
 
-    const updated = await db
-      .update(Platform)
-      .set({
-        name: payload.name,
-        description: payload.description,
-        icon: payload.icon,
-        type: payload.type,
-        qCount: payload.qCount,
-        isActive: payload.isActive,
-      })
-      .where(eq(Platform.id, id))
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to update platform' });
-      });
+    try {
+      const updated = await platformRepository.update(
+        {
+          name: payload.name,
+          description: payload.description,
+          icon: payload.icon,
+          type: payload.type,
+          qCount: payload.qCount,
+          isActive: payload.isActive,
+        },
+        (table) => eq(table.id, id),
+      );
 
-    return normalizePlatform(updated[0]);
+      return normalizePlatform(updated[0]);
+    } catch (err: unknown) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to update platform',
+      });
+    }
   },
 });
 
 export const deletePlatform = defineAction({
   input: z.object({ id: z.number().int().min(1) }),
   async handler({ id }) {
-    const deleted = await db
-      .delete(Platform)
-      .where(eq(Platform.id, id))
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to delete platform' });
+    try {
+      const deleted = await platformRepository.delete((table) => eq(table.id, id));
+
+      if (!deleted[0]) {
+        throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
+      }
+
+      return { success: true };
+    } catch (err: unknown) {
+      if (err instanceof ActionError) {
+        throw err;
+      }
+
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to delete platform',
       });
-
-    if (!deleted[0]) {
-      throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
     }
-
-    return { success: true };
   },
 });
