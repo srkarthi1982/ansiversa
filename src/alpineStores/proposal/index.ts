@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
+import { hideLoader, showLoader } from '../base';
 import {
   createEmptyProposalData,
   proposalTemplateOptions,
@@ -10,8 +11,6 @@ import {
   type ProposalTone,
 } from '../../lib/proposal/schema';
 import { describeProposalSummary, formatCurrency, ensureHexColor, nowIso } from '../../lib/proposal/utils';
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
@@ -133,7 +132,7 @@ class ProposalStore {
 
   async loadList() {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       const { data, error } = await actions.proposal.list({});
       if (error) throw error;
@@ -146,7 +145,7 @@ class ProposalStore {
       this.state.filtered = [];
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -184,7 +183,7 @@ class ProposalStore {
 
   async createDraft(templateKey?: ProposalTemplateKey) {
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.proposal.create(templateKey ? { templateKey } : {});
       if (error) throw error;
       if (data?.proposal) {
@@ -197,13 +196,13 @@ class ProposalStore {
       console.error('Unable to create proposal', error);
       this.pushToast('Could not create proposal. Try again.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
   async duplicate(id: string) {
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.proposal.duplicate({ id });
       if (error) throw error;
       if (data?.proposal) {
@@ -215,7 +214,7 @@ class ProposalStore {
       console.error('Unable to duplicate proposal', error);
       this.pushToast('Duplicate failed.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -224,7 +223,7 @@ class ProposalStore {
       return;
     }
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { error } = await actions.proposal.delete({ id });
       if (error) throw error;
       this.state.proposals = this.state.proposals.filter((item) => item.id !== id);
@@ -234,7 +233,7 @@ class ProposalStore {
       console.error('Unable to delete proposal', error);
       this.pushToast('Delete failed.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -250,7 +249,7 @@ class ProposalStore {
   async initBuilder(options: BuilderInitInput) {
     if (this.builder.loading) return;
     this.builder.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       if (options.id) {
         const { data, error } = await actions.proposal.get({ id: options.id });
@@ -271,7 +270,7 @@ class ProposalStore {
       this.pushToast('Unable to load proposal.', 'error');
     } finally {
       this.builder.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -457,7 +456,7 @@ class ProposalStore {
   async publishCurrent() {
     if (!this.builder.id) return;
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.proposal.publish({ id: this.builder.id });
       if (error) throw error;
       if (data?.proposal) {
@@ -469,13 +468,13 @@ class ProposalStore {
       console.error('Publish failed', error);
       this.pushToast('Publish failed. Try again.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
   async publishFromList(id: string) {
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.proposal.publish({ id });
       if (error) throw error;
       if (data?.proposal) {
@@ -491,7 +490,7 @@ class ProposalStore {
       console.error('Publish failed', error);
       this.pushToast('Publish failed. Try again.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 

@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { flashLoader } from './base';
 
 class FeaturesStoreImpl {
   onInit(): void {
@@ -6,8 +7,7 @@ class FeaturesStoreImpl {
   }
 
   private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
+    flashLoader();
   }
 }
 

@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { hideLoader, showLoader } from '../base';
 import {
   getSampleAiPlaybooks,
   getSampleInsights,
@@ -20,8 +21,6 @@ import type {
 } from '../../types/lesson';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 type LessonTabKey = 'lessons' | 'modules';
 
@@ -131,7 +130,7 @@ class LessonBuilderStore {
 
   async loadWorkspace(): Promise<void> {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       const lessons = getSampleLessons();
       const modules = getSampleModules();
@@ -149,7 +148,7 @@ class LessonBuilderStore {
       this.applyModuleFilters();
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 

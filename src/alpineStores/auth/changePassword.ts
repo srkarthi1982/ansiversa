@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { flashLoader } from '../base';
 
 type ChangePasswordForm = {
   identifier: string;
@@ -39,8 +40,7 @@ class ChangePassword {
   }
 
   private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 400);
+    flashLoader(400);
   }
 }
 

@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { flashLoader } from '../base';
 
 export type VerifyEmailStatus = 'missing' | 'invalid' | 'expired' | 'used' | 'user_missing' | 'success';
 
@@ -23,8 +24,7 @@ class VerifyEmail {
   }
 
   private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 400);
+    flashLoader(400);
   }
 }
 

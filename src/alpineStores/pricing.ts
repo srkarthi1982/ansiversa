@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { flashLoader } from './base';
 
 type BillingCycle = 'monthly' | 'annual';
 
@@ -18,8 +19,7 @@ class Pricing {
   }
 
   private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
+    flashLoader();
   }
 }
 

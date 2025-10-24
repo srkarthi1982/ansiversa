@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
+import { hideLoader, showLoader } from '../base';
 import {
   contractTemplates,
   contractTemplateKeys,
@@ -20,8 +21,6 @@ import {
   getTemplateLabel,
   nowIso,
 } from '../../lib/contract/utils';
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
@@ -183,7 +182,7 @@ class ContractStore {
 
   async loadList() {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       const { data, error } = await actions.contract.list({});
       if (error) throw error;
@@ -196,7 +195,7 @@ class ContractStore {
       this.state.filtered = [];
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -236,7 +235,7 @@ class ContractStore {
 
   async createDraft(templateKey?: ContractTemplateKey) {
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.contract.create(
         templateKey ? { templateKey } : {},
       );
@@ -251,13 +250,13 @@ class ContractStore {
       console.error('Unable to create contract', error);
       this.pushToast('Could not create contract. Try again.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
   async duplicate(id: string) {
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.contract.duplicate({ id });
       if (error) throw error;
       if (data?.contract) {
@@ -269,7 +268,7 @@ class ContractStore {
       console.error('Unable to duplicate contract', error);
       this.pushToast('Duplicate failed.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -278,7 +277,7 @@ class ContractStore {
       return;
     }
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { error } = await actions.contract.delete({ id });
       if (error) throw error;
       this.state.contracts = this.state.contracts.filter((item) => item.id !== id);
@@ -288,7 +287,7 @@ class ContractStore {
       console.error('Unable to delete contract', error);
       this.pushToast('Delete failed.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -304,7 +303,7 @@ class ContractStore {
   async initBuilder(options: BuilderInitInput) {
     if (this.builder.loading) return;
     this.builder.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       await this.loadClauseLibrary();
       if (options.id) {
@@ -327,7 +326,7 @@ class ContractStore {
       this.pushToast('Unable to load contract.', 'error');
     } finally {
       this.builder.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -524,7 +523,7 @@ class ContractStore {
   async publishCurrent() {
     if (!this.builder.id) return;
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.contract.publish({ id: this.builder.id });
       if (error) throw error;
       if (data?.contract) {
@@ -535,14 +534,14 @@ class ContractStore {
       console.error('Unable to publish contract', error);
       this.pushToast('Publish failed.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
   async export(format: 'pdf' | 'docx' | 'md') {
     if (!this.builder.id) return;
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.contract.export({ id: this.builder.id, format });
       if (error) throw error;
       const message = data?.message ?? 'Export requested.';
@@ -551,7 +550,7 @@ class ContractStore {
       console.error('Unable to export contract', error);
       this.pushToast('Export failed.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 

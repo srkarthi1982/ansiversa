@@ -1,11 +1,11 @@
 import Alpine from 'alpinejs';
+import { flashLoader } from './base';
 
 class Home {
   isLoading = false;
 
   onInit(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 2000);
+    flashLoader(2000);
   }
 }
 

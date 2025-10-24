@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { hideLoader, showLoader } from '../base';
 import {
   blogTemplates,
   createEmptyBlogPost,
@@ -46,8 +47,6 @@ type Plan = 'free' | 'pro';
 type BuilderExportFormat = 'md' | 'html' | 'pdf';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 const filterIdeasByTopic = (topic: string): BlogAiIdea[] => {
   if (!topic) return sampleIdeas.map((idea) => ({ ...idea }));
@@ -184,7 +183,7 @@ class BlogWriterStore {
   }
   async loadPosts() {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       const stored = readJSON<BlogPostRecord[] | null>(STORAGE_KEYS.posts, null);
       if (stored && Array.isArray(stored) && stored.length > 0) {
@@ -205,7 +204,7 @@ class BlogWriterStore {
       this.refreshAdmin();
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -361,7 +360,7 @@ class BlogWriterStore {
 
   async loadBuilder(id: string | null) {
     this.builder.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       let record: BlogPostRecord | null = null;
       if (id) {
@@ -397,7 +396,7 @@ class BlogWriterStore {
       writeJSON(STORAGE_KEYS.lastId, record.id);
     } finally {
       this.builder.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
   private scheduleAutosave() {

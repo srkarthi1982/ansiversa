@@ -1,5 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
+import { hideLoader, showLoader } from '../base';
 import type {
   MinutesRecord,
   MinutesTemplateKey,
@@ -21,8 +22,6 @@ import {
   formatRelativeTime,
   buildDemoSummary,
 } from '../../lib/minutes/utils';
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
@@ -149,7 +148,7 @@ class MinutesStore {
 
   async loadList() {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       const { data, error } = await actions.minutes.list({});
       if (error) throw error;
@@ -166,7 +165,7 @@ class MinutesStore {
       this.updateMetrics();
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -216,7 +215,7 @@ class MinutesStore {
 
   async createDraft(templateKey?: MinutesTemplateKey) {
     try {
-      loaderStore()?.show?.();
+      showLoader();
       const { data, error } = await actions.minutes.create({ templateKey });
       if (error) throw error;
       const record = data?.minutes as MinutesRecord | undefined;
@@ -231,13 +230,13 @@ class MinutesStore {
       console.error('Failed to create minutes', error);
       this.showToast('Unable to create minutes. Try again.', 'error');
     } finally {
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
   async loadBuilder(id: string | null) {
     this.builder.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       let targetId = id;
       if (!targetId) {
@@ -258,7 +257,7 @@ class MinutesStore {
       this.showToast('Unable to load meeting minutes.', 'error');
     } finally {
       this.builder.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 

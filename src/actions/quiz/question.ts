@@ -1,19 +1,14 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
+import { Platform, Question, Roadmap, Subject, Topic, and, asc, desc, eq, sql } from 'astro:db';
 import {
-  Platform,
-  Question,
-  Roadmap,
-  Subject,
-  Topic,
-  and,
-  asc,
-  count,
-  db,
-  desc,
-  eq,
-  sql,
-} from 'astro:db';
+  platformRepository,
+  questionQueryRepository,
+  questionRepository,
+  roadmapRepository,
+  subjectRepository,
+  topicRepository,
+} from './repositories';
 
 type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 
@@ -312,19 +307,6 @@ export const fetchQuestions = defineAction({
 
     const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
-    let totalQuery = db.select({ value: count() }).from(Question);
-    if (whereClause) {
-      totalQuery = totalQuery.where(whereClause);
-    }
-    const totalResult = await totalQuery;
-    const total = totalResult[0]?.value ?? 0;
-
-    const safePageSize = pageSize;
-    const totalPages = total > 0 ? Math.ceil(Number(total) / safePageSize) : 0;
-    const maxPage = totalPages > 0 ? totalPages : 1;
-    const currentPage = Math.min(Math.max(page, 1), maxPage);
-    const offset = total === 0 ? 0 : (currentPage - 1) * safePageSize;
-
     const sortColumnMap: Record<QuestionSortInput['column'], any> = {
       id: Question.id,
       questionText: Question.q,
@@ -340,24 +322,6 @@ export const fetchQuestions = defineAction({
       status: Question.isActive,
     };
 
-    let query = db
-      .select({
-        question: Question,
-        platformName: Platform.name,
-        subjectName: Subject.name,
-        topicName: Topic.name,
-        roadmapName: Roadmap.name,
-      })
-      .from(Question)
-      .leftJoin(Platform, eq(Question.platformId, Platform.id))
-      .leftJoin(Subject, eq(Question.subjectId, Subject.id))
-      .leftJoin(Topic, eq(Question.topicId, Topic.id))
-      .leftJoin(Roadmap, eq(Question.roadmapId, Roadmap.id));
-
-    if (whereClause) {
-      query = query.where(whereClause);
-    }
-
     const orderExpressions: any[] = [];
     if (normalizedSort) {
       const columnExpr = sortColumnMap[normalizedSort.column];
@@ -370,9 +334,14 @@ export const fetchQuestions = defineAction({
       orderExpressions.push(asc(Question.id));
     }
 
-    const questions = await query.orderBy(...orderExpressions).limit(safePageSize).offset(offset);
+    const result = await questionQueryRepository.getPaginatedData({
+      page,
+      pageSize,
+      where: () => whereClause,
+      orderBy: () => orderExpressions,
+    });
 
-    const items = questions.map(({ question, platformName, subjectName, topicName, roadmapName }) =>
+    const items = result.data.map(({ question, platformName, subjectName, topicName, roadmapName }) =>
       normalizeQuestion({
         ...question,
         platformName: platformName ?? null,
@@ -384,9 +353,9 @@ export const fetchQuestions = defineAction({
 
     return {
       items,
-      total: typeof total === 'bigint' ? Number(total) : total,
-      page: total === 0 ? 1 : currentPage,
-      pageSize: safePageSize,
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
     };
   },
 });
@@ -396,23 +365,13 @@ export const createQuestion = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const platformRow = await db
-      .select({ id: Platform.id, name: Platform.name })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platformRow = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platformRow[0]) {
+    if (!platformRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subjectRowResult = await db
-      .select({ id: Subject.id, platformId: Subject.platformId, name: Subject.name })
-      .from(Subject)
-      .where(eq(Subject.id, payload.subjectId))
-      .limit(1);
-
-    const subjectRow = subjectRowResult[0];
+    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
     }
@@ -424,18 +383,7 @@ export const createQuestion = defineAction({
       });
     }
 
-    const topicRowResult = await db
-      .select({
-        id: Topic.id,
-        platformId: Topic.platformId,
-        subjectId: Topic.subjectId,
-        name: Topic.name,
-      })
-      .from(Topic)
-      .where(eq(Topic.id, payload.topicId))
-      .limit(1);
-
-    const topicRow = topicRowResult[0];
+    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
     if (!topicRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
     }
@@ -449,19 +397,7 @@ export const createQuestion = defineAction({
 
     let roadmapRow: { id: number; name: string | null } | null = null;
     if (payload.roadmapId !== null) {
-      const roadmapResult = await db
-        .select({
-          id: Roadmap.id,
-          platformId: Roadmap.platformId,
-          subjectId: Roadmap.subjectId,
-          topicId: Roadmap.topicId,
-          name: Roadmap.name,
-        })
-        .from(Roadmap)
-        .where(eq(Roadmap.id, payload.roadmapId))
-        .limit(1);
-
-      const roadmap = roadmapResult[0];
+      const roadmap = await roadmapRepository.getById((table) => table.id, payload.roadmapId);
       if (!roadmap) {
         throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap not found' });
       }
@@ -479,9 +415,8 @@ export const createQuestion = defineAction({
       roadmapRow = { id: roadmap.id, name: roadmap.name ?? null };
     }
 
-    const inserted = await db
-      .insert(Question)
-      .values({
+    try {
+      const inserted = await questionRepository.insert({
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
@@ -492,24 +427,37 @@ export const createQuestion = defineAction({
         e: payload.explanation,
         l: payload.level,
         isActive: payload.isActive,
-      })
-      .returning()
-      .catch((err) => {
-        throw new ActionError({ code: 'BAD_REQUEST', message: err?.message ?? 'Unable to create question' });
       });
 
-    const record = inserted?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create question' });
-    }
+      const record = inserted?.[0];
+      if (!record) {
+        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create question' });
+      }
 
-    return normalizeQuestion({
-      ...record,
-      platformName: platformRow[0]?.name ?? null,
-      subjectName: subjectRow?.name ?? null,
-      topicName: topicRow?.name ?? null,
-      roadmapName: roadmapRow?.name ?? null,
-    });
+      const enriched = await questionQueryRepository.getById((table) => table.id, record.id);
+      const result =
+        enriched ??
+        ({
+          question: record,
+          platformName: platformRow.name ?? null,
+          subjectName: subjectRow.name ?? null,
+          topicName: topicRow.name ?? null,
+          roadmapName: roadmapRow?.name ?? null,
+        } as const);
+
+      return normalizeQuestion({
+        ...result.question,
+        platformName: result.platformName ?? null,
+        subjectName: result.subjectName ?? null,
+        topicName: result.topicName ?? null,
+        roadmapName: result.roadmapName ?? null,
+      });
+    } catch (err: unknown) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to create question',
+      });
+    }
   },
 });
 
@@ -521,23 +469,13 @@ export const updateQuestion = defineAction({
     const payload = normalizeInput(input);
     const { id } = input;
 
-    const platformRow = await db
-      .select({ id: Platform.id, name: Platform.name })
-      .from(Platform)
-      .where(eq(Platform.id, payload.platformId))
-      .limit(1);
+    const platformRow = await platformRepository.getById((table) => table.id, payload.platformId);
 
-    if (!platformRow[0]) {
+    if (!platformRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subjectRowResult = await db
-      .select({ id: Subject.id, platformId: Subject.platformId, name: Subject.name })
-      .from(Subject)
-      .where(eq(Subject.id, payload.subjectId))
-      .limit(1);
-
-    const subjectRow = subjectRowResult[0];
+    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
     }
@@ -549,18 +487,7 @@ export const updateQuestion = defineAction({
       });
     }
 
-    const topicRowResult = await db
-      .select({
-        id: Topic.id,
-        platformId: Topic.platformId,
-        subjectId: Topic.subjectId,
-        name: Topic.name,
-      })
-      .from(Topic)
-      .where(eq(Topic.id, payload.topicId))
-      .limit(1);
-
-    const topicRow = topicRowResult[0];
+    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
     if (!topicRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
     }
@@ -574,19 +501,7 @@ export const updateQuestion = defineAction({
 
     let roadmapRow: { id: number; name: string | null } | null = null;
     if (payload.roadmapId !== null) {
-      const roadmapResult = await db
-        .select({
-          id: Roadmap.id,
-          platformId: Roadmap.platformId,
-          subjectId: Roadmap.subjectId,
-          topicId: Roadmap.topicId,
-          name: Roadmap.name,
-        })
-        .from(Roadmap)
-        .where(eq(Roadmap.id, payload.roadmapId))
-        .limit(1);
-
-      const roadmap = roadmapResult[0];
+      const roadmap = await roadmapRepository.getById((table) => table.id, payload.roadmapId);
       if (!roadmap) {
         throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap not found' });
       }
@@ -604,9 +519,8 @@ export const updateQuestion = defineAction({
       roadmapRow = { id: roadmap.id, name: roadmap.name ?? null };
     }
 
-    const updated = await db
-      .update(Question)
-      .set({
+    const updated = await questionRepository.update(
+      {
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
@@ -617,21 +531,32 @@ export const updateQuestion = defineAction({
         e: payload.explanation,
         l: payload.level,
         isActive: payload.isActive,
-      })
-      .where(eq(Question.id, id))
-      .returning();
+      },
+      (table) => eq(table.id, id),
+    );
 
     const record = updated?.[0];
     if (!record) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Question not found' });
     }
 
+    const enriched = await questionQueryRepository.getById((table) => table.id, record.id);
+    const result =
+      enriched ??
+      ({
+        question: record,
+        platformName: platformRow.name ?? null,
+        subjectName: subjectRow.name ?? null,
+        topicName: topicRow.name ?? null,
+        roadmapName: roadmapRow?.name ?? null,
+      } as const);
+
     return normalizeQuestion({
-      ...record,
-      platformName: platformRow[0]?.name ?? null,
-      subjectName: subjectRow?.name ?? null,
-      topicName: topicRow?.name ?? null,
-      roadmapName: roadmapRow?.name ?? null,
+      ...result.question,
+      platformName: result.platformName ?? null,
+      subjectName: result.subjectName ?? null,
+      topicName: result.topicName ?? null,
+      roadmapName: result.roadmapName ?? null,
     });
   },
 });
@@ -641,7 +566,7 @@ export const deleteQuestion = defineAction({
     id: z.number().int().min(1, 'Question id is required'),
   }),
   async handler({ id }) {
-    const deleted = await db.delete(Question).where(eq(Question.id, id)).returning({ id: Question.id });
+    const deleted = await questionRepository.delete((table) => eq(table.id, id));
 
     if (!deleted?.[0]) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Question not found' });

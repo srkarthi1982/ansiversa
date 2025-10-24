@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { hideLoader, showLoader } from '../base';
 import {
   createEmptyPortfolioData,
   createPortfolioDocument,
@@ -15,8 +16,6 @@ import type {
 } from '../../types/portfolio';
 
 const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
-
-const loaderStore = () => Alpine.store('loader') as { show?: () => void; hide?: () => void } | undefined;
 
 type PortfolioListItem = PortfolioDocument & {
   views: number;
@@ -150,7 +149,7 @@ class PortfolioCreatorStore {
 
   async loadList(): Promise<void> {
     this.state.loading = true;
-    loaderStore()?.show?.();
+    showLoader();
     try {
       const samples = getSamplePortfolios();
       this.state.items = samples.map((item) => ({
@@ -162,7 +161,7 @@ class PortfolioCreatorStore {
       this.refreshAdminInsights();
     } finally {
       this.state.loading = false;
-      loaderStore()?.hide?.();
+      hideLoader();
     }
   }
 
@@ -404,7 +403,7 @@ class PortfolioCreatorStore {
   aiImprove(target: AISectionTarget): void {
     if (!this.consumeAIQuota()) return;
     this.builderState.aiImproving = true;
-    loaderStore()?.show?.();
+    showLoader();
     setTimeout(() => {
       switch (target.type) {
         case 'about': {
@@ -446,7 +445,7 @@ class PortfolioCreatorStore {
       }
       this.builderState.aiImproving = false;
       this.markUnsaved();
-      loaderStore()?.hide?.();
+      hideLoader();
     }, 600);
   }
 

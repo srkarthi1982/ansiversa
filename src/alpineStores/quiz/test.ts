@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import type { LoaderStore } from '../loader';
+import { setLoaderVisible } from '../base';
 
 type OptionRecord = {
   id: number;
@@ -82,11 +82,7 @@ class QuizTestStore {
     levelId: '',
     answers: [],
   };
-  private readonly loader: LoaderStore;
-
-  constructor() {
-    this.loader = Alpine.store('loader') as LoaderStore;
-  }
+  constructor() {}
 
   async onInit(): Promise<void> {
     await this.loadPlatforms();
@@ -196,12 +192,7 @@ class QuizTestStore {
 
   private setLoading(state: boolean): void {
     this.loading = state;
-    if (!this.loader) return;
-    if (state) {
-      this.loader.show?.();
-    } else {
-      this.loader.hide?.();
-    }
+    setLoaderVisible(state);
   }
 
   private resetSelections(afterStep: number): void {

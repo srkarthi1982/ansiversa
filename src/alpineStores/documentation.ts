@@ -1,4 +1,5 @@
 import Alpine from 'alpinejs';
+import { flashLoader } from './base';
 
 type DocsSection = 'overview' | 'guides' | 'api' | 'deployment';
 
@@ -14,8 +15,7 @@ class Documentation {
   }
 
   private showLoaderBriefly(): void {
-    Alpine.store('loader').show();
-    setTimeout(() => Alpine.store('loader').hide(), 300);
+    flashLoader();
   }
 }
 

@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import type { LoaderStore } from '../loader';
+import { setLoaderVisible } from '../base';
 
 type TopicRecord = {
   id: number;
@@ -79,10 +79,7 @@ class TopicsStoreImpl {
     'status',
     'id',
   ];
-  private readonly loader: LoaderStore;
-
   constructor() {
-    this.loader = Alpine.store('loader') as LoaderStore;
     this.form = this.createDefaultForm();
     this.filters = this.createDefaultFilters();
   }
@@ -398,14 +395,7 @@ class TopicsStoreImpl {
 
   private setLoading(state: boolean): void {
     this.loading = state;
-    const loader = this.loader;
-    if (loader && typeof loader.show === 'function' && typeof loader.hide === 'function') {
-      if (state) {
-        loader.show();
-      } else {
-        loader.hide();
-      }
-    }
+    setLoaderVisible(state);
   }
 
   private createDefaultForm(): TopicForm {
