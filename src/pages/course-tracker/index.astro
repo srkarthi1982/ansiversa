@@ -1,14 +1,689 @@
 ---
 import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section data-mini-app-landing class="py-16" x-data="() => ({ loader: $store.loader, app: $store['course-tracker'] ?? {} })">
-      <div class="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
-          Course Tracker
-        </h1>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#course-tracker-workspace"
+  >
+    Skip to Course Tracker workspace
+  </a>
+  <main
+    id="course-tracker-workspace"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ app: $store['course-tracker'] ?? {} })"
+    x-init="app.onInit?.()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-graduation-cap text-xs"></i>
+              Cross-platform study cockpit
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Course Tracker
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Plan, log, and reflect on every online course in one place. Turn playlists into structured roadmaps, attach Quiz
+              Institute assessments, and ship polished reflections straight to Blog Writer.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" class="shadow-sm" @click.prevent="app.createCourseDraft?.()">
+                <i class="fas fa-plus text-xs"></i>
+                Add course
+              </Button>
+              <Button type="button" variant="outline" @click.prevent="app.openPlanWizard?.()">
+                <i class="fas fa-calendar-week text-xs"></i>
+                Plan my week
+              </Button>
+              <Button type="button" variant="ghost" @click.prevent="app.requestBlogDraft?.()">
+                <i class="fas fa-pen-nib text-xs"></i>
+                Export to Blog Writer
+              </Button>
+            </div>
+            <dl class="grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
+              <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Active courses</dt>
+                <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+                  <span x-text="app.state?.metrics?.activeCourses ?? 0"></span>
+                  <span class="text-xs font-semibold text-slate-500">of <span x-text="app.state?.metrics?.totalCourses ?? 0"></span></span>
+                </dd>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Planned hours</dt>
+                <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+                  <span x-text="app.state?.metrics?.hoursPlannedThisWeek ?? 0"></span>
+                  <span class="text-xs font-semibold text-slate-500">hrs queued</span>
+                </dd>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Weekly streak</dt>
+                <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+                  <span x-text="app.state?.metrics?.bestStreak ?? 0"></span>
+                  <span class="text-xs font-semibold text-slate-500">day max</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-40 blur-xl"></div>
+            <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <header class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Today&apos;s study briefing</p>
+                  <p class="text-xs text-slate-500">Auto-prioritised from your active courses and reminders.</p>
+                </div>
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  <i class="fas fa-bolt text-[10px]"></i>
+                  Smart sync
+                </span>
+              </header>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <template x-if="app.todaysPlan?.length">
+                  <template x-for="session in app.todaysPlan" :key="session.id">
+                    <li class="flex items-start gap-3 rounded-xl border border-slate-100 bg-slate-50/80 p-3">
+                      <div class="mt-0.5 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                        <i class="fas fa-clock text-xs"></i>
+                      </div>
+                      <div class="flex-1">
+                        <p class="font-semibold text-slate-900" x-text="session.focus"></p>
+                        <p class="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                          <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 font-medium text-slate-500 shadow-sm">
+                            <i class="fas fa-calendar-day text-[10px]"></i>
+                            <span x-text="session.day"></span>
+                          </span>
+                          <span x-text="`${session.start} – ${session.end}`"></span>
+                          <span class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 font-medium text-indigo-600" x-text="session.status === 'overdue' ? 'Overdue' : session.status === 'completed' ? 'Completed' : 'Scheduled'"></span>
+                        </p>
+                      </div>
+                    </li>
+                  </template>
+                </template>
+                <template x-if="!app.todaysPlan?.length">
+                  <li class="rounded-xl border border-dashed border-slate-200 bg-white/60 p-6 text-center text-xs text-slate-500">
+                    No sessions planned today — tap &ldquo;Plan my week&rdquo; to auto-distribute lessons.
+                  </li>
+                </template>
+              </ul>
+              <div class="rounded-2xl border border-slate-100 bg-white/70 p-4 text-xs text-slate-500">
+                <p>
+                  <i class="fas fa-bell-on mr-2 text-[10px] text-amber-500"></i>
+                  <span x-text="`${app.state?.metrics?.remindersDueToday ?? 0} reminders queued for delivery today.`"></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
+
+    <section class="relative pb-20">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[0.95fr_1.1fr_0.95fr]">
+          <div class="space-y-5">
+            <SectionHeading
+              eyebrow="Workspace library"
+              title="Courses &amp; filters"
+              description="Search across all platforms, switch focus areas, and keep an eye on completion velocity."
+            />
+            <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div class="space-y-3">
+                <label class="block text-sm font-semibold text-slate-700" for="course-search">
+                  Search or paste course link
+                </label>
+                <div class="relative">
+                  <i class="fas fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                  <input
+                    id="course-search"
+                    type="search"
+                    placeholder="Machine Learning, UX Research, ..."
+                    class="w-full rounded-xl border border-slate-200 bg-slate-50 py-2.5 pl-9 pr-3 text-sm text-slate-700 placeholder:text-slate-400 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    @input.debounce.250ms="app.setSearch?.($event.target.value)"
+                  />
+                </div>
+              </div>
+              <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                <div>
+                  <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Status</label>
+                  <div class="mt-2 flex flex-wrap gap-2">
+                    <template x-for="status in ['active','planning','completed','archived','all']" :key="status">
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="light"
+                        class="border border-slate-200 text-slate-600"
+                        :class="app.state?.filters?.status === status ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : ''"
+                        @click.prevent="app.setStatusFilter?.(status)"
+                      >
+                        <span class="capitalize" x-text="status"></span>
+                      </Button>
+                    </template>
+                  </div>
+                </div>
+                <div>
+                  <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Provider</label>
+                  <select
+                    class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    @change="app.setProviderFilter?.($event.target.value)"
+                  >
+                    <option value="all">All platforms</option>
+                    <template x-for="provider in app.providers ?? []" :key="provider">
+                      <option x-text="provider" :value="provider"></option>
+                    </template>
+                  </select>
+                </div>
+                <div class="sm:col-span-2">
+                  <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Focus area</label>
+                  <select
+                    class="mt-2 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    @change="app.setFocusFilter?.($event.target.value)"
+                  >
+                    <option value="all">All tracks</option>
+                    <template x-for="area in app.focusAreas ?? []" :key="area">
+                      <option x-text="area" :value="area"></option>
+                    </template>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-3" x-data>
+              <template x-if="app.state?.filteredCourses?.length">
+                <ul class="space-y-3">
+                  <template x-for="course in app.state.filteredCourses" :key="course.id">
+                    <li>
+                      <button
+                        type="button"
+                        class="w-full rounded-2xl border p-4 text-left transition hover:border-indigo-300 hover:bg-indigo-50/40"
+                        :class="course.id === app.state.selectedCourseId ? 'border-indigo-400 bg-indigo-50 shadow-sm' : 'border-slate-200 bg-white'"
+                        @click="app.selectCourse?.(course.id)"
+                      >
+                        <div class="flex flex-wrap items-start justify-between gap-3">
+                          <div>
+                            <p class="text-sm font-semibold text-slate-900" x-text="course.title"></p>
+                            <p class="mt-1 text-xs text-slate-500">
+                              <span x-text="course.provider"></span>
+                              •
+                              <span x-text="course.level"></span>
+                              •
+                              <span x-text="course.focusArea"></span>
+                            </p>
+                          </div>
+                          <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                            <i class="fas fa-check-circle text-[10px]"></i>
+                            <span x-text="`${course.progressPct}%`"></span>
+                          </span>
+                        </div>
+                        <div class="mt-3">
+                          <div class="h-2 w-full rounded-full bg-slate-100">
+                            <div class="h-2 rounded-full bg-indigo-500" :style="`width: ${course.progressPct}%`"></div>
+                          </div>
+                          <dl class="mt-3 grid gap-3 text-xs text-slate-500 sm:grid-cols-3">
+                            <div>
+                              <dt>Lessons</dt>
+                              <dd class="mt-0.5 font-semibold text-slate-700">
+                                <span x-text="course.metrics.completedLessons"></span>
+                                /
+                                <span x-text="course.metrics.totalLessons"></span>
+                              </dd>
+                            </div>
+                            <div>
+                              <dt>Minutes logged</dt>
+                              <dd class="mt-0.5 font-semibold text-slate-700" x-text="course.metrics.minutesLogged"></dd>
+                            </div>
+                            <div>
+                              <dt>Target end</dt>
+                              <dd class="mt-0.5 font-semibold text-slate-700" x-text="new Date(course.targetEndDate).toLocaleDateString()"></dd>
+                            </div>
+                          </dl>
+                        </div>
+                      </button>
+                    </li>
+                  </template>
+                </ul>
+              </template>
+              <template x-if="!app.state?.filteredCourses?.length">
+                <div class="rounded-2xl border border-dashed border-slate-200 bg-white/70 p-6 text-center text-sm text-slate-500">
+                  Nothing matches your filters yet. Add a course or reset filters to see the full library.
+                </div>
+              </template>
+            </div>
+          </div>
+
+          <div class="space-y-5">
+            <SectionHeading
+              eyebrow="Course overview"
+              title="Outline &amp; milestones"
+              description="Track progress, upcoming lessons, and integration hooks in one responsive workspace."
+            />
+            <template x-if="app.selectedCourse">
+              <div class="space-y-5">
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <header class="flex flex-wrap items-start justify-between gap-4">
+                    <div>
+                      <h2 class="text-xl font-semibold text-slate-900" x-text="app.selectedCourse.title"></h2>
+                      <p class="text-sm text-slate-500">
+                        <a class="underline decoration-dotted decoration-indigo-400 hover:text-indigo-600" :href="app.selectedCourse.url" target="_blank" rel="noopener">
+                          <span x-text="app.selectedCourse.provider"></span>
+                        </a>
+                        •
+                        <span x-text="app.selectedCourse.level"></span>
+                        •
+                        <span x-text="app.selectedCourse.focusArea"></span>
+                      </p>
+                    </div>
+                    <div class="rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-center">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Progress</p>
+                      <p class="mt-1 text-3xl font-bold text-indigo-700" x-text="`${app.selectedCourse.progressPct}%`"></p>
+                    </div>
+                  </header>
+                  <dl class="mt-6 grid gap-4 sm:grid-cols-4">
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Streak</dt>
+                      <dd class="mt-1 text-2xl font-semibold text-slate-900">
+                        <span x-text="app.selectedCourse.plan.streakDays"></span>
+                        <span class="ml-1 text-xs text-slate-500">days</span>
+                      </dd>
+                    </div>
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Lessons</dt>
+                      <dd class="mt-1 text-2xl font-semibold text-slate-900">
+                        <span x-text="app.selectedCourse.metrics.completedLessons"></span>
+                        <span class="ml-1 text-xs text-slate-500">/<span x-text="app.selectedCourse.metrics.totalLessons"></span></span>
+                      </dd>
+                    </div>
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Minutes this week</dt>
+                      <dd class="mt-1 text-2xl font-semibold text-slate-900" x-text="app.selectedCourse.metrics.minutesThisWeek"></dd>
+                    </div>
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                      <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Next reminder</dt>
+                      <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="new Date(app.selectedCourse.plan.nextReminderAt).toLocaleString()"></dd>
+                    </div>
+                  </dl>
+                  <div class="mt-6 space-y-4">
+                    <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Modules &amp; lessons</h3>
+                    <div class="space-y-4">
+                      <template x-for="module in app.selectedCourse.modules" :key="module.id">
+                        <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                          <div class="flex items-center justify-between">
+                            <p class="text-sm font-semibold text-slate-900" x-text="module.title"></p>
+                            <span class="text-xs font-medium text-slate-500" x-text="`${module.lessons.filter(l => l.completed).length} of ${module.lessons.length} done`"></span>
+                          </div>
+                          <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                            <template x-for="lesson in module.lessons" :key="lesson.id">
+                              <li class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-transparent bg-white px-3 py-2 transition hover:border-indigo-200">
+                                <div>
+                                  <p class="font-medium text-slate-800" x-text="lesson.title"></p>
+                                  <p class="text-[11px] text-slate-500">
+                                    <span x-text="`${lesson.durationMin} min`"></span>
+                                    •
+                                    <span x-text="lesson.tags.join(', ')"></span>
+                                  </p>
+                                </div>
+                                <div class="flex items-center gap-2 text-[11px]">
+                                  <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-0.5 font-semibold text-slate-500" x-show="lesson.quizAttached">
+                                    <i class="fas fa-clipboard-question text-[9px]"></i>
+                                    Quiz
+                                  </span>
+                                  <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 font-semibold" :class="lesson.completed ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'">
+                                    <i class="fas" :class="lesson.completed ? 'fa-circle-check' : 'fa-hourglass-half'"></i>
+                                    <span x-text="lesson.completed ? 'Done' : 'Pending'"></span>
+                                  </span>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="ghost"
+                                    class="!px-2 !py-1 text-[11px]"
+                                    @click.prevent="app.markLessonComplete?.(lesson.id)"
+                                  >
+                                    Mark done
+                                  </Button>
+                                </div>
+                              </li>
+                            </template>
+                          </ul>
+                        </div>
+                      </template>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Upcoming focus</h3>
+                  <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Overdue</p>
+                      <ul class="mt-3 space-y-2 text-xs text-slate-600" x-show="app.overdueLessons.length">
+                        <template x-for="lesson in app.overdueLessons" :key="lesson.id">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-circle-exclamation mt-0.5 text-[10px] text-amber-500"></i>
+                            <span>
+                              <span class="font-semibold text-slate-800" x-text="lesson.title"></span>
+                              <span class="ml-1 text-slate-500" x-text="lesson.moduleTitle"></span>
+                            </span>
+                          </li>
+                        </template>
+                      </ul>
+                      <p class="mt-2 text-xs text-slate-400" x-show="!app.overdueLessons.length">All caught up. Great job!</p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Next three lessons</p>
+                      <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                        <template x-for="lesson in app.suggestedNextLessons" :key="lesson.id">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-play-circle mt-0.5 text-[10px] text-indigo-500"></i>
+                            <span>
+                              <span class="font-semibold text-slate-800" x-text="lesson.title"></span>
+                              <span class="ml-1 text-slate-500" x-text="lesson.moduleTitle"></span>
+                            </span>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+                  </div>
+                  <div class="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Highlights</p>
+                    <ul class="mt-2 space-y-1 text-sm text-indigo-900">
+                      <template x-for="win in app.selectedCourse.highlight.wins" :key="win">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-star text-[11px]"></i>
+                          <span x-text="win"></span>
+                        </li>
+                      </template>
+                    </ul>
+                    <div class="mt-4 rounded-2xl border border-white/60 bg-white/70 p-3 text-xs text-slate-600">
+                      <p class="font-semibold text-slate-900">Current blocker</p>
+                      <p class="mt-1" x-text="app.selectedCourse.highlight.blockers[0] ?? 'None logged'">
+                      </p>
+                      <p class="mt-3 font-semibold text-slate-900">Reflection prompt</p>
+                      <p class="mt-1" x-text="app.selectedCourse.highlight.focusQuestion"></p>
+                    </div>
+                  </div>
+                </article>
+
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Milestones &amp; integrations</h3>
+                  <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Upcoming milestones</p>
+                      <template x-if="app.selectedCourse.plan.upcomingMilestones.length">
+                        <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                          <template x-for="milestone in app.selectedCourse.plan.upcomingMilestones" :key="milestone.id">
+                            <li class="flex items-start gap-2">
+                              <i class="fas fa-flag text-[10px] text-indigo-500"></i>
+                              <span>
+                                <span class="font-semibold text-slate-800" x-text="milestone.label"></span>
+                                <span class="ml-1 text-slate-500" x-text="new Date(milestone.date).toLocaleDateString()"></span>
+                              </span>
+                            </li>
+                          </template>
+                        </ul>
+                      </template>
+                      <p class="mt-2 text-xs text-slate-400" x-show="!app.selectedCourse.plan.upcomingMilestones.length">
+                        No future checkpoints — add one from the study plan wizard.
+                      </p>
+                    </div>
+                    <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Connected apps</p>
+                      <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-layer-group text-[10px] text-indigo-500"></i>
+                          Lesson Builder — import outlines &amp; sync modules.
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-clipboard-question text-[10px] text-indigo-500"></i>
+                          Quiz Institute — attach quick checks and track mastery.
+                        </li>
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-pen-nib text-[10px] text-indigo-500"></i>
+                          Blog Writer — turn highlights into publish-ready reflections.
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </article>
+              </div>
+            </template>
+            <template x-if="!app.selectedCourse">
+              <div class="rounded-3xl border border-dashed border-slate-200 bg-white/70 p-10 text-center">
+                <p class="text-sm font-semibold text-slate-600">Select a course to view outline, plan, and integrations.</p>
+              </div>
+            </template>
+          </div>
+
+          <div class="space-y-5">
+            <SectionHeading
+              eyebrow="Execution hub"
+              title="Sessions, notes &amp; reminders"
+              description="Log time, surface highlights, and keep streaks alive with fast toggles."
+            />
+            <div class="space-y-5">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Session timer</h3>
+                <div class="mt-4 rounded-2xl border border-indigo-100 bg-indigo-50/80 p-5">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Current focus</p>
+                  <p class="mt-2 text-lg font-semibold text-indigo-900" x-text="app.activeTimerLesson ? app.activeTimerLesson.title : 'Select a lesson to begin'">
+                  </p>
+                  <p class="text-sm text-indigo-700" x-show="app.activeTimerLesson">
+                    <span x-text="app.activeTimerLesson?.moduleTitle"></span>
+                    •
+                    <span x-text="`${app.activeTimerLesson?.durationMin ?? 0} min lesson`"></span>
+                  </p>
+                  <div class="mt-4 flex items-center gap-4">
+                    <div class="rounded-2xl bg-white/80 px-4 py-3 text-center shadow-sm">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Minutes</p>
+                      <p class="mt-1 text-3xl font-bold text-indigo-700" x-text="app.timerMinutes ?? 0"></p>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                      <Button
+                        type="button"
+                        size="sm"
+                        class="shadow-sm"
+                        @click.prevent="app.startTimer?.(app.suggestedNextLessons[0]?.id ?? app.selectedCourse?.modules?.[0]?.lessons?.[0]?.id ?? '')"
+                      >
+                        <i class="fas fa-play text-xs"></i>
+                        Start
+                      </Button>
+                      <Button type="button" size="sm" variant="outline" @click.prevent="app.pauseTimer?.()">
+                        <i class="fas fa-pause text-xs"></i>
+                        Pause
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" @click.prevent="app.stopTimer?.()">
+                        <i class="fas fa-stop text-xs"></i>
+                        Log &amp; reset
+                      </Button>
+                    </div>
+                  </div>
+                  <p class="mt-3 text-xs text-indigo-700">
+                    Timer automatically logs sessions to streaks and study analytics when you tap &ldquo;Log &amp; reset&rdquo;.
+                  </p>
+                </div>
+              </article>
+
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Notes &amp; highlights</h3>
+                <template x-if="app.selectedCourseNotes.length">
+                  <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                    <template x-for="note in app.selectedCourseNotes" :key="note.id">
+                      <li class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                        <div class="flex items-center justify-between text-xs text-slate-500">
+                          <span x-text="new Date(note.updatedAt).toLocaleString()"></span>
+                          <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 font-semibold text-slate-500">
+                            <i class="fas fa-tag text-[10px]"></i>
+                            <span x-text="note.tags.join(', ') || 'note'"></span>
+                          </span>
+                        </div>
+                        <h4 class="mt-2 text-sm font-semibold text-slate-900" x-text="note.title"></h4>
+                        <p class="mt-1 text-sm" x-text="note.body"></p>
+                        <div class="mt-3 flex flex-wrap gap-2 text-[11px] text-slate-500">
+                          <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 font-semibold text-slate-500">
+                            <i class="fas fa-book-open text-[9px]"></i>
+                            Lesson
+                          </span>
+                          <span x-text="app.selectedCourse?.modules.flatMap(m => m.lessons).find(l => l.id === note.lessonId)?.title ?? 'Lesson'">
+                          </span>
+                        </div>
+                      </li>
+                    </template>
+                  </ul>
+                </template>
+                <p class="mt-4 text-sm text-slate-500" x-show="!app.selectedCourseNotes.length">
+                  Your note space is empty. Capture insights during study sessions and export to Markdown or Blog Writer anytime.
+                </p>
+              </article>
+
+              <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Reminders</h3>
+                <ul class="mt-4 space-y-3 text-sm text-slate-600" x-show="app.selectedCourse?.reminders?.length">
+                  <template x-for="reminder in app.selectedCourse.reminders" :key="reminder.id">
+                    <li class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                      <div>
+                        <p class="font-semibold text-slate-900" x-text="reminder.label"></p>
+                        <p class="text-xs text-slate-500">
+                          <span x-text="`${reminder.cadence} · ${reminder.time}`"></span>
+                          •
+                          <span x-text="reminder.channel"></span>
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        class="inline-flex h-6 w-12 items-center rounded-full border transition"
+                        :class="reminder.active ? 'border-indigo-400 bg-indigo-500/90 justify-end' : 'border-slate-200 bg-white justify-start'"
+                        @click="app.toggleReminder?.(reminder.id)"
+                      >
+                        <span class="mx-1 h-4 w-4 rounded-full bg-white shadow"></span>
+                      </button>
+                    </li>
+                  </template>
+                </ul>
+                <p class="mt-3 text-sm text-slate-500" x-show="!(app.selectedCourse?.reminders?.length ?? 0)">
+                  Create reminder cadences from the plan wizard to automate nudges across email, push, or SMS.
+                </p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-slate-200 bg-white/60 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Recent activity</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600" x-show="app.selectedCourseTimeline.length">
+              <template x-for="event in app.selectedCourseTimeline" :key="event.id">
+                <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                  <div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                    <i class="fas" :class="{
+                      'fa-pen-to-square': event.type === 'note',
+                      'fa-clock': event.type === 'session',
+                      'fa-bell': event.type === 'reminder',
+                      'fa-flag': event.type === 'milestone'
+                    }"></i>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900" x-text="event.label"></p>
+                    <p class="text-xs text-slate-500" x-text="new Date(event.date).toLocaleString()"></p>
+                    <p class="mt-1 text-sm" x-text="event.detail"></p>
+                  </div>
+                </li>
+              </template>
+            </ul>
+            <p class="mt-4 text-sm text-slate-500" x-show="!app.selectedCourseTimeline.length">
+              Activity history appears as soon as you log sessions, add notes, or hit milestones.
+            </p>
+          </div>
+          <div class="space-y-5">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Export centre</h3>
+              <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                <template x-for="exportItem in app.state?.exports ?? []" :key="exportItem.id">
+                  <li class="flex items-center justify-between gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                    <div>
+                      <p class="font-semibold text-slate-900" x-text="`${exportItem.format} export`"></p>
+                      <p class="text-xs text-slate-500" x-text="exportItem.description"></p>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      :disabled="exportItem.status === 'pro'"
+                      @click.prevent="app.notify?.(exportItem.status === 'pro' ? 'Upgrade to Pro to unlock PDF & ICS exports' : `${exportItem.format} export prepared`)"
+                    >
+                      <i class="fas" :class="exportItem.status === 'pro' ? 'fa-lock' : 'fa-arrow-down'"></i>
+                      <span x-text="exportItem.status === 'pro' ? 'Pro' : 'Download'"></span>
+                    </Button>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Plan limits</h3>
+              <div class="mt-4 overflow-hidden rounded-2xl border border-slate-200">
+                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                  <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th class="px-4 py-3">Feature</th>
+                      <th class="px-4 py-3">Free</th>
+                      <th class="px-4 py-3">Pro</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-100 bg-white text-slate-600">
+                    <tr>
+                      <td class="px-4 py-3 font-semibold text-slate-700">Courses</td>
+                      <td class="px-4 py-3">Up to 10 active</td>
+                      <td class="px-4 py-3">Unlimited</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 font-semibold text-slate-700">Notes</td>
+                      <td class="px-4 py-3">200 stored</td>
+                      <td class="px-4 py-3">Unlimited with AI search</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 font-semibold text-slate-700">Exports</td>
+                      <td class="px-4 py-3">Markdown &amp; CSV (watermark)</td>
+                      <td class="px-4 py-3">PDF &amp; ICS (no watermark)</td>
+                    </tr>
+                    <tr>
+                      <td class="px-4 py-3 font-semibold text-slate-700">AI assists</td>
+                      <td class="px-4 py-3">20 / month</td>
+                      <td class="px-4 py-3">300 / month + auto-outlines</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <template x-if="app.state?.lastActionMessage">
+      <div class="fixed bottom-6 right-6 z-50 w-full max-w-xs rounded-2xl border border-slate-200 bg-white p-4 text-sm font-semibold text-slate-700 shadow-xl">
+        <div class="flex items-start gap-3">
+          <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+            <i class="fas fa-sparkles text-xs"></i>
+          </span>
+          <div class="flex-1">
+            <p x-text="app.state.lastActionMessage"></p>
+            <button
+              type="button"
+              class="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+              @click="app.state.lastActionMessage = null"
+            >
+              Dismiss
+              <i class="fas fa-xmark text-[10px]"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+    </template>
   </main>
 </Layout>
