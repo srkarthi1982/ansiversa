@@ -1,0 +1,307 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+---
+
+<Layout>
+  <main class="min-h-screen bg-slate-50">
+    <header class="border-b border-slate-200 bg-white/70 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-4 py-6 sm:px-6 lg:px-8">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Caption editor</p>
+          <h1 class="text-2xl font-bold text-slate-900">Multi-platform workspace</h1>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+          <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-100 px-3 py-1">
+            <i class="fas fa-shield-check text-slate-500"></i>
+            Autosave: <span class="font-semibold" x-text="$store.caption.editor.autosaveLabel"></span>
+          </span>
+          <Button href="/caption/templates" variant="outline" size="sm">
+            <i class="fas fa-layer-group text-xs"></i>
+            Templates
+          </Button>
+          <Button href="/caption/campaigns" variant="ghost" size="sm">
+            <i class="fas fa-calendar-day text-xs"></i>
+            Campaigns
+          </Button>
+        </div>
+      </div>
+    </header>
+
+    <section
+      class="mx-auto grid max-w-6xl grid-cols-1 gap-6 px-4 py-10 sm:px-6 lg:grid-cols-[300px_minmax(0,1fr)_320px] lg:px-8"
+      x-data="() => ({
+        store: $store.caption,
+        get draft() {
+          return this.store.activeDraft;
+        },
+        get platform() {
+          if (!this.store.editor.platformId) return null;
+          return this.store.listPlatforms.find((platform) => platform.id === this.store.editor.platformId) ?? null;
+        },
+        selectDraft(id) {
+          this.store.setActiveDraft(id);
+        },
+        selectVariant(platformId, variantId) {
+          this.store.openVariant(platformId, variantId);
+        },
+      })"
+    >
+      <aside class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Drafts</h2>
+          <div class="mt-4 space-y-3">
+            <template x-for="draft in store.draftsList" :key="draft.id">
+              <button
+                type="button"
+                class="w-full rounded-2xl border px-4 py-3 text-left text-sm shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                :class="store.editor.activeDraftId === draft.id ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-700'"
+                x-on:click="selectDraft(draft.id)"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold" x-text="draft.title"></span>
+                  <span class="text-xs uppercase tracking-wide" x-text="draft.status"></span>
+                </div>
+                <p class="mt-1 text-xs text-slate-500" x-text="draft.idea"></p>
+              </button>
+            </template>
+          </div>
+          <Button class="mt-4 w-full" variant="ghost" href="/caption">
+            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+            Generate new set
+          </Button>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Variants</h3>
+          <template x-if="draft">
+            <div class="mt-4 space-y-4">
+              <template x-for="platformId in draft.platforms" :key="platformId">
+                <div>
+                  <header class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                      <i :class="store.listPlatforms.find((platform) => platform.id === platformId)?.icon"></i>
+                      <span x-text="store.listPlatforms.find((platform) => platform.id === platformId)?.name"></span>
+                    </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      variant="outline"
+                      :class="draft.chosen[platformId] ? 'border-indigo-500 text-indigo-600' : ''"
+                      x-on:click="store.chooseVariant(platformId, draft.chosen[platformId])"
+                    >
+                      Ready
+                    </Button>
+                  </header>
+                  <div class="mt-3 space-y-2">
+                    <template x-for="variant in draft.variants[platformId]" :key="variant.id">
+                      <button
+                        type="button"
+                        class="w-full rounded-2xl border px-4 py-3 text-left text-sm transition"
+                        :class="{
+                          'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm': store.editor.variantId === variant.id,
+                          'border-slate-200 bg-slate-50 text-slate-600 hover:bg-white hover:shadow': store.editor.variantId !== variant.id,
+                        }"
+                        x-on:click="selectVariant(platformId, variant.id)"
+                      >
+                        <div class="flex items-center justify-between">
+                          <span class="font-semibold" x-text="variant.title"></span>
+                          <span class="text-xs text-slate-500" x-text="`${variant.counters.characters}/${store.listPlatforms.find((p) => p.id === platformId)?.limit}`"></span>
+                        </div>
+                        <p class="mt-1 line-clamp-2 text-xs" x-text="variant.text"></p>
+                      </button>
+                    </template>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+      </aside>
+
+      <section class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <template x-if="draft && store.activeVariant">
+          <div class="space-y-6">
+            <div class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 class="text-xl font-semibold text-slate-900" x-text="store.activeVariant.title"></h2>
+                <p class="text-sm text-slate-600">
+                  Editing <span x-text="platform?.name"></span> variant. Counters and compliance update as you type.
+                </p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1">
+                  <i class="fas fa-font"></i>
+                  <span x-text="`${store.activeVariant.counters.characters}/${platform?.limit}`"></span>
+                </span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1">
+                  <i class="fas fa-hashtag"></i>
+                  <span x-text="store.activeVariant.counters.hashtags"></span>
+                </span>
+              </div>
+            </div>
+
+            <textarea
+              class="min-h-[280px] w-full rounded-3xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              x-model="store.editor.textBuffer"
+              x-on:input.debounce.300ms="store.updateEditorBuffer($event.target.value)"
+            ></textarea>
+
+            <div class="flex flex-wrap items-center gap-4 text-sm text-slate-500">
+              <span class="flex items-center gap-1">
+                <i class="fas fa-sparkles text-indigo-500"></i>
+                <span x-text="`${store.activeVariant.score.clarity} clarity`"></span>
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="fas fa-bolt text-amber-500"></i>
+                <span x-text="`${store.activeVariant.score.punch} punch`"></span>
+              </span>
+              <span class="flex items-center gap-1">
+                <i class="fas fa-shield-check text-emerald-500"></i>
+                <span x-text="`${store.activeVariant.score.compliance} compliance`"></span>
+              </span>
+            </div>
+
+            <template x-if="store.activeVariant.compliance.length">
+              <ul class="space-y-2 text-xs">
+                <template x-for="flag in store.activeVariant.compliance" :key="flag.id">
+                  <li
+                    class="rounded-xl border px-3 py-2"
+                    :class="{
+                      'border-amber-200 bg-amber-50 text-amber-700': flag.severity === 'warning',
+                      'border-emerald-200 bg-emerald-50 text-emerald-700': flag.severity === 'info',
+                      'border-rose-200 bg-rose-50 text-rose-700': flag.severity === 'error',
+                    }"
+                  >
+                    <i
+                      class="fas mr-2 text-sm"
+                      :class="{
+                        'fa-circle-info': flag.severity === 'info',
+                        'fa-triangle-exclamation': flag.severity === 'warning',
+                        'fa-octagon-exclamation': flag.severity === 'error',
+                      }"
+                    ></i>
+                    <span x-text="flag.message"></span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <Button type="button" variant="primary" x-on:click="store.chooseVariant(store.editor.platformId, store.activeVariant.id)">
+                <i class="fas fa-check text-xs"></i>
+                Mark ready
+              </Button>
+              <Button type="button" variant="outline" x-on:click="store.copyVariantText(store.activeVariant)">
+                <i class="fas fa-copy text-xs"></i>
+                Copy with hashtags
+              </Button>
+              <Button href="/caption/templates" variant="ghost">
+                <i class="fas fa-layer-group text-xs"></i>
+                Swap template
+              </Button>
+            </div>
+          </div>
+        </template>
+        <template x-if="!draft">
+          <div class="flex h-full flex-col items-center justify-center gap-4 text-center text-slate-500">
+            <i class="fas fa-sparkles text-3xl text-slate-300"></i>
+            <p>Select a draft from the sidebar to begin editing.</p>
+          </div>
+        </template>
+      </section>
+
+      <aside class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Brand voice</h3>
+          <ul class="mt-4 space-y-3 text-sm">
+            <template x-for="voice in store.listVoices" :key="voice.id">
+              <li
+                class="rounded-2xl border px-4 py-3"
+                :class="draft?.voiceId === voice.id ? 'border-indigo-500 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-slate-50 text-slate-600'"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold" x-text="voice.name"></span>
+                  <span class="text-xs uppercase tracking-wide" x-text="voice.tone"></span>
+                </div>
+                <p class="mt-2 text-xs" x-text="voice.description"></p>
+              </li>
+            </template>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Hashtag sets</h3>
+          <div class="mt-4 space-y-3 text-xs text-slate-600">
+            <template x-for="set in store.listHashtagSets" :key="set.id">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div class="flex items-center justify-between text-sm font-semibold text-slate-800">
+                  <span x-text="set.name"></span>
+                  <span class="text-xs uppercase tracking-wide" x-text="set.category"></span>
+                </div>
+                <p class="mt-2 flex flex-wrap gap-2">
+                  <template x-for="tag in set.tags" :key="tag">
+                    <span class="rounded-full bg-white px-2 py-1">#<span x-text="tag"></span></span>
+                  </template>
+                </p>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Localization</h3>
+          <ul class="mt-4 space-y-3 text-sm">
+            <template x-for="target in store.editor.localization" :key="target.lang">
+              <li class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <div>
+                  <p class="font-semibold text-slate-800" x-text="target.label"></p>
+                  <p class="text-xs text-slate-500" x-text="target.rtl ? 'RTL supported' : 'LTR layout'"></p>
+                </div>
+                <span
+                  class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold uppercase tracking-wide"
+                  :class="{
+                    'bg-emerald-100 text-emerald-700': target.status === 'ready',
+                    'bg-slate-100 text-slate-600': target.status === 'queued',
+                    'bg-rose-100 text-rose-700': target.status === 'error',
+                  }"
+                >
+                  <i class="fas fa-language"></i>
+                  <span x-text="target.status"></span>
+                </span>
+              </li>
+            </template>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">UTM tracking</h3>
+          <template x-if="draft && draft.utm">
+            <div class="mt-4 space-y-3 text-xs text-slate-600">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Source</span>
+                <span x-text="draft.utm.source"></span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Medium</span>
+                <span x-text="draft.utm.medium"></span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Campaign</span>
+                <span x-text="draft.utm.campaign"></span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-700">Content</span>
+                <span x-text="draft.utm.content"></span>
+              </div>
+              <div class="rounded-2xl bg-slate-100 px-3 py-2 text-slate-600" x-text="draft.utm.url"></div>
+            </div>
+          </template>
+          <template x-if="!draft || !draft.utm">
+            <p class="mt-4 text-xs text-slate-500">Generate UTMs from the quick generator to track engagement.</p>
+          </template>
+        </div>
+      </aside>
+    </section>
+  </main>
+</Layout>

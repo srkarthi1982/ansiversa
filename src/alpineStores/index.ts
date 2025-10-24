@@ -30,3 +30,4 @@ import './email';
 import './promptBuilder';
 import './lessonBuilder';
 import './career';
+import './caption';
