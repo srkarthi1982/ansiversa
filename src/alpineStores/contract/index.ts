@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import { actions } from 'astro:actions';
 import {
   contractTemplates,
@@ -21,8 +21,6 @@ import {
   getTemplateLabel,
   nowIso,
 } from '../../lib/contract/utils';
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const formatRelative = (dateString?: string | null) => {
   if (!dateString) return 'never';

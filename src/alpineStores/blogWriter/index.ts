@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import {
   blogTemplates,
   createEmptyBlogPost,
@@ -45,8 +45,6 @@ type ActivityItem = {
 type Plan = 'free' | 'pro';
 
 type BuilderExportFormat = 'md' | 'html' | 'pdf';
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const filterIdeasByTopic = (topic: string): BlogAiIdea[] => {
   if (!topic) return sampleIdeas.map((idea) => ({ ...idea }));

@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import {
   getSampleAiPlaybooks,
   getSampleInsights,
@@ -19,8 +19,6 @@ import type {
   LessonTimelineEvent,
   LessonWorkspaceItem,
 } from '../../types/lesson';
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 type LessonTabKey = 'lessons' | 'modules';
 

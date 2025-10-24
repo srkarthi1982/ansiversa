@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import {
   createEmptyPortfolioData,
   createPortfolioDocument,
@@ -14,8 +14,6 @@ import type {
   PortfolioStatus,
   PortfolioTemplateKey,
 } from '../../types/portfolio';
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 type PortfolioListItem = PortfolioDocument & {
   views: number;
