@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import { actions } from 'astro:actions';
 import { createEmptyResumeData, resumeTemplateKeys, skillLevels } from '../../lib/resume/schema';
 import type {
@@ -31,8 +31,6 @@ const templateOptions: Array<{ key: TemplateKey; label: string; icon: string; pl
   { key: 'minimal', label: 'Minimal', icon: 'fas fa-circle-notch', plan: 'free' },
   { key: 'creative', label: 'Creative', icon: 'fas fa-palette', plan: 'pro' },
 ];
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const describeSummary = (data: ResumeData) => {
   const segments: string[] = [];

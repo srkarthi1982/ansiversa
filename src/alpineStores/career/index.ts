@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import {
   buildAssessmentSummary,
   createDraftPlan,
@@ -21,8 +21,6 @@ import type {
   CareerSprintPlan,
   CareerTrackerState,
 } from '../../types/career';
-
-const clone = <T>(value: T): T => structuredClone(value);
 
 const formatRelativeDate = (value: string | null) => {
   if (!value) return 'Not saved yet';

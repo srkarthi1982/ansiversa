@@ -1,5 +1,5 @@
 import Alpine from "alpinejs";
-import { BaseStore } from "../base";
+import { BaseStore, clone } from "../base";
 import {
   createPromptProjectSkeleton,
   defaultPromptModel,
@@ -11,8 +11,6 @@ import {
   type PromptBuilderTemplate,
   type PromptPlanDetail,
 } from "../../data/promptBuilderSamples";
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 class PromptBuilderStore extends BaseStore {
   private collection: {

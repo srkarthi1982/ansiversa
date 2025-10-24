@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import { actions } from 'astro:actions';
 import type {
   MinutesRecord,
@@ -22,8 +22,6 @@ import {
   formatRelativeTime,
   buildDemoSummary,
 } from '../../lib/minutes/utils';
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 type Toast = { message: string; type: 'success' | 'error' } | null;
 

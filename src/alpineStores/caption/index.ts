@@ -1,5 +1,5 @@
 import Alpine from "alpinejs";
-import { BaseStore } from "../base";
+import { BaseStore, clone } from "../base";
 import {
   captionBrandVoices,
   captionCampaigns,
@@ -27,8 +27,6 @@ import type {
   CaptionTemplate,
   CaptionVariant,
 } from "../../types/caption";
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const ensureArray = <T>(value: T[] | undefined | null): T[] =>
   Array.isArray(value) ? value : [];

@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from './base';
+import { BaseStore, clone } from './base';
 import { actions } from 'astro:actions';
 import type { FlashNote, FlashNoteAIMode, FlashNoteDraft, FlashNoteReviewCard } from '../types/flashnote';
 import { readJSON, writeJSON } from '../utils/storage';
@@ -14,8 +14,6 @@ const defaultDraft = (): FlashNoteDraft => ({
   content: '',
   tags: [],
 });
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const sampleNotes: FlashNote[] = [
   {

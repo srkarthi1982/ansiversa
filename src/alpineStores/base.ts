@@ -8,6 +8,16 @@ type StoreRecord = Record<string, unknown>;
 const hasLoaderMethods = (value: unknown): value is LoaderMethods =>
   Boolean(value) && typeof (value as LoaderMethods).show === 'function' && typeof (value as LoaderMethods).hide === 'function';
 
+export const clone = <TValue>(value: TValue): TValue => {
+  const structuredCloneFn = (globalThis as typeof globalThis & {
+    structuredClone?: <T>(input: T) => T;
+  }).structuredClone;
+  if (typeof structuredCloneFn === 'function') {
+    return structuredCloneFn(value);
+  }
+  return JSON.parse(JSON.stringify(value));
+};
+
 export abstract class BaseStore {
   protected readonly loader: LoaderMethods | null;
 
@@ -23,6 +33,10 @@ export abstract class BaseStore {
   protected getStore<TStore extends StoreRecord = StoreRecord>(name: string): TStore | null {
     const store = Alpine.store(name) as TStore | undefined;
     return store ?? null;
+  }
+
+  protected clone<TValue>(value: TValue): TValue {
+    return clone(value);
   }
 
   protected showLoaderBriefly(duration = 300): void {

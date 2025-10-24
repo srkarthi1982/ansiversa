@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import { actions } from 'astro:actions';
 import {
   createEmptyProposalData,
@@ -11,8 +11,6 @@ import {
   type ProposalTone,
 } from '../../lib/proposal/schema';
 import { describeProposalSummary, formatCurrency, ensureHexColor, nowIso } from '../../lib/proposal/utils';
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const setByPath = (target: any, path: string, value: any) => {
   const normalized = path.replace(/\[(\w+)\]/g, '.$1');

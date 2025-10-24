@@ -1,5 +1,5 @@
 import Alpine from 'alpinejs';
-import { BaseStore } from '../base';
+import { BaseStore, clone } from '../base';
 import { actions } from 'astro:actions';
 import type {
   EmailDraft,
@@ -80,8 +80,6 @@ type TemplateCollection = {
   loading: boolean;
   category: string;
 };
-
-const clone = <T>(value: T): T => JSON.parse(JSON.stringify(value));
 
 const defaultQuickState = (): QuickState => ({
   title: 'Untitled email',
