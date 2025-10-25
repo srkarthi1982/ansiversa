@@ -1,0 +1,30 @@
+<section class="space-y-4">
+  <header>
+    <h2 class="text-xl font-semibold text-slate-900">Theme palette</h2>
+    <p class="text-sm text-slate-600">Pick a color story — swatches adapt background, accents, and type highlights.</p>
+  </header>
+  <div class="grid gap-4 sm:grid-cols-2">
+    <template x-for="theme in $store['visiting-card-maker'].themes" :key="theme.id">
+      <button
+        type="button"
+        class="group flex h-full flex-col justify-between gap-4 rounded-2xl border p-5 text-left transition"
+        :class="$store['visiting-card-maker'].state.theme === theme.id ? 'border-indigo-400 shadow-lg ring-2 ring-indigo-200 bg-white' : 'border-slate-200 bg-white/80 hover:-translate-y-1 hover:shadow-md'"
+        @click="$store['visiting-card-maker'].selectTheme(theme.id)"
+      >
+        <div class="flex items-center justify-between gap-4">
+          <h3 class="text-lg font-semibold text-slate-900" x-text="theme.name"></h3>
+          <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+            <i class="fas fa-droplet text-[10px]"></i>
+            <span class="capitalize" x-text="theme.id"></span>
+          </span>
+        </div>
+        <p class="text-sm text-slate-600" x-text="theme.description"></p>
+        <div class="flex gap-2">
+          <span class="h-10 w-10 rounded-full border border-white shadow-sm" :class="theme.colors.primary"></span>
+          <span class="h-10 w-10 rounded-full border border-white shadow-sm" :class="theme.colors.secondary"></span>
+          <span class="h-10 flex-1 rounded-full border border-dashed border-slate-300 bg-slate-50"></span>
+        </div>
+      </button>
+    </template>
+  </div>
+</section>

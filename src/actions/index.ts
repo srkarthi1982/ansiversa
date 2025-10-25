@@ -8,6 +8,7 @@ import { contract } from './contract';
 import { minutes } from './minutes';
 import { email } from './email';
 import { coverLetter } from './coverLetter';
+import { card, visitingCard } from './visitingCard';
 
 export const server = {
   auth,
@@ -20,6 +21,8 @@ export const server = {
   minutes,
   email,
   coverLetter,
+  card,
+  visitingCard,
   // slug-based names used by the mini-app pages
   'proposal-writer': proposal,
   'contract-generator': contract,
@@ -27,4 +30,5 @@ export const server = {
   'email-polisher': email,
   'cover-letter': coverLetter,
   'cover-letter-writer': coverLetter,
+  'visiting-card-maker': card,
 };

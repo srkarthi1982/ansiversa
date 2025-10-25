@@ -1,0 +1,240 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+import CardPreview from './components/CardPreview.astro';
+import CardForm from './components/CardForm.astro';
+import ThemeSelector from './components/ThemeSelector.astro';
+import TemplateSelector from './components/TemplateSelector.astro';
+import AIControls from './components/AIControls.astro';
+import ExportPanel from './components/ExportPanel.astro';
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#visiting-card-workspace"
+  >
+    Skip to visiting card workspace
+  </a>
+  <main
+    id="visiting-card-workspace"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ card: $store['visiting-card-maker'] })"
+    x-init="card.init()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-address-card text-xs"></i>
+              Visiting card maker
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Design polished business cards and export them in minutes
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Combine professional templates, brand-ready themes, and AI-assisted taglines to produce print-friendly visiting cards
+              without leaving your browser. Save drafts, duplicate styles, and share SVG exports anywhere.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" @click.prevent="$store['visiting-card-maker'].generateTagline()">
+                <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                Try AI tagline
+              </Button>
+              <Button href="#template-gallery" variant="outline">
+                <i class="fas fa-layer-group text-xs"></i>
+                Browse templates
+              </Button>
+              <Button href="#saved-designs" variant="ghost">
+                <i class="fas fa-bookmark text-xs"></i>
+                View saved cards
+              </Button>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-2xl"></div>
+            <div class="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <header class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-slate-900">Workspace snapshot</h2>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-circle-dot text-[10px]" :class="$store['visiting-card-maker'].state.loading ? 'text-amber-500' : 'text-emerald-500'"></i>
+                  <span x-text="$store['visiting-card-maker'].state.loading ? 'Working…' : 'Ready to export'"></span>
+                </span>
+              </header>
+              <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Saved cards</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="$store['visiting-card-maker'].state.saved.items.length"></span>
+                    <span class="text-xs font-medium text-slate-500">total</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Current theme</dt>
+                  <dd class="mt-2 text-sm font-semibold text-slate-900">
+                    <span x-text="$store['visiting-card-maker'].themes.find((theme) => theme.id === $store['visiting-card-maker'].state.theme)?.name ?? 'Aurora Indigo'"></span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Template</dt>
+                  <dd class="mt-2 text-sm font-semibold text-slate-900">
+                    <span x-text="$store['visiting-card-maker'].templates.find((tpl) => tpl.key === $store['visiting-card-maker'].state.template)?.name ?? 'Minimal Serif'"></span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Last export</dt>
+                  <dd class="mt-2 text-xs font-medium text-slate-500">
+                    <template x-if="$store['visiting-card-maker'].state.export.filename">
+                      <span x-text="$store['visiting-card-maker'].state.export.filename"></span>
+                    </template>
+                    <template x-if="!$store['visiting-card-maker'].state.export.filename">
+                      <span>—</span>
+                    </template>
+                  </dd>
+                </div>
+              </dl>
+              <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                SVG exports maintain crisp typography at any size. PDF and PNG fall back to SVG for faster downloads when conversion is unavailable.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:px-8">
+        <div class="space-y-10">
+          <CardForm />
+          <AIControls />
+          <ThemeSelector />
+          <ExportPanel />
+        </div>
+        <div class="space-y-10">
+          <CardPreview />
+          <div id="template-gallery">
+            <TemplateSelector />
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="saved-designs" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <header class="flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <h2 class="text-2xl font-semibold text-slate-900">Saved designs</h2>
+            <p class="text-sm text-slate-600">Reuse past cards, duplicate styles, or delete versions you no longer need.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Filter template</span>
+              <i class="fas fa-layer-group text-xs"></i>
+              <select
+                class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="$store['visiting-card-maker'].state.saved.filters.template"
+                @change="$store['visiting-card-maker'].setFilter('template', $event.target.value)"
+              >
+                <option value="all">All templates</option>
+                <template x-for="template in $store['visiting-card-maker'].templates" :key="template.key">
+                  <option :value="template.key" x-text="template.name"></option>
+                </template>
+              </select>
+            </label>
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Search cards</span>
+              <i class="fas fa-search text-xs"></i>
+              <input
+                type="search"
+                placeholder="Search name or company"
+                class="w-48 bg-transparent text-sm focus:outline-none"
+                :value="$store['visiting-card-maker'].state.saved.filters.search"
+                @input.debounce.250ms="$store['visiting-card-maker'].setFilter('search', $event.target.value)"
+              />
+            </label>
+          </div>
+        </header>
+
+        <template x-if="$store['visiting-card-maker'].state.saved.loading">
+          <div class="grid gap-6 md:grid-cols-2">
+            <template x-for="placeholder in 4" :key="`card-skeleton-${placeholder}`">
+              <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                <div class="space-y-3">
+                  <div class="h-6 w-40 rounded bg-slate-200"></div>
+                  <div class="h-4 w-24 rounded bg-slate-100"></div>
+                  <div class="h-[72px] rounded bg-slate-50"></div>
+                </div>
+                <div class="mt-6 flex items-center justify-between">
+                  <div class="h-6 w-24 rounded-full bg-slate-100"></div>
+                  <div class="h-10 w-28 rounded-full bg-slate-200"></div>
+                </div>
+              </article>
+            </template>
+          </div>
+        </template>
+
+        <template x-if="!$store['visiting-card-maker'].state.saved.loading && !$store['visiting-card-maker'].hasSavedCards">
+          <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-12 text-center">
+            <i class="fas fa-address-card text-3xl text-slate-300"></i>
+            <h3 class="mt-4 text-lg font-semibold text-slate-900">No saved cards yet</h3>
+            <p class="mt-2 text-sm text-slate-600">Fill out the form and hit save to build your personal template library.</p>
+            <Button type="button" class="mt-4" @click.prevent="$store['visiting-card-maker'].saveCard()">
+              <i class="fas fa-floppy-disk text-xs"></i>
+              Save first card
+            </Button>
+          </div>
+        </template>
+
+        <div class="grid gap-6 md:grid-cols-2" x-show="$store['visiting-card-maker'].hasSavedCards" x-cloak>
+          <template x-for="card in $store['visiting-card-maker'].getSavedCards()" :key="card.id">
+            <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+              <div class="space-y-4">
+                <div class="flex items-center justify-between gap-3">
+                  <h3 class="text-xl font-semibold text-slate-900" x-text="card.name || card.company || 'Untitled card'"></h3>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                    <i class="fas fa-layer-group text-[11px]"></i>
+                    <span class="capitalize" x-text="card.template"></span>
+                  </span>
+                </div>
+                <p class="text-sm text-slate-600" x-text="card.tagline || 'Add a tagline to make this card memorable.'"></p>
+                <dl class="grid grid-cols-2 gap-3 text-xs text-slate-500">
+                  <div>
+                    <dt class="font-medium text-slate-500">Company</dt>
+                    <dd class="text-slate-700" x-text="card.company || '—'"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium text-slate-500">Updated</dt>
+                    <dd class="text-slate-700" x-text="new Date(card.updatedAt).toLocaleDateString()"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium text-slate-500">Email</dt>
+                    <dd class="text-slate-700" x-text="card.email || '—'"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium text-slate-500">Theme</dt>
+                    <dd class="text-slate-700" x-text="card.theme"></dd>
+                  </div>
+                </dl>
+              </div>
+              <div class="mt-6 flex flex-wrap items-center gap-3">
+                <Button type="button" variant="light" @click.prevent="$store['visiting-card-maker'].duplicateCard(card)">
+                  <i class="fas fa-copy text-xs"></i>
+                  Load in editor
+                </Button>
+                <Button type="button" variant="ghost" @click.prevent="$store['visiting-card-maker'].exportCard('svg')">
+                  <i class="fas fa-download text-xs"></i>
+                  Quick export
+                </Button>
+                <Button type="button" variant="ghost" class="text-red-600 hover:text-red-700" @click.prevent="$store['visiting-card-maker'].deleteCard(card.id)">
+                  <i class="fas fa-trash text-xs"></i>
+                  Delete
+                </Button>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

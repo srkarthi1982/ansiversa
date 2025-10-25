@@ -1,0 +1,94 @@
+<section class="space-y-4">
+  <header>
+    <h2 class="text-xl font-semibold text-slate-900">Card details</h2>
+    <p class="text-sm text-slate-600">Fill in the essentials — the preview and export-ready design update in real time.</p>
+  </header>
+  <div class="grid gap-4">
+    <label class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-slate-700">Full name</span>
+      <input
+        type="text"
+        placeholder="Taylor Morgan"
+        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+        x-model="$store['visiting-card-maker'].state.cardData.name"
+        @input="$store['visiting-card-maker'].updateCardField('name', $event.target.value)"
+      />
+    </label>
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-slate-700">Role / Title</span>
+        <input
+          type="text"
+          placeholder="Brand Strategist"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          x-model="$store['visiting-card-maker'].state.cardData.title"
+          @input="$store['visiting-card-maker'].updateCardField('title', $event.target.value)"
+        />
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-slate-700">Company / Organization</span>
+        <input
+          type="text"
+          placeholder="Northwind Studio"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          x-model="$store['visiting-card-maker'].state.cardData.company"
+          @input="$store['visiting-card-maker'].updateCardField('company', $event.target.value)"
+        />
+      </label>
+    </div>
+    <label class="flex flex-col gap-2">
+      <span class="text-sm font-medium text-slate-700">Tagline / Focus statement</span>
+      <textarea
+        rows="2"
+        placeholder="Designing unforgettable brand identities."
+        class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+        x-model="$store['visiting-card-maker'].state.cardData.tagline"
+        @input="$store['visiting-card-maker'].updateCardField('tagline', $event.target.value)"
+      ></textarea>
+    </label>
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-slate-700">Email</span>
+        <input
+          type="email"
+          placeholder="taylor@northwind.studio"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          x-model="$store['visiting-card-maker'].state.cardData.email"
+          @input="$store['visiting-card-maker'].updateCardField('email', $event.target.value)"
+        />
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-slate-700">Phone</span>
+        <input
+          type="tel"
+          placeholder="+1 (555) 123-4567"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          x-model="$store['visiting-card-maker'].state.cardData.phone"
+          @input="$store['visiting-card-maker'].updateCardField('phone', $event.target.value)"
+        />
+      </label>
+    </div>
+    <div class="grid gap-4 md:grid-cols-2">
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-slate-700">Website / Portfolio</span>
+        <input
+          type="text"
+          placeholder="northwind.studio"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          x-model="$store['visiting-card-maker'].state.cardData.website"
+          @input="$store['visiting-card-maker'].updateCardField('website', $event.target.value)"
+        />
+      </label>
+      <label class="flex flex-col gap-2">
+        <span class="text-sm font-medium text-slate-700">Office address</span>
+        <input
+          type="text"
+          placeholder="200 Market Street, Suite 40"
+          class="w-full rounded-xl border border-slate-200 bg-white px-4 py-2.5 text-sm shadow-sm focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+          x-model="$store['visiting-card-maker'].state.cardData.address"
+          @input="$store['visiting-card-maker'].updateCardField('address', $event.target.value)"
+        />
+      </label>
+    </div>
+  </div>
+</section>
