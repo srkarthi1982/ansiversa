@@ -4,14 +4,6 @@ import Layout from "../layouts/Layout.astro";
 const mission =
   "Ansiversa is an AI-powered universe of 100 web-based mini-apps engineered for learning, creativity, productivity, and everyday life — all unified under one subscription.";
 
-const aliasMiniApps = new Map<string, string>([
-  ["/proposal", "/proposal-writer"],
-  ["/contract", "/contract-generator"],
-  ["/invoice", "/invoice-and-receipt-maker"],
-  ["/minutes", "/meeting-minutes-ai"],
-  ["/email", "/email-polisher"],
-]);
-
 const pageFiles = Object.keys(
   import.meta.glob("../pages/**/*.{astro,md,mdx}", { eager: false })
 );
@@ -38,11 +30,10 @@ const normalizeRoute = (href: string | undefined) => {
   return withLeadingSlash.replace(/\/+$/, "");
 };
 
-const resolveMiniAppHref = (href: string | undefined) => {
+const resolveMiniAppHref = (href?: string | undefined) => {
   const normalized = normalizeRoute(href);
   if (!normalized) return undefined;
 
-  const aliasTarget = aliasMiniApps.get(normalized);
   const candidateRoutes: string[] = [];
 
   const addCandidate = (value: string | undefined) => {
@@ -53,9 +44,6 @@ const resolveMiniAppHref = (href: string | undefined) => {
     }
   };
 
-  if (aliasTarget) {
-    addCandidate(aliasTarget);
-  }
   addCandidate(normalized);
 
   for (const candidate of [...candidateRoutes]) {
@@ -155,26 +143,26 @@ const miniAppCategories = [
     blurb: "Snappy helpers that automate workflows for makers and teams.",
     accent: "from-indigo-500 via-slate-500 to-purple-500",
     apps: [
-      { name: "Snippet Generator", href: "/snippet-generator" },
-      { name: "File Converter", href: "/file-converter" },
-      { name: "Image Background Remover", href: "/image-background-remover" },
-      { name: "Unit & Currency Converter", href: "/unit-and-currency-converter" },
-      { name: "Price Checker", href: "/price-checker" },
-      { name: "QR Code Creator", href: "/qr-code-creator" },
-      { name: "Clipboard Manager", href: "/clipboard-manager" },
-      { name: "File Compressor", href: "/file-compressor" },
-      { name: "Text-to-Speech Converter", href: "/text-to-speech-converter" },
-      { name: "Speech-to-Text Converter", href: "/speech-to-text-converter" },
-      { name: "Screenshot Editor", href: "/screenshot-editor" },
-      { name: "Color Palette Generator", href: "/color-palette-generator" },
-      { name: "Password Generator", href: "/password-generator" },
-      { name: "API Tester", href: "/api-tester" },
-      { name: "JSON Formatter", href: "/json-formatter" },
-      { name: "Markdown Editor", href: "/markdown-editor" },
-      { name: "Time Zone Scheduler", href: "/time-zone-scheduler" },
-      { name: "Browser PDF Reader", href: "/browser-pdf-reader" },
-      { name: "Clipboard Translator", href: "/clipboard-translator" },
-      { name: "Quick Notepad", href: "/quick-notepad" },
+      { name: "Snippet Generator", href: null },
+      { name: "File Converter", href: null },
+      { name: "Image Background Remover", href: null },
+      { name: "Unit & Currency Converter", href: null },
+      { name: "Price Checker", href: null },
+      { name: "QR Code Creator", href: null },
+      { name: "Clipboard Manager", href: null },
+      { name: "File Compressor", href: null },
+      { name: "Text-to-Speech Converter", href: null },
+      { name: "Speech-to-Text Converter", href: null },
+      { name: "Screenshot Editor", href: null },
+      { name: "Color Palette Generator", href: null },
+      { name: "Password Generator", href:null },
+      { name: "API Tester", href: null },
+      { name: "JSON Formatter", href: null },
+      { name: "Markdown Editor", href: null },
+      { name: "Time Zone Scheduler", href: null },
+      { name: "Browser PDF Reader", href: null },
+      { name: "Clipboard Translator", href: null},
+      { name: "Quick Notepad", href: null },
     ],
   },
   {
@@ -182,21 +170,21 @@ const miniAppCategories = [
     blurb: "Plan habits, health, travel, and personal growth with gentle insights.",
     accent: "from-emerald-500 via-sky-500 to-indigo-500",
     apps: [
-      { name: "Wellness & Goal Planner", href: "/wellness-and-goal-planner" },
-      { name: "Event Planner", href: "/event-planner" },
-      { name: "Meal Planner", href: "/meal-planner" },
-      { name: "Fitness Tracker", href: "/fitness-tracker" },
-      { name: "Mood Journal", href: "/mood-journal" },
-      { name: "Meditation Script Maker", href: "/meditation-script-maker" },
-      { name: "Sleep Routine Designer", href: "/sleep-routine-designer" },
-      { name: "Affirmation Generator", href: "/affirmation-generator" },
-      { name: "Expense Tracker", href: "/expense-tracker" },
-      { name: "Shopping List AI", href: "/shopping-list-ai" },
-      { name: "Travel Itinerary Builder", href: "/travel-itinerary-builder" },
-      { name: "Recipe Generator", href: "/recipe-generator" },
-      { name: "Pet Care Planner", href: "/pet-care-planner" },
-      { name: "Language Learning Buddy", href: "/language-learning-buddy" },
-      { name: "Eco Habit Tracker", href: "/eco-habit-tracker" },
+      { name: "Wellness & Goal Planner", href: null },
+      { name: "Event Planner", href: null },
+      { name: "Meal Planner", href: null },
+      { name: "Fitness Tracker", href: null },
+      { name: "Mood Journal", href: null },
+      { name: "Meditation Script Maker", href: null },
+      { name: "Sleep Routine Designer", href: null },
+      { name: "Affirmation Generator", href: null },
+      { name: "Expense Tracker", href: null},
+      { name: "Shopping List AI", href: null },
+      { name: "Travel Itinerary Builder", href: null },
+      { name: "Recipe Generator", href: null },
+      { name: "Pet Care Planner", href: null },
+      { name: "Language Learning Buddy", href: null },
+      { name: "Eco Habit Tracker", href: null },
     ],
   },
   {
@@ -204,16 +192,16 @@ const miniAppCategories = [
     blurb: "Bring playful experiences to every break, classroom, or meetup.",
     accent: "from-purple-500 via-fuchsia-500 to-sky-500",
     apps: [
-      { name: "Trivia Arena", href: "/trivia-arena" },
-      { name: "Riddle Maker", href: "/riddle-maker" },
-      { name: "Puzzle Zone", href: "/puzzle-zone" },
-      { name: "Would You Rather", href: "/would-you-rather" },
-      { name: "Guess the Emoji", href: "/guess-the-emoji" },
-      { name: "AI Character Chat", href: "/ai-character-chat" },
-      { name: "Personality Quiz", href: "/personality-quiz" },
-      { name: "Fortune Teller", href: "/fortune-teller" },
-      { name: "Horoscope AI", href: "/horoscope-ai" },
-      { name: "Daily Challenge", href: "/daily-challenge" },
+      { name: "Trivia Arena", href: null },
+      { name: "Riddle Maker", href: null },
+      { name: "Puzzle Zone", href: null },
+      { name: "Would You Rather", href: null },
+      { name: "Guess the Emoji", href: null },
+      { name: "AI Character Chat", href: null},
+      { name: "Personality Quiz", href: null },
+      { name: "Fortune Teller", href: null},
+      { name: "Horoscope AI", href: null },
+      { name: "Daily Challenge", href: null },
     ],
   },
 ];

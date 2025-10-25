@@ -28,7 +28,6 @@ import '../pages/invoice-and-receipt-maker/stores';
 import '../pages/blog-writer/stores';
 import '../pages/email-polisher/stores';
 import '../pages/prompt-builder/stores';
-import '../pages/lesson-builder/stores';
 import '../pages/career-planner/stores';
 import '../pages/social-caption-generator/stores';
 import '../pages/course-tracker/stores/courseTracker';
