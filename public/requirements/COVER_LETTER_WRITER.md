@@ -21,7 +21,7 @@ and document export.
 
 ### 1. **UI & Pages (Astro)**
 
--   **Primary Page:** `src/pages/cover-letter.astro`
+-   **Primary Page:** `src/pages/cover-letter-writer.astro`
 -   **Layout:** Inherits from `src/layouts/Layout.astro`
 -   **Sections:**
     -   Hero section with short intro and CTA to start writing.

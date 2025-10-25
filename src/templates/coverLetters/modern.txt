@@ -1,0 +1,14 @@
+Hello {{COMPANY}} Team,
+
+I’m excited to apply for the {{POSITION}} role.{{INTRO}}
+
+Where I stand out:
+{{SKILL_LINES}}
+
+Wins I’m proud of:
+{{ACHIEVEMENT_LINES}}
+
+Let’s talk about how I can bring this energy to {{COMPANY}}.
+
+Best,
+{{SIGNATURE}}
