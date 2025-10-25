@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import InvoiceBuilderToolbar from '../../mini-apps/invoice/InvoiceBuilderToolbar.astro';
-import InvoiceBuilderForm from '../../mini-apps/invoice/InvoiceBuilderForm.astro';
-import InvoicePreview from '../../mini-apps/invoice/InvoicePreview.astro';
+import InvoiceBuilderToolbar from './components/InvoiceBuilderToolbar.astro';
+import InvoiceBuilderForm from './components/InvoiceBuilderForm.astro';
+import InvoicePreview from './components/InvoicePreview.astro';
 
 const invoiceId = Astro.url.searchParams.get('id');
 const builderInit = JSON.stringify({ id: invoiceId });

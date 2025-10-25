@@ -1,11 +1,11 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import ContractBuilderToolbar from '../../mini-apps/contract/ContractBuilderToolbar.astro';
-import ContractVariablesPanel from '../../mini-apps/contract/ContractVariablesPanel.astro';
-import ContractClauseEditor from '../../mini-apps/contract/ContractClauseEditor.astro';
-import ContractClauseLibrary from '../../mini-apps/contract/ContractClauseLibrary.astro';
-import ContractPreview from '../../mini-apps/contract/ContractPreview.astro';
-import ContractVersionsPanel from '../../mini-apps/contract/ContractVersionsPanel.astro';
+import ContractBuilderToolbar from './components/ContractBuilderToolbar.astro';
+import ContractVariablesPanel from './components/ContractVariablesPanel.astro';
+import ContractClauseEditor from './components/ContractClauseEditor.astro';
+import ContractClauseLibrary from './components/ContractClauseLibrary.astro';
+import ContractPreview from './components/ContractPreview.astro';
+import ContractVersionsPanel from './components/ContractVersionsPanel.astro';
 
 const contractId = Astro.url.searchParams.get('id');
 const builderInit = JSON.stringify({ id: contractId });
