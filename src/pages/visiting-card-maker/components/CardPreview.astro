@@ -1,0 +1,75 @@
+<section class="space-y-4">
+  <header class="flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-semibold text-slate-900">Live card preview</h2>
+      <p class="text-sm text-slate-600">Visual updates respond instantly as you edit content and styling.</p>
+    </div>
+    <span
+      class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600"
+      x-text="$store['visiting-card-maker'].templates.find((tpl) => tpl.key === $store['visiting-card-maker'].state.template)?.name ?? 'Signature style'"
+    ></span>
+  </header>
+  <div
+    class="relative rounded-[32px] border border-slate-200 bg-white shadow-2xl shadow-indigo-100/40"
+    x-data="() => ({
+      card: $store['visiting-card-maker'],
+      get theme() {
+        return this.card.themes.find((theme) => theme.id === this.card.state.theme) ?? this.card.themes[0];
+      },
+      get template() {
+        return this.card.templates.find((tpl) => tpl.key === this.card.state.template) ?? this.card.templates[0];
+      },
+      contactFields() {
+        const { email, phone, website, address } = this.card.state.cardData;
+        return [
+          email ? { icon: 'fa-envelope', value: email } : null,
+          phone ? { icon: 'fa-phone', value: phone } : null,
+          website ? { icon: 'fa-globe', value: website } : null,
+          address ? { icon: 'fa-location-dot', value: address } : null,
+        ].filter(Boolean);
+      },
+    })"
+  >
+    <div class="absolute inset-x-8 top-8 h-32 rounded-3xl opacity-60 blur-2xl" :class="theme.colors.secondary"></div>
+    <div class="absolute inset-0 rounded-[32px]" :class="theme.colors.surface"></div>
+    <div class="relative z-10 grid gap-8 p-10">
+      <div class="flex items-start justify-between gap-6">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em]" :class="theme.colors.accent">
+            <span x-text="card.state.cardData.company || 'Brand Studio'"></span>
+          </p>
+          <h3 class="text-3xl font-semibold text-slate-900" x-text="card.state.cardData.name || 'Taylor Morgan'"></h3>
+          <p class="text-base text-slate-600" x-text="card.state.cardData.title || 'Brand Strategist'"></p>
+        </div>
+        <div class="flex flex-col items-end gap-2 text-right">
+          <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold" :class="`${theme.colors.secondary} ${theme.colors.accent}`">
+            <i class="fas fa-palette text-[10px]"></i>
+            <span x-text="theme.name"></span>
+          </span>
+          <span class="inline-flex items-center gap-2 rounded-full bg-slate-900/90 px-3 py-1 text-xs font-semibold text-white shadow-lg">
+            <i class="fas fa-sparkles text-[10px]"></i>
+            <span x-text="card.state.aiTagline ? 'AI tagline active' : 'Manual mode'"></span>
+          </span>
+        </div>
+      </div>
+      <div class="rounded-3xl border border-dashed border-slate-200/80 bg-slate-50/50 p-6 text-sm leading-relaxed text-slate-600">
+        <p x-text="card.state.cardData.tagline || 'Designing unforgettable brand identities.'"></p>
+      </div>
+      <div class="grid gap-4 text-sm text-slate-600 lg:grid-cols-2">
+        <template x-for="field in contactFields()" :key="field?.icon">
+          <div class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-white/70 px-4 py-3 shadow-sm">
+            <span class="flex h-8 w-8 items-center justify-center rounded-full text-sm" :class="theme.colors.secondary">
+              <i class="fas" :class="field.icon"></i>
+            </span>
+            <span class="font-medium text-slate-700" x-text="field.value"></span>
+          </div>
+        </template>
+      </div>
+      <footer class="flex items-center justify-between rounded-2xl border border-slate-200/60 bg-white/80 px-5 py-3 text-xs font-medium uppercase tracking-[0.2em] text-slate-500">
+        <span x-text="template.badge"></span>
+        <span x-text="template.name"></span>
+      </footer>
+    </div>
+    <div class="pointer-events-none absolute inset-y-0 right-0 w-1/4 rounded-[32px] opacity-80" :class="template.accent ? `bg-gradient-to-br ${template.accent}` : 'bg-gradient-to-br from-indigo-500 via-sky-500 to-purple-500'"></div>
+  </div>
+</section>

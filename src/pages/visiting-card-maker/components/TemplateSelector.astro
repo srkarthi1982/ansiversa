@@ -1,0 +1,28 @@
+<section class="space-y-4">
+  <header class="flex items-center justify-between">
+    <div>
+      <h2 class="text-xl font-semibold text-slate-900">Template gallery</h2>
+      <p class="text-sm text-slate-600">Choose a starting canvas — typography, layout, and accents adjust instantly.</p>
+    </div>
+  </header>
+  <div class="grid gap-4 md:grid-cols-2">
+    <template x-for="template in $store['visiting-card-maker'].templates" :key="template.key">
+      <button
+        type="button"
+        class="group relative flex h-full flex-col gap-3 rounded-2xl border bg-white p-5 text-left transition hover:-translate-y-1 hover:shadow-lg"
+        :class="$store['visiting-card-maker'].state.template === template.key ? 'border-indigo-400 shadow-lg ring-2 ring-indigo-200' : 'border-slate-200 shadow-sm'"
+        @click="$store['visiting-card-maker'].selectTemplate(template.key)"
+      >
+        <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <i class="fas fa-layer-group text-[10px]"></i>
+          <span x-text="template.badge"></span>
+        </span>
+        <div class="space-y-2">
+          <h3 class="text-lg font-semibold text-slate-900" x-text="template.name"></h3>
+          <p class="text-sm text-slate-600" x-text="template.description"></p>
+        </div>
+        <span class="pointer-events-none absolute inset-x-5 bottom-5 h-2 rounded-full opacity-80" :class="template.accent ? `bg-gradient-to-r ${template.accent}` : 'bg-indigo-500'"></span>
+      </button>
+    </template>
+  </div>
+</section>

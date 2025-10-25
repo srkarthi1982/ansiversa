@@ -9,6 +9,7 @@ import { contractTables } from './contract/tables';
 import { minutesTables } from './minutes/tables';
 import { emailTables } from './email/tables';
 import { coverLetterTables } from './cover-letter-writer/tables';
+import { visitingCardTables } from './visiting-card/tables';
 
 export default defineDb({
   tables: {
@@ -21,5 +22,6 @@ export default defineDb({
     ...minutesTables,
     ...emailTables,
     ...coverLetterTables,
+    ...visitingCardTables,
   },
 });

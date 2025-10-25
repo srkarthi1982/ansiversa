@@ -33,3 +33,4 @@ import '../pages/social-caption-generator/stores';
 import '../pages/course-tracker/stores/courseTracker';
 import '../pages/job-analyzer/stores';
 import './coverLetter';
+import './visitingCard';

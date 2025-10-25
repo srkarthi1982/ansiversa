@@ -1,0 +1,58 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="space-y-4">
+  <header class="flex items-center justify-between gap-4">
+    <div>
+      <h2 class="text-xl font-semibold text-slate-900">AI assist</h2>
+      <p class="text-sm text-slate-600">Let Ansiversa craft a polished tagline that complements your brand voice.</p>
+    </div>
+  </header>
+  <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+    <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+      <div class="space-y-2">
+        <div class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+          <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
+          Instant tagline suggestions
+        </div>
+        <p class="text-sm text-slate-600">
+          Provide a name and company to receive a modern, confident tagline under 12 words. We fall back to curated prompts when
+          offline.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3">
+        <Button
+          type="button"
+          @click.prevent="$store['visiting-card-maker'].generateTagline()"
+          :disabled="$store['visiting-card-maker'].state.loading"
+        >
+          <i class="fas fa-magic-wand-sparkles text-xs"></i>
+          Generate tagline
+        </Button>
+        <Button
+          type="button"
+          variant="ghost"
+          @click.prevent="$store['visiting-card-maker'].resetCard()"
+        >
+          <i class="fas fa-rotate-left text-xs"></i>
+          Reset to demo
+        </Button>
+      </div>
+    </div>
+    <template x-if="$store['visiting-card-maker'].state.aiTagline">
+      <div class="mt-4 rounded-xl border border-indigo-100 bg-indigo-50/60 px-4 py-3 text-sm text-indigo-700">
+        <span class="font-semibold">Latest AI suggestion:</span>
+        <span x-text="$store['visiting-card-maker'].state.aiTagline"></span>
+      </div>
+    </template>
+  </div>
+  <template x-if="$store['visiting-card-maker'].state.toast">
+    <div
+      class="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm"
+      :class="$store['visiting-card-maker'].state.toast.type === 'success' ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-amber-200 bg-amber-50 text-amber-700'"
+    >
+      <i class="fas" :class="$store['visiting-card-maker'].state.toast.type === 'success' ? 'fa-circle-check' : 'fa-circle-exclamation'"></i>
+      <span x-text="$store['visiting-card-maker'].state.toast.message"></span>
+    </div>
+  </template>
+</section>
