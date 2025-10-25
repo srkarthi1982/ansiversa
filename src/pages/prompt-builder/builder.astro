@@ -847,9 +847,7 @@ import Button from "../../components/Button.astro";
           variant.blocks.toolHints,
         ]
           .filter(Boolean)
-          .join("
-
-");
+          .join("\n\n");
         const promptTokens = estimateTokens(promptText);
         const output = this.composeOutput(variant, testCase, runtime);
         const outputTokens = estimateTokens(output) + (testCase.expectedTraits?.length ?? 0) * 12;
@@ -884,13 +882,11 @@ import Button from "../../components/Button.astro";
       composeOutput(variant, testCase, runtime) {
         const traits =
           (testCase.expectedTraits ?? []).length > 0
-            ? (testCase.expectedTraits ?? []).map((trait) => `• ${trait}`).join("
-")
+            ? (testCase.expectedTraits ?? []).map((trait) => `• ${trait}`).join("\n")
             : "• General quality expectations";
         const variables = Object.entries(runtime ?? {})
           .map(([key, value]) => `- ${key}: ${value || "—"}`)
-          .join("
-");
+          .join("\n");
         const callToAction =
           runtime.call_to_action || runtime.cta || "Share the output with the review channel.";
         return [
@@ -904,8 +900,7 @@ import Button from "../../components/Button.astro";
           variables,
           "",
           `Next step: ${callToAction}`,
-        ].join("
-");
+        ].join("\n");
       },
       lintProject() {
         if (!this.project) return;
@@ -1045,9 +1040,7 @@ import Button from "../../components/Button.astro";
               .map((example) => `Example: ${example.label}
 Input: ${example.input}
 Output: ${example.output}`)
-              .join("
-
-") ?? "No enabled examples.";
+              .join("\n\n") ?? "No enabled examples.";
           content = `# System
 ${variant?.blocks.system ?? ""}
 
@@ -1063,8 +1056,7 @@ ${examples}`;
           const variables =
             (this.project.variables ?? [])
               .map((variable) => `- **${variable.name}** (${variable.type}) — ${variable.description}`)
-              .join("
-") || "- No variables yet.";
+              .join("\n") || "- No variables yet.";
           content = `# ${this.project.title}
 
 ${this.project.description}
@@ -1090,7 +1082,7 @@ ${variables}`;
       buildCodeSnippet() {
         const variant = this.activeVariant();
         const runtime = JSON.stringify(this.builder.runtimeInputs, null, 2);
-        const instruction = (variant?.blocks.instruction ?? "").replace(/`/g, "\`");
+        const instruction = (variant?.blocks.instruction ?? "").replace(/`/g, "\\`");
         const modelName = this.project?.model?.model ?? "gpt-4o-mini";
         const temperature = this.project?.model?.temperature ?? 0.5;
         if (this.builder.export.language === "py") {
@@ -1109,16 +1101,14 @@ ${variables}`;
             ")",
             "",
             "print(response.output_text)",
-          ].join("
-");
+          ].join("\n");
         }
         const header = [
           `const variables = ${runtime};`,
           `const prompt = \`${instruction}\`;`,
           "",
-          "const rendered = prompt.replace(/\{(\w+)\}/g, (_, key) => variables[key] ?? "");",
-        ].join("
-");
+          'const rendered = prompt.replace(/\\{(\\w+)\\}/g, (_, key) => variables[key] ?? "");',
+        ].join("\n");
         const body = [
           "const response = await client.responses.create({",
           `  model: "${modelName}",`,
@@ -1127,28 +1117,25 @@ ${variables}`;
           "});",
           "",
           "console.log(response.output_text);",
-        ].join("
-");
+        ].join("\n");
         if (this.builder.export.language === "ts") {
           return [
-            "import OpenAI from "openai";",
+            'import OpenAI from "openai";',
             "",
             "const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });",
             header,
             "",
             body,
-          ].join("
-");
+          ].join("\n");
         }
         return [
-          "import OpenAI from "openai";",
+          'import OpenAI from "openai";',
           "",
           "const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });",
           header,
           "",
           body,
-        ].join("
-");
+        ].join("\n");
       },
       closeExport() {
         this.builder.export.open = false;

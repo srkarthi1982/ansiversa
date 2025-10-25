@@ -13,8 +13,14 @@ export const server = {
   flashnote,
   quiz,
   resume,
+  // legacy names retained for backward compatibility
   proposal,
   contract,
   minutes,
   email,
+  // slug-based names used by the mini-app pages
+  'proposal-writer': proposal,
+  'contract-generator': contract,
+  'meeting-minutes-ai': minutes,
+  'email-polisher': email,
 };

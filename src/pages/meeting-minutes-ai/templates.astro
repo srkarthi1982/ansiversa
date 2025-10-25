@@ -1,0 +1,78 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ minutes: $store.minutes })"
+    x-init="minutes.initTemplates()"
+  >
+    <section class="border-b border-slate-200 bg-white/70 py-12 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 sm:px-6 lg:max-w-6xl lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Meeting templates</h1>
+          <p class="mt-2 max-w-2xl text-sm text-slate-600">
+            Start with curated agendas for standups, sprint reviews, client calls, and sales discovery. Apply a template to seed agenda items and summary highlights instantly.
+          </p>
+        </div>
+        <Button href="/meeting-minutes-ai/builder" variant="outline">
+          <i class="fas fa-pen-to-square text-xs"></i>
+          Back to builder
+        </Button>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 lg:grid-cols-2 lg:px-8">
+        <template x-for="template in minutes.templates" :key="template.key">
+          <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="space-y-4">
+              <header class="flex items-start justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900" x-text="template.label"></h2>
+                  <p class="text-xs text-slate-500" x-text="template.bestFor"></p>
+                </div>
+                <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600" x-text="template.key"></span>
+              </header>
+              <p class="text-sm text-slate-600" x-text="template.description"></p>
+              <div class="rounded-2xl bg-slate-50 p-4">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Agenda starters</h3>
+                <ul class="mt-2 space-y-1 text-sm text-slate-700">
+                  <template x-for="(item, index) in template.agendaExamples" :key="`${template.key}-agenda-${index}`">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-circle text-[6px] text-indigo-500"></i>
+                      <span x-text="item"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+              <div class="rounded-2xl bg-white p-4 shadow-inner">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Summary guidance</h3>
+                <ul class="mt-2 space-y-1 text-sm text-slate-700">
+                  <template x-for="(tip, index) in template.summaryHighlights" :key="`${template.key}-tip-${index}`">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-star text-[10px] text-amber-500"></i>
+                      <span x-text="tip"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+            <footer class="mt-6 flex items-center justify-between">
+              <Button
+                type="button"
+                size="sm"
+                @click.prevent="minutes.setTemplate(template.key); window.location.assign('/meeting-minutes-ai/builder')"
+              >
+                <i class="fas fa-check text-[10px]"></i>
+                Use template
+              </Button>
+              <p class="text-xs text-slate-500" x-text="template.aiPrompt"></p>
+            </footer>
+          </article>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>

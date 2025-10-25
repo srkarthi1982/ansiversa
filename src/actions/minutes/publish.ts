@@ -43,8 +43,7 @@ export const publish = defineAction({
 
     return {
       slug,
-      url: `/minutes/view/${slug}`,
+      url: `/meeting-minutes-ai/view/${slug}`,
     };
   },
 });
-

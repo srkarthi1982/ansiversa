@@ -1,0 +1,132 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+<Layout>
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ minutes: $store.minutes })"
+    x-init="minutes.initActions()"
+  >
+    <section class="border-b border-slate-200 bg-white/70 py-12 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 sm:px-6 lg:max-w-6xl lg:flex-row lg:items-center lg:justify-between">
+        <div>
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Action tracker</h1>
+          <p class="mt-2 max-w-2xl text-sm text-slate-600">
+            Review outstanding tasks across every meeting. Filter by assignee, status, or meeting to keep follow-ups moving.
+          </p>
+        </div>
+        <Button href="/meeting-minutes-ai" variant="outline">
+          <i class="fas fa-arrow-left text-xs"></i>
+          Back to dashboard
+        </Button>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-3 sm:grid-cols-4">
+          <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+            <span class="sr-only">Status</span>
+            <i class="fas fa-traffic-light text-xs"></i>
+            <select
+              class="bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+              x-model="minutes.actionTracker.filters.status"
+              @change="minutes.applyActionFilters()"
+            >
+              <option value="all">All statuses</option>
+              <option value="open">Open</option>
+              <option value="in-progress">In progress</option>
+              <option value="done">Completed</option>
+            </select>
+          </label>
+          <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+            <span class="sr-only">Assignee</span>
+            <i class="fas fa-user text-xs"></i>
+            <input
+              type="search"
+              placeholder="Assignee"
+              class="w-full bg-transparent focus:outline-none"
+              x-model="minutes.actionTracker.filters.assignee"
+              @input.debounce.300ms="minutes.applyActionFilters()"
+            />
+          </label>
+          <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+            <span class="sr-only">Meeting</span>
+            <i class="fas fa-briefcase text-xs"></i>
+            <select
+              class="bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+              x-model="minutes.actionTracker.filters.meeting"
+              @change="minutes.applyActionFilters()"
+            >
+              <option value="all">All meetings</option>
+              <template x-for="record in minutes.state.items" :key="record.id">
+                <option :value="record.id" x-text="record.title"></option>
+              </template>
+            </select>
+          </label>
+          <label class="flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+            <span class="sr-only">Search tasks</span>
+            <i class="fas fa-search text-xs"></i>
+            <input
+              type="search"
+              placeholder="Search tasks"
+              class="w-full bg-transparent focus:outline-none"
+              x-model="minutes.actionTracker.filters.search"
+              @input.debounce.300ms="minutes.applyActionFilters()"
+            />
+          </label>
+        </div>
+        <label class="flex items-center gap-2 text-xs text-slate-500">
+          <input
+            type="checkbox"
+            class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500"
+            x-model="minutes.actionTracker.filters.showDone"
+            @change="minutes.applyActionFilters()"
+          />
+          Show completed tasks
+        </label>
+
+        <template x-if="minutes.actionTracker.filtered.length === 0">
+          <div class="rounded-3xl border border-dashed border-slate-300 bg-white p-12 text-center">
+            <i class="fas fa-list-check text-3xl text-slate-300"></i>
+            <h2 class="mt-4 text-lg font-semibold text-slate-900">No actions match the filters</h2>
+            <p class="mt-2 text-sm text-slate-600">Adjust filters or add action items from the meeting builder.</p>
+          </div>
+        </template>
+
+        <div class="space-y-3" x-show="minutes.actionTracker.filtered.length" x-cloak>
+          <template x-for="item in minutes.actionTracker.filtered" :key="item.id">
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-sm font-semibold text-slate-900" x-text="item.task"></h3>
+                  <p class="text-xs text-slate-500">
+                    <span class="font-semibold" x-text="item.assignee || 'Unassigned'"></span>
+                    <span class="mx-2 text-slate-300">•</span>
+                    <span x-text="minutes.getTemplateLabel(item.templateKey)"></span>
+                    <span class="mx-2 text-slate-300">•</span>
+                    <span x-text="item.minutesTitle"></span>
+                  </p>
+                </div>
+                <div class="flex items-center gap-2 text-xs text-slate-500">
+                  <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold" x-text="item.status"></span>
+                  <span class="rounded-full bg-amber-100 px-3 py-1 font-semibold text-amber-700" x-text="item.priority"></span>
+                  <span class="rounded-full bg-slate-100 px-3 py-1" x-text="item.due ?? 'No due date'"></span>
+                  <Button
+                    :href="`/meeting-minutes-ai/builder?id=${item.minutesId}`"
+                    variant="ghost"
+                    size="sm"
+                    class="text-xs"
+                  >
+                    View
+                  </Button>
+                </div>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

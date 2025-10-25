@@ -565,26 +565,28 @@ const projectSupportTriage: PromptBuilderProject = {
       message: 'Consider clarifying what to do when {preferred_language} is not supported.',
     },
   ],
-  versions: [
-    {
-      id: 'ver-support-1',
-      version: 1,
-      label: 'v1 · Initial release',
-      notes: 'Baseline prompt for triage and suggested reply.',
-      createdAt: '2024-11-12T09:00:00.000Z',
-      author: 'Priya',
-      diffSummary: 'Initial structure with JSON output and severity tags.',
-      payload: clone({
-        variants: projectSupportTriage.variants,
-        variables: projectSupportTriage.variables,
-        model: baseModel,
-        activeVariantId: 'A',
-      }),
-    },
-  ],
+  versions: [],
   model: { ...baseModel },
   shareSlug: 'support-triage-agent',
 };
+
+projectSupportTriage.versions = [
+  {
+    id: 'ver-support-1',
+    version: 1,
+    label: 'v1 · Initial release',
+    notes: 'Baseline prompt for triage and suggested reply.',
+    createdAt: '2024-11-12T09:00:00.000Z',
+    author: 'Priya',
+    diffSummary: 'Initial structure with JSON output and severity tags.',
+    payload: clone({
+      variants: projectSupportTriage.variants,
+      variables: projectSupportTriage.variables,
+      model: baseModel,
+      activeVariantId: 'A',
+    }),
+  },
+];
 
 const projectSqlAuthor: PromptBuilderProject = {
   id: 'proj-sql-author',
@@ -709,26 +711,28 @@ const projectSqlAuthor: PromptBuilderProject = {
     },
   ],
   lintIssues: [],
-  versions: [
-    {
-      id: 'ver-sql-1',
-      version: 1,
-      label: 'v1 · SQL baseline',
-      notes: 'Initial schema-aware query generator.',
-      createdAt: '2025-01-14T11:22:00.000Z',
-      author: 'Miguel',
-      diffSummary: 'Baseline variant with explanation output.',
-      payload: clone({
-        variants: projectSqlAuthor.variants,
-        variables: projectSqlAuthor.variables,
-        model: baseModel,
-        activeVariantId: 'A',
-      }),
-    },
-  ],
+  versions: [],
   model: { ...baseModel, temperature: 0.2 },
   shareSlug: null,
 };
+
+projectSqlAuthor.versions = [
+  {
+    id: 'ver-sql-1',
+    version: 1,
+    label: 'v1 · SQL baseline',
+    notes: 'Initial schema-aware query generator.',
+    createdAt: '2025-01-14T11:22:00.000Z',
+    author: 'Miguel',
+    diffSummary: 'Baseline variant with explanation output.',
+    payload: clone({
+      variants: projectSqlAuthor.variants,
+      variables: projectSqlAuthor.variables,
+      model: baseModel,
+      activeVariantId: 'A',
+    }),
+  },
+];
 
 const sampleProjects: PromptBuilderProject[] = [
   projectProductLaunch,

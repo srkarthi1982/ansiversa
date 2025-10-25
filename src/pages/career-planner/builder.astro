@@ -1,0 +1,511 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#career-builder"
+  >
+    Skip to content
+  </a>
+  <main
+    id="career-builder"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ career: $store.career })"
+    x-init="career.initBuilder({ id: new URLSearchParams(window.location.search).get('id') })"
+  >
+    <section class="border-b border-slate-200 bg-white/90 py-10 shadow-sm">
+      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="min-w-0">
+            <div class="flex items-center gap-2 text-xs uppercase tracking-wide text-indigo-600">
+              <i class="fas fa-sliders text-[11px]"></i>
+              Guided Builder
+            </div>
+            <div class="mt-2 flex flex-wrap items-center gap-3">
+              <h1 class="text-3xl font-bold text-slate-900" x-text="career.builder.title"></h1>
+              <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+                <i class="fas fa-clock text-[11px]"></i>
+                <span x-text="career.builderAutosaveLabel"></span>
+              </span>
+            </div>
+            <p class="mt-2 text-sm text-slate-600">
+              Fill out each section, generate gap analysis and plans, then publish or export your roadmap.
+            </p>
+          </div>
+          <div class="flex flex-wrap gap-3">
+            <Button type="button" size="sm" variant="outline" @click.prevent="career.exportPlan('pdf')">
+              <i class="fas fa-file-arrow-down text-[11px]"></i>
+              Export
+            </Button>
+            <Button type="button" size="sm" variant="outline" @click.prevent="career.publishPlan()">
+              <i class="fas fa-globe text-[11px]"></i>
+              Publish
+            </Button>
+            <Button type="button" size="sm" class="shadow-sm" @click.prevent="career.saveBuilderDraft()">
+              <i class="fas fa-floppy-disk text-[11px]"></i>
+              Save draft
+            </Button>
+          </div>
+        </div>
+        <nav class="overflow-x-auto">
+          <ol class="flex min-w-max items-center gap-3 text-xs font-semibold text-slate-600">
+            <template x-for="step in career.builderSteps" :key="step.id">
+              <li>
+                <button
+                  class="flex items-center gap-2 rounded-full border px-4 py-2 transition"
+                  :class="career.builder.activeStep === step.id ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-200 bg-white hover:border-indigo-200'"
+                  type="button"
+                  @click="career.setBuilderStep(step.id)"
+                >
+                  <i class="fas text-[11px]" :class="step.icon"></i>
+                  <span x-text="step.label"></span>
+                </button>
+              </li>
+            </template>
+          </ol>
+        </nav>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[minmax(0,1fr)_360px] lg:px-8">
+        <div class="space-y-8">
+          <form class="space-y-8" @submit.prevent>
+            <section x-show="career.builder.activeStep === 'profile'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900">Profile &amp; context</h2>
+                  <p class="text-sm text-slate-600">Tell us where you're starting so we can map strengths and constraints.</p>
+                </div>
+                <Button type="button" size="sm" variant="outline" @click.prevent="career.generateAssessment()">
+                  <i class="fas fa-wand-magic-sparkles text-[11px]"></i>
+                  Generate assessment
+                </Button>
+              </header>
+              <div class="grid gap-4 sm:grid-cols-2">
+                <label class="text-sm font-medium text-slate-700">
+                  Current role
+                  <input
+                    type="text"
+                    class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    x-model="career.builder.profile.currentRole"
+                    placeholder="Support Engineer"
+                  />
+                </label>
+                <label class="text-sm font-medium text-slate-700">
+                  Years of experience
+                  <input
+                    type="number"
+                    min="0"
+                    class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    x-model.number="career.builder.profile.experienceYears"
+                    placeholder="5"
+                  />
+                </label>
+                <label class="sm:col-span-2 text-sm font-medium text-slate-700">
+                  Industries
+                  <input
+                    type="text"
+                    class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    :value="career.builder.profile.industries.join(', ')"
+                    placeholder="SaaS, Customer Success"
+                    @change="career.updateIndustries($event.target.value)"
+                  />
+                  <span class="mt-1 block text-xs text-slate-500">Separate industries with commas.</span>
+                </label>
+                <label class="sm:col-span-2 text-sm font-medium text-slate-700">
+                  Interests &amp; focus areas
+                  <input
+                    type="text"
+                    class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    :value="career.builder.profile.interests.join(', ')"
+                    @change="career.updateInterests($event.target.value)"
+                    placeholder="frontend, product analytics, design systems"
+                  />
+                </label>
+                <label class="text-sm font-medium text-slate-700">
+                  Weekly hours for upskilling
+                  <input
+                    type="number"
+                    min="1"
+                    class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    x-model.number="career.builder.profile.constraints.hoursPerWeek"
+                    placeholder="8"
+                  />
+                </label>
+                <label class="text-sm font-medium text-slate-700">
+                  Location
+                  <input
+                    type="text"
+                    class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    x-model="career.builder.profile.constraints.location"
+                    placeholder="Dubai"
+                  />
+                </label>
+              </div>
+              <label class="block text-sm font-medium text-slate-700">
+                Personal summary
+                <textarea
+                  rows="3"
+                  class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                  x-model="career.builder.profile.summary"
+                  placeholder="Support engineer transitioning to product-facing frontend role with strong customer empathy."
+                ></textarea>
+              </label>
+              <template x-if="career.builder.assessment">
+                <aside class="rounded-2xl border border-indigo-200 bg-indigo-50/80 p-4 text-sm text-indigo-800">
+                  <h3 class="font-semibold text-indigo-900">AI assessment</h3>
+                  <p class="mt-2" x-text="career.builder.assessment.summary"></p>
+                  <div class="mt-3 text-xs">
+                    <p class="font-semibold">Suggested roles</p>
+                    <ul class="mt-1 space-y-1">
+                      <template x-for="suggestion in career.builder.assessment.suggestedRoles" :key="suggestion.roleId">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-lightbulb text-[10px] text-indigo-500"></i>
+                          <span>
+                            <span class="font-semibold" x-text="suggestion.roleId.replaceAll('_',' ')"></span>
+                            — <span x-text="suggestion.reason"></span>
+                          </span>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </aside>
+              </template>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'targets'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900">Target roles</h2>
+                  <p class="text-sm text-slate-600">Prioritise the roles you want to pursue. We'll tailor skills and projects automatically.</p>
+                </div>
+                <Button href="/career-planner/roles" size="sm" variant="outline">
+                  <i class="fas fa-briefcase text-[11px]"></i>
+                  Browse roles
+                </Button>
+              </header>
+              <div class="space-y-4">
+                <template x-for="(target, index) in career.builder.targets" :key="target.roleId ?? index">
+                  <div class="flex flex-wrap items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="min-w-0 flex-1">
+                      <p class="text-sm font-semibold text-slate-900" x-text="target.roleId.replaceAll('_',' ')"></p>
+                      <p class="text-xs text-slate-500">
+                        Priority
+                        <span class="font-semibold" x-text="target.priority"></span>
+                        — Level
+                        <span class="font-semibold capitalize" x-text="target.level ?? 'mid'"></span>
+                      </p>
+                    </div>
+                    <Button type="button" size="sm" variant="ghost" class="text-slate-500" @click.prevent="career.removeTargetRole(index)">
+                      <i class="fas fa-xmark text-xs"></i>
+                      Remove
+                    </Button>
+                  </div>
+                </template>
+                <div class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-4">
+                  <p class="text-sm font-medium text-slate-700">Add another target role</p>
+                  <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                    <input
+                      type="text"
+                      class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                      placeholder="frontend_engineer"
+                      x-ref="newRoleId"
+                    />
+                    <input
+                      type="number"
+                      min="1"
+                      max="3"
+                      class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                      placeholder="Priority"
+                      x-ref="newPriority"
+                    />
+                    <select
+                      class="rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                      x-ref="newLevel"
+                    >
+                      <option value="junior">Junior</option>
+                      <option value="mid" selected>Mid</option>
+                      <option value="senior">Senior</option>
+                    </select>
+                  </div>
+                    <Button
+                      type="button"
+                      size="sm"
+                      class="mt-3"
+                      @click.prevent="career.addTargetRole($refs.newRoleId.value, $refs.newPriority.value, $refs.newLevel.value); $refs.newRoleId.value=''; $refs.newPriority.value='';"
+                    >
+                    <i class="fas fa-plus text-xs"></i>
+                    Add role
+                  </Button>
+                </div>
+              </div>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'gaps'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900">Skills gap matrix</h2>
+                  <p class="text-sm text-slate-600">Compare current proficiency to role expectations and mark priorities.</p>
+                </div>
+                <Button type="button" size="sm" variant="outline" @click.prevent="career.generateLearningPlan()">
+                  <i class="fas fa-chart-simple text-[11px]"></i>
+                  Update from AI
+                </Button>
+              </header>
+              <div class="overflow-hidden rounded-2xl border border-slate-200">
+                <table class="min-w-full divide-y divide-slate-200 text-sm">
+                  <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                    <tr>
+                      <th class="px-4 py-3 text-left">Skill</th>
+                      <th class="px-4 py-3 text-center">Current</th>
+                      <th class="px-4 py-3 text-center">Target</th>
+                      <th class="px-4 py-3 text-left">Priority</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-slate-200 bg-white">
+                    <template x-for="(row, index) in career.builder.gapMatrix" :key="row.skill ?? index">
+                      <tr>
+                        <td class="px-4 py-3 font-medium text-slate-900" x-text="row.skill.replaceAll('_',' ')"></td>
+                        <td class="px-4 py-3 text-center">
+                          <input
+                            type="number"
+                            min="0"
+                            max="5"
+                            class="w-16 rounded-lg border border-slate-200 px-2 py-1 text-center focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                            x-model.number="row.current"
+                          />
+                        </td>
+                        <td class="px-4 py-3 text-center">
+                          <input
+                            type="number"
+                            min="0"
+                            max="5"
+                            class="w-16 rounded-lg border border-slate-200 px-2 py-1 text-center focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                            x-model.number="row.target"
+                          />
+                        </td>
+                        <td class="px-4 py-3">
+                          <select
+                            class="rounded-lg border border-slate-200 px-3 py-2 text-xs font-semibold capitalize focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                            x-model="row.priority"
+                          >
+                            <option value="low">Low</option>
+                            <option value="med">Medium</option>
+                            <option value="high">High</option>
+                          </select>
+                        </td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'learning'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900">Learning plan</h2>
+                  <p class="text-sm text-slate-600">Structured modules with checkpoints and resource links.</p>
+                </div>
+                <Button type="button" size="sm" variant="outline" @click.prevent="career.generateLearningPlan()">
+                  <i class="fas fa-robot text-[11px]"></i>
+                  Regenerate
+                </Button>
+              </header>
+              <div class="space-y-4">
+                <template x-for="module in career.builder.learningPlan.modules" :key="module.id">
+                  <article class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                    <div class="flex flex-wrap items-center justify-between gap-3">
+                      <div>
+                        <h3 class="text-sm font-semibold text-slate-900" x-text="module.title"></h3>
+                        <p class="text-xs uppercase tracking-wide text-slate-500" x-text="module.difficulty"></p>
+                      </div>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                        <i class="fas fa-clock text-[10px]"></i>
+                        <span x-text="`${module.hours} hrs`"></span>
+                      </span>
+                    </div>
+                    <p class="mt-3 text-sm text-slate-600" x-text="module.checkpoint"></p>
+                    <ul class="mt-3 flex flex-wrap gap-2 text-xs text-indigo-600">
+                      <template x-for="resource in module.resources" :key="resource">
+                        <li class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 font-medium text-indigo-700">
+                          <i class="fas fa-link text-[10px]"></i>
+                          <span x-text="resource"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </article>
+                </template>
+              </div>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'projects'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900">Portfolio projects</h2>
+                  <p class="text-sm text-slate-600">Build evidence of new skills with scoped project briefs.</p>
+                </div>
+                <Button type="button" size="sm" variant="outline" @click.prevent="career.generateProjects()">
+                  <i class="fas fa-repeat text-[11px]"></i>
+                  Refresh
+                </Button>
+              </header>
+              <div class="space-y-4">
+                <template x-for="project in career.builder.projects" :key="project.id">
+                  <article class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                    <header class="flex items-center justify-between gap-3">
+                      <h3 class="text-sm font-semibold text-slate-900" x-text="project.title"></h3>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                        <i class="fas fa-layer-group text-[10px]"></i>
+                        <span x-text="`${project.skills.length} skills`"></span>
+                      </span>
+                    </header>
+                    <p class="mt-2 text-sm text-slate-600" x-text="project.brief"></p>
+                    <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                      <template x-for="criterion in project.acceptance" :key="criterion">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-check text-[10px] text-emerald-500"></i>
+                          <span x-text="criterion"></span>
+                        </li>
+                      </template>
+                    </ul>
+                    <template x-if="project.impact">
+                      <p class="mt-2 text-xs font-medium text-indigo-600" x-text="project.impact"></p>
+                    </template>
+                  </article>
+                </template>
+              </div>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'sprint'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex items-center justify-between">
+                <div>
+                  <h2 class="text-xl font-semibold text-slate-900">90-day sprint</h2>
+                  <p class="text-sm text-slate-600">Plan out weekly focus areas across learning, projects, and outreach.</p>
+                </div>
+                <Button type="button" size="sm" variant="outline" @click.prevent="career.generateSprintPlan()">
+                  <i class="fas fa-calendar-week text-[11px]"></i>
+                  Build schedule
+                </Button>
+              </header>
+              <div class="grid gap-4 md:grid-cols-2">
+                <template x-for="week in career.builder.sprintPlan.weeks" :key="week.week">
+                  <article class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                    <div class="flex items-center justify-between">
+                      <h3 class="text-sm font-semibold text-slate-900" x-text="`Week ${week.week}`"></h3>
+                      <span class="text-xs font-semibold uppercase tracking-wide text-indigo-600" x-text="week.focus"></span>
+                    </div>
+                    <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                      <template x-for="task in week.tasks" :key="task">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-circle text-[6px] text-indigo-400"></i>
+                          <span x-text="task"></span>
+                        </li>
+                      </template>
+                    </ul>
+                    <p class="mt-3 text-xs font-medium text-emerald-600" x-text="`Milestone: ${week.milestone}`"></p>
+                  </article>
+                </template>
+              </div>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'tracker'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header>
+                <h2 class="text-xl font-semibold text-slate-900">Application tracker</h2>
+                <p class="text-sm text-slate-600">Keep roles, stages, and follow-ups centralised. Use the dedicated tracker page for full tables.</p>
+              </header>
+              <p class="text-sm text-slate-600">
+                Head to the <a href="/career-planner/tracker" class="font-semibold text-indigo-600 hover:text-indigo-500">job tracker</a> to manage detailed pipelines, reminders, and exports.
+              </p>
+            </section>
+
+            <section x-show="career.builder.activeStep === 'review'" x-cloak class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header>
+                <h2 class="text-xl font-semibold text-slate-900">Review &amp; next steps</h2>
+                <p class="text-sm text-slate-600">Finalise your plan, generate resume bullets, and prepare exports.</p>
+              </header>
+              <div class="grid gap-4 md:grid-cols-2">
+                <Button type="button" variant="outline" @click.prevent="career.generateResumeBullets()">
+                  <i class="fas fa-pen-nib text-[11px]"></i>
+                  Generate resume bullets
+                </Button>
+                <Button type="button" variant="outline" @click.prevent="career.exportPlan('md')">
+                  <i class="fas fa-code text-[11px]"></i>
+                  Export markdown summary
+                </Button>
+              </div>
+              <label class="block text-sm font-medium text-slate-700">
+                Notes &amp; next actions
+                <textarea
+                  rows="4"
+                  class="mt-1 w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                  x-model="career.builder.notes"
+                  placeholder="Outline follow-ups, mentors to contact, or blockers to unblock."
+                ></textarea>
+              </label>
+            </section>
+          </form>
+        </div>
+
+        <aside class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+            <h2 class="text-base font-semibold text-slate-900">Plan snapshot</h2>
+            <dl class="mt-3 space-y-2 text-xs text-slate-600">
+              <div class="flex items-center justify-between">
+                <dt>Status</dt>
+                <dd class="font-semibold capitalize" x-text="career.builder.status"></dd>
+              </div>
+              <div class="flex items-center justify-between">
+                <dt>Target role</dt>
+                <dd class="font-semibold" x-text="career.builder.targets[0]?.roleId.replaceAll('_',' ') || 'Set a target'"></dd>
+              </div>
+              <div class="flex items-center justify-between">
+                <dt>Last saved</dt>
+                <dd x-text="career.formatRelative(career.builder.lastSavedAt)"></dd>
+              </div>
+              <div class="flex items-center justify-between">
+                <dt>Learning ETA</dt>
+                <dd class="font-semibold" x-text="career.builder.learningPlan.etaWeeks ? `${career.builder.learningPlan.etaWeeks} weeks` : 'Add modules'"></dd>
+              </div>
+            </dl>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+            <h2 class="text-base font-semibold text-slate-900">Resume bullets</h2>
+            <ul class="mt-3 space-y-2 text-xs text-slate-600">
+              <template x-for="(bullet, index) in career.builder.resumeBullets" :key="index">
+                <li class="rounded-xl border border-slate-200 bg-white px-3 py-2" x-text="bullet"></li>
+              </template>
+              <template x-if="career.builder.resumeBullets.length === 0">
+                <li class="rounded-xl border border-dashed border-slate-200 bg-white px-3 py-2 text-slate-500">
+                  Generate bullets to align impact stories to your target role.
+                </li>
+              </template>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4 text-xs text-slate-600">
+            <h2 class="text-base font-semibold text-slate-900">Tips</h2>
+            <ul class="mt-3 space-y-2">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-clock text-[10px] text-indigo-500"></i>
+                <span>Update sprint cadence weekly so tasks roll into the tracker.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-share text-[10px] text-indigo-500"></i>
+                <span>Publishing creates a private share link – redact sensitive details before sharing.</span>
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-file-export text-[10px] text-indigo-500"></i>
+                <span>Exports bundle plan summary, gap matrix, and sprint schedule into a PDF/Markdown pack.</span>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+</Layout>

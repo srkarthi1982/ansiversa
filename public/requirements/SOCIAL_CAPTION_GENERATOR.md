@@ -1,7 +1,7 @@
 # ðŸ“£ Social Caption Generator â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/caption`  
+**Module Path:** `/social-caption-generator`  
 **Category:** Writing & Creativity / Marketing  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Help users quickly **generate, A/B test, and localize** social media captions for multiple platforms with brand voice, hashtags, emojis, CTAs, and link tracking â€” ready to paste into their social tools.
@@ -34,7 +34,7 @@
 
 1. **Create Caption**
    - *As a user*, I enter a post idea and select target platforms; I get 2â€“5 caption variants.  
-   - **AC:** `/caption/api/generate` returns variants per platform with counters and compliance flags.
+   - **AC:** `/social-caption-generator/api/generate` returns variants per platform with counters and compliance flags.
 
 2. **Brand Voice**
    - *As a user*, I choose a brand voice (or create one) and regenerate captions.  
@@ -42,19 +42,19 @@
 
 3. **Hashtags & Emojis**
    - *As a user*, I get **hashtag suggestions** by topic + an option to create **hashtag sets** (reusable).  
-   - **AC:** `/caption/api/hashtags` returns ranked tags with counts (static heuristics v1). Emoji suggestions appear inline.
+   - **AC:** `/social-caption-generator/api/hashtags` returns ranked tags with counts (static heuristics v1). Emoji suggestions appear inline.
 
 4. **CTA & Links**
    - *As a user*, I add a CTA from presets (â€œLearn moreâ€, â€œShop nowâ€, â€œApply todayâ€) and build a **UTM** tracking link.  
-   - **AC:** `/caption/api/utm` returns a full URL; characters counted accordingly.
+   - **AC:** `/social-caption-generator/api/utm` returns a full URL; characters counted accordingly.
 
 5. **Localization**
    - *As a user*, I translate a chosen variant to selected languages while keeping brand voice.  
-   - **AC:** `/caption/api/translate` returns localized variants; RTL layout respected.
+   - **AC:** `/social-caption-generator/api/translate` returns localized variants; RTL layout respected.
 
 6. **A/B Compare**
    - *As a user*, I select 2 variants to compare sideâ€‘byâ€‘side with simple scores (clarity, engagement, compliance).  
-   - **AC:** `/caption/api/score` returns scores (0â€“100) + quick suggestions.
+   - **AC:** `/social-caption-generator/api/score` returns scores (0â€“100) + quick suggestions.
 
 7. **Platform Presets**
    - *As a user*, I pick platformâ€‘specific options (e.g., LinkedIn no emojis; Instagram line breaks; X with 1â€“2 hashtags).  
@@ -66,7 +66,7 @@
 
 9. **Campaigns**
    - *As a user*, I create a **campaign** with multiple posts and due dates; export the batch to CSV/JSON.  
-   - **AC:** `/caption/api/campaign/save` persists items; `/caption/api/campaign/export` returns files.
+   - **AC:** `/social-caption-generator/api/campaign/save` persists items; `/social-caption-generator/api/campaign/export` returns files.
 
 10. **Plan Gating**
     - Free: 20 generations/month, 1 brand voice, 2 hashtag sets, watermark on exports.  
@@ -76,26 +76,26 @@
 
 ## 3) Information Architecture & Routes
 
-- `/caption` â€” Dashboard & quick generator  
-- `/caption/editor` â€” Full editor (variants, A/B, hashtags, voice, localization, UTM)  
-- `/caption/campaigns` â€” Campaign manager  
-- `/caption/templates` â€” Prompt templates (product launch, event, hiring, announcement)  
-- `/caption/view/[slug].astro` â€” Optional readâ€‘only share page
+- `/social-caption-generator` â€” Dashboard & quick generator  
+- `/social-caption-generator/editor` â€” Full editor (variants, A/B, hashtags, voice, localization, UTM)  
+- `/social-caption-generator/campaigns` â€” Campaign manager  
+- `/social-caption-generator/templates` â€” Prompt templates (product launch, event, hiring, announcement)  
+- `/social-caption-generator/view/[slug].astro` â€” Optional readâ€‘only share page
 
 **API (SSR):**  
-- `POST /caption/api/create` (create draft/campaign item)  
-- `POST /caption/api/generate` (multiâ€‘platform variants)  
-- `POST /caption/api/hashtags` (suggest/curate sets)  
-- `POST /caption/api/translate`  
-- `POST /caption/api/score` (A/B scoring with heuristics)  
-- `POST /caption/api/utm` (build UTM link)  
-- `POST /caption/api/save` (patch; autosave)  
-- `POST /caption/api/campaign/save`  
-- `POST /caption/api/campaign/export` (csv/json/md)  
-- `POST /caption/api/export` (csv/json/md)  
-- `POST /caption/api/publish` (share page)  
-- `POST /caption/api/delete`  
-- `POST /caption/api/duplicate`
+- `POST /social-caption-generator/api/create` (create draft/campaign item)  
+- `POST /social-caption-generator/api/generate` (multiâ€‘platform variants)  
+- `POST /social-caption-generator/api/hashtags` (suggest/curate sets)  
+- `POST /social-caption-generator/api/translate`  
+- `POST /social-caption-generator/api/score` (A/B scoring with heuristics)  
+- `POST /social-caption-generator/api/utm` (build UTM link)  
+- `POST /social-caption-generator/api/save` (patch; autosave)  
+- `POST /social-caption-generator/api/campaign/save`  
+- `POST /social-caption-generator/api/campaign/export` (csv/json/md)  
+- `POST /social-caption-generator/api/export` (csv/json/md)  
+- `POST /social-caption-generator/api/publish` (share page)  
+- `POST /social-caption-generator/api/delete`  
+- `POST /social-caption-generator/api/duplicate`
 
 ---
 
@@ -160,78 +160,78 @@
 
 ## 5) Editor UI / Pages
 
-### `/caption` (Quick Generator)
+### `/social-caption-generator` (Quick Generator)
 - Input: **Post idea**, **Platforms**, **Brand Voice**, **Hashtag set**, **CTA**, **Link/UTM**.  
 - Output: cards per platform with 2â€“5 variants, counters, **Copy** buttons, Regenerate.
 
-### `/caption/editor`
+### `/social-caption-generator/editor`
 - **Left**: Variant list per platform + live counter + platform notes (limits, link rules).  
 - **Center**: Active editor (inline text with hashtag/emoji suggestions + compliance flags).  
 - **Right**: Brand Voice manager, Hashtag sets, CTA presets, UTM builder, Localization panel.  
 - Toolbar: Generate, Translate, Score (A/B), Export, Publish; autosave status.
 
-### `/caption/campaigns`
+### `/social-caption-generator/campaigns`
 - List and Kanban calendar; items show platform icons, due date, asset/link badges.  
 - Export batch to CSV/JSON or MD brief.
 
-### `/caption/templates`
+### `/social-caption-generator/templates`
 - Templates: Product Launch, Feature Update, Event, Hiring, Giveaway, Quote, Carousel.  
 - â€œUse Templateâ€ pre-fills idea, CTA, platform presets.
 
-### `/caption/view/[slug]`
+### `/social-caption-generator/view/[slug]`
 - Readâ€‘only share page with selected variants per platform; **Copy** buttons + QR (optional).
 
 ---
 
 ## 6) API Contracts
 
-### `POST /caption/api/create`
+### `POST /social-caption-generator/api/create`
 Req: `{ "title":"Launch Teaser", "platforms":["insta","x"] }`  
 Res: `{ "id":"<uuid>", "slug":"launch-teaser" }`
 
-### `POST /caption/api/generate`
+### `POST /social-caption-generator/api/generate`
 Req: `{ "idea":"We launched...", "platforms":["insta","x","linkedin"], "voiceId":"<id|null>", "cta":"learn_more", "hashtagSetId":"<id|null>", "maxVariants":3 }`  
 Res: `{ "variants": {...per platform arrays...}, "counters": {...}, "compliance": {...} }`
 
-### `POST /caption/api/hashtags`
+### `POST /social-caption-generator/api/hashtags`
 Req: `{ "topic":"startup launch", "platform":"insta", "limit":20 }`  
 Res: `{ "tags": ["startup","buildinpublic","productlaunch", "..."] }`
 
-### `POST /caption/api/translate`
+### `POST /social-caption-generator/api/translate`
 Req: `{ "text":"...", "to":["ar","hi","ta"], "keepTone":true }`  
 Res: `{ "localized": [{"lang":"ar","text":"..."}, {"lang":"hi","text":"..."}] }`
 
-### `POST /caption/api/score`
+### `POST /social-caption-generator/api/score`
 Req: `{ "variantA":"...", "variantB":"...", "platform":"x" }`  
 Res: `{ "scores": {"A":{"clarity":82,"compliance":100}, "B":{"clarity":77,"compliance":100}}, "suggestions":["Try a clearer CTA"] }`
 
-### `POST /caption/api/utm`
+### `POST /social-caption-generator/api/utm`
 Req: `{ "base":"https://ansiversa.com", "source":"instagram", "medium":"social", "campaign":"launch_oct", "content":"hero_v1" }`  
 Res: `{ "url":"https://ansiversa.com?utm_source=instagram&utm_medium=social&utm_campaign=launch_oct&utm_content=hero_v1" }`
 
-### `POST /caption/api/save`
+### `POST /social-caption-generator/api/save`
 Req: `{ "id":"<uuid>", "patch": { "path":"chosen.insta", "value": {"id":"v2","text":"..."} } }`  
 Res: `{ "ok": true, "lastSavedAt":"<ISO>" }`
 
-### `POST /caption/api/export`
+### `POST /social-caption-generator/api/export`
 Req: `{ "id":"<uuid>", "format":"csv|json|md" }`  
 Res: `{ "url": "/exports/Captions_Launch_Teaser.csv" }`
 
-### `POST /caption/api/campaign/save`
+### `POST /social-caption-generator/api/campaign/save`
 Req: `{ "id":"<uuid|null>", "campaign":{ "title":"Launch", "items":[{"captionId":"<uuid>","dueOn":"2025-10-29"}] } }`  
 Res: `{ "id":"<uuid>", "ok": true }`
 
-### `POST /caption/api/campaign/export`
+### `POST /social-caption-generator/api/campaign/export`
 Req: `{ "id":"<uuid>", "format":"csv|json|md" }`  
 Res: `{ "url": "/exports/Campaign_Launch.csv" }`
 
-### `POST /caption/api/publish`
+### `POST /social-caption-generator/api/publish`
 Req: `{ "id":"<uuid>" }`  
-Res: `{ "url": "/caption/view/launch-teaser" }`
+Res: `{ "url": "/social-caption-generator/view/launch-teaser" }`
 
-### `POST /caption/api/delete`
+### `POST /social-caption-generator/api/delete`
 Req: `{ "id":"<uuid>" }` â†’ `{ "ok": true }`  
-### `POST /caption/api/duplicate`
+### `POST /social-caption-generator/api/duplicate`
 Req: `{ "id":"<uuid>" }` â†’ `{ "id":"<newUuid>" }`
 
 ---
@@ -299,31 +299,31 @@ Rate limit keys: `userId` + day for generate/translate; `userId` + month for exp
 ## 13) Suggested File Layout
 
 ```
-src/pages/caption/index.astro
-src/pages/caption/editor.astro
-src/pages/caption/campaigns.astro
-src/pages/caption/templates.astro
-src/pages/caption/view/[slug].astro
+src/pages/social-caption-generator/index.astro
+src/pages/social-caption-generator/editor.astro
+src/pages/social-caption-generator/campaigns.astro
+src/pages/social-caption-generator/templates.astro
+src/pages/social-caption-generator/view/[slug].astro
 
-src/pages/caption/api/create.ts
-src/pages/caption/api/generate.ts
-src/pages/caption/api/hashtags.ts
-src/pages/caption/api/translate.ts
-src/pages/caption/api/score.ts
-src/pages/caption/api/utm.ts
-src/pages/caption/api/save.ts
-src/pages/caption/api/campaign/save.ts
-src/pages/caption/api/campaign/export.ts
-src/pages/caption/api/export.ts
-src/pages/caption/api/publish.ts
-src/pages/caption/api/delete.ts
-src/pages/caption/api/duplicate.ts
+src/pages/social-caption-generator/api/create.ts
+src/pages/social-caption-generator/api/generate.ts
+src/pages/social-caption-generator/api/hashtags.ts
+src/pages/social-caption-generator/api/translate.ts
+src/pages/social-caption-generator/api/score.ts
+src/pages/social-caption-generator/api/utm.ts
+src/pages/social-caption-generator/api/save.ts
+src/pages/social-caption-generator/api/campaign/save.ts
+src/pages/social-caption-generator/api/campaign/export.ts
+src/pages/social-caption-generator/api/export.ts
+src/pages/social-caption-generator/api/publish.ts
+src/pages/social-caption-generator/api/delete.ts
+src/pages/social-caption-generator/api/duplicate.ts
 
-src/components/caption/Editor/*.astro or .tsx
-src/components/caption/Variants/*.astro
-src/components/caption/Voice/*.astro
-src/components/caption/Hashtags/*.astro
-src/components/caption/UTM/*.astro
+src/components/social-caption-generator/Editor/*.astro or .tsx
+src/components/social-caption-generator/Variants/*.astro
+src/components/social-caption-generator/Voice/*.astro
+src/components/social-caption-generator/Hashtags/*.astro
+src/components/social-caption-generator/UTM/*.astro
 ```
 
 ---

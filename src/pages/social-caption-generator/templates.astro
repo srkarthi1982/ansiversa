@@ -1,0 +1,137 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+---
+
+<Layout>
+  <main class="min-h-screen bg-slate-50">
+    <section class="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-900 to-purple-700 py-16 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.12),_rgba(15,23,42,0.6))]"></div>
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-8 px-4 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+        <div class="flex-1 space-y-5">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+            Template Library
+          </span>
+          <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+            Start from battle-tested caption frameworks
+          </h1>
+          <p class="max-w-2xl text-white/80">
+            Browse launch announcements, event teasers, hiring updates, and more. Load a template to the editor and customize with your brand voice.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <Button href="/social-caption-generator" variant="light">
+              <i class="fas fa-wand-magic-sparkles text-sm"></i>
+              Quick generator
+            </Button>
+            <Button href="/social-caption-generator/editor" variant="outline">
+              <i class="fas fa-pen-to-square text-sm"></i>
+              Open editor
+            </Button>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+          <p class="text-xs font-semibold uppercase tracking-wide text-white/70">Templates available</p>
+          <p class="mt-3 text-4xl font-bold" x-text="$store.caption.listTemplates.length"></p>
+        </div>
+      </div>
+    </section>
+
+    <section
+      class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8"
+      x-data="() => ({
+        store: $store.caption,
+        search: '',
+        category: 'all',
+        get categories() {
+          const values = new Set(this.store.listTemplates.map((template) => template.category));
+          return ['all', ...values];
+        },
+        get filtered() {
+          const query = this.search.trim().toLowerCase();
+          return this.store.listTemplates.filter((template) => {
+            const matchesCategory = this.category === 'all' || template.category === this.category;
+            const matchesSearch =
+              !query ||
+              template.title.toLowerCase().includes(query) ||
+              template.description.toLowerCase().includes(query) ||
+              template.sampleHook.toLowerCase().includes(query);
+            return matchesCategory && matchesSearch;
+          });
+        },
+        useTemplate(key) {
+          this.store.useTemplate(key);
+          window.location.href = '/social-caption-generator/editor';
+        },
+      })"
+    >
+      <header class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <h2 class="text-2xl font-bold text-slate-900">Template gallery</h2>
+          <p class="mt-2 text-sm text-slate-600">Filter by category or search to find the perfect starting point.</p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3 text-sm">
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <i class="fas fa-search text-xs text-slate-500"></i>
+            <input
+              type="search"
+              class="w-48 bg-transparent focus:outline-none"
+              placeholder="Search templates"
+              x-model="search"
+            />
+          </label>
+          <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 shadow-sm">
+            <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Category</span>
+            <select class="bg-transparent focus:outline-none" x-model="category">
+              <template x-for="cat in categories" :key="cat">
+                <option :value="cat" x-text="cat === 'all' ? 'All' : cat"></option>
+              </template>
+            </select>
+          </label>
+        </div>
+      </header>
+
+      <div class="mt-10 grid gap-6 lg:grid-cols-3">
+        <template x-if="filtered.length === 0">
+          <div class="lg:col-span-3 rounded-3xl border border-dashed border-slate-200 bg-white p-10 text-center text-slate-500">
+            <i class="fas fa-sparkles text-2xl text-slate-300"></i>
+            <p class="mt-4 text-sm">No templates match your filters. Try adjusting the search.</p>
+          </div>
+        </template>
+
+        <template x-for="template in filtered" :key="template.key">
+          <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
+            <div class="space-y-4">
+              <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-slate-500">
+                <span x-text="template.category"></span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1">
+                  <i class="fas fa-layer-group"></i>
+                  <span x-text="template.platforms.length + ' platforms'"></span>
+                </span>
+              </div>
+              <h3 class="text-xl font-semibold text-slate-900" x-text="template.title"></h3>
+              <p class="text-sm text-slate-600" x-text="template.description"></p>
+              <div class="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                <span class="font-semibold text-slate-900">Hook:</span>
+                <span class="ml-2" x-text="template.sampleHook"></span>
+              </div>
+            </div>
+            <div class="mt-6 flex flex-wrap items-center justify-between gap-3 text-sm text-slate-500">
+              <div class="flex flex-wrap gap-2">
+                <template x-for="platformId in template.platforms" :key="platformId">
+                  <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2 py-1 uppercase tracking-wide">
+                    <i class="fas fa-hashtag"></i>
+                    <span x-text="platformId"></span>
+                  </span>
+                </template>
+              </div>
+              <Button type="button" size="sm" variant="primary" x-on:click="useTemplate(template.key)">
+                <i class="fas fa-bolt text-xs"></i>
+                Use template
+              </Button>
+            </div>
+          </article>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>

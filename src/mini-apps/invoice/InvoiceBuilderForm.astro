@@ -397,7 +397,7 @@
                 variant="ghost"
                 class="text-xs"
                 :disabled="!payment.receiptNumber"
-                @click.prevent="payment.receiptNumber ? window.open(`/invoice/receipt/${payment.receiptNumber}`, '_blank') : null"
+                @click.prevent="payment.receiptNumber ? window.open(`/invoice-and-receipt-maker/receipt/${payment.receiptNumber}`, '_blank') : null"
               >
                 <i class="fas fa-print text-[10px]"></i>
                 Receipt

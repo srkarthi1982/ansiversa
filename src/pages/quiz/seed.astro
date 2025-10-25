@@ -198,7 +198,7 @@ const seederConfig = {
 </Layout>
 
 <script is:inline>
-  function questionSeeder(config) {
+  window.questionSeeder = function questionSeeder(config) {
     const datasets = Array.isArray(config?.datasets) ? config.datasets : [];
     const defaultDatasetId = typeof config?.defaultDatasetId === 'string' ? config.defaultDatasetId : datasets[0]?.id ?? null;
     const defaultDataset = datasets.find((item) => item.id === defaultDatasetId) ?? datasets[0] ?? null;
@@ -300,7 +300,7 @@ const seederConfig = {
               totalRecords,
             );
 
-        this.currentChunk = chunkIndex + 1;
+            this.currentChunk = chunkIndex + 1;
 
             if (payload.done) {
               this.completed = true;
@@ -352,5 +352,5 @@ const seederConfig = {
         this.error = null;
       },
     };
-  }
+  };
 </script>

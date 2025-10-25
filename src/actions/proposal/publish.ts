@@ -34,7 +34,7 @@ export const publish = defineAction({
     const updated = await findProposalOrThrow(id, user.id);
     return {
       proposal: normalizeProposalRow(updated),
-      url: `/proposal/view/${finalSlug}`,
+      url: `/proposal-writer/view/${finalSlug}`,
     };
   },
 });

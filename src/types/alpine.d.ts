@@ -10,12 +10,12 @@ import type { PricingStore } from '../alpineStores/pricing';
 import type { FeaturesStore } from '../alpineStores/features';
 import type { FaqStore } from '../alpineStores/faq';
 import type { ContactStore } from '../alpineStores/contact';
-import type { ResumeStore } from '../alpineStores/resume/index';
-import type { PlatformStore } from '../alpineStores/quiz/platform';
-import type { SubjectsStore } from '../alpineStores/quiz/subjects';
-import type { TopicsStore } from '../alpineStores/quiz/topics';
-import type { RoadmapsStore } from '../alpineStores/quiz/roadmaps';
-import type { QuestionsStore } from '../alpineStores/quiz/questions';
+import type { ResumeStore } from '../pages/resume-builder/stores';
+import type { PlatformStore } from '../pages/quiz/stores/platform';
+import type { SubjectsStore } from '../pages/quiz/stores/subjects';
+import type { TopicsStore } from '../pages/quiz/stores/topics';
+import type { RoadmapsStore } from '../pages/quiz/stores/roadmaps';
+import type { QuestionsStore } from '../pages/quiz/stores/questions';
 
 declare module 'alpinejs' {
   namespace Alpine {

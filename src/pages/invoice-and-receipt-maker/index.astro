@@ -1,21 +1,253 @@
 ---
-import Layout from "../../layouts/Layout.astro";
-import Button from "../../components/Button.astro";
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
 ---
 <Layout>
-  <main class="bg-slate-50 min-h-screen">
-    <section class="py-16">
-      <div class="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
-        <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Invoice & Receipt Maker</h1>
-        <p class="mt-4 text-base text-slate-600">
-          We've moved to a refreshed workspace with dashboards, builder, and share links.
-          Use the button below to access the new experience.
-        </p>
-        <div class="mt-6 flex justify-center">
-          <Button href="/invoice">
-            <i class="fas fa-up-right-from-square text-xs"></i>
-            Go to /invoice
-          </Button>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#invoice-dashboard"
+  >
+    Skip to invoice workspace
+  </a>
+  <main
+    id="invoice-dashboard"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ invoice: $store.invoice })"
+    x-init="invoice.initDashboard()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-file-invoice-dollar text-xs"></i>
+              Invoice & receipt workspace
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Send polished invoices in minutes and track payments with clarity
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Build itemized invoices with taxes and discounts, apply your branding, and export pixel-perfect PDFs.
+              Capture payments, generate receipts, and keep polite reminders ready with AI support.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" @click.prevent="$store.invoice.createDraft()">
+                <i class="fas fa-plus text-xs"></i>
+                New invoice
+              </Button>
+              <Button href="/invoice-and-receipt-maker/templates" variant="outline">
+                <i class="fas fa-layer-group text-xs"></i>
+                Template gallery
+              </Button>
+              <Button href="/invoice-and-receipt-maker/builder" variant="ghost">
+                <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                Open builder
+              </Button>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-xl"></div>
+            <div class="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <header class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-slate-900">Billing snapshot</h2>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-circle-dot text-[10px]" :class="$store.invoice.builder.hasUnsavedChanges ? 'text-amber-500' : 'text-emerald-500'"></i>
+                  <span x-text="$store.invoice.builder.hasUnsavedChanges ? 'Unsaved edits' : 'Workspace ready'"></span>
+                </span>
+              </header>
+              <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Invoices</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="$store.invoice.state.invoices.length"></span>
+                    <span class="text-xs font-medium text-slate-500">total</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Outstanding</dt>
+                  <dd class="mt-2 text-lg font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.state.metrics.outstanding)"></dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Paid this month</dt>
+                  <dd class="mt-2 text-lg font-semibold text-slate-900" x-text="$store.invoice.formatCurrency($store.invoice.state.metrics.paidThisMonth)"></dd>
+                </div>
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Due soon</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="$store.invoice.state.metrics.dueSoon"></span>
+                    <span class="text-xs font-medium text-slate-500">within 7 days</span>
+                  </dd>
+                </div>
+              </dl>
+              <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                Free plan includes up to 5 invoices with watermark. Upgrade inside the builder to unlock receipts and additional templates.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <header class="flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <h2 class="text-2xl font-semibold text-slate-900">Your invoices</h2>
+            <p class="text-sm text-slate-600">
+              Track statuses, duplicate successful formats, and jump back into the builder for quick edits.
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Filter status</span>
+              <i class="fas fa-traffic-light text-xs"></i>
+              <select
+                class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="$store.invoice.state.filters.status"
+                @change="$store.invoice.setFilter('status', $event.target.value)"
+              >
+                <option value="all">All statuses</option>
+                <template x-for="option in $store.invoice.statusOptions" :key="`status-${option.value}`">
+                  <option :value="option.value" x-text="option.label"></option>
+                </template>
+              </select>
+            </label>
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Filter template</span>
+              <i class="fas fa-layer-group text-xs"></i>
+              <select
+                class="appearance-none bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="$store.invoice.state.filters.template"
+                @change="$store.invoice.setFilter('template', $event.target.value)"
+              >
+                <option value="all">All templates</option>
+                <template x-for="template in $store.invoice.templates" :key="`tpl-${template.key}`">
+                  <option :value="template.key" x-text="template.label"></option>
+                </template>
+              </select>
+            </label>
+            <label class="flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <span class="sr-only">Search invoices</span>
+              <i class="fas fa-search text-xs"></i>
+              <input
+                type="search"
+                placeholder="Search invoice or client"
+                class="w-48 bg-transparent text-sm focus:outline-none"
+                :value="$store.invoice.state.filters.search"
+                @input.debounce.250ms="$store.invoice.setFilter('search', $event.target.value)"
+              />
+            </label>
+          </div>
+        </header>
+
+        <div class="grid gap-6 lg:grid-cols-2">
+          <template x-if="$store.invoice.state.loading">
+            <div class="lg:col-span-2 grid gap-6 sm:grid-cols-2">
+              <template x-for="skeleton in 4" :key="`invoice-skeleton-${skeleton}`">
+                <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <div class="space-y-3">
+                    <div class="h-6 w-40 rounded bg-slate-200"></div>
+                    <div class="h-4 w-24 rounded bg-slate-100"></div>
+                    <div class="h-[72px] rounded bg-slate-50"></div>
+                  </div>
+                  <div class="mt-6 flex items-center justify-between">
+                    <div class="h-6 w-24 rounded-full bg-slate-100"></div>
+                    <div class="h-10 w-28 rounded-full bg-slate-200"></div>
+                  </div>
+                </article>
+              </template>
+            </div>
+          </template>
+
+          <template x-if="!$store.invoice.state.loading && $store.invoice.state.filtered.length === 0">
+            <div class="lg:col-span-2 rounded-2xl border border-dashed border-slate-200 bg-white p-12 text-center">
+              <i class="fas fa-file-circle-plus text-3xl text-slate-300"></i>
+              <h3 class="mt-4 text-lg font-semibold text-slate-900">No invoices yet</h3>
+              <p class="mt-2 text-sm text-slate-600">
+                Create your first invoice to start tracking balances, receipts, and exports.
+              </p>
+              <div class="mt-4 flex justify-center">
+                <Button type="button" @click.prevent="$store.invoice.createDraft()">
+                  <i class="fas fa-plus text-xs"></i>
+                  Create invoice
+                </Button>
+              </div>
+            </div>
+          </template>
+
+          <template x-for="invoiceItem in $store.invoice.state.filtered" :key="invoiceItem.id">
+            <article class="flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div class="space-y-3">
+                <div class="flex items-center justify-between">
+                  <div>
+                    <h3 class="text-lg font-semibold text-slate-900" x-text="invoiceItem.number"></h3>
+                    <p class="text-sm text-slate-600" x-text="invoiceItem.client.company || invoiceItem.client.name"></p>
+                  </div>
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                    :class="{
+                      'bg-slate-100 text-slate-600': invoiceItem.status === 'draft',
+                      'bg-sky-100 text-sky-700': invoiceItem.status === 'sent' || invoiceItem.status === 'viewed',
+                      'bg-amber-100 text-amber-700': invoiceItem.status === 'partial',
+                      'bg-emerald-100 text-emerald-700': invoiceItem.status === 'paid',
+                      'bg-rose-100 text-rose-700': invoiceItem.status === 'void'
+                    }"
+                  >
+                    <i class="fas fa-circle text-[8px]"></i>
+                    <span x-text="invoiceItem.status.charAt(0).toUpperCase() + invoiceItem.status.slice(1)"></span>
+                  </span>
+                </div>
+                <div class="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                  <div class="flex items-center justify-between">
+                    <span class="font-semibold text-slate-900" x-text="$store.invoice.formatCurrency(invoiceItem.totals.grandTotal, invoiceItem.currency)"></span>
+                    <span
+                      class="text-xs font-semibold"
+                      :class="$store.invoice.isPastDue(invoiceItem) ? 'text-rose-600' : 'text-slate-500'"
+                      x-text="$store.invoice.formatDueLabel(invoiceItem)"
+                    ></span>
+                  </div>
+                  <p class="mt-1 text-xs" x-text="$store.invoice.describe(invoiceItem)"></p>
+                </div>
+              </div>
+              <div class="mt-6 flex flex-wrap items-center justify-between gap-3">
+                <div class="text-xs text-slate-500">
+                  <span class="font-semibold">Updated</span>
+                  <span x-text="invoiceItem.updatedAt ? new Date(invoiceItem.updatedAt).toLocaleDateString() : '—'"></span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    class="min-w-[110px]"
+                    @click.prevent="window.location.assign(`/invoice-and-receipt-maker/builder?id=${invoiceItem.id}`)"
+                  >
+                    <i class="fas fa-pen-to-square text-xs"></i>
+                    Edit
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    class="min-w-[120px]"
+                    @click.prevent="$store.invoice.duplicateInvoice(invoiceItem.id)"
+                  >
+                    <i class="fas fa-copy text-xs"></i>
+                    Duplicate
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    class="min-w-[120px]"
+                    :disabled="!invoiceItem.slug"
+                    @click.prevent="invoiceItem.slug ? window.open(`/invoice-and-receipt-maker/view/${invoiceItem.slug}`, '_blank') : null"
+                  >
+                    <i class="fas fa-up-right-from-square text-xs"></i>
+                    View link
+                  </Button>
+                </div>
+              </div>
+            </article>
+          </template>
         </div>
       </div>
     </section>

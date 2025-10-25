@@ -25,7 +25,7 @@ export const exportMinutes = defineAction({
       });
     }
 
-    const url = `/minutes/download/${minutes.slug ?? minutes.id}.${format}`;
+    const url = `/meeting-minutes-ai/download/${minutes.slug ?? minutes.id}.${format}`;
 
     return {
       url,
@@ -34,4 +34,3 @@ export const exportMinutes = defineAction({
     };
   },
 });
-

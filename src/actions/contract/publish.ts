@@ -34,7 +34,7 @@ export const publish = defineAction({
     const updated = await findContractOrThrow(id, user.id);
     return {
       contract: normalizeContractRow(updated),
-      url: `/contract/view/${finalSlug}`,
+      url: `/contract-generator/view/${finalSlug}`,
     };
   },
 });
