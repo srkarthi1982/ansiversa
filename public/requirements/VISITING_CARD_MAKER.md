@@ -50,7 +50,7 @@ All components follow **Tailwind design tokens** and Ansiversa's
 
 ### 2. **Client State (Alpine.js)**
 
--   **Store File:** `src/alpineStores/visitingCard.ts`
+-   **Store File:** `src/pages/visiting-card-maker/stores/visitingCard.ts`
 -   **State Keys:**
     -   `cardData`: {"name": "","title": "","company": "","email":
         "","phone": "","address": "","tagline": ""}

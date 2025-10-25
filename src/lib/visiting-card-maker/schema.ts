@@ -94,11 +94,7 @@ export const visitingCardThemes = [
 
 export type VisitingCardThemeId = (typeof visitingCardThemes)[number]['id'];
 
-const trimmed = (max: number) =>
-  z
-    .string()
-    .max(max)
-    .transform((value) => value.trim());
+const trimmed = (max: number) => z.string().trim().max(max);
 
 export const VisitingCardDataSchema = z.object({
   name: trimmed(120).optional().default(''),

@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import { BaseStore } from './base';
+import { BaseStore } from '../../../alpineStores/base';
 import {
   defaultCardData,
   visitingCardTemplates,
@@ -9,7 +9,7 @@ import {
   type VisitingCardTemplateKey,
   type VisitingCardThemeId,
   type VisitingCardRecord,
-} from '../lib/visiting-card-maker/schema';
+} from '../../../lib/visiting-card-maker/schema';
 
 const resolveActions = () => {
   const registry = actions as unknown as Record<string, any>;
