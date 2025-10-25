@@ -1,8 +1,8 @@
 ---
 import Layout from '../../layouts/Layout.astro';
-import ProposalBuilderToolbar from '../../mini-apps/proposal/ProposalBuilderToolbar.astro';
-import ProposalBuilderForm from '../../mini-apps/proposal/ProposalBuilderForm.astro';
-import ProposalPreview from '../../mini-apps/proposal/ProposalPreview.astro';
+import ProposalBuilderToolbar from './components/ProposalBuilderToolbar.astro';
+import ProposalBuilderForm from './components/ProposalBuilderForm.astro';
+import ProposalPreview from './components/ProposalPreview.astro';
 
 const proposalId = Astro.url.searchParams.get('id');
 const builderInit = JSON.stringify({ id: proposalId });
