@@ -1,12 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
-import BlogWriterToolbar from "../../mini-apps/blog-writer/BlogWriterToolbar.astro";
-import BlogWriterIdeaPanel from "../../mini-apps/blog-writer/BlogWriterIdeaPanel.astro";
-import BlogWriterOutlinePanel from "../../mini-apps/blog-writer/BlogWriterOutlinePanel.astro";
-import BlogWriterEditor from "../../mini-apps/blog-writer/BlogWriterEditor.astro";
-import BlogWriterSeoPanel from "../../mini-apps/blog-writer/BlogWriterSeoPanel.astro";
-import BlogWriterMediaPanel from "../../mini-apps/blog-writer/BlogWriterMediaPanel.astro";
-import BlogWriterVersionsPanel from "../../mini-apps/blog-writer/BlogWriterVersionsPanel.astro";
+import BlogWriterToolbar from "./BlogWriterToolbar.astro";
+import BlogWriterIdeaPanel from "./BlogWriterIdeaPanel.astro";
+import BlogWriterOutlinePanel from "./BlogWriterOutlinePanel.astro";
+import BlogWriterEditor from "./BlogWriterEditor.astro";
+import BlogWriterSeoPanel from "./BlogWriterSeoPanel.astro";
+import BlogWriterMediaPanel from "./BlogWriterMediaPanel.astro";
+import BlogWriterVersionsPanel from "./BlogWriterVersionsPanel.astro";
 
 const postId = Astro.url.searchParams.get("id");
 const builderInit = JSON.stringify({ id: postId });
