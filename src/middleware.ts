@@ -8,6 +8,7 @@ import {
   getUserFromCookies,
   setUserCookie,
 } from './utils/session.server';
+import { MINI_APP_PROTECTED_PATHS } from './data/miniApps';
 
 export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redirect }, next) => {
   const sessionToken = cookies.get(SESSION_COOKIE_NAME)?.value;
@@ -31,10 +32,22 @@ export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redir
     user = null;
   }
 
+  const protectedPrefixes = ['/dashboard', '/settings', '/change-password'];
+  const normalizedPathname = url.pathname.replace(/\/+$/, '') || '/';
+  const normalizedPath = normalizedPathname.toLowerCase();
+  const pathSegments = normalizedPath.split('/').filter(Boolean);
+  const includesAdminSegment = pathSegments.includes('admin');
+
+  const matchesPrefix = (path: string, prefix: string) => path === prefix || path.startsWith(`${prefix}/`);
+
+  const requiresMiniAppAuth = MINI_APP_PROTECTED_PATHS.some((route) => matchesPrefix(normalizedPath, `/${route}`));
+
+  const requiresAuth =
+    protectedPrefixes.some((prefix) => matchesPrefix(normalizedPath, prefix)) ||
+    includesAdminSegment ||
+    requiresMiniAppAuth;
+
   const isAuthed = Boolean(session);
-  const protectedPaths = ['/dashboard', '/settings', '/change-password'];
-  const includesAdminSegment = url.pathname.split('/').filter(Boolean).includes('admin');
-  const requiresAuth = protectedPaths.some((p) => url.pathname.startsWith(p)) || includesAdminSegment;
 
   if (!isAuthed && requiresAuth) {
     return redirect('/login');
