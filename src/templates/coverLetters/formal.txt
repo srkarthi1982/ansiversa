@@ -1,0 +1,14 @@
+Dear Hiring Manager,
+
+I am writing to express my interest in the {{POSITION}} position at {{COMPANY}}.{{INTRO}}
+
+Key strengths:
+{{SKILL_LINES}}
+
+Highlighted achievements:
+{{ACHIEVEMENT_LINES}}
+
+I am confident that these experiences prepare me to deliver immediate value to your team. I welcome the opportunity to discuss how I can support your goals in greater detail.
+
+Sincerely,
+{{SIGNATURE}}

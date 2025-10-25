@@ -1,0 +1,12 @@
+{{COMPANY}} Hiring Team,
+
+{{INTRO}} I’m interested in the {{POSITION}} role because it lets me apply:
+{{SKILL_LINES}}
+
+Recent highlights:
+{{ACHIEVEMENT_LINES}}
+
+Thanks for considering my application.
+
+Regards,
+{{SIGNATURE}}

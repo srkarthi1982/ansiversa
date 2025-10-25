@@ -1,0 +1,426 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Button from '../components/Button.astro';
+import Loader from '../components/Loader.astro';
+---
+
+<Layout title="Cover Letter Writer">
+  <Loader />
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#cover-letter-main"
+  >
+    Skip to content
+  </a>
+  <main
+    id="cover-letter-main"
+    class="bg-slate-50 min-h-screen"
+    x-data="() => ({ coverLetter: Alpine.store('coverLetter') })"
+    x-init="coverLetter.init()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent opacity-80"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-feather text-xs"></i>
+              Tailored letters in minutes
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Generate, polish, and export standout cover letters
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Feed in the role, company, and your wins—Ansiversa handles the voice, structure, and polish so you can apply with confidence.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button
+                type="button"
+                @click.prevent="document.getElementById('cover-letter-editor')?.scrollIntoView({ behavior: 'smooth' })"
+              >
+                <i class="fas fa-magic text-xs"></i>
+                Start drafting
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                @click.prevent="coverLetter.resetEditor()"
+              >
+                <i class="fas fa-rotate-left text-xs"></i>
+                Clear workspace
+              </Button>
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-xl"></div>
+            <div class="relative rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-indigo-600">Live preview</span>
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-bolt text-[10px] text-indigo-500"></i>
+                  AI powered
+                </span>
+              </div>
+              <p class="mt-4 text-sm leading-relaxed text-slate-600">
+                “I’m thrilled to apply for the Product Manager role at Northwind. My launch playbook has driven 3 successful releases in 12 months…”
+              </p>
+              <div class="mt-6 flex items-center justify-between border-t border-slate-100 pt-4 text-xs text-slate-500">
+                <span>Templates: Formal · Modern · Minimalist</span>
+                <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-600">
+                  <i class="fas fa-clock"></i>
+                  Under 30s
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="cover-letter-editor" class="pb-20">
+      <div class="mx-auto flex max-w-6xl flex-col gap-10 px-4 sm:px-6 lg:flex-row lg:px-8">
+        <div class="w-full space-y-6 lg:w-[42%]">
+          <div
+            x-show="coverLetter.editor.toast"
+            x-transition
+            class="rounded-2xl border border-slate-200 bg-white/80 px-4 py-3 text-sm shadow-sm"
+            role="status"
+            x-cloak
+          >
+            <p
+              class="font-medium"
+              :class="coverLetter.editor.toast?.type === 'success' ? 'text-emerald-600' : 'text-rose-600'"
+              x-text="coverLetter.editor.toast?.message"
+            ></p>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="mb-6 space-y-1">
+              <h2 class="text-xl font-semibold text-slate-900">Job details</h2>
+              <p class="text-sm text-slate-600">Tell us about the role so we can tailor the opening and impact sections.</p>
+            </header>
+            <div class="space-y-4">
+              <label class="block text-sm font-medium text-slate-700">
+                Position or role
+                <input
+                  type="text"
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="e.g. Product Marketing Manager"
+                  x-model="coverLetter.editor.position"
+                />
+              </label>
+              <label class="block text-sm font-medium text-slate-700">
+                Company name
+                <input
+                  type="text"
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="e.g. Northwind Logistics"
+                  x-model="coverLetter.editor.company"
+                />
+              </label>
+              <label class="block text-sm font-medium text-slate-700">
+                Opening context (optional)
+                <textarea
+                  rows="3"
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Why this role excites you, or a key alignment statement."
+                  x-model="coverLetter.editor.intro"
+                ></textarea>
+              </label>
+              <label class="block text-sm font-medium text-slate-700">
+                Top skills (comma separated)
+                <input
+                  type="text"
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Product strategy, stakeholder alignment, go-to-market planning"
+                  x-model="coverLetter.editor.skillsInput"
+                />
+              </label>
+              <label class="block text-sm font-medium text-slate-700">
+                Key achievements (one per line)
+                <textarea
+                  rows="4"
+                  class="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Increased qualified pipeline by 42% in six months\nLaunched cross-border onboarding program in three regions"
+                  x-model="coverLetter.editor.achievementsInput"
+                ></textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="mb-4 space-y-1">
+              <h3 class="text-lg font-semibold text-slate-900">Tone & layout</h3>
+              <p class="text-sm text-slate-600">Pick the voice and template style. You can always regenerate or rewrite.</p>
+            </header>
+            <div class="space-y-4">
+              <div>
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tone</span>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <template x-for="option in coverLetter.toneOptions" :key="option.value">
+                    <button
+                      type="button"
+                      class="rounded-full px-4 py-2 text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      :class="coverLetter.editor.tone === option.value ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'"
+                      @click="coverLetter.updateTone(option.value)"
+                    >
+                      <span x-text="option.label"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Template</label>
+                <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                  <template x-for="option in coverLetter.templateOptions" :key="option.value">
+                    <button
+                      type="button"
+                      class="rounded-2xl border px-4 py-3 text-left text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                      :class="coverLetter.editor.templateKey === option.value ? 'border-indigo-500 bg-indigo-50 text-indigo-700 shadow-sm' : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-200'"
+                      @click="coverLetter.updateTemplate(option.value)"
+                    >
+                      <span class="block" x-text="option.label"></span>
+                      <span class="mt-1 block text-xs font-normal text-slate-500">Adaptive layout</span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="mb-4 space-y-1">
+              <h3 class="text-lg font-semibold text-slate-900">Actions</h3>
+              <p class="text-sm text-slate-600">Use AI to draft, iterate, and save your best version.</p>
+            </header>
+            <div class="flex flex-wrap gap-3">
+              <Button
+                type="button"
+                @click.prevent="coverLetter.generateLetter()"
+                :disabled="coverLetter.editor.loading"
+              >
+                <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                Generate
+              </Button>
+              <div class="flex items-center gap-2" x-data="{ focus: '' }">
+                <Button
+                  type="button"
+                  variant="secondary"
+                  @click.prevent="coverLetter.improveLetter(focus)"
+                  :disabled="coverLetter.editor.loading"
+                >
+                  <i class="fas fa-sparkles text-xs"></i>
+                  Improve
+                </Button>
+                <input
+                  type="text"
+                  placeholder="Focus (optional)"
+                  class="w-40 rounded-full border border-slate-200 px-3 py-2 text-xs text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  x-model="focus"
+                />
+              </div>
+              <Button
+                type="button"
+                variant="outline"
+                @click.prevent="coverLetter.rewriteTone(coverLetter.editor.tone)"
+                :disabled="coverLetter.editor.loading"
+              >
+                <i class="fas fa-repeat text-xs"></i>
+                Rewrite tone
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                @click.prevent="coverLetter.saveLetter()"
+                :disabled="coverLetter.editor.loading"
+              >
+                <i class="fas fa-bookmark text-xs"></i>
+                Save
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                @click.prevent="coverLetter.copyLetter()"
+              >
+                <i class="fas fa-copy text-xs"></i>
+                Copy
+              </Button>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-full space-y-6 lg:w-[58%]">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 class="text-xl font-semibold text-slate-900">Cover letter draft</h2>
+                <p class="text-sm text-slate-600">Edit the generated copy before saving or exporting.</p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                <template x-if="coverLetter.editor.lastSource">
+                  <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-600">
+                    <i class="fas fa-signal text-[10px]"></i>
+                    <span x-text="coverLetter.editor.lastSource === 'openai' ? 'AI generated' : coverLetter.editor.lastSource === 'library' ? 'From library' : 'Template draft'"></span>
+                  </span>
+                </template>
+                <template x-if="coverLetter.editor.usage">
+                  <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 font-semibold text-indigo-600">
+                    <i class="fas fa-circle-nodes text-[10px]"></i>
+                    <span x-text="`tokens: ${coverLetter.editor.usage.inputTokens}/${coverLetter.editor.usage.outputTokens}`"></span>
+                  </span>
+                </template>
+              </div>
+            </div>
+            <input
+              type="text"
+              class="mt-4 w-full rounded-xl border border-slate-200 px-3 py-2 text-base font-semibold text-slate-900 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Title for this cover letter"
+              x-model="coverLetter.editor.title"
+            />
+            <textarea
+              rows="20"
+              class="mt-4 w-full rounded-2xl border border-slate-200 px-4 py-4 text-sm leading-relaxed text-slate-800 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Your cover letter will appear here."
+              x-model="coverLetter.editor.content"
+            ></textarea>
+          </div>
+
+          <div class="grid gap-6 lg:grid-cols-[1fr_0.6fr]">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-lg font-semibold text-slate-900">Export options</h3>
+              <p class="mt-1 text-sm text-slate-600">Save your latest version before exporting. We’ll email you the download link.</p>
+              <div
+                x-show="coverLetter.exportState.toast"
+                x-transition
+                class="mt-4 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs font-medium"
+                :class="coverLetter.exportState.toast?.type === 'success' ? 'text-emerald-600' : 'text-rose-600'"
+                x-text="coverLetter.exportState.toast?.message"
+                x-cloak
+              ></div>
+              <div class="mt-5 flex flex-wrap gap-3">
+                <Button
+                  type="button"
+                  variant="outline"
+                  @click.prevent="coverLetter.exportLetter('pdf')"
+                  :disabled="coverLetter.exportState.loading"
+                >
+                  <i class="fas fa-file-pdf text-xs"></i>
+                  PDF
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  @click.prevent="coverLetter.exportLetter('docx')"
+                  :disabled="coverLetter.exportState.loading"
+                >
+                  <i class="fas fa-file-word text-xs"></i>
+                  Word
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  @click.prevent="coverLetter.exportLetter('txt')"
+                  :disabled="coverLetter.exportState.loading"
+                >
+                  <i class="fas fa-file-lines text-xs"></i>
+                  Text
+                </Button>
+              </div>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-lg font-semibold text-slate-900">Quick tips</h3>
+              <ul class="mt-3 space-y-3 text-sm text-slate-600">
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-check text-xs text-indigo-500"></i>
+                  Keep achievements quantified when possible.
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-check text-xs text-indigo-500"></i>
+                  Regenerate with different tones to match company culture.
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-check text-xs text-indigo-500"></i>
+                  Export multiple formats to customize for every application.
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="space-y-1">
+            <h2 class="text-2xl font-semibold text-slate-900">Saved letters</h2>
+            <p class="text-sm text-slate-600">Reload any cover letter, iterate further, or export when it’s ready.</p>
+          </div>
+          <Button
+            type="button"
+            variant="outline"
+            @click.prevent="coverLetter.loadLetters()"
+            :disabled="coverLetter.list.loading"
+          >
+            <i class="fas fa-arrows-rotate text-xs"></i>
+            Refresh list
+          </Button>
+        </div>
+
+        <template x-if="coverLetter.list.loading">
+          <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            <template x-for="idx in 6" :key="idx">
+              <div class="h-48 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+                <div class="h-4 w-32 rounded-full bg-slate-200"></div>
+                <div class="mt-4 space-y-2">
+                  <div class="h-3 w-full rounded-full bg-slate-100"></div>
+                  <div class="h-3 w-3/4 rounded-full bg-slate-100"></div>
+                  <div class="h-3 w-2/3 rounded-full bg-slate-100"></div>
+                </div>
+                <div class="mt-6 h-9 w-28 rounded-full bg-slate-200"></div>
+              </div>
+            </template>
+          </div>
+        </template>
+
+        <template x-if="!coverLetter.list.loading && coverLetter.list.items.length === 0">
+          <div class="mt-10 rounded-3xl border border-dashed border-slate-200 bg-slate-50 p-12 text-center">
+            <i class="fas fa-folder-open text-3xl text-slate-300"></i>
+            <h3 class="mt-4 text-lg font-semibold text-slate-900">No saved letters yet</h3>
+            <p class="mt-2 text-sm text-slate-600">Generate a letter, make it yours, and save it here for easy access.</p>
+          </div>
+        </template>
+
+        <div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <template x-for="item in coverLetter.list.items" :key="item.id">
+            <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-md">
+              <div class="space-y-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div class="space-y-1">
+                    <h3 class="text-lg font-semibold text-slate-900" x-text="item.title"></h3>
+                    <p class="text-xs font-medium uppercase tracking-wide text-slate-500">
+                      <span x-text="`Tone: ${item.tone}`"></span>
+                      ·
+                      <span x-text="`Template: ${item.templateKey}`"></span>
+                    </p>
+                  </div>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-600">
+                    <i class="fas fa-calendar-day"></i>
+                    <span x-text="new Date(item.updatedAt).toLocaleDateString()"></span>
+                  </span>
+                </div>
+                <p class="text-sm text-slate-600 line-clamp-4" x-text="item.content"></p>
+              </div>
+              <div class="mt-6 flex items-center justify-between">
+                <span class="text-xs text-slate-500" x-text="new Date(item.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })"></span>
+                <Button type="button" variant="outline" @click.prevent="coverLetter.selectLetter(item.id)">
+                  Use draft
+                </Button>
+              </div>
+            </article>
+          </template>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
