@@ -1,0 +1,447 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const previewSections = [
+  {
+    title: "Warm-up Pulse",
+    duration: "10 min",
+    summary: "Prime prior knowledge with a think-pair-share prompt and quick poll.",
+  },
+  {
+    title: "Teach & Explore",
+    duration: "20 min",
+    summary: "Guide a concept mini-lesson with live examples, media, and checkpoints.",
+  },
+  {
+    title: "Practice Sprint",
+    duration: "15 min",
+    summary: "Small-group station rotation with differentiated scaffolds.",
+  },
+  {
+    title: "Assess & Wrap",
+    duration: "10 min",
+    summary: "Attach Quiz Institute exit ticket and gather reflections.",
+  },
+];
+
+const lessonWorkspaceHighlights = [
+  {
+    title: "Structured lesson blocks",
+    description:
+      "Outline every phase — Warm-up, Teach, Explore, Practice, Assess, Wrap — with minutes, materials, and facilitation notes.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Drag, duplicate, reorder",
+    description:
+      "Reorganize blocks in seconds. Duplicate high-performing lessons into modules and remix for new cohorts.",
+    icon: "fas fa-arrows-up-down-left-right",
+  },
+  {
+    title: "Outcome tracking",
+    description:
+      "Attach standards, success criteria, and differentiation strategies that stay synced across exports.",
+    icon: "fas fa-bullseye",
+  },
+];
+
+const aiAssistFlows = [
+  {
+    title: "AI outline architect",
+    description:
+      "Describe your topic, audience, and target duration. Instantly receive SMART objectives, pacing suggestions, and section summaries you can tweak.",
+    icon: "fas fa-wand-magic-sparkles",
+  },
+  {
+    title: "Activity generator",
+    description:
+      "Ask for creative warm-ups, hands-on labs, or discussion prompts tailored to your learners’ level, with built-in accessibility notes.",
+    icon: "fas fa-lightbulb",
+  },
+  {
+    title: "Quiz Institute bridge",
+    description:
+      "Link an existing quiz or auto-generate mastery questions, ready to publish directly inside Quiz Institute.",
+    icon: "fas fa-link",
+  },
+];
+
+const publishingHighlights = [
+  {
+    title: "Publish clean lesson pages",
+    description:
+      "Share a read-only lesson view with timing bars, materials list, and embedded Quiz Institute check-ins.",
+    icon: "fas fa-window-restore",
+  },
+  {
+    title: "Professional exports",
+    description:
+      "Generate PDF, Docx, or Markdown packets with watermarking control based on your plan tier.",
+    icon: "fas fa-file-export",
+  },
+  {
+    title: "Calendar-ready pacing",
+    description:
+      "Drop lessons onto your calendar with auto-generated .ics events and module pacing summaries.",
+    icon: "fas fa-calendar-day",
+  },
+];
+
+const moduleSteps = [
+  {
+    eyebrow: "Step 1",
+    title: "Assemble your module",
+    description:
+      "Drag lessons into sequence, define prerequisites, and surface estimated hours per week so teams stay aligned.",
+    icon: "fas fa-diagram-project",
+  },
+  {
+    eyebrow: "Step 2",
+    title: "Thread in assessments",
+    description:
+      "Attach Quiz Institute checkpoints at key milestones. AI suggests question banks or builds fresh quizzes from your outline.",
+    icon: "fas fa-clipboard-list",
+  },
+  {
+    eyebrow: "Step 3",
+    title: "Share & iterate",
+    description:
+      "Publish a module overview page, export facilitator briefs, and track feedback for continuous improvement.",
+    icon: "fas fa-share-nodes",
+  },
+];
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#lesson-workspace"
+  >
+    Skip to Lesson Builder workspace
+  </a>
+  <main id="lesson-workspace" class="min-h-screen bg-slate-50">
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="pointer-events-none absolute inset-0 -z-10 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-graduation-cap text-xs" aria-hidden="true"></i>
+              Learning &amp; Knowledge suite
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Lesson Builder
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Design rigorous lessons, orchestrate modules, and plug directly into Quiz Institute. Capture outcomes, activities, resources, and exports in one guided workspace.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <Button href="#ai-assist" class="shadow-sm">
+                <i class="fas fa-robot text-xs" aria-hidden="true"></i>
+                Explore AI assist
+              </Button>
+              <Button href="#module-builder" variant="outline">
+                <i class="fas fa-diagram-project text-xs" aria-hidden="true"></i>
+                View module flow
+              </Button>
+              <Button href="#publishing" variant="ghost">
+                <i class="fas fa-file-export text-xs" aria-hidden="true"></i>
+                Export options
+              </Button>
+            </div>
+            <dl class="grid gap-4 text-left sm:grid-cols-3">
+              <div class="rounded-2xl border border-indigo-100 bg-white/70 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Lesson drafts</dt>
+                <dd class="mt-1 text-3xl font-bold text-slate-900">10<span class="text-xs font-semibold text-slate-500"> free tier</span></dd>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-white/70 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">AI credits</dt>
+                <dd class="mt-1 text-3xl font-bold text-slate-900">Unlimited<span class="text-xs font-semibold text-slate-500"> pro</span></dd>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-white/70 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Export watermark</dt>
+                <dd class="mt-1 text-3xl font-bold text-slate-900">Off<span class="text-xs font-semibold text-slate-500"> on pro</span></dd>
+              </div>
+            </dl>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-40 blur-xl"></div>
+            <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <header class="flex items-start justify-between gap-4">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Today&apos;s lesson draft</p>
+                  <p class="text-xs text-slate-500">Grade 8 • STEM Lab • 55 minutes</p>
+                </div>
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  <i class="fas fa-bolt text-[10px]" aria-hidden="true"></i>
+                  Autosave on
+                </span>
+              </header>
+              <ul class="space-y-3">
+                {previewSections.map((section) => (
+                  <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4" aria-label={`${section.title} block`}>
+                    <span class="mt-0.5 inline-flex h-9 w-9 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                      <i class="fas fa-check text-sm" aria-hidden="true"></i>
+                    </span>
+                    <div class="flex-1">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <p class="text-sm font-semibold text-slate-900">{section.title}</p>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-xs font-semibold text-slate-500">
+                          <i class="fas fa-clock text-[10px]" aria-hidden="true"></i>
+                          {section.duration}
+                        </span>
+                      </div>
+                      <p class="mt-2 text-xs text-slate-600">{section.summary}</p>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+              <div class="rounded-2xl border border-slate-100 bg-white/80 p-4 text-xs text-slate-500">
+                <p class="flex flex-wrap items-center gap-2">
+                  <span class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 font-semibold text-indigo-600">
+                    <i class="fas fa-book-open text-[10px]" aria-hidden="true"></i>
+                    Outcomes synced
+                  </span>
+                  Students explain energy transfer with 90% accuracy • Linked quiz: Ecosystems mastery check
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16" id="structure">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
+          <div class="space-y-5">
+            <SectionHeading
+              eyebrow="Workspace foundation"
+              title="Everything you need to architect a lesson"
+              description="Map outcomes, pacing, and materials without fighting spreadsheets. Lesson Builder keeps facilitation details, differentiation strategies, and timing totals front and center."
+            />
+            <ul class="space-y-4 text-sm text-slate-600">
+              <li class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i class="fas fa-check" aria-hidden="true"></i>
+                </span>
+                <span>Switch between table and card views to focus on either the big picture or granular instructions.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i class="fas fa-check" aria-hidden="true"></i>
+                </span>
+                <span>Attach slide decks, worksheets, and video links so every resource is one click away during delivery.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i class="fas fa-check" aria-hidden="true"></i>
+                </span>
+                <span>Set differentiation, accessibility, and extension notes that roll into exports and published pages.</span>
+              </li>
+            </ul>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            {lessonWorkspaceHighlights.map((item) => (
+              <FeatureCard
+                title={item.title}
+                description={item.description}
+                icon={item.icon}
+                class="h-full"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai-assist" class="bg-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="AI copilots"
+          title="Let Ansiversa AI jump-start the heavy lifting"
+          description="Generate SMART objectives, remix activities for different ability levels, and spin up assessment drafts without leaving your lesson."
+          class="text-center"
+        />
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {aiAssistFlows.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon={item.icon}
+              class="h-full"
+            />
+          ))}
+        </div>
+        <div class="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
+          <div class="rounded-3xl border border-indigo-100 bg-white p-6 shadow-soft">
+            <h3 class="text-lg font-semibold text-slate-900">Prompt once, iterate forever</h3>
+            <p class="mt-3 text-sm text-slate-600">
+              Capture your favourite prompts as reusable blueprints. AI suggestions stay editable and versioned, so teams can review changes before publishing.
+            </p>
+            <div class="mt-6 space-y-3">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Outline prompt</p>
+                <p class="mt-2 text-sm text-slate-700">“Design a collaborative STEM lab on renewable energy for Grade 8 students with options for English learners.”</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-600">AI response snapshot</p>
+                <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                  <li>• Three SMART objectives with measurable verbs.</li>
+                  <li>• Differentiated lab stations with scaffolds and extensions.</li>
+                  <li>• Suggested Quiz Institute question stems for each outcome.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <h3 class="text-lg font-semibold text-slate-900">Plan gating at a glance</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600">
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i class="fas fa-crown text-[10px]" aria-hidden="true"></i>
+                </span>
+                <span>Free members unlock up to 10 lesson drafts, 2 modules, and light AI suggestions with export watermark.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                  <i class="fas fa-bolt text-[10px]" aria-hidden="true"></i>
+                </span>
+                <span>Pro unlocks unlimited lessons, advanced AI, translation helper, and watermark-free exports.</span>
+              </li>
+              <li class="flex items-start gap-3">
+                <span class="mt-0.5 inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-slate-600">
+                  <i class="fas fa-calendar-check text-[10px]" aria-hidden="true"></i>
+                </span>
+                <span>Calendar exports (.ics) and quiz auto-generation are exclusive to Pro creators.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="module-builder" class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-5">
+            <SectionHeading
+              eyebrow="Module sequencing"
+              title="Group lessons into powerful learning arcs"
+              description="Visualise multi-lesson journeys with pacing, prerequisites, and assessment checkpoints that keep every facilitator aligned."
+            />
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <h3 class="text-lg font-semibold text-slate-900">Module timeline preview</h3>
+              <ol class="mt-4 space-y-4">
+                <li class="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4">
+                  <div class="flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-indigo-700">
+                    <span>Week 1 • Foundations</span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-indigo-600">
+                      <i class="fas fa-clock text-[10px]" aria-hidden="true"></i>
+                      3.5 hrs
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs text-indigo-700/80">Lessons: Renewable energy primer, Lab safety, Design challenge kickoff.</p>
+                </li>
+                <li class="rounded-2xl border border-emerald-100 bg-emerald-50/70 p-4">
+                  <div class="flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-emerald-700">
+                    <span>Week 2 • Build &amp; test</span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-emerald-600">
+                      <i class="fas fa-clock text-[10px]" aria-hidden="true"></i>
+                      4 hrs
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs text-emerald-700/80">Lessons: Prototype sprints, Peer feedback, Quiz Institute mastery check.</p>
+                </li>
+                <li class="rounded-2xl border border-purple-100 bg-purple-50/70 p-4">
+                  <div class="flex flex-wrap items-center justify-between gap-2 text-sm font-semibold text-purple-700">
+                    <span>Week 3 • Launch &amp; reflect</span>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-xs font-semibold text-purple-600">
+                      <i class="fas fa-clock text-[10px]" aria-hidden="true"></i>
+                      3 hrs
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs text-purple-700/80">Lessons: Showcase, Reflection circle, Portfolio export.</p>
+                </li>
+              </ol>
+            </div>
+          </div>
+          <div class="space-y-4">
+            {moduleSteps.map((step) => (
+              <FeatureCard
+                eyebrow={step.eyebrow}
+                title={step.title}
+                description={step.description}
+                icon={step.icon}
+                class="h-full"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="publishing" class="bg-slate-900 py-16 text-slate-100">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-5">
+            <SectionHeading
+              eyebrow="Publishing &amp; exports"
+              title="Share lessons anywhere"
+              description="Export facilitator packets, publish read-only pages, and ship pacing calendars straight to your collaborators."
+              class="text-slate-100"
+            />
+            <p class="text-sm text-slate-300">
+              Exports highlight objectives, timing totals, materials lists, and accessibility notes automatically. Quiz Institute links stay active so facilitators can launch assessments instantly.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <Button variant="secondary" href="#">
+                <i class="fas fa-download text-xs" aria-hidden="true"></i>
+                Download sample export
+              </Button>
+              <Button variant="ghost" href="#">
+                <i class="fas fa-eye text-xs" aria-hidden="true"></i>
+                Preview published view
+              </Button>
+            </div>
+          </div>
+          <div class="grid gap-4 sm:grid-cols-2">
+            {publishingHighlights.map((item) => (
+              <FeatureCard
+                title={item.title}
+                description={item.description}
+                icon={item.icon}
+                class="h-full bg-slate-800/80 text-left"
+                baseClass="rounded-3xl border border-slate-700 bg-slate-800/80 p-6 shadow-soft"
+                titleClass="text-lg font-semibold text-white"
+                descriptionClass="mt-3 text-sm text-slate-300"
+                iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-200"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Ready to build your first lesson?</h2>
+        <p class="mt-4 text-base text-slate-600 sm:text-lg">
+          Get early access to the Lesson Builder alpha and help shape our upcoming standards mapping and analytics roadmap.
+        </p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <Button href="/signup" class="shadow-sm">
+            <i class="fas fa-user-plus text-xs" aria-hidden="true"></i>
+            Request early access
+          </Button>
+          <Button variant="outline" href="/contact">
+            <i class="fas fa-comments text-xs" aria-hidden="true"></i>
+            Talk to our team
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
