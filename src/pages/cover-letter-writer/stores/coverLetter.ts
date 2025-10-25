@@ -1,6 +1,6 @@
 import Alpine from 'alpinejs';
 import { actions } from 'astro:actions';
-import { BaseStore, clone } from './base';
+import { BaseStore, clone } from '../../../alpineStores/base';
 import {
   coverLetterToneLabels,
   coverLetterTemplateLabels,
@@ -10,7 +10,7 @@ import {
   type CoverLetterRecord,
   type CoverLetterTemplateKey,
   type CoverLetterTone,
-} from '../lib/cover-letter-writer/schema';
+} from '../../../lib/cover-letter-writer/schema';
 
 const resolveActions = () => {
   const registry = actions as unknown as Record<string, any>;

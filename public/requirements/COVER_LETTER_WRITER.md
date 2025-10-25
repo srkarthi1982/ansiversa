@@ -46,7 +46,7 @@ All components follow Tailwind-based design tokens defined in
 
 ### 2. **Client State (Alpine.js)**
 
--   **Store File:** `src/alpineStores/coverLetter.ts`
+-   **Store File:** `src/pages/cover-letter-writer/stores/coverLetter.ts`
 -   **State Keys:**
     -   `userInput`: position, company, skills, achievements
     -   `aiOutput`: generated letter text
