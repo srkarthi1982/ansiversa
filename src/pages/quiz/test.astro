@@ -1,12 +1,64 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../components/Button.astro";
-import Modal from "../../components/Modal.astro";
-import { Fragment } from "astro/jsx-runtime";
+import ResultView from "./components/ResultView.astro";
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section class="py-4" x-data="{ test: $store.test, showAnswers: false }" x-init="test.onInit()">
+    <section
+      class="py-4"
+      x-data={`(() => {
+        const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' });
+        const parseSelectedIndex = (value, optionsLength) => {
+          if (typeof value === 'number' && Number.isFinite(value)) {
+            return value >= 0 && value < optionsLength ? value : -1;
+          }
+          if (typeof value === 'string') {
+            const parsed = Number.parseInt(value, 10);
+            if (!Number.isNaN(parsed)) {
+              return parsed >= 0 && parsed < optionsLength ? parsed : -1;
+            }
+          }
+          return -1;
+        };
+        return {
+          test: $store.test,
+          showAnswers: false,
+          get practiceResult() {
+            if (!this.test?.isCompleted) return null;
+            const questions = Array.isArray(this.test?.list?.questions) ? this.test.list.questions : [];
+            const answers = Array.isArray(this.test?.selection?.answers) ? this.test.selection.answers : [];
+            return {
+              id: 'practice',
+              mark: Number(this.test?.mark ?? 0),
+              totalQuestions: questions.length,
+              level: this.test?.selection?.levelId || null,
+              createdAtISO: new Date().toISOString(),
+              createdAtLabel: formatter.format(new Date()),
+              responses: questions.map((question, index) => {
+                const options = Array.isArray(question?.options) ? question.options : [];
+                const selectedIndex = parseSelectedIndex(answers[index], options.length);
+                const correctIndex = typeof question?.correctIndex === 'number' && Number.isFinite(question.correctIndex)
+                  ? question.correctIndex
+                  : -1;
+                return {
+                  questionId: question?.id ?? index + 1,
+                  questionText: question?.questionText ?? 'Question unavailable',
+                  options,
+                  explanation: question?.explanation ?? '',
+                  level: question?.level ?? null,
+                  correctIndex,
+                  selectedIndex,
+                  selectionCaptured: selectedIndex >= 0,
+                  selectionFallback: false,
+                };
+              }),
+            };
+          },
+        };
+      })()`}
+      x-init="test.onInit()"
+    >
       <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 sm:px-6 lg:px-8">
         <div class="rounded-3xl border border-slate-200 bg-white shadow-[0_24px_60px_-32px_rgba(15,23,42,0.3)]">
           <div class="border-b border-slate-200 px-6 pb-6 pt-8">
@@ -285,53 +337,7 @@ import { Fragment } from "astro/jsx-runtime";
           </div>
         </div>
 
-        <template x-if="showAnswers">
-          <Modal
-            size="lg"
-            title="Answers"
-            x-on:modal-close="showAnswers = false"
-            x-on:keydown.escape.window="showAnswers = false"
-          >          
-            <div class="max-h-[70vh] space-y-5 overflow-y-auto pr-1 text-sm text-slate-700">
-              <template x-for="(question, answerIndex) in test.list.questions" :key="`answer-${question.id}`">
-                <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                    <header class="flex items-start justify-between gap-3">
-                      <h4 class="font-semibold text-slate-900" x-text="question.questionText"></h4>
-                    </header>
-                  <ul class="mt-3 space-y-2">
-                    <template x-for="(option, optionIndex) in question.options ?? []" :key="`answer-option-${question.id}-${optionIndex}`">
-                      <li
-                        class="rounded-xl border px-3 py-2"
-                        :class="
-                          optionIndex === question.correctIndex
-                            ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                            : (Number(test.selection.answers?.[answerIndex] ?? -1) === optionIndex
-                                ? 'border-rose-300 bg-rose-50 text-rose-700'
-                                : 'border-slate-200 bg-white text-slate-700')
-                        "
-                      >
-                        <span x-text="option"></span>
-                      </li>
-                    </template>
-                  </ul>
-                  <p
-                    class="mt-3 rounded-xl bg-slate-100 px-3 py-2 text-xs text-slate-600"
-                    x-show="question.explanation"
-                    x-cloak
-                  >
-                    <span class="font-semibold text-slate-700">Explanation:</span>
-                    <span x-text="question.explanation"></span>
-                  </p>
-                </article>
-              </template>
-            </div>
-            <div slot="footer" class="flex w-full items-center justify-end gap-3">
-              <Button variant="outline" size="sm" x-on:click="showAnswers = false">
-                Close
-              </Button>
-            </div>
-          </Modal>
-        </template>
+        <ResultView openExpr="showAnswers" resultExpr="practiceResult" onCloseExpr="showAnswers = false" />
       </div>
     </section>
   </main>

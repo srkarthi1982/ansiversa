@@ -2,7 +2,7 @@ import { fetchPlatforms, createPlatform, updatePlatform, deletePlatform } from '
 import { fetchSubjects, createSubject, updateSubject, deleteSubject } from './subject';
 import { fetchTopics, createTopic, updateTopic, deleteTopic } from './topic';
 import { fetchRoadmaps, createRoadmap, updateRoadmap, deleteRoadmap } from './roadmap';
-import { fetchQuestions, createQuestion, updateQuestion, deleteQuestion } from './question';
+import { fetchQuestions, fetchRandomQuestions, createQuestion, updateQuestion, deleteQuestion } from './question';
 import { saveResult } from './result';
 
 export const quiz = {
@@ -23,6 +23,7 @@ export const quiz = {
   updateRoadmap,
   deleteRoadmap,
   fetchQuestions,
+  fetchRandomQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,
@@ -47,6 +48,7 @@ export {
   updateRoadmap,
   deleteRoadmap,
   fetchQuestions,
+  fetchRandomQuestions,
   createQuestion,
   updateQuestion,
   deleteQuestion,

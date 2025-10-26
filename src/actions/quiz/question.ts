@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { Platform, Question, Roadmap, Subject, Topic, and, asc, desc, eq, sql } from 'astro:db';
+import { Platform, Question, Roadmap, Subject, Topic, and, asc, count, db, desc, eq, sql } from 'astro:db';
 import {
   platformRepository,
   questionQueryRepository,
@@ -356,6 +356,102 @@ export const fetchQuestions = defineAction({
       total: result.total,
       page: result.page,
       pageSize: result.pageSize,
+    };
+  },
+});
+
+export const fetchRandomQuestions = defineAction({
+  input: z.object({
+    filters: questionFiltersSchema.optional(),
+    excludeIds: z.array(z.number().int().min(1)).optional(),
+  }),
+  async handler({ filters, excludeIds }) {
+    const normalizedFilters = normalizeFilters(filters);
+    const normalizedExcludeIds = Array.isArray(excludeIds)
+      ? Array.from(
+          new Set(
+            excludeIds
+              .map((value) => (Number.isFinite(value) ? Math.floor(value) : Number.NaN))
+              .filter((value) => Number.isFinite(value) && value > 0),
+          ),
+        )
+      : [];
+
+    const conditions: SqlCondition[] = [];
+
+    if (normalizedFilters.questionText) {
+      conditions.push(
+        sql`lower(${Question.q}) LIKE ${`%${normalizedFilters.questionText.toLowerCase()}%`}`,
+      );
+    }
+
+    if (normalizedFilters.platformId !== null) {
+      conditions.push(eq(Question.platformId, normalizedFilters.platformId));
+    }
+
+    if (normalizedFilters.subjectId !== null) {
+      conditions.push(eq(Question.subjectId, normalizedFilters.subjectId));
+    }
+
+    if (normalizedFilters.topicId !== null) {
+      conditions.push(eq(Question.topicId, normalizedFilters.topicId));
+    }
+
+    if (normalizedFilters.roadmapId !== null) {
+      conditions.push(eq(Question.roadmapId, normalizedFilters.roadmapId));
+    }
+
+    if (normalizedFilters.level) {
+      conditions.push(sql`upper(${Question.l}) = ${normalizedFilters.level.toUpperCase()}`);
+    }
+
+    if (normalizedFilters.status === 'active') {
+      conditions.push(eq(Question.isActive, true));
+    } else if (normalizedFilters.status === 'inactive') {
+      conditions.push(eq(Question.isActive, false));
+    }
+
+    normalizedExcludeIds.forEach((id) => {
+      conditions.push(sql`${Question.id} != ${id}`);
+    });
+
+    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
+    const pageSize = 10;
+
+    let countQuery = db.select({ value: count() }).from(Question);
+    if (whereClause) {
+      countQuery = countQuery.where(whereClause);
+    }
+    const countResult = await countQuery;
+    const rawTotal = countResult[0]?.value ?? 0;
+    const total = typeof rawTotal === 'number' ? rawTotal : Number(rawTotal);
+
+    const rows = await questionQueryRepository.getData({
+      where: () => whereClause,
+      orderBy: () => sql`random()`,
+      limit: pageSize,
+    });
+
+    const items = rows.map(({ question, platformName, subjectName, topicName, roadmapName }) =>
+      normalizeQuestion({
+        ...question,
+        platformName: platformName ?? null,
+        subjectName: subjectName ?? null,
+        topicName: topicName ?? null,
+        roadmapName: roadmapName ?? null,
+      }),
+    );
+
+    const totalPages = total > 0 ? Math.ceil(total / pageSize) : 0;
+
+    return {
+      items,
+      total,
+      page: 1,
+      pageSize,
+      totalPages,
+      hasNextPage: total > pageSize,
+      hasPreviousPage: false,
     };
   },
 });

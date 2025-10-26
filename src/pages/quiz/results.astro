@@ -25,7 +25,6 @@ const paginated = await resultRepository.getPaginatedData({
 });
 
 const results = paginated.data;
-
 const normalizeOptions = (value: unknown): string[] => {
   if (Array.isArray(value)) {
     return value
@@ -356,8 +355,7 @@ const resultsSerialized = JSON.stringify(resultsPayload).replace(/</g, "\\u003c"
             </nav>
           )}
         </div>
-
-        <ResultView openExpr="modalOpen" resultExpr="selected" onCloseExpr="modalOpen = false; selected = null" />
+        <ResultView openExpr="modalOpen" resultExpr="selected" onCloseExpr="modalOpen = false; " />
       </div>
     </section>
   </main>

@@ -487,8 +487,6 @@ class QuizTestStore extends BaseStore {
     }
     const pageSize = 10;
     const requestPayload = {
-      page: 1,
-      pageSize,
       filters: {
         platformId,
         subjectId,
@@ -498,34 +496,14 @@ class QuizTestStore extends BaseStore {
       },
     } as const;
 
-    const { data, error } = await actions.quiz.fetchQuestions(requestPayload);
+    const { data, error } = await actions.quiz.fetchRandomQuestions(requestPayload);
     if (error) {
       throw error;
     }
 
-    let payload = data ?? { items: [], total: 0, page: 1 };
-    let items = Array.isArray(payload.items) ? payload.items : [];
-
-    const rawTotal = (payload as any).total ?? 0;
-    const total = typeof rawTotal === 'number' ? rawTotal : Number(rawTotal);
-    const totalPages = Number.isFinite(total) && total > 0 ? Math.ceil(total / pageSize) : 0;
-
-    if (totalPages > 1) {
-      const randomPage = Math.floor(Math.random() * totalPages) + 1;
-      const currentPage = typeof (payload as any).page === 'number' ? (payload as any).page : 1;
-      if (randomPage !== currentPage) {
-        const { data: randomData, error: randomError } = await actions.quiz.fetchQuestions({
-          ...requestPayload,
-          page: randomPage,
-        });
-        if (!randomError && randomData) {
-          payload = randomData;
-          items = Array.isArray(randomData.items) ? randomData.items : items;
-        }
-      }
-    }
-
-    const shuffledItems = this.shuffleArray(items);
+    const payload = data ?? { items: [] };
+    const items = Array.isArray(payload.items) ? payload.items : [];
+    const shuffledItems = this.shuffleArray(items).slice(0, pageSize);
 
     this.list.questions = shuffledItems.map((item: any) => {
       const options = Array.isArray(item.options) ? item.options : [];
@@ -561,13 +539,30 @@ class QuizTestStore extends BaseStore {
       return;
     }
     let score = 0;
-    const responseRecords: { id: number; a: number }[] = [];
+    const responseRecords: { id: number; a: number; s: number }[] = [];
     questions.forEach((question, index) => {
       const rawAnswer = this.selection.answers[index];
+      const options = question.options ?? [];
+      const numericAnswer = this.normalizeAnswerIndex(rawAnswer);
+      const selectedIndex = (() => {
+        if (numericAnswer !== null) {
+          return numericAnswer >= 0 && numericAnswer < options.length ? numericAnswer : -1;
+        }
+        if (typeof rawAnswer === 'string' && rawAnswer.trim().length > 0) {
+          const lowered = rawAnswer.trim().toLowerCase();
+          const match = options.findIndex(
+            (option) => typeof option === 'string' && option.trim().toLowerCase() === lowered,
+          );
+          if (match !== -1) {
+            return match;
+          }
+        }
+        return -1;
+      })();
       const resolvedCorrectIndex =
         typeof question.correctIndex === 'number' && question.correctIndex >= 0
           ? question.correctIndex
-          : this.resolveCorrectIndex(question.options ?? [], question.answerKey);
+          : this.resolveCorrectIndex(options, question.answerKey);
       const storedCorrectIndex =
         typeof resolvedCorrectIndex === 'number' && resolvedCorrectIndex >= 0
           ? resolvedCorrectIndex
@@ -575,13 +570,12 @@ class QuizTestStore extends BaseStore {
       responseRecords.push({
         id: question.id,
         a: storedCorrectIndex,
+        s: selectedIndex,
       });
       if (rawAnswer === null) {
         return;
       }
-      const numericAnswer = this.normalizeAnswerIndex(rawAnswer);
       const normalizedKeyValue = (question.answerKey ?? '').trim().toLowerCase();
-      const options = question.options ?? [];
 
       if (
         typeof resolvedCorrectIndex === 'number' &&
@@ -688,7 +682,7 @@ class QuizTestStore extends BaseStore {
     return matchIndex !== -1 ? matchIndex : null;
   }
 
-  private async persistResult(mark: number, responses: { id: number; a: number }[]): Promise<void> {
+  private async persistResult(mark: number, responses: { id: number; a: number; s: number }[]): Promise<void> {
     if (
       !this.selection.platformId ||
       !this.selection.subjectId ||

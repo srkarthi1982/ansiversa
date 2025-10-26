@@ -8,6 +8,7 @@ import type { SessionUser } from '../../types/session-user';
 const responseSchema = z.object({
   id: z.number().int().min(1),
   a: z.number().int().min(-1),
+  s: z.number().int().min(-1).optional(),
 });
 
 const saveResultInputSchema = z
@@ -38,6 +39,7 @@ export const saveResult = defineAction({
     const responses = input.responses.map((response) => ({
       id: response.id,
       a: response.a,
+      s: typeof response.s === 'number' ? response.s : -1,
     }));
 
     const payload: typeof Result.$inferInsert = {

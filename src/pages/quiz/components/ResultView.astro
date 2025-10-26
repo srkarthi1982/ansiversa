@@ -1,6 +1,5 @@
 ---
 import Modal from "../../../components/Modal.astro";
-import Button from "../../../components/Button.astro";
 
 interface Props {
   openExpr?: string;
@@ -111,11 +110,6 @@ const scoreLabelExpr = `(${scoreExpr}) + ' / ' + (${totalExpr})`;
           </article>
         </template>
       </div>
-    </div>
-    <div class="flex w-full items-center justify-end gap-3" slot="footer">
-      <Button variant="outline" size="sm" x-on:click={onCloseExpr}>
-        Close
-      </Button>
     </div>
   </Modal>
 </template>
