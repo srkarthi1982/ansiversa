@@ -1,11 +1,12 @@
 ---
 import Layout from "../../layouts/Layout.astro";
 import Button from "../../components/Button.astro";
+import Modal from "../../components/Modal.astro";
 import { Fragment } from "astro/jsx-runtime";
 ---
 <Layout>
   <main class="bg-slate-50 min-h-screen">
-    <section class="py-4" x-data="{ test: $store.test }" x-init="test.onInit()">
+    <section class="py-4" x-data="{ test: $store.test, showAnswers: false }" x-init="test.onInit()">
       <div class="mx-auto flex max-w-6xl flex-col gap-4 px-4 sm:px-6 lg:px-8">
         <div class="rounded-3xl border border-slate-200 bg-white shadow-[0_24px_60px_-32px_rgba(15,23,42,0.3)]">
           <div class="border-b border-slate-200 px-6 pb-6 pt-8">
@@ -203,7 +204,11 @@ import { Fragment } from "astro/jsx-runtime";
 
               <template x-if="test.totalQuestions > 0">
                 <div class="space-y-6">
-                  <div class="rounded-2xl border border-slate-200 bg-white px-5 py-6 shadow-inner">
+                  <div
+                    class="rounded-2xl border border-slate-200 bg-white px-5 py-6 shadow-inner"
+                    x-show="!test.isCompleted"
+                    x-cloak
+                  >
                     <div class="flex items-start justify-between gap-4">
                       <div>
                         <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Question <span x-text="test.currentQuestion + 1"></span> of <span x-text="test.totalQuestions"></span></p>
@@ -233,7 +238,7 @@ import { Fragment } from "astro/jsx-runtime";
                     </ul>
                   </div>
 
-                  <div class="flex flex-wrap items-center justify-between gap-3">
+                  <div class="flex flex-wrap items-center justify-between gap-3" x-show="!test.isCompleted" x-cloak>
                     <div class="flex items-center gap-2">
                       <Button variant="ghost" size="sm" x-on:click="test.previousQuestion()" x-bind:disabled="test.currentQuestion === 0">
                         <i class="fas fa-arrow-left text-sm"></i>
@@ -245,34 +250,92 @@ import { Fragment } from "astro/jsx-runtime";
                       </Button>
                     </div>
                     <div class="flex items-center gap-2">
-                      <Button variant="outline" size="sm" x-on:click="test.reset()">
-                        Restart
-                      </Button>
                       <Button size="sm" x-on:click="test.finishQuiz()" x-bind:disabled="test.isCompleted || test.currentQuestion < 9">
                         Submit answers
                       </Button>
                     </div>
                   </div>
-
-                  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5" x-show="test.isCompleted">
-                    <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                      <div>
-                        <p class="text-sm font-semibold text-slate-900">Score</p>
-                        <p class="text-xs text-slate-500">Correct answers out of <span x-text="test.totalQuestions"></span></p>
-                      </div>
-                      <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-semibold text-emerald-600">
-                        <i class="fas fa-star text-[11px]"></i>
-                        <span x-text="`${test.mark} / ${test.totalQuestions}`"></span>
-                      </span>
-                    </div>
-                  </div>
                 </div>
               </template>
+              <div class="space-y-4" x-show="test.isCompleted" x-cloak>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-5">
+                  <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                      <p class="text-sm font-semibold text-slate-900">Score</p>
+                      <p class="text-xs text-slate-500">
+                        Correct answers out of <span x-text="test.totalQuestions"></span>
+                      </p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-4 py-1.5 text-sm font-semibold text-emerald-600">
+                      <i class="fas fa-star text-[11px]"></i>
+                      <span x-text="`${test.mark} / ${test.totalQuestions}`"></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="flex flex-wrap items-center gap-3">
+                  <Button variant="outline" size="sm" x-on:click="test.reset(); showAnswers = false">
+                    Restart
+                  </Button>
+                  <Button variant="ghost" size="sm" x-on:click="showAnswers = true">
+                    View answers
+                  </Button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
 
-
+        <template x-if="showAnswers">
+          <Modal
+            size="lg"
+            title="Answers"
+            x-on:modal-close="showAnswers = false"
+            x-on:keydown.escape.window="showAnswers = false"
+          >          
+            <div class="max-h-[70vh] space-y-5 overflow-y-auto pr-1 text-sm text-slate-700">
+              <template x-for="(question, answerIndex) in test.list.questions" :key="`answer-${question.id}`">
+                <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <header class="flex items-start justify-between gap-3">
+                    <h4 class="font-semibold text-slate-900" x-text="question.questionText"></h4>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                      <i class="fas fa-signal text-[10px]"></i>
+                      <span x-text="question.level ?? '—'"></span>
+                    </span>
+                  </header>
+                  <ul class="mt-3 space-y-2">
+                    <template x-for="(option, optionIndex) in question.options ?? []" :key="`answer-option-${question.id}-${optionIndex}`">
+                      <li
+                        class="rounded-xl border px-3 py-2"
+                        :class="
+                          optionIndex === question.correctIndex
+                            ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                            : (Number(test.selection.answers?.[answerIndex] ?? -1) === optionIndex
+                                ? 'border-rose-300 bg-rose-50 text-rose-700'
+                                : 'border-slate-200 bg-white text-slate-700')
+                        "
+                      >
+                        <span x-text="option"></span>
+                      </li>
+                    </template>
+                  </ul>
+                  <p
+                    class="mt-3 rounded-xl bg-slate-100 px-3 py-2 text-xs text-slate-600"
+                    x-show="question.explanation"
+                    x-cloak
+                  >
+                    <span class="font-semibold text-slate-700">Explanation:</span>
+                    <span x-text="question.explanation"></span>
+                  </p>
+                </article>
+              </template>
+            </div>
+            <div slot="footer" class="flex w-full items-center justify-end gap-3">
+              <Button variant="outline" size="sm" x-on:click="showAnswers = false">
+                Close
+              </Button>
+            </div>
+          </Modal>
+        </template>
       </div>
     </section>
   </main>

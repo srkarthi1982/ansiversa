@@ -1,4 +1,5 @@
-import { column, defineTable } from 'astro:db';
+import { column, defineTable, NOW } from 'astro:db';
+import { User } from '../auth/tables';
 
 export const Platform = defineTable({
   columns: {
@@ -61,10 +62,26 @@ export const Question = defineTable({
   },
 });
 
+export const Result = defineTable({
+  columns: {
+    id: column.number({ primaryKey: true, autoIncrement: true }),
+    userId: column.text({ references: () => User.columns.id }),
+    platformId: column.number({ references: () => Platform.columns.id }),
+    subjectId: column.number({ references: () => Subject.columns.id }),
+    topicId: column.number({ references: () => Topic.columns.id }),
+    roadmapId: column.number({ references: () => Roadmap.columns.id }),
+    level: column.text({ enum: ['E', 'M', 'D'] }),
+    responses: column.json(),
+    mark: column.number({ default: 0 }),
+    createdAt: column.date({ default: NOW }),
+  },
+});
+
 export const quizTables = {
   Platform,
   Subject,
   Topic,
   Roadmap,
   Question,
+  Result,
 } as const;

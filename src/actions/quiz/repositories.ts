@@ -1,4 +1,4 @@
-import { db, eq, Platform, Question, Roadmap, Subject, Topic } from 'astro:db';
+import { db, eq, Platform, Question, Roadmap, Subject, Topic, Result } from 'astro:db';
 import { BaseRepository } from '../baseRepository';
 
 type PlatformRow = typeof Platform.$inferSelect;
@@ -107,3 +107,5 @@ class QuestionQueryRepository extends BaseRepository<typeof Question, QuestionSe
 
 export const questionRepository = new BaseRepository(Question);
 export const questionQueryRepository = new QuestionQueryRepository(Question);
+
+export const resultRepository = new BaseRepository(Result);

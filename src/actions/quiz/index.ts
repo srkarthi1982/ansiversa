@@ -3,6 +3,7 @@ import { fetchSubjects, createSubject, updateSubject, deleteSubject } from './su
 import { fetchTopics, createTopic, updateTopic, deleteTopic } from './topic';
 import { fetchRoadmaps, createRoadmap, updateRoadmap, deleteRoadmap } from './roadmap';
 import { fetchQuestions, createQuestion, updateQuestion, deleteQuestion } from './question';
+import { saveResult } from './result';
 
 export const quiz = {
   fetchPlatforms,
@@ -25,6 +26,7 @@ export const quiz = {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  saveResult,
 };
 
 export {
@@ -48,4 +50,5 @@ export {
   createQuestion,
   updateQuestion,
   deleteQuestion,
+  saveResult,
 };

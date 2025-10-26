@@ -241,17 +241,23 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
 		<!-- CTA -->
   <section id="cta" class="py-14">
     <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="rounded-2xl border bg-gradient-to-tr from-indigo-600 via-sky-500 to-emerald-500 p-8 text-white">
+      <div class="rounded-2xl border bg-gradient-to-tr from-indigo-700 via-indigo-600 to-indigo-500 p-8 text-white">
         <div class="flex flex-col md:flex-row items-center justify-between gap-6">
           <div>
             <h3 class="text-2xl font-bold">Ready to explore Ansiversa?</h3>
-            <p class="mt-1 text-sm text-white/90">Create an account to unlock curated mini-apps crafted by the Ansiversa team.</p>
+            <p class="mt-1 text-sm text-white/90">
+              {isLoggedIn
+                ? "Thanks for being part of the Ansiversa workspace—dive into your mini-apps below."
+                : "Create an account to unlock curated mini-apps crafted by the Ansiversa team."}
+            </p>
           </div>
           <div class="flex gap-3">
-            <Button href="/signup" variant="light" size="lg">
-              Get started
-            </Button>
-            <Button href="/#mini-apps" variant="tinted" size="lg">
+            {!isLoggedIn && (
+              <Button href="/signup" variant="light" size="lg">
+                Get started
+              </Button>
+            )}
+            <Button href="/#mini-apps" variant="secondary" size="lg">
               Discover mini-apps
             </Button>
           </div>

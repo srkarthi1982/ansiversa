@@ -26,6 +26,7 @@ type QuestionItem = {
   answerKey: string | null;
   explanation: string | null;
   level: string | null;
+  correctIndex: number | null;
 };
 
 type SelectionState = {
@@ -526,14 +527,19 @@ class QuizTestStore extends BaseStore {
 
     const shuffledItems = this.shuffleArray(items);
 
-    this.list.questions = shuffledItems.map((item: any) => ({
-      id: Number(item.id),
-      questionText: item.questionText ?? '',
-      options: Array.isArray(item.options) ? item.options : [],
-      answerKey: typeof item.answerKey === 'string' ? item.answerKey : null,
-      explanation: typeof item.explanation === 'string' ? item.explanation : null,
-      level: typeof item.level === 'string' ? item.level : null,
-    }));
+    this.list.questions = shuffledItems.map((item: any) => {
+      const options = Array.isArray(item.options) ? item.options : [];
+      const answerKey = typeof item.answerKey === 'string' ? item.answerKey : null;
+      return {
+        id: Number(item.id),
+        questionText: item.questionText ?? '',
+        options,
+        answerKey,
+        explanation: typeof item.explanation === 'string' ? item.explanation : null,
+        level: typeof item.level === 'string' ? item.level : null,
+        correctIndex: this.resolveCorrectIndex(options, answerKey),
+      };
+    });
     this.selection.answers = Array.from({ length: this.list.questions.length }, () => null);
   }
 
@@ -555,34 +561,68 @@ class QuizTestStore extends BaseStore {
       return;
     }
     let score = 0;
+    const responseRecords: { id: number; a: number }[] = [];
     questions.forEach((question, index) => {
       const rawAnswer = this.selection.answers[index];
-      if (rawAnswer === null || question.answerKey === null) {
+      const resolvedCorrectIndex =
+        typeof question.correctIndex === 'number' && question.correctIndex >= 0
+          ? question.correctIndex
+          : this.resolveCorrectIndex(question.options ?? [], question.answerKey);
+      const storedCorrectIndex =
+        typeof resolvedCorrectIndex === 'number' && resolvedCorrectIndex >= 0
+          ? resolvedCorrectIndex
+          : -1;
+      responseRecords.push({
+        id: question.id,
+        a: storedCorrectIndex,
+      });
+      if (rawAnswer === null) {
         return;
       }
-      const answer =
-        typeof rawAnswer === 'string' ? Number.parseInt(rawAnswer, 10) : rawAnswer;
-      const hasNumericAnswer = typeof answer === 'number' && !Number.isNaN(answer);
-      const normalizedKey = Number.parseInt(question.answerKey, 10);
-      if (!Number.isNaN(normalizedKey)) {
-        if (hasNumericAnswer && (normalizedKey === answer || normalizedKey - 1 === answer)) {
+      const numericAnswer = this.normalizeAnswerIndex(rawAnswer);
+      const normalizedKeyValue = (question.answerKey ?? '').trim().toLowerCase();
+      const options = question.options ?? [];
+
+      if (
+        typeof resolvedCorrectIndex === 'number' &&
+        resolvedCorrectIndex >= 0 &&
+        numericAnswer !== null
+      ) {
+        if (numericAnswer === resolvedCorrectIndex) {
           score += 1;
         }
         return;
       }
-      const options = question.options ?? [];
-      const normalizedKeyValue = question.answerKey.trim().toLowerCase();
-      const correctValue = options.findIndex(
-        (option) => option.trim().toLowerCase() === normalizedKeyValue,
-      );
-      if (correctValue !== -1 && hasNumericAnswer && correctValue === answer) {
+
+      if (
+        typeof resolvedCorrectIndex === 'number' &&
+        resolvedCorrectIndex >= 0 &&
+        numericAnswer === null &&
+        typeof rawAnswer === 'string'
+      ) {
+        const selectedValue = rawAnswer.trim().toLowerCase();
+        const correctValue = options[resolvedCorrectIndex];
+        if (typeof correctValue === 'string' && correctValue.trim().toLowerCase() === selectedValue) {
+          score += 1;
+        }
+        return;
+      }
+
+      if (
+        numericAnswer !== null &&
+        normalizedKeyValue.length > 0 &&
+        options[numericAnswer] &&
+        options[numericAnswer]?.trim().toLowerCase() === normalizedKeyValue
+      ) {
         score += 1;
         return;
       }
+
       if (
-        !hasNumericAnswer &&
+        numericAnswer === null &&
         typeof rawAnswer === 'string' &&
         rawAnswer.trim().length > 0 &&
+        normalizedKeyValue.length > 0 &&
         rawAnswer.trim().toLowerCase() === normalizedKeyValue
       ) {
         score += 1;
@@ -590,12 +630,14 @@ class QuizTestStore extends BaseStore {
     });
     this.mark = score;
     this.isCompleted = true;
+    void this.persistResult(score, responseRecords);
   }
 
   reset(): void {
     this.step = 1;
     this.search = '';
     this.resetSelections(1);
+    this.list.questions = [];
     this.selection = {
       platformId: null,
       subjectId: null,
@@ -604,6 +646,74 @@ class QuizTestStore extends BaseStore {
       levelId: '',
       answers: [],
     };
+  }
+
+  private normalizeAnswerIndex(value: unknown): number | null {
+    if (typeof value === 'number' && Number.isFinite(value)) {
+      return value;
+    }
+    if (typeof value === 'string') {
+      const parsed = Number.parseInt(value, 10);
+      return Number.isNaN(parsed) ? null : parsed;
+    }
+    return null;
+  }
+
+  private resolveCorrectIndex(options: string[], answerKey: string | null): number | null {
+    if (!Array.isArray(options) || options.length === 0) {
+      return null;
+    }
+    const key = typeof answerKey === 'string' ? answerKey.trim() : '';
+    if (!key) {
+      return null;
+    }
+    const numericKey = Number.parseInt(key, 10);
+    if (!Number.isNaN(numericKey)) {
+      if (numericKey >= 0 && numericKey < options.length) {
+        return numericKey;
+      }
+      const zeroBased = numericKey - 1;
+      if (zeroBased >= 0 && zeroBased < options.length) {
+        return zeroBased;
+      }
+    }
+    if (key.length === 1) {
+      const alphaIndex = key.toLowerCase().charCodeAt(0) - 97;
+      if (alphaIndex >= 0 && alphaIndex < options.length) {
+        return alphaIndex;
+      }
+    }
+    const lowered = key.toLowerCase();
+    const matchIndex = options.findIndex((option) => option.trim().toLowerCase() === lowered);
+    return matchIndex !== -1 ? matchIndex : null;
+  }
+
+  private async persistResult(mark: number, responses: { id: number; a: number }[]): Promise<void> {
+    if (
+      !this.selection.platformId ||
+      !this.selection.subjectId ||
+      !this.selection.topicId ||
+      !this.selection.roadmapId ||
+      !this.selection.levelId
+    ) {
+      return;
+    }
+    try {
+      const { error } = await actions.quiz.saveResult({
+        platformId: this.selection.platformId,
+        subjectId: this.selection.subjectId,
+        topicId: this.selection.topicId,
+        roadmapId: this.selection.roadmapId,
+        level: this.selection.levelId as 'E' | 'M' | 'D',
+        mark,
+        responses,
+      });
+      if (error && error.code !== 'UNAUTHORIZED') {
+        console.error('Failed to save quiz result', error);
+      }
+    } catch (error) {
+      console.error('Failed to save quiz result', error);
+    }
   }
 }
 
