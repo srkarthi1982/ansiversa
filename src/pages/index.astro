@@ -206,18 +206,26 @@ const miniAppCategories = [
   },
 ];
 
-const categorizedMiniApps = miniAppCategories.map((category) => ({
-  ...category,
-  apps: category.apps.map((app) => {
-    const resolvedHref = resolveMiniAppHref(app.href);
+const categorizedMiniApps = miniAppCategories
+  .map((category) => {
+    const apps = category.apps
+      .map((app) => {
+        const resolvedHref = resolveMiniAppHref(app.href);
+
+        return {
+          ...app,
+          href: resolvedHref,
+          available: Boolean(resolvedHref),
+        };
+      })
+      .filter((app) => app.available);
 
     return {
-      ...app,
-      href: resolvedHref,
-      available: Boolean(resolvedHref),
+      ...category,
+      apps,
     };
-  }),
-}));
+  })
+  .filter((category) => category.apps.length > 0);
 
 const plans = [
   {
