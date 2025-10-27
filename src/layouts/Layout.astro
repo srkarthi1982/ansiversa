@@ -14,6 +14,7 @@ const userInitial = sessionData?.user?.username?.charAt(0)?.toUpperCase() ?? 'U'
 const logoutAction = actions.auth.logout;
 const username = (sessionData?.user?.username ?? 'Account').toUpperCase();
 const shouldShowBreadcrumb = Astro.url.pathname !== '/';
+const isAdmin = sessionData?.user?.roleId === 1;
 ---
 <!doctype html>
 <html lang="en">
@@ -105,6 +106,15 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
               >
                 Settings
               </a>
+              {isAdmin && (
+                <a
+                  href="/app/admin"
+                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                  x-on:click="$dispatch('dropdown-close')"
+                >
+                  Administration
+                </a>
+              )}
               <a
                 href="/app/change-password"
                 class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
@@ -199,6 +209,15 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
                 >
                   Settings
                 </a>
+                {isAdmin && (
+                  <a
+                    href="/app/admin"
+                    class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
+                    x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
+                  >
+                    Administration
+                  </a>
+                )}
                 <a
                   href="/app/change-password"
                   class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
