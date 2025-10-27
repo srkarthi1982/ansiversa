@@ -1,10 +1,10 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 import { actions } from 'astro:actions';
-import { getSessionWithUser } from '../utils/session.server';
-import Textbox from "../components/Textbox.astro";
-import Password from "../components/Password.astro";
-import Button from "../components/Button.astro";
+import { getSessionWithUser } from '../../utils/session.server';
+import Textbox from "../../components/Textbox.astro";
+import Password from "../../components/Password.astro";
+import Button from "../../components/Button.astro";
 
 export const prerender = false;
 
@@ -92,7 +92,7 @@ const errorMsg =
 
     <p class="mt-6 text-center text-sm text-slate-600">
       Already have an account?
-      <a href="/login" class="font-medium text-indigo-600 hover:underline">Log in</a>
+      <a href="/app/login" class="font-medium text-indigo-600 hover:underline">Log in</a>
     </p>
   </section>
 

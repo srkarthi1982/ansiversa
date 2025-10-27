@@ -1,6 +1,6 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Button from "../components/Button.astro";
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
 
 const displayName = Astro.locals.user?.username
   ? Astro.locals.user?.username?.toUpperCase()
@@ -20,7 +20,7 @@ const displayName = Astro.locals.user?.username
               Track product momentum, monitor engagement, and keep your projects aligned. Everything you need to build at speed—right here.
             </p>
             <div class="mt-6 flex flex-wrap gap-3">
-              <Button href="/settings" size="sm">
+              <Button href="/app/settings" size="sm">
                 <i class="fas fa-sliders-h text-sm"></i>
                 Customize workspace
               </Button>

@@ -1,9 +1,9 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import HeroSection from "../components/HeroSection.astro";
-import SectionHeading from "../components/SectionHeading.astro";
-import FeatureCard from "../components/FeatureCard.astro";
-import { getSessionWithUser } from '../utils/session.server';
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import { getSessionWithUser } from '../../utils/session.server';
 
 const sessionData = await getSessionWithUser(Astro.cookies);
 const isLoggedIn = Boolean(sessionData);
@@ -80,7 +80,7 @@ const experiencePillars = [
     >
       <a
         slot="actions"
-        href="/pricing"
+        href="/app/pricing"
         class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100"
       >
         Compare plans
@@ -211,7 +211,7 @@ const experiencePillars = [
                       Roadmap polls and feedback loops give members a voice in upcoming builds.
                     </p>
                   </div>
-                  <a href="/signup" class="mt-6 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
+                  <a href="/app/signup" class="mt-6 inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100">
                     Create your account
                   </a>
                 </>

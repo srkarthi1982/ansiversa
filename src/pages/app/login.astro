@@ -1,10 +1,10 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 import { actions } from 'astro:actions';
-import { getSessionWithUser } from '../utils/session.server';
-import Textbox from "../components/Textbox.astro";
-import Password from "../components/Password.astro";
-import Button from "../components/Button.astro";
+import { getSessionWithUser } from '../../utils/session.server';
+import Textbox from "../../components/Textbox.astro";
+import Password from "../../components/Password.astro";
+import Button from "../../components/Button.astro";
 
 // Ensure this page is rendered on-demand (required for form actions)
 export const prerender = false;
@@ -58,7 +58,7 @@ const loginError =
           <input type="checkbox" name="remember" value="on" class="h-4 w-4 rounded border" />
           <span>Remember me</span>
         </label>
-        <a href="/forgot-password" class="text-sm text-indigo-600 hover:underline">Forgot password?</a>
+        <a href="/app/forgot-password" class="text-sm text-indigo-600 hover:underline">Forgot password?</a>
       </div>
 
       <Button type="submit" block>
@@ -68,7 +68,7 @@ const loginError =
 
     <p class="mt-6 text-center text-sm text-slate-600">
       Don’t have an account?
-      <a href="/signup" class="font-medium text-indigo-600 hover:underline">Create one</a>
+      <a href="/app/signup" class="font-medium text-indigo-600 hover:underline">Create one</a>
     </p>
   </section>
 

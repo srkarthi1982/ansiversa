@@ -1,5 +1,5 @@
 ---
-import Layout from "../layouts/Layout.astro";
+import Layout from "../../layouts/Layout.astro";
 import { readFile } from "node:fs/promises";
 
 const endpointGlobs = import.meta.glob("./**/api/*.{ts,js}");
@@ -97,7 +97,7 @@ const describeGroup = (slug, label) =>
             </p>
             <div class="flex flex-wrap gap-3">
               <a
-                href="/documentation"
+                href="/app/documentation"
                 class="inline-flex items-center justify-center gap-2 rounded-full bg-white px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-indigo-500/30 transition hover:-translate-y-0.5 hover:bg-slate-100"
               >
                 View docs

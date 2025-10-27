@@ -55,7 +55,7 @@ export const register = defineAction({
     await createSession(sessionUser, remember, ctx);
 
     const verificationToken = await createEmailVerificationToken(userId);
-    const verificationUrl = new URL(`/verify-email?token=${verificationToken}`, ctx.url).toString();
+    const verificationUrl = new URL(`/app/verify-email?token=${verificationToken}`, ctx.url).toString();
     await sendVerificationEmail({ to: email, username, verificationUrl });
 
     return {
