@@ -184,3 +184,11 @@ src/
 ---
 
 > _Ansiversa — Innovation in Every Click._
+
+Stripe
+-------
+
+Next Steps
+
+Replace the placeholder product/price IDs in db/billing/seed.ts with live Stripe IDs, run npx astro db push, and reseed so the new tables reflect real plans.
+Configure STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, STRIPE_SUCCESS_URL, and STRIPE_CANCEL_URL (or the PUBLIC_ fallbacks), then point your Stripe webhook to /api/billing/we

@@ -10,6 +10,7 @@ import { minutesTables } from './minutes/tables';
 import { emailTables } from './email/tables';
 import { coverLetterTables } from './cover-letter-writer/tables';
 import { visitingCardTables } from './visiting-card/tables';
+import { billingTables } from './billing/tables';
 
 export default defineDb({
   tables: {
@@ -23,5 +24,6 @@ export default defineDb({
     ...emailTables,
     ...coverLetterTables,
     ...visitingCardTables,
+    ...billingTables,
   },
 });
