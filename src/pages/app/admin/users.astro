@@ -1,0 +1,163 @@
+---
+import { Fragment } from "astro/jsx-runtime";
+import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
+import DataGrid from "../../../components/DataGrid.astro";
+
+const userColumns = [
+  {
+    key: "username",
+    label: "User",
+    sortable: true,
+    sortKey: "username",
+    filter: { type: "text", key: "username", placeholder: "Username" },
+  },
+  {
+    key: "email",
+    label: "Email",
+    sortable: true,
+    sortKey: "email",
+    filter: { type: "text", key: "email", placeholder: "Email" },
+  },
+  {
+    key: "plan",
+    label: "Plan",
+    sortable: true,
+    sortKey: "plan",
+    widthClass: "w-28",
+    filter: { type: "text", key: "plan", placeholder: "Plan" },
+  },
+  {
+    key: "roleName",
+    label: "Role",
+    sortable: true,
+    sortKey: "role",
+    widthClass: "w-36",
+    filter: { type: "text", key: "role", placeholder: "Role" },
+  },
+  {
+    key: "emailVerifiedAt",
+    label: "Email verified",
+    align: "center",
+    widthClass: "w-32",
+    filter: {
+      type: "select",
+      key: "status",
+      options: [
+        { label: "All", value: "all" },
+        { label: "Verified", value: "verified" },
+        { label: "Unverified", value: "unverified" },
+      ],
+    },
+  },
+  {
+    key: "createdAt",
+    label: "Created",
+    sortable: true,
+    sortKey: "createdAt",
+    align: "center",
+    widthClass: "w-44",
+  },
+];
+---
+<Layout>
+  <main class="bg-slate-50 min-h-screen">
+    <section class="py-4" x-data="{ users: $store.users }" x-init="users.onInit()">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 class="mt-3 text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">
+              Users
+            </h2>
+            <p class="mt-1 text-sm text-slate-600">Manage application users and view their roles.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              x-on:click="users.loadUsers()"
+              x-bind:disabled="users.loading"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.992 0 3.181 3.181a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.181" />
+              </svg>
+              Refresh
+            </Button>
+            <template x-if="users.hasActiveFilters">
+              <Button type="button" size="sm" variant="ghost" x-on:click="users.clearFilters()">
+                Clear filters
+              </Button>
+            </template>
+          </div>
+        </div>
+
+        <div class="mt-10">
+          <DataGrid
+            columns={userColumns}
+            rowsVar="users.users"
+            loadingVar="users.loading"
+            errorVar="users.error"
+            filtersVar="users.filters"
+            hasFiltersVar="users.hasActiveFilters"
+            sortStateVar="users.sort"
+            onSort="users.setSort"
+            onFilterChange="users.onFilterChange"
+            onPageSizeChange="users.setPageSize"
+            onPrevPage="users.prevPage"
+            onNextPage="users.nextPage"
+            onSetPage="users.setPage"
+            onFirstPage="users.firstPage"
+            onLastPage="users.lastPage"
+            pageSizeVar="users.pageSize"
+            pageSizeOptions={[10, 20, 30, 40, 50]}
+            pageVar="users.page"
+            pageNumbersVar="users.pageNumbers"
+            totalVar="users.totalItems"
+            totalPagesVar="users.totalPages"
+            emptyMessage="No users found."
+            filteredEmptyMessage="No users match the current filters."
+          >
+            <Fragment slot="body">
+              <template x-for="item in users.users" :key="item.id">
+                <tr class="transition hover:bg-slate-50">
+                  <td class="px-3 py-3 align-top">
+                    <div class="flex flex-col gap-1">
+                      <span class="font-semibold text-slate-900" x-text="item.username"></span>
+                      <span class="text-xs text-slate-500" x-text="item.id"></span>
+                    </div>
+                  </td>
+                  <td class="px-3 py-3 align-top">
+                    <span class="text-sm text-slate-700" x-text="item.email"></span>
+                  </td>
+                  <td class="px-3 py-3 align-top">
+                    <span class="inline-flex items-center gap-2 rounded-lg bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+                      <i class="fas fa-crown text-[10px]"></i>
+                      <span x-text="item.plan ? item.plan.toUpperCase() : 'FREE'"></span>
+                    </span>
+                  </td>
+                  <td class="px-3 py-3 align-top">
+                    <span class="inline-flex items-center gap-2 rounded-lg bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                      <i class="fas fa-user-shield text-[10px]"></i>
+                      <span x-text="item.roleName || '—'"></span>
+                    </span>
+                  </td>
+                  <td class="px-3 py-3 text-center align-top">
+                    <span
+                      class="inline-flex h-7 w-7 items-center justify-center rounded-full border text-sm font-semibold"
+                      :class="item.emailVerifiedAt ? 'border-emerald-200 bg-emerald-50 text-emerald-600' : 'border-rose-200 bg-rose-50 text-rose-600'"
+                      x-text="item.emailVerifiedAt ? '✓' : '✕'"
+                    ></span>
+                  </td>
+                  <td class="px-3 py-3 text-center align-top">
+                    <span class="text-sm font-medium text-slate-700" x-text="item.createdAt ? new Date(item.createdAt).toLocaleString() : '—'"></span>
+                  </td>
+                </tr>
+              </template>
+            </Fragment>
+          </DataGrid>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
