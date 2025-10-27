@@ -17,6 +17,7 @@ import type { TopicsStore } from '../pages/quiz/stores/topics';
 import type { RoadmapsStore } from '../pages/quiz/stores/roadmaps';
 import type { QuestionsStore } from '../pages/quiz/stores/questions';
 import type { UsersStore } from '../pages/app/stores/users';
+import type { MemoryTrainerStoreType } from '../pages/memory-trainer/stores/memoryTrainer';
 
 declare module 'alpinejs' {
   namespace Alpine {
@@ -40,6 +41,7 @@ declare module 'alpinejs' {
       roadmaps: RoadmapsStore;
       questions: QuestionsStore;
       users: UsersStore;
+      memoryTrainer: MemoryTrainerStoreType;
     }
   }
 }

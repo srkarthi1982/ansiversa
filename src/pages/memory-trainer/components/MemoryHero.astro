@@ -1,0 +1,157 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="relative overflow-hidden py-16 sm:py-20">
+  <div class="absolute inset-0 bg-gradient-to-br from-indigo-50 via-white to-transparent"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-center lg:px-8">
+    <div class="space-y-6 text-center lg:w-7/12 lg:text-left">
+      <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+        <i class="fas fa-brain text-xs"></i>
+        Cognitive endurance studio
+      </span>
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+        Memory Trainer
+      </h1>
+      <p class="text-base text-slate-600 sm:text-lg">
+        Blend adaptive drills, spaced repetition, and reflective cooldowns to sharpen working and long-term memory. Each session
+        choreographs N-back, span, and recall circuits with analytics you can export in a click.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+        <Button
+          type="button"
+          class="shadow-sm"
+          @click.prevent="app.startBlock(app.state.plan[0]?.id)"
+          :disabled="!app.state.plan.length"
+        >
+          <i class="fas fa-play text-xs"></i>
+          Start warm-up
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          @click.prevent="app.resetPlan()"
+          :disabled="!app.state.plan.length"
+        >
+          <i class="fas fa-rotate text-xs"></i>
+          Reset plan
+        </Button>
+        <Button type="button" variant="ghost" @click.prevent="app.toggleReminderEnabled()">
+          <i class="fas fa-bell-on text-xs"></i>
+          <span x-text="app.state.reminder.enabled ? 'Pause reminder' : 'Resume reminder'"></span>
+        </Button>
+      </div>
+      <dl class="grid gap-4 text-left sm:grid-cols-3">
+        <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Daily streak</dt>
+          <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+            <span x-text="app.state.streak.current"></span>
+            <span class="text-xs font-semibold text-slate-500">of <span x-text="app.state.streak.best"></span> best</span>
+          </dd>
+        </div>
+        <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Today&apos;s circuit</dt>
+          <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+            <span x-text="app.state.planSummary.totalMinutes"></span>
+            <span class="text-xs font-semibold text-slate-500">mins</span>
+          </dd>
+        </div>
+        <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Active level</dt>
+          <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+            <span x-text="app.state.exercises.find((item) => item.type === 'nback')?.level ?? 1"></span>
+            <span class="text-xs font-semibold text-slate-500">dual N-back</span>
+          </dd>
+        </div>
+      </dl>
+      <p class="text-xs text-slate-500" x-show="app.state.lastAction" x-cloak>
+        <i class="fas fa-sparkles mr-2 text-[10px] text-indigo-500"></i>
+        <span x-text="app.state.lastAction"></span>
+      </p>
+    </div>
+    <div class="relative w-full lg:w-5/12">
+      <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-40 blur-xl"></div>
+      <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+        <header class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-900">Today&apos;s adaptive flow</p>
+            <p class="text-xs text-slate-500">Warm-up → Focus → Cooldown timeline generated from your streak.</p>
+          </div>
+          <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <i class="fas fa-bolt text-[10px]"></i>
+            Adaptive
+          </span>
+        </header>
+        <ol class="space-y-3 text-left">
+          <template x-for="block in app.state.plan" :key="block.id">
+            <li
+              class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-4"
+              :class="{
+                'border-indigo-300 bg-white shadow': block.status === 'in-progress',
+                'opacity-70': block.status === 'completed',
+              }"
+            >
+              <div class="flex h-9 w-9 items-center justify-center rounded-full"
+                :class="block.phase === 'focus' ? 'bg-indigo-100 text-indigo-600' : block.phase === 'warmup' ? 'bg-amber-100 text-amber-600' : 'bg-emerald-100 text-emerald-600'">
+                <i class="fas" :class="{
+                  'fa-fire-flame-curved': block.phase === 'focus',
+                  'fa-seedling': block.phase === 'cooldown',
+                  'fa-sparkles': block.phase === 'warmup',
+                }"></i>
+              </div>
+              <div class="flex-1 space-y-2">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p class="font-semibold text-slate-900" x-text="block.title"></p>
+                    <p class="text-xs text-slate-500" x-text="block.description"></p>
+                  </div>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-500 shadow-sm">
+                    <i class="fas fa-clock text-[10px]"></i>
+                    <span x-text="`${block.durationMinutes}m`"></span>
+                  </span>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-2.5 py-1 font-medium text-indigo-700">
+                    <i class="fas fa-bullseye text-[10px]"></i>
+                    Target <span x-text="Math.round(block.targetAccuracy * 100)"></span>%
+                  </span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-2.5 py-1 font-medium text-slate-600">
+                    <i class="fas fa-layer-group text-[10px]"></i>
+                    <span x-text="block.exercises.join(' · ')"></span>
+                  </span>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="light"
+                    class="border border-slate-200"
+                    @click.prevent="app.startBlock(block.id)"
+                  >
+                    <i class="fas fa-play text-[10px]"></i>
+                    Run block
+                  </Button>
+                  <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    class="border border-slate-200"
+                    @click.prevent="app.completeBlock(block.id)"
+                  >
+                    <i class="fas fa-check text-[10px]"></i>
+                    Mark done
+                  </Button>
+                </div>
+              </div>
+            </li>
+          </template>
+        </ol>
+        <footer class="rounded-2xl border border-slate-100 bg-white/70 p-4 text-xs text-slate-500">
+          <p>
+            <i class="fas fa-info-circle mr-2 text-[10px] text-indigo-500"></i>
+            Streak auto-extends when all focus blocks are completed before 23:00 in your timezone.
+          </p>
+        </footer>
+      </div>
+    </div>
+  </div>
+</section>
