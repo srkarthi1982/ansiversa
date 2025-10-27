@@ -9,9 +9,11 @@ import { minutes } from './minutes';
 import { email } from './email';
 import { coverLetter } from './coverLetter';
 import { card, visitingCard } from './visitingCard';
+import { app } from './app';
 
 export const server = {
   auth,
+  app,
   flashnote,
   quiz,
   resume,

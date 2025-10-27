@@ -16,6 +16,7 @@ import type { SubjectsStore } from '../pages/quiz/stores/subjects';
 import type { TopicsStore } from '../pages/quiz/stores/topics';
 import type { RoadmapsStore } from '../pages/quiz/stores/roadmaps';
 import type { QuestionsStore } from '../pages/quiz/stores/questions';
+import type { UsersStore } from '../pages/app/stores/users';
 
 declare module 'alpinejs' {
   namespace Alpine {
@@ -38,6 +39,7 @@ declare module 'alpinejs' {
       topics: TopicsStore;
       roadmaps: RoadmapsStore;
       questions: QuestionsStore;
+      users: UsersStore;
     }
   }
 }

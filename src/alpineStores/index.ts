@@ -16,6 +16,7 @@ import '../pages/quiz/stores/topics';
 import '../pages/quiz/stores/roadmaps';
 import '../pages/quiz/stores/questions';
 import '../pages/quiz/stores/test';
+import '../pages/app/stores/users';
 import '../pages/resume-builder/stores';
 import './admin';
 import '../pages/flashnote/stores/flashnote';
