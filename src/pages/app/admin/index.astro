@@ -1,0 +1,55 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import FeatureCard from "../../../components/FeatureCard.astro";
+---
+<Layout>
+  <main class="bg-slate-50 min-h-screen">
+    <section class="py-10">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <header class="max-w-3xl">
+          <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">Administration</p>
+          <h1 class="mt-2 text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">Control center</h1>
+          <p class="mt-3 text-base text-slate-600">
+            Manage privileged areas of the Ansiversa workspace, including user accounts and the roles that define their access.
+          </p>
+        </header>
+
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          <a
+            href="/app/admin/users"
+            class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+          >
+            <FeatureCard
+              title="Users"
+              description="View, filter, and audit every member in the system. Refresh data, inspect plans, and verify email status."
+              icon="fas fa-user-shield"
+              class="h-full transition duration-200 group-hover:-translate-y-1 group-hover:shadow-lg"
+            >
+              <span slot="footer" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600">
+                Manage users
+                <span aria-hidden="true">→</span>
+              </span>
+            </FeatureCard>
+          </a>
+
+          <a
+            href="/app/admin/roles"
+            class="group block focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 focus-visible:ring-offset-2"
+          >
+            <FeatureCard
+              title="Roles"
+              description="Review the access roles that shape administrative permissions and see how many users belong to each."
+              icon="fas fa-id-badge"
+              class="h-full transition duration-200 group-hover:-translate-y-1 group-hover:shadow-lg"
+            >
+              <span slot="footer" class="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600">
+                Explore roles
+                <span aria-hidden="true">→</span>
+              </span>
+            </FeatureCard>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
