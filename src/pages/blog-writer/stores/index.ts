@@ -699,8 +699,8 @@ class BlogWriterStore extends BaseStore {
       ...headings.slice(0, 4).map((heading) => heading.toLowerCase()),
     ]));
     this.builder.record.seo.internalLinks = [
-      { label: 'Ansiversa dashboard', url: '/dashboard' },
-      { label: 'Pricing', url: '/pricing' },
+      { label: 'Ansiversa dashboard', url: '/app/dashboard' },
+      { label: 'Pricing', url: '/app/pricing' },
     ];
     this.builder.record.seo.score = Math.min(100, 65 + this.builder.record.seo.keywords.length * 4);
     this.builder.record.seo.readability = this.builder.stats.readingMinutes > 5 ? 'B' : 'A';

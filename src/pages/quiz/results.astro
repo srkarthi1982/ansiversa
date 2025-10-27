@@ -9,7 +9,7 @@ import { db, Question, Platform, Subject, Topic, Roadmap, eq, desc, inArray } fr
 const session = await getSessionWithUser(Astro.cookies);
 if (!session?.user) {
   const target = `${Astro.url.pathname}${Astro.url.search}`;
-  return Astro.redirect(`/login?redirect=${encodeURIComponent(target)}`);
+  return Astro.redirect(`/app/login?redirect=${encodeURIComponent(target)}`);
 }
 const user = session.user;
 

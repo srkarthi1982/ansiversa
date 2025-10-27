@@ -74,11 +74,11 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
           <span class="text-[0.625rem] uppercase">Curated App Suite</span>
         </a>
         <nav class="hidden md:flex items-center gap-8 text-sm">
-          <a href="/features" class="hover:text-indigo-600">Features</a>
-          <a href="/pricing" class="hover:text-indigo-600">Pricing</a>
-          <a href="/documentation" class="hover:text-indigo-600">Docs</a>
-          <a href="/faq" class="hover:text-indigo-600">FAQ</a>
-          <a href="/contact" class="hover:text-indigo-600">Contact</a>
+          <a href="/app/features" class="hover:text-indigo-600">Features</a>
+          <a href="/app/pricing" class="hover:text-indigo-600">Pricing</a>
+          <a href="/app/documentation" class="hover:text-indigo-600">Docs</a>
+          <a href="/app/faq" class="hover:text-indigo-600">FAQ</a>
+          <a href="/app/contact" class="hover:text-indigo-600">Contact</a>
         </nav>
         <div class="hidden md:flex items-center gap-3">
           {isLoggedIn ? (
@@ -92,21 +92,21 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
                 <p class="text-sm font-semibold text-slate-900">{username}</p>
               </div>
               <a
-                href="/dashboard"
+                href="/app/dashboard"
                 class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
                 x-on:click="$dispatch('dropdown-close')"
               >
                 Dashboard
               </a>
               <a
-                href="/settings"
+                href="/app/settings"
                 class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
                 x-on:click="$dispatch('dropdown-close')"
               >
                 Settings
               </a>
               <a
-                href="/change-password"
+                href="/app/change-password"
                 class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
                 x-on:click="$dispatch('dropdown-close')"
               >
@@ -124,7 +124,7 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
             </Dropdown>
           ) : (
             <a
-              href="/login"
+              href="/app/login"
               class="inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
             >
               Log in
@@ -153,11 +153,11 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
       </div>
       <div x-show="open" x-transition.duration.200ms x-cloak class="md:hidden pb-4">
         <div class="flex flex-col gap-2 text-sm">
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/faq" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQ</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/contact" class="px-3 py-2 rounded-lg hover:bg-slate-100">Contact</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/faq" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQ</a>
+          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/contact" class="px-3 py-2 rounded-lg hover:bg-slate-100">Contact</a>
           <div class="mt-4">
             {isLoggedIn ? (
               <Dropdown
@@ -186,21 +186,21 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
                   </svg>
                 </span>
                 <a
-                  href="/dashboard"
+                  href="/app/dashboard"
                   class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
                   x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
                 >
                   Dashboard
                 </a>
                 <a
-                  href="/settings"
+                  href="/app/settings"
                   class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
                   x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
                 >
                   Settings
                 </a>
                 <a
-                  href="/change-password"
+                  href="/app/change-password"
                   class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
                   x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
                 >
@@ -218,7 +218,7 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
               </Dropdown>
             ) : (
               <a
-                href="/login"
+                href="/app/login"
                 class="flex w-full items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
                 x-on:click="open=false; $dispatch('dropdown-close')"
               >
@@ -253,7 +253,7 @@ const shouldShowBreadcrumb = Astro.url.pathname !== '/';
           </div>
           <div class="flex gap-3">
             {!isLoggedIn && (
-              <Button href="/signup" variant="light" size="lg">
+              <Button href="/app/signup" variant="light" size="lg">
                 Get started
               </Button>
             )}

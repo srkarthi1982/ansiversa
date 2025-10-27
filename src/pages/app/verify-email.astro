@@ -1,7 +1,7 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Button from "../components/Button.astro";
-import { consumeEmailVerificationToken } from '../actions/auth/helpers';
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import { consumeEmailVerificationToken } from '../../actions/auth/helpers';
 
 const token = Astro.url.searchParams.get('token');
 
@@ -65,7 +65,7 @@ if (token) {
       <Button href="/" variant="ghost">
         Back home
       </Button>
-      <Button href="/login" variant="primary">
+      <Button href="/app/login" variant="primary">
         Log in
       </Button>
     </div>

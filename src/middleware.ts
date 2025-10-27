@@ -32,7 +32,7 @@ export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redir
     user = null;
   }
 
-  const protectedPrefixes = ['/dashboard', '/settings', '/change-password'];
+  const protectedPrefixes = ['/app/dashboard', '/app/settings', '/app/change-password'];
   const normalizedPathname = url.pathname.replace(/\/+$/, '') || '/';
   const normalizedPath = normalizedPathname.toLowerCase();
   const pathSegments = normalizedPath.split('/').filter(Boolean);
@@ -50,7 +50,7 @@ export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redir
   const isAuthed = Boolean(session);
 
   if (!isAuthed && requiresAuth) {
-    return redirect('/login');
+    return redirect('/app/login');
   }
 
   if (session) {
@@ -59,7 +59,7 @@ export const onRequest: MiddlewareHandler = async ({ locals, url, cookies, redir
   if (user) {
     locals.user = user;
     if (includesAdminSegment && user.roleId !== 1) {
-      return redirect('/unauthorized');
+      return redirect('/app/unauthorized');
     }
   }
   return next();
