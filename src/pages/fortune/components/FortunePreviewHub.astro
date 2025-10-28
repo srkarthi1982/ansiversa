@@ -1,0 +1,330 @@
+---
+const tabs = [
+  { key: 'daily', label: 'Daily Fortune', icon: 'fas fa-sun' },
+  { key: 'yesno', label: 'Yes/No Oracle', icon: 'fas fa-coins' },
+  { key: 'spread', label: 'Spreads', icon: 'fas fa-layer-group' },
+  { key: 'zodiac', label: 'Zodiac Feed', icon: 'fas fa-star' },
+  { key: 'numsum', label: 'Numerology', icon: 'fas fa-infinity' },
+];
+---
+<section
+  id="fortune-preview"
+  class="bg-white py-16 text-slate-900"
+  x-data="{
+    fortune: $store.fortuneOracle,
+    rerollReason: '',
+    yesnoQuestion: $store.fortuneOracle.state.yesno.question,
+    birthdate: $store.fortuneOracle.state.selectedBirthdate,
+    ask() {
+      this.fortune.askYesNo(this.yesnoQuestion);
+    },
+    reroll() {
+      this.fortune.rerollDaily(this.rerollReason || 'Exploring clarity');
+      this.rerollReason = '';
+    },
+    updateBirthdate() {
+      this.fortune.updateNumerology(this.birthdate);
+    },
+  }"
+>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Preview the reading hub</h2>
+      <p class="mt-3 text-base text-slate-600">
+        Toggle between seeded readings, check cooldowns, and experience the safeguards that keep Fortune Teller playful and
+        responsible.
+     </p>
+    </div>
+    <div class="mt-12 grid gap-6 lg:grid-cols-[280px,1fr]">
+      <nav class="space-y-2 rounded-3xl border border-slate-200 bg-slate-50/70 p-4">
+        {tabs.map((tab) => (
+          <button
+            type="button"
+            class="w-full rounded-2xl px-4 py-3 text-left text-sm font-semibold transition"
+            :class="fortune.state.activeView === '{tab.key}' ? 'bg-white text-indigo-600 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:bg-white'"
+            @click="fortune.setActiveView('{tab.key}')"
+          >
+            <span class="inline-flex items-center gap-3">
+              <i class={`${tab.icon} text-xs`}></i>
+              {tab.label}
+            </span>
+          </button>
+        ))}
+        <div class="rounded-2xl border border-dashed border-slate-200 bg-white/60 px-4 py-3 text-xs text-slate-500">
+          <p class="font-semibold text-slate-700">Personalization snapshot</p>
+          <p class="mt-1">Theme <span class="font-semibold" x-text="fortune.state.activeTheme"></span></p>
+          <p class="mt-1">Mood <span class="font-semibold" x-text="fortune.state.activeMood"></span></p>
+          <p class="mt-1">Intent <span class="font-semibold" x-text="fortune.state.activeIntent"></span></p>
+        </div>
+      </nav>
+      <div class="space-y-10">
+        <section x-show="fortune.state.activeView === 'daily'" x-cloak class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">Seeded daily fortune</h3>
+              <p class="text-sm text-slate-500">Deterministic seeds based on nickname, intent, and date.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+              <i class="fas fa-seedling text-[10px]"></i>
+              <span x-text="fortune.state.daily?.seed ?? '—'"></span>
+            </span>
+          </header>
+          <div class="mt-6 grid gap-4 lg:grid-cols-2">
+            <article class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Card</p>
+              <p class="mt-2 text-2xl font-bold text-slate-900" x-text="fortune.state.daily?.cardTitle ?? 'Loading'"></p>
+              <p class="mt-2 text-sm text-slate-600" x-text="fortune.state.daily?.summary ?? ''"></p>
+              <dl class="mt-4 space-y-1 text-xs text-slate-500">
+                <div class="flex justify-between">
+                  <dt>Orientation</dt>
+                  <dd class="font-semibold text-slate-700" x-text="fortune.state.daily?.orientation ?? ''"></dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt>Lucky focus</dt>
+                  <dd class="font-semibold text-slate-700" x-text="fortune.state.daily?.luckyFocus ?? ''"></dd>
+                </div>
+                <div class="flex justify-between">
+                  <dt>Affirmation</dt>
+                  <dd class="text-right text-slate-600" x-text="fortune.state.daily?.affirmation ?? ''"></dd>
+                </div>
+              </dl>
+            </article>
+            <div class="space-y-4">
+              <div class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tiny action</p>
+                <p class="mt-2 text-sm text-slate-700" x-text="fortune.state.daily?.action ?? ''"></p>
+              </div>
+              <form class="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm" @submit.prevent="reroll()">
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Reroll once</label>
+                <p class="mt-1 text-xs text-slate-500">Share a reason — we log it to improve copy variety.</p>
+                <div class="mt-3 flex flex-col gap-3 sm:flex-row">
+                  <input
+                    type="text"
+                    class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                    placeholder="Reason (optional)"
+                    x-model="rerollReason"
+                  />
+                  <button
+                    type="submit"
+                    class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500 disabled:cursor-not-allowed disabled:bg-slate-300"
+                    :disabled="fortune.state.dailyRerollsUsed >= fortune.state.dailyRerollLimit"
+                  >
+                    <i class="fas fa-rotate text-xs"></i>
+                    Reroll daily
+                  </button>
+                </div>
+                <p class="mt-2 text-xs text-slate-500">
+                  Rerolls used:
+                  <span class="font-semibold text-slate-700" x-text="fortune.state.dailyRerollsUsed"></span>
+                  <span class="px-1 text-slate-400">/</span>
+                  <span class="font-semibold text-slate-700" x-text="fortune.state.dailyRerollLimit"></span>
+                </p>
+          </div>
+        </section>
+
+        <section x-show="fortune.state.activeView === 'yesno'" x-cloak class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">Yes/No oracle</h3>
+              <p class="text-sm text-slate-500">Cooldown prevents spam; we store hashed questions to detect repeats.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+              Cooldown
+              <span class="font-semibold" x-text="fortune.state.yesno.cooldownRemaining ? `${fortune.state.yesno.cooldownRemaining}s` : 'Ready'"></span>
+            </span>
+          </header>
+          <form class="mt-6 flex flex-col gap-3 sm:flex-row" @submit.prevent="ask()">
+            <input
+              type="text"
+              class="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm shadow-inner focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              placeholder="Ask a question (3-240 chars)"
+              x-model="yesnoQuestion"
+              minlength="3"
+              maxlength="240"
+            />
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500"
+            >
+              <i class="fas fa-crystal-ball text-xs"></i>
+              Reveal answer
+            </button>
+          </form>
+          <p class="mt-3 text-xs text-rose-500" x-show="fortune.state.yesno.error" x-text="fortune.state.yesno.error" x-cloak></p>
+          <div class="mt-6 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Outcome</p>
+            <p class="mt-2 text-2xl font-bold text-slate-900" x-text="fortune.state.yesno.outcome?.toUpperCase() ?? '—'"></p>
+            <p class="mt-2 text-sm text-slate-600" x-text="fortune.state.yesno.oneLiner ?? ''"></p>
+            <p class="mt-3 text-xs text-slate-500">
+              Seed
+              <span class="font-semibold text-slate-700" x-text="fortune.state.yesno.seed ?? '—'"></span>
+            </p>
+
+        <section x-show="fortune.state.activeView === 'spread'" x-cloak class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">Interactive spreads</h3>
+              <p class="text-sm text-slate-500">Choose spread size and focus area — we enforce seed diversity to avoid repeats.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+              <span class="rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-600" x-text="fortune.state.spread?.seed ?? '—'"></span>
+            </div>
+          </header>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <button
+              type="button"
+              class="rounded-full border px-4 py-2 text-xs font-semibold transition"
+              :class="fortune.state.spread?.spread === '3-card' ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-200 text-slate-600 hover:border-indigo-200'"
+              @click="fortune.setSpreadType('3-card')"
+            >
+              3-card
+            </button>
+            <button
+              type="button"
+              class="rounded-full border px-4 py-2 text-xs font-semibold transition"
+              :class="fortune.state.spread?.spread === '5-card' ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-200 text-slate-600 hover:border-indigo-200'"
+              @click="fortune.setSpreadType('5-card')"
+            >
+              5-card
+            </button>
+            <template x-for="intent in fortune.state.focusAreas" :key="intent">
+              <button
+                type="button"
+                class="rounded-full border px-4 py-2 text-xs font-semibold capitalize transition"
+                :class="fortune.state.activeFocus === intent ? 'border-indigo-500 bg-indigo-50 text-indigo-600' : 'border-slate-200 text-slate-600 hover:border-indigo-200'"
+                @click="fortune.setFocus(intent)"
+              >
+                <span x-text="intent"></span>
+              </button>
+            </template>
+          </div>
+          <div class="mt-6 grid gap-4 lg:grid-cols-2">
+            <template x-for="card in fortune.state.spread?.cards ?? []" :key="card.position">
+              <article class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500" x-text="card.position"></p>
+                <p class="mt-2 text-lg font-semibold text-slate-900" x-text="card.cardTitle"></p>
+                <p class="text-xs text-slate-500" x-text="card.orientation"></p>
+                <p class="mt-2 text-sm text-slate-600" x-text="card.text"></p>
+              </article>
+            </template>
+          </div>
+          <div class="mt-6 rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Suggested actions</p>
+            <ul class="mt-2 list-disc space-y-1 pl-5 text-sm text-slate-600">
+              <template x-for="action in fortune.state.spread?.actions ?? []" :key="action">
+                <li x-text="action"></li>
+              </template>
+            </ul>
+          </div>
+        </section>
+
+        <section x-show="fortune.state.activeView === 'zodiac'" x-cloak class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">Zodiac feed</h3>
+              <p class="text-sm text-slate-500">Daily and weekly themes rotate by deck and seed; Pro unlocks archives.</p>
+            </div>
+            <div class="flex items-center gap-2 text-xs text-slate-500">
+              <button
+                type="button"
+                class="rounded-full px-3 py-1 font-semibold transition"
+                :class="fortune.state.selectedPeriod === 'daily' ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-600'"
+                @click="fortune.updateZodiac(fortune.state.selectedSign, 'daily')"
+              >
+                Daily
+              </button>
+              <button
+                type="button"
+                class="rounded-full px-3 py-1 font-semibold transition"
+                :class="fortune.state.selectedPeriod === 'weekly' ? 'bg-indigo-50 text-indigo-600' : 'bg-slate-100 text-slate-600'"
+                @click="fortune.updateZodiac(fortune.state.selectedSign, 'weekly')"
+              >
+                Weekly
+              </button>
+            </div>
+          </header>
+          <div class="mt-6 flex flex-wrap items-center gap-3">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Sign</label>
+            <select
+              class="rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+              x-model="fortune.state.selectedSign"
+              @change="fortune.updateZodiac(fortune.state.selectedSign, fortune.state.selectedPeriod)"
+            >
+              <template x-for="profile in fortune.state.zodiacProfiles" :key="profile.sign">
+                <option :value="profile.sign" x-text="`${profile.icon} ${profile.label}`"></option>
+              </template>
+            </select>
+          </div>
+          <article class="mt-6 space-y-4 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <p class="text-sm font-semibold text-slate-900" x-text="fortune.state.zodiac?.title ?? ''"></p>
+              <span class="text-xs uppercase tracking-wide text-slate-500" x-text="fortune.state.zodiac?.sign ?? ''"></span>
+            </div>
+            <p class="text-sm text-slate-600" x-text="fortune.state.zodiac?.text ?? ''"></p>
+            <ul class="list-disc space-y-1 pl-5 text-xs text-slate-500">
+              <template x-for="point in fortune.state.zodiac?.highlights ?? []" :key="point">
+                <li x-text="point"></li>
+              </template>
+            </ul>
+            <p class="text-xs text-slate-500">
+              Mantra: <span class="font-semibold text-slate-700" x-text="fortune.state.zodiac?.mantra ?? ''"></span>
+           </p>
+          </article>
+        </section>
+
+        <section x-show="fortune.state.activeView === 'numsum'" x-cloak class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">Numerology-style summary</h3>
+              <p class="text-sm text-slate-500">We compute a playful life-path number, then surface strengths and growth edges.</p>
+            </div>
+          </header>
+          <form class="mt-6 flex flex-col gap-3 sm:flex-row" @submit.prevent="updateBirthdate()">
+            <label class="flex w-full flex-col text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Birth date
+              <input
+                type="date"
+                class="mt-2 rounded-xl border border-slate-200 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30"
+                x-model="birthdate"
+              />
+            </label>
+            <button
+              type="submit"
+              class="inline-flex items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow hover:bg-indigo-500"
+            >
+              <i class="fas fa-infinity text-xs"></i>
+              Refresh summary
+            </button>
+          </form>
+          <div class="mt-6 rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Life path</p>
+            <p class="mt-2 text-3xl font-bold text-slate-900" x-text="fortune.state.numerology?.lifePath ?? '—'"></p>
+            <p class="mt-2 text-sm text-slate-600" x-text="fortune.state.numerology?.archetype ?? ''"></p>
+            <p class="mt-2 text-sm text-slate-600" x-text="fortune.state.numerology?.summary ?? ''"></p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Strengths</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-500">
+                  <template x-for="item in fortune.state.numerology?.strengths ?? []" :key="item">
+                    <li x-text="item"></li>
+                  </template>
+                </ul>
+              </div>
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Growth invites</p>
+                <ul class="mt-2 list-disc space-y-1 pl-5 text-xs text-slate-500">
+                  <template x-for="item in fortune.state.numerology?.growth ?? []" :key="item">
+                    <li x-text="item"></li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+            <p class="mt-3 text-xs text-slate-500">
+              Mantra: <span class="font-semibold text-slate-700" x-text="fortune.state.numerology?.mantra ?? ''"></span>
+           </p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>
