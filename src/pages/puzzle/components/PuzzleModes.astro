@@ -1,0 +1,169 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-slate-50 py-20 text-slate-900">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Play Modes"
+      title="Choose how you puzzle"
+      description="Solo drills, daily spotlights, story packs, and sprint-ready micro boards share a common scoring engine with cross-app streaks."
+      align="center"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[0.7fr_0.3fr]">
+      <div class="grid gap-4 sm:grid-cols-2">
+        <template x-for="mode in puzzle.state.modes" :key="mode.id">
+          <button
+            type="button"
+            class="flex h-full flex-col justify-between rounded-3xl border p-6 text-left transition"
+            :class="
+              mode.id === puzzle.state.activeModeId
+                ? 'border-purple-500 bg-white shadow-lg shadow-purple-200'
+                : 'border-slate-200 bg-white hover:border-purple-400 hover:shadow-sm'
+            "
+            @click.prevent="puzzle.setActiveMode(mode.id)"
+          >
+            <div class="space-y-4">
+              <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-600">
+                <i class="fas" :class="mode.icon"></i>
+              </span>
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900" x-text="mode.name"></h3>
+                <p class="mt-2 text-sm text-slate-600" x-text="mode.description"></p>
+              </div>
+              <ul class="space-y-2 text-sm text-slate-600">
+                <template x-for="item in mode.highlights" :key="item">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-star text-[10px] text-purple-500"></i>
+                    <span x-text="item"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="pt-4">
+              <span class="inline-flex items-center gap-2 text-sm font-semibold text-purple-600">
+                <i class="fas fa-arrow-right text-xs"></i>
+                <span x-text="mode.cta"></span>
+              </span>
+            </div>
+          </button>
+        </template>
+      </div>
+      <div class="flex flex-col gap-4">
+        <div class="rounded-3xl border border-purple-200 bg-white p-6 shadow-sm">
+          <header class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Daily spotlight</p>
+              <h3
+                class="text-lg font-semibold text-slate-900"
+                x-text="
+                  puzzle.state.types.find((type) => type.id === puzzle.state.daily?.typeId)?.name ??
+                  puzzle.state.daily?.typeId ??
+                  '—'
+                "
+              ></h3>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              class="bg-purple-500 text-white hover:bg-purple-400"
+              @click.prevent="puzzle.recordDailyResult(525000, 0.95, 1)"
+              :disabled="!puzzle.state.daily"
+            >
+              Submit demo run
+            </Button>
+          </header>
+          <p class="mt-2 text-sm text-slate-600">
+            Difficulty:
+            <span class="font-semibold" x-text="puzzle.state.daily?.difficulty ?? '—'"></span>
+            · Seed
+            <span class="font-mono text-xs" x-text="puzzle.state.daily?.seed ?? ''"></span>
+          </p>
+          <div class="mt-4 space-y-2 text-sm text-slate-600">
+            <template x-if="puzzle.state.daily">
+              <template x-for="entry in puzzle.state.daily?.leaderboard" :key="entry.user">
+                <div class="flex items-center justify-between rounded-2xl border border-slate-200 px-3 py-2">
+                  <span class="font-semibold text-slate-900" x-text="entry.user"></span>
+                  <div class="flex items-center gap-4 text-xs text-slate-500">
+                    <span>
+                      <i class="fas fa-stopwatch mr-1 text-[10px] text-purple-500"></i>
+                      <span x-text="(entry.timeMs / 1000).toFixed(0) + 's'"></span>
+                    </span>
+                    <span>
+                      <i class="fas fa-bullseye mr-1 text-[10px] text-emerald-500"></i>
+                      <span x-text="Math.round(entry.accuracy * 100) + '%' "></span>
+                    </span>
+                    <span>
+                      <i class="fas fa-lightbulb-on mr-1 text-[10px] text-amber-400"></i>
+                      <span x-text="entry.hintsUsed"></span>
+                    </span>
+                  </div>
+                </div>
+              </template>
+            </template>
+            <p x-show="!puzzle.state.daily" class="text-slate-400" x-cloak>
+              Daily challenge loads automatically at midnight UTC.
+            </p>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex items-center justify-between">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Time Attack</p>
+              <h3 class="text-lg font-semibold text-slate-900" x-text="puzzle.activeTimeAttackRound?.title ?? 'Pick a round'"></h3>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              class="border-purple-300 text-purple-600"
+              @click.prevent="puzzle.startTimeAttack(puzzle.state.timeAttack.rounds[0]?.id)"
+              :disabled="!puzzle.state.timeAttack.rounds.length"
+            >
+              Start blitz
+            </Button>
+          </header>
+          <p class="mt-2 text-sm text-slate-600" x-text="puzzle.activeTimeAttackRound?.examplePrompt ?? 'Select a round to preview the sprint.'"></p>
+          <div class="mt-4 space-y-2">
+            <template x-for="round in puzzle.state.timeAttack.rounds" :key="round.id">
+              <button
+                type="button"
+                class="w-full rounded-2xl border px-3 py-2 text-left text-sm transition"
+                :class="
+                  round.id === puzzle.state.timeAttack.activeRoundId
+                    ? 'border-purple-400 bg-purple-50'
+                    : 'border-slate-200 hover:border-purple-400'
+                "
+                @click.prevent="puzzle.startTimeAttack(round.id)"
+              >
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-slate-900" x-text="round.title"></span>
+                  <span class="text-xs text-slate-500">
+                    <i class="fas fa-clock mr-1 text-[10px] text-purple-400"></i>
+                    <span x-text="round.durationSeconds + 's'"></span>
+                  </span>
+                </div>
+                <div class="mt-1 flex items-center justify-between text-xs text-slate-500">
+                  <span>Best <span x-text="round.bestScore"></span> pts</span>
+                  <span>Type <span class="font-semibold" x-text="round.puzzleTypeId"></span></span>
+                </div>
+              </button>
+            </template>
+          </div>
+          <div class="mt-4 rounded-2xl border border-dashed border-purple-300 bg-purple-50/60 p-4 text-xs text-purple-700">
+            <p>
+              <i class="fas fa-chart-line mr-2 text-[10px]"></i>
+              Current streak:
+              <span class="font-semibold" x-text="puzzle.state.timeAttack.streak"></span>
+              · Score
+              <span class="font-semibold" x-text="puzzle.state.timeAttack.score"></span>
+              · Remaining
+              <span class="font-semibold" x-text="puzzle.state.timeAttack.remainingSeconds + 's'"></span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

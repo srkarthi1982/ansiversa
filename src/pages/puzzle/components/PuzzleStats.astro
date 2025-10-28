@@ -1,0 +1,142 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-slate-100 py-20 text-slate-900">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Analytics & Hints"
+      title="Stay on top of performance"
+      description="Track solve speed, accuracy, and hint usage across every mode. Leaderboard exports and streak sync keep Puzzle Zone aligned with the wider Ansiversa universe."
+      align="center"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[0.4fr_0.6fr]">
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-purple-500">Hint engine</h3>
+          <p class="mt-2 text-sm text-slate-600">
+            Request contextual hints or run targeted checks. Penalties adjust streak and scoring automatically.
+          </p>
+          <div class="mt-4 flex flex-wrap gap-3">
+            <Button type="button" size="sm" class="bg-purple-500 text-white hover:bg-purple-400" @click.prevent="puzzle.requestHint('cell')">
+              <i class="fas fa-eye text-[10px]"></i>
+              Reveal cell hint
+            </Button>
+            <Button type="button" size="sm" variant="outline" class="border-purple-300 text-purple-600" @click.prevent="puzzle.requestHint('word')">
+              <i class="fas fa-book text-[10px]"></i>
+              Reveal word/row
+            </Button>
+            <Button type="button" size="sm" variant="ghost" class="text-slate-600" @click.prevent="puzzle.checkProgress('board')">
+              <i class="fas fa-shield-check text-[10px]"></i>
+              Check entire board
+            </Button>
+          </div>
+          <p class="mt-4 text-xs text-slate-500">
+            Hint tokens remaining:
+            <span class="font-semibold text-slate-900" x-text="puzzle.state.hintsRemaining"></span>
+            · Total hints used:
+            <span class="font-semibold text-slate-900" x-text="puzzle.state.stats.hintsUsed"></span>
+          </p>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-purple-500">Integrations</h3>
+          <p class="mt-2 text-sm text-slate-600">
+            Puzzle Zone taps into the rest of Ansiversa. Export stats, sync vocab decks, and share streak boosts in minutes.
+          </p>
+          <ul class="mt-4 space-y-3 text-sm text-slate-600">
+            <template x-for="integration in puzzle.state.integrations" :key="integration.id">
+              <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-slate-900" x-text="integration.title"></span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
+                    <i class="fas" :class="integration.icon"></i>
+                    <span x-text="integration.relatedApp"></span>
+                  </span>
+                </div>
+                <ul class="mt-3 space-y-1 text-xs text-slate-500">
+                  <template x-for="action in integration.actions" :key="action">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-circle text-[6px] text-purple-400"></i>
+                      <span x-text="action"></span>
+                    </li>
+                  </template>
+                </ul>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Performance snapshot</p>
+              <h3 class="text-lg font-semibold text-slate-900">Lifetime stats</h3>
+            </div>
+            <Button type="button" size="sm" variant="outline" class="border-purple-300 text-purple-600" @click.prevent="puzzle.logSolve({ mode: 'solo', timeMs: 420000, accuracy: 0.97, hintsUsed: 0 })">
+              <i class="fas fa-file-export text-[10px]"></i>
+              Log sample solve
+            </Button>
+          </header>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Puzzles solved</p>
+              <p class="mt-2 text-3xl font-bold text-slate-900" x-text="puzzle.state.stats.puzzlesSolved"></p>
+              <p class="mt-1 text-xs text-slate-500">Across all puzzle types</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Completion rate</p>
+              <p class="mt-2 text-3xl font-bold text-slate-900" x-text="Math.round(puzzle.state.stats.completionRate * 100) + '%' "></p>
+              <p class="mt-1 text-xs text-slate-500">Solved vs. attempted</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Average time</p>
+              <p class="mt-2 text-3xl font-bold text-slate-900" x-text="Math.round(puzzle.state.stats.averageTimeMs / 1000) + 's'"></p>
+              <p class="mt-1 text-xs text-slate-500">Adaptive smoothing applied</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-500">Accuracy</p>
+              <p class="mt-2 text-3xl font-bold text-slate-900" x-text="Math.round(puzzle.state.stats.accuracy * 100) + '%' "></p>
+              <p class="mt-1 text-xs text-slate-500">Hints automatically adjust scoring</p>
+            </div>
+          </div>
+          <div class="mt-5 rounded-2xl border border-dashed border-purple-300 bg-purple-50 p-4 text-xs text-purple-700">
+            <p>
+              <i class="fas fa-fire mr-2 text-[10px]"></i>
+              Current streak:
+              <span class="font-semibold" x-text="puzzle.state.stats.streakDays"></span>
+              days · Best streak
+              <span class="font-semibold" x-text="puzzle.state.stats.bestStreak"></span>
+              days.
+            </p>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-purple-500">Export options</h3>
+          <p class="mt-2 text-sm text-slate-600">
+            Export puzzle states and solutions to JSON, PNG, or PDF. Pro plans unlock template branding controls.
+          </p>
+          <div class="mt-4 grid gap-3 sm:grid-cols-3">
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center text-sm">
+              <i class="fas fa-file-code mb-2 text-lg text-purple-500"></i>
+              JSON snapshot
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center text-sm">
+              <i class="fas fa-file-pdf mb-2 text-lg text-purple-500"></i>
+              PDF proof
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-center text-sm">
+              <i class="fas fa-image mb-2 text-lg text-purple-500"></i>
+              PNG board
+            </div>
+          </div>
+          <Button type="button" size="sm" class="mt-6 bg-purple-500 text-white hover:bg-purple-400" @click.prevent="puzzle.logSolve({ mode: 'packs', timeMs: 360000, accuracy: 0.9, hintsUsed: 0 })">
+            <i class="fas fa-cloud-arrow-up text-[10px]"></i>
+            Sync export to Analytics
+          </Button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,116 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="relative overflow-hidden py-16 sm:py-20">
+  <div class="absolute inset-0 bg-gradient-to-br from-purple-100 via-white to-sky-100"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-center lg:px-8">
+    <div class="space-y-6 text-center lg:w-7/12 lg:text-left">
+      <span class="inline-flex items-center gap-2 rounded-full bg-purple-200 px-4 py-1.5 text-sm font-semibold text-purple-700">
+        <i class="fas fa-puzzle-piece text-xs"></i>
+        Logic & word-play studio
+      </span>
+      <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+        Puzzle Zone
+      </h1>
+      <p class="text-base text-slate-600 sm:text-lg">
+        Build and solve Sudoku, crosswords, word searches, nonograms, and more — all wired with adaptive hints,
+        streak analytics, and seamless exports. Every run is generator-backed with uniqueness checks and instant sharing.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+        <Button type="button" class="shadow-sm" @click.prevent="puzzle.setActiveMode('solo')">
+          <i class="fas fa-play text-xs"></i>
+          Launch Solo Studio
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          @click.prevent="puzzle.refreshDailySeed()"
+          :disabled="!puzzle.state.daily"
+        >
+          <i class="fas fa-rotate text-xs"></i>
+          Refresh daily seed
+        </Button>
+        <Button type="button" variant="ghost" @click.prevent="puzzle.grantHintToken()">
+          <i class="fas fa-sparkles text-xs"></i>
+          Boost hints
+        </Button>
+      </div>
+      <dl class="grid gap-4 text-left sm:grid-cols-3">
+        <div class="rounded-2xl border border-purple-100 bg-white/80 p-4 shadow-sm">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-purple-600">Active type</dt>
+          <dd class="mt-1 text-2xl font-bold text-slate-900" x-text="puzzle.activeType?.name ?? 'Pick one'"></dd>
+          <dd class="mt-1 text-xs text-slate-500" x-text="puzzle.activeType?.tagline ?? ''"></dd>
+        </div>
+        <div class="rounded-2xl border border-purple-100 bg-white/80 p-4 shadow-sm">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-purple-600">Daily streak</dt>
+          <dd class="mt-1 text-3xl font-bold text-slate-900" x-text="puzzle.state.stats.streakDays"></dd>
+          <dd class="mt-1 text-xs text-slate-500">
+            Best <span x-text="puzzle.state.stats.bestStreak"></span> days
+          </dd>
+        </div>
+        <div class="rounded-2xl border border-purple-100 bg-white/80 p-4 shadow-sm">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-purple-600">Hint tokens</dt>
+          <dd class="mt-1 text-3xl font-bold text-slate-900" x-text="puzzle.state.hintsRemaining"></dd>
+          <dd class="mt-1 text-xs text-slate-500">Complete puzzles to earn more</dd>
+        </div>
+      </dl>
+      <p class="text-xs text-slate-500" x-show="puzzle.state.lastAction" x-cloak>
+        <i class="fas fa-broadcast-tower mr-2 text-[10px] text-purple-500"></i>
+        <span x-text="puzzle.state.lastAction"></span>
+      </p>
+    </div>
+    <div class="relative w-full lg:w-5/12">
+      <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-purple-300 opacity-30 blur-xl"></div>
+      <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+        <header class="flex items-start justify-between">
+          <div>
+            <p class="text-sm font-semibold text-slate-900">Board preview</p>
+            <p class="text-xs text-slate-500" x-text="puzzle.activeType?.board.label ?? 'Select a puzzle type'"></p>
+          </div>
+          <span class="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-700">
+            <i class="fas fa-wand-magic-sparkles text-[10px]"></i>
+            Generator view
+          </span>
+        </header>
+        <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 font-mono text-sm leading-relaxed text-slate-700">
+          <template x-if="puzzle.activeType">
+            <div>
+              <template x-for="row in puzzle.activeType.board.rows" :key="row">
+                <p class="tabular-nums" x-text="row"></p>
+              </template>
+            </div>
+          </template>
+          <p x-show="!puzzle.activeType" class="text-center text-sm text-slate-500" x-cloak>
+            Choose a puzzle type to inspect the generator output.
+          </p>
+        </div>
+        <footer class="space-y-3 text-xs text-slate-500">
+          <p>
+            <i class="fas fa-microchip mr-2 text-[10px] text-purple-500"></i>
+            Generator:
+            <span class="font-semibold text-slate-700" x-text="puzzle.activeType?.generator ?? '—'"></span>
+          </p>
+          <p>
+            <i class="fas fa-shield-check mr-2 text-[10px] text-purple-500"></i>
+            Validator:
+            <span class="font-semibold text-slate-700" x-text="puzzle.activeType?.validator ?? '—'"></span>
+          </p>
+          <p x-show="puzzle.state.daily" x-cloak>
+            <i class="fas fa-sun mr-2 text-[10px] text-amber-500"></i>
+            Daily spotlight:
+            <span
+              class="font-semibold text-slate-700"
+              x-text="
+                puzzle.state.types.find((type) => type.id === puzzle.state.daily?.typeId)?.name ??
+                puzzle.state.daily?.typeId ??
+                '—'
+              "
+            ></span>
+            ·
+            <span x-text="puzzle.state.daily?.difficulty"></span>
+          </p>
+        </footer>
+      </div>
+    </div>
+  </div>
+</section>
