@@ -108,6 +108,7 @@ export const MINI_APP_SLUGS: MiniAppSlug[] = MINI_APP_DEFINITIONS.map((app) => a
 const MINI_APP_ROUTE_ALIASES: Partial<Record<MiniAppSlug, readonly string[]>> = {
   contract: ['contract-generator'],
   invoice: ['invoice-and-receipt-maker'],
+  'trivia-arena': ['trivia'],
 };
 
 export const MINI_APP_ROUTE_PREFIXES: readonly string[] = MINI_APP_DEFINITIONS.flatMap((app) => {

@@ -1,0 +1,33 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-white py-16">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Scoring"
+      title="Transparent scoring tuned for speed and mastery"
+      description="Players see exactly how they earn points, from base difficulty values to streak multipliers. Anti-cheat policies keep every submission fair."
+      align="center"
+    />
+    <div class="grid gap-6 lg:grid-cols-2">
+      <article class="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+        <h3 class="text-lg font-semibold text-slate-900">Point system</h3>
+        <ul class="space-y-2 text-sm text-slate-600">
+          <li><strong>Base points:</strong> Easy 100 · Medium 150 · Hard 200.</li>
+          <li><strong>Time bonus:</strong> <code>ceil((remaining_ms / total_ms) * 100)</code>.</li>
+          <li><strong>Streak multiplier:</strong> <code>1 + streak * 0.05</code> capped at 2x.</li>
+          <li><strong>Double points:</strong> applies after bonus math, logging both base and multiplier.</li>
+        </ul>
+      </article>
+      <article class="space-y-4 rounded-3xl border border-slate-200 bg-slate-50 p-6">
+        <h3 class="text-lg font-semibold text-slate-900">Anti-cheat guardrails</h3>
+        <ul class="space-y-2 text-sm text-slate-600">
+          <li>Server-side timestamps validate submission speed and detect tampering.</li>
+          <li>Per-question nonce ensures answers can't be replayed across sessions.</li>
+          <li>Sessions lock once all questions are answered or timer hits zero.</li>
+          <li>Async arena results include verification hashes for both players.</li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
