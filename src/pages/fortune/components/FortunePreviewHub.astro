@@ -41,8 +41,8 @@ const tabs = [
           <button
             type="button"
             class="w-full rounded-2xl px-4 py-3 text-left text-sm font-semibold transition"
-            :class="fortune.state.activeView === '{tab.key}' ? 'bg-white text-indigo-600 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:bg-white'"
-            @click="fortune.setActiveView('{tab.key}')"
+            :class="fortune.state.activeView === tab.key ? 'bg-white text-indigo-600 shadow-sm shadow-indigo-100' : 'text-slate-500 hover:bg-white'"
+            @click="fortune.setActiveView(tab.key)"
           >
             <span class="inline-flex items-center gap-3">
               <i class={`${tab.icon} text-xs`}></i>
