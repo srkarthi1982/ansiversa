@@ -10,6 +10,14 @@ declare global {
       user?: SessionUser | null;
     }
   }
+
+  interface ImportMetaEnv {
+    readonly USER_COOKIE_SECRET?: string;
+  }
+
+  interface ImportMeta {
+    readonly env: ImportMetaEnv;
+  }
 }
 
 export {};
