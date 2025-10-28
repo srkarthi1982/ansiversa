@@ -39,3 +39,4 @@ import '../pages/cover-letter-writer/stores/coverLetter';
 import '../pages/memory-trainer/stores/memoryTrainer';
 import '../pages/trivia/stores/triviaArena';
 import '../pages/concept/stores/conceptExplainer';
+import '../pages/puzzle/stores/puzzleZone';

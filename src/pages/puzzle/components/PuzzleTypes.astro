@@ -1,0 +1,130 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-slate-900 py-20 text-slate-50">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Puzzle Library"
+      title="Master every logic and word challenge"
+      description="Generators, validators, and hint engines are tuned per puzzle type so solvers get authentic difficulty without dead-ends."
+      align="center"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-purple-300"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-300"
+    />
+    <div class="mt-10 grid gap-6 lg:grid-cols-[0.45fr_0.55fr]">
+      <aside class="space-y-4">
+        <div class="flex flex-wrap gap-2">
+          <template x-for="type in puzzle.state.types" :key="type.id">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-semibold transition"
+              :class="
+                type.id === puzzle.state.activeTypeId
+                  ? 'border-purple-400 bg-purple-500/20 text-white shadow-lg shadow-purple-500/20'
+                  : 'border-white/15 bg-white/5 text-slate-200 hover:border-purple-400/60 hover:text-white'
+              "
+              @click.prevent="puzzle.selectType(type.id)"
+            >
+              <i class="fas fa-shapes text-xs"></i>
+              <span x-text="type.name"></span>
+            </button>
+          </template>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h3 class="text-lg font-semibold text-white" x-text="puzzle.activeType?.name ?? 'Select a puzzle type'"></h3>
+          <p class="mt-2 text-sm text-slate-300" x-text="puzzle.activeType?.description ?? 'Pick a puzzle to explore adaptive tools, hints, and exports.'"></p>
+          <ul class="mt-4 grid gap-2 text-sm text-slate-200">
+            <template x-if="puzzle.activeType">
+              <template x-for="item in puzzle.activeType.bestFor" :key="item">
+                <li class="flex items-center gap-2 rounded-xl bg-black/30 px-3 py-2">
+                  <i class="fas fa-check text-emerald-400"></i>
+                  <span x-text="item"></span>
+                </li>
+              </template>
+            </template>
+          </ul>
+          <div class="mt-6 flex flex-wrap gap-3">
+            <Button type="button" size="sm" variant="outline" class="border-white/30 text-white" @click.prevent="puzzle.cycleDifficulty(-1)">
+              <i class="fas fa-angle-left text-xs"></i>
+              Prev difficulty
+            </Button>
+            <Button type="button" size="sm" class="bg-purple-500 text-white hover:bg-purple-400" @click.prevent="puzzle.cycleDifficulty(1)">
+              Next difficulty
+              <i class="fas fa-angle-right text-xs"></i>
+            </Button>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h4 class="text-sm font-semibold uppercase tracking-[0.35em] text-purple-300">Hint samples</h4>
+          <ul class="mt-4 space-y-3 text-sm text-slate-200">
+            <template x-if="puzzle.activeType">
+              <template x-for="hint in puzzle.activeType.hintExamples" :key="hint">
+                <li class="rounded-2xl border border-white/10 bg-black/30 p-3 leading-relaxed">
+                  <i class="fas fa-lightbulb-on mr-2 text-[11px] text-amber-300"></i>
+                  <span x-text="hint"></span>
+                </li>
+              </template>
+            </template>
+            <li x-show="!puzzle.activeType" class="text-slate-400" x-cloak>
+              Select a puzzle type to preview hint narration.
+            </li>
+          </ul>
+        </div>
+      </aside>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <header class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-300">Difficulty presets</p>
+              <h3 class="text-xl font-semibold text-white" x-text="puzzle.activeDifficultyDefinition?.level ?? 'Difficulty'"></h3>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1 text-xs font-semibold text-slate-200">
+              <i class="fas fa-clock text-[10px]"></i>
+              <span x-text="puzzle.activeDifficultyDefinition?.targetTime ?? '—'"></span>
+            </span>
+          </header>
+          <p class="mt-3 text-sm text-slate-300" x-text="puzzle.activeDifficultyDefinition?.highlight ?? 'Cycle through presets to understand how coaching scales per mode.'"></p>
+          <div class="mt-5 grid gap-3 sm:grid-cols-2">
+            <template x-if="puzzle.activeDifficultyDefinition">
+              <template x-for="support in puzzle.activeDifficultyDefinition.supports" :key="support">
+                <div class="rounded-2xl border border-white/10 bg-black/30 p-4 text-sm text-slate-200">
+                  <i class="fas fa-sparkles mr-2 text-[10px] text-purple-300"></i>
+                  <span x-text="support"></span>
+                </div>
+              </template>
+            </template>
+            <p x-show="!puzzle.activeDifficultyDefinition" class="text-sm text-slate-400" x-cloak>
+              Choose a puzzle and difficulty to inspect support tools.
+            </p>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <header class="flex items-center justify-between">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-300">Validator insights</p>
+            <Button type="button" size="sm" variant="light" class="border-white/20 text-white" @click.prevent="puzzle.checkProgress('board')">
+              <i class="fas fa-shield-check text-[10px]"></i>
+              Run board check
+            </Button>
+          </header>
+          <div class="mt-4 grid gap-4 text-sm text-slate-200 sm:grid-cols-2">
+            <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+              <p class="font-semibold text-white">Generator</p>
+              <p class="mt-2 text-slate-300" x-text="puzzle.activeType?.generator ?? 'Select a puzzle type to view generator notes.'"></p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+              <p class="font-semibold text-white">Validator</p>
+              <p class="mt-2 text-slate-300" x-text="puzzle.activeType?.validator ?? 'Select a puzzle type to view validation logic.'"></p>
+            </div>
+          </div>
+          <p class="mt-4 text-xs text-slate-400">
+            <i class="fas fa-info-circle mr-2 text-[10px] text-purple-300"></i>
+            Checks performed this session:
+            <span class="font-semibold text-white" x-text="puzzle.state.checksPerformed"></span>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

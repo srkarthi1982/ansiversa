@@ -1,0 +1,140 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-gradient-to-br from-slate-950 via-slate-900 to-purple-900 py-20 text-slate-50">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Packs & Progress"
+      title="Story-driven puzzle journeys"
+      description="Launch themed packs with classroom sync, unlockable rewards, and cross-app benefits like Trivia Arena streak boosts and FlashNote decks."
+      align="center"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-purple-300"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-300"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[0.6fr_0.4fr]">
+      <div class="grid gap-4">
+        <template x-for="pack in puzzle.state.packs" :key="pack.id">
+          <div
+            class="rounded-3xl border p-6 transition"
+            :class="
+              pack.id === puzzle.state.activePackId
+                ? 'border-purple-400 bg-white/10 shadow-xl shadow-purple-500/20'
+                : 'border-white/10 bg-white/5 hover:border-purple-300/60'
+            "
+          >
+            <div class="flex flex-wrap items-start justify-between gap-4">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-300" x-text="pack.theme"></p>
+                <h3 class="mt-2 text-xl font-semibold text-white" x-text="pack.title"></h3>
+                <p class="mt-2 text-sm text-slate-300" x-text="pack.description"></p>
+              </div>
+              <Button
+                type="button"
+                size="sm"
+                variant="outline"
+                class="border-purple-300 text-white"
+                @click.prevent="puzzle.selectPack(pack.id)"
+              >
+                Focus pack
+              </Button>
+            </div>
+            <div class="mt-5 space-y-3 text-sm text-slate-200">
+              <div class="flex items-center justify-between">
+                <span>Progress</span>
+                <span x-text="`${pack.puzzlesCompleted}/${pack.puzzlesTotal}`"></span>
+              </div>
+              <div class="h-3 rounded-full bg-white/10">
+                <div
+                  class="h-full rounded-full bg-gradient-to-r from-purple-400 to-purple-200"
+                  :style="`width: ${(pack.puzzlesCompleted / pack.puzzlesTotal) * 100}%`"
+                ></div>
+              </div>
+              <div class="flex flex-wrap items-center gap-2 text-xs text-slate-400">
+                <span class="inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1">
+                  <i class="fas fa-gift text-[10px] text-amber-300"></i>
+                  <span x-text="pack.reward"></span>
+                </span>
+                <span class="inline-flex items-center gap-2 rounded-full bg-black/40 px-3 py-1">
+                  <i class="fas fa-layer-group text-[10px] text-purple-200"></i>
+                  <span x-text="pack.difficultyMix.join(' • ')"></span>
+                </span>
+              </div>
+            </div>
+            <div class="mt-5 flex flex-wrap gap-3">
+              <Button
+                type="button"
+                size="sm"
+                class="bg-purple-500 text-white hover:bg-purple-400"
+                @click.prevent="puzzle.advancePack(pack.id)"
+              >
+                <i class="fas fa-check text-[10px]"></i>
+                Log solve
+              </Button>
+              <Button type="button" size="sm" variant="ghost" class="text-slate-200">
+                <i class="fas fa-share-nodes text-[10px]"></i>
+                Share progress
+              </Button>
+            </div>
+          </div>
+        </template>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-purple-400/40 bg-white/10 p-6">
+          <header class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-purple-300">Active pack focus</p>
+              <h3 class="text-lg font-semibold text-white" x-text="puzzle.activePack?.title ?? 'Select a pack'"></h3>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-purple-500/20 px-3 py-1 text-xs font-semibold text-purple-200">
+              <i class="fas fa-users text-[10px]"></i>
+              Classroom ready
+            </span>
+          </header>
+          <p class="mt-3 text-sm text-slate-200" x-text="puzzle.activePack?.description ?? 'Pick a pack to see feature highlights, featured puzzle types, and rewards.'"></p>
+          <div class="mt-4 space-y-2 text-sm text-slate-200">
+            <template x-if="puzzle.activePack">
+              <template x-for="typeId in puzzle.activePack?.featuredTypeIds" :key="typeId">
+                <div class="flex items-center justify-between rounded-2xl border border-white/10 bg-black/30 px-3 py-2">
+                  <span
+                    class="font-semibold text-white"
+                    x-text="(puzzle.state.types.find((type) => type.id === typeId)?.name) ?? typeId"
+                  ></span>
+                  <span class="text-xs text-slate-400">Boosted drops</span>
+                </div>
+              </template>
+            </template>
+            <p x-show="!puzzle.activePack" class="text-slate-400" x-cloak>
+              Select a pack to reveal featured puzzle types.
+            </p>
+          </div>
+          <div class="mt-5 rounded-2xl border border-purple-300/40 bg-purple-500/10 p-4 text-xs text-purple-100">
+            <p>
+              <i class="fas fa-sparkles mr-2 text-[10px]"></i>
+              Hint tokens refresh faster once packs hit 60% completion.
+            </p>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-purple-300">Plan benefits</h3>
+          <div class="mt-4 space-y-4">
+            <template x-for="benefit in puzzle.state.planBenefits" :key="benefit.plan">
+              <div class="rounded-2xl border border-white/10 bg-black/30 p-4">
+                <p class="text-sm font-semibold text-white" x-text="benefit.plan"></p>
+                <ul class="mt-3 space-y-2 text-sm text-slate-200">
+                  <template x-for="feature in benefit.features" :key="feature">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-circle-check text-[10px] text-purple-200"></i>
+                      <span x-text="feature"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
