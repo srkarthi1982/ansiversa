@@ -2,6 +2,7 @@ import Alpine from 'alpinejs';
 import { BaseStore, clone } from '../../../alpineStores/base';
 import { actions } from 'astro:actions';
 import { createEmptyResumeData, resumeTemplateKeys, skillLevels } from '../../../lib/resume/schema';
+import { resumeBuilderSteps, type ResumeBuilderStepKey } from '../steps';
 import type {
   ResumeData,
   ResumeDocument,
@@ -24,6 +25,9 @@ type BuilderInitInput = {
 };
 
 type AutosaveTimer = ReturnType<typeof setTimeout> | null;
+
+const isStepKey = (value: string): value is ResumeBuilderStepKey =>
+  resumeBuilderSteps.some((step) => step.key === value);
 
 const templateOptions: Array<{ key: TemplateKey; label: string; icon: string; plan: 'free' | 'pro' }> = [
   { key: 'modern', label: 'Modern', icon: 'fas fa-bolt', plan: 'free' },
@@ -90,8 +94,31 @@ class ResumeStoreImpl extends BaseStore {
 
   templates = templateOptions;
 
+  builderSteps = resumeBuilderSteps;
+
+  currentBuilderStep = 1;
+
   private builderAutosaveTimer: AutosaveTimer = null;
   private sectionsOpen = new Set(['basics', 'experience', 'education', 'skills']);
+
+  private scrollToBuilderStep(key: ResumeBuilderStepKey): void {
+    if (typeof window === 'undefined') return;
+    window.requestAnimationFrame(() => {
+      const section = document.querySelector<HTMLElement>(`[data-resume-step="${key}"]`);
+      if (!section) return;
+      section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      if (typeof section.focus === 'function') {
+        section.focus({ preventScroll: true });
+      }
+    });
+  }
+
+  private setCurrentStepFromKey(key: ResumeBuilderStepKey): void {
+    const index = this.builderSteps.findIndex((step) => step.key === key);
+    if (index !== -1) {
+      this.currentBuilderStep = index + 1;
+    }
+  }
 
   private normalizeResume(input: any): ResumeListItem {
     const baseData = input?.data ?? createEmptyResumeData();
@@ -313,6 +340,7 @@ class ResumeStoreImpl extends BaseStore {
       this.state.hasUnsavedChanges = false;
       this.state.lastSavedLabel = target.lastSavedAt ?? null;
       this.sectionsOpen = new Set(['basics', 'experience', 'education', 'skills']);
+      this.currentBuilderStep = 1;
     } catch (error) {
       console.error('Unable to load resume', error);
       window.alert('Unable to load resume right now.');
@@ -419,7 +447,36 @@ class ResumeStoreImpl extends BaseStore {
       this.sectionsOpen.delete(section);
     } else {
       this.sectionsOpen.add(section);
+      if (isStepKey(section)) {
+        this.setCurrentStepFromKey(section);
+      }
     }
+  }
+
+  goToStep(step: number): void {
+    if (!this.canNavigateToStep(step)) return;
+    const target = this.builderSteps[step - 1];
+    if (!target) return;
+    this.currentBuilderStep = step;
+    if (target.key !== 'links') {
+      this.sectionsOpen.add(target.key);
+    }
+    this.scrollToBuilderStep(target.key);
+  }
+
+  goToPreviousStep(): void {
+    if (this.currentBuilderStep <= 1) return;
+    this.goToStep(this.currentBuilderStep - 1);
+  }
+
+  goToNextStep(): void {
+    if (this.currentBuilderStep >= this.builderSteps.length) return;
+    this.goToStep(this.currentBuilderStep + 1);
+  }
+
+  canNavigateToStep(step: number): boolean {
+    if (!Number.isInteger(step)) return false;
+    return step >= 1 && step <= this.builderSteps.length;
   }
 
   addExperience(): void {
@@ -438,6 +495,7 @@ class ResumeStoreImpl extends BaseStore {
       description: '',
     };
     this.builderState.data.experience.push(entry);
+    this.goToStep(this.builderSteps.findIndex((step) => step.key === 'experience') + 1);
     this.markUnsaved();
   }
 
@@ -461,6 +519,7 @@ class ResumeStoreImpl extends BaseStore {
       description: '',
     };
     this.builderState.data.education.push(entry);
+    this.goToStep(this.builderSteps.findIndex((step) => step.key === 'education') + 1);
     this.markUnsaved();
   }
 
@@ -477,9 +536,10 @@ class ResumeStoreImpl extends BaseStore {
     const link: ResumeLink = {
       id: crypto.randomUUID(),
       label: '',
-      url: 'https://',
+      url: 'https://example.com',
     };
     this.builderState.data.links.push(link);
+    this.goToStep(this.builderSteps.findIndex((step) => step.key === 'links') + 1);
     this.markUnsaved();
   }
 
@@ -506,6 +566,7 @@ class ResumeStoreImpl extends BaseStore {
     const skill: ResumeSkill = { name, level: this.skillDraft.level };
     this.builderState.data.skills.push(skill);
     this.skillDraft = { name: '', level: this.skillDraft.level };
+    this.goToStep(this.builderSteps.findIndex((step) => step.key === 'skills') + 1);
     this.markUnsaved();
   }
 
