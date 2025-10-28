@@ -1,0 +1,587 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const heroHighlights = [
+  {
+    icon: "fas fa-sparkles",
+    label: "AI-first creation",
+    blurb: "Prompt to polished outline with agenda and notes in seconds.",
+  },
+  {
+    icon: "fas fa-palette",
+    label: "Brand-ready themes",
+    blurb: "Palettes, fonts, and watermark controls baked in.",
+  },
+  {
+    icon: "fas fa-file-export",
+    label: "One-click export",
+    blurb: "Ship PPTX/PDF with presenter notes and version history.",
+  },
+];
+
+const roadmapHighlights = [
+  {
+    title: "Live collaboration",
+    description:
+      "Invite reviewers into a shared session with change tracking and quick approvals.",
+    status: "Coming soon",
+  },
+  {
+    title: "Theme marketplace",
+    description:
+      "Curated partner themes with typography rules, layout packs, and iconography.",
+    status: "Exploring",
+  },
+  {
+    title: "Analytics pulse",
+    description:
+      "Slide view tracking and engagement heatmaps for shared links.",
+    status: "In discovery",
+  },
+];
+
+const nonGoals = [
+  "No multiplayer cursor or simultaneous editing in v1.",
+  "No external stock media integrations yet — use uploads or URLs.",
+  "PDF export omits embedded video playback (PPTX retains media links).",
+];
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#presentation-designer"
+  >
+    Skip to Presentation Designer workspace
+  </a>
+  <main
+    id="presentation-designer"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ presentation: $store.presentation })"
+    x-init="presentation.init()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-slate-50 to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-7 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-display text-xs"></i>
+              Presentation studio
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Presentation Designer
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Turn ideas, outlines, or imported Ansiversa workspaces into polished decks faster than ever. Guide themes, automate smart slides, enrich with charts, and export PPTX/PDF in one workspace.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" class="shadow-sm" @click.prevent="presentation.selectMode('prompt')">
+                <i class="fas fa-pen-nib text-xs"></i>
+                Start from prompt
+              </Button>
+              <Button type="button" variant="outline" @click.prevent="presentation.selectMode('outline')">
+                <i class="fas fa-list-check text-xs"></i>
+                Paste outline
+              </Button>
+              <Button type="button" variant="ghost" @click.prevent="presentation.selectTheme('slatewave')">
+                <i class="fas fa-palette text-xs"></i>
+                Preview themes
+              </Button>
+            </div>
+            <dl class="grid gap-4 text-left sm:grid-cols-2 lg:grid-cols-3">
+              <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Slides drafted</dt>
+                <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+                  <span x-text="presentation.state.deckMetrics.slides"></span>
+                  <span class="text-xs font-semibold text-slate-500">in outline</span>
+                </dd>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Estimated runtime</dt>
+                <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+                  <span x-text="presentation.state.deckMetrics.estimatedDuration"></span>
+                  <span class="text-xs font-semibold text-slate-500">minutes</span>
+                </dd>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-white/80 p-4 shadow-sm">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Brand confidence</dt>
+                <dd class="mt-1 flex items-baseline gap-2 text-3xl font-bold text-slate-900">
+                  <span x-text="`${presentation.state.deckMetrics.confidence}%`"></span>
+                  <span class="text-xs font-semibold text-slate-500">consistency</span>
+                </dd>
+              </div>
+            </dl>
+            <div class="grid gap-3 sm:grid-cols-3">
+              {heroHighlights.map((item) => (
+                <div class="rounded-2xl border border-slate-200 bg-white/70 p-4 text-left shadow-sm" key={item.label}>
+                  <div class="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                    <i class={`${item.icon} text-indigo-500 text-xs`}></i>
+                    {item.label}
+                  </div>
+                  <p class="mt-2 text-xs text-slate-600">{item.blurb}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-50 blur-2xl"></div>
+            <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-xl">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-semibold text-slate-900" x-text="presentation.selectedMode.label"></h2>
+                <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                  <i class="fas fa-bolt text-[10px]"></i>
+                  <span x-text="presentation.selectedMode.highlight"></span>
+                </span>
+              </div>
+              <p class="text-sm text-slate-600" x-text="presentation.selectedMode.description"></p>
+              <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                <h3 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Inputs</h3>
+                <div class="mt-2 flex flex-wrap gap-2">
+                  <template x-for="field in presentation.selectedMode.inputFields" :key="field">
+                    <span class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
+                      <i class="fas fa-circle-dot text-[9px] text-indigo-500"></i>
+                      <span x-text="field"></span>
+                    </span>
+                  </template>
+                </div>
+              </div>
+              <div class="space-y-3">
+                <h3 class="text-sm font-semibold text-slate-900">Sample outline</h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                  <template x-for="section in presentation.selectedMode.sampleOutline" :key="section.title">
+                    <li class="rounded-2xl border border-slate-100 bg-white/70 p-3">
+                      <p class="font-semibold text-slate-900" x-text="section.title"></p>
+                      <ul class="mt-2 space-y-1 text-xs text-slate-500">
+                        <template x-for="point in section.bullets" :key="point">
+                          <li class="flex items-start gap-2">
+                            <i class="fas fa-check text-emerald-500 text-[10px] mt-0.5"></i>
+                            <span x-text="point"></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4 text-xs text-indigo-700">
+                <p class="font-semibold">Share link</p>
+                <p class="mt-1" x-text="presentation.state.deckMetrics.shareableLink"></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-16">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Start anywhere"
+          title="Creation pipelines for every input"
+          description="Prompt, paste, upload, or import from Ansiversa companions — each pipeline builds a structure, balances slide pacing, and queues AI helpers."
+        />
+        <div class="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="space-y-3">
+            <template x-for="mode in presentation.state.creationModes" :key="mode.id">
+              <button
+                type="button"
+                class="w-full rounded-2xl border bg-white px-4 py-3 text-left shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                :class="presentation.state.selectedModeId === mode.id ? 'border-indigo-300 ring-2 ring-indigo-200' : 'border-slate-200'"
+                @click="presentation.selectMode(mode.id)"
+              >
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900" x-text="mode.label"></p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="mode.description"></p>
+                  </div>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-600">
+                    <i class="fas fa-clock text-[9px]"></i>
+                    <span x-text="`${mode.estimatedDuration}m`"></span>
+                  </span>
+                </div>
+              </button>
+            </template>
+          </div>
+          <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <h3 class="text-lg font-semibold text-slate-900" x-text="presentation.selectedMode.label"></h3>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                <i class="fas fa-user-group text-[10px]"></i>
+                <span x-text="presentation.state.deckMetrics.audience"></span>
+              </span>
+            </div>
+            <p class="text-sm text-slate-600">
+              Slide pacing, agenda sequencing, and call-to-action slides adapt automatically to the creation mode you choose. Bring your own content or lean on Ansiversa&apos;s AI.
+            </p>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4">
+              <h4 class="text-xs font-semibold uppercase tracking-wide text-slate-500">Preview slides</h4>
+              <div class="mt-3 grid gap-3 sm:grid-cols-2">
+                <template x-for="slide in presentation.state.sampleSlides" :key="slide.id">
+                  <button
+                    type="button"
+                    class="rounded-2xl border bg-white px-4 py-3 text-left text-xs shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                    :class="presentation.state.selectedSlideId === slide.id ? 'border-indigo-300 ring-2 ring-indigo-200' : 'border-slate-200'"
+                    @click="presentation.selectSlide(slide.id)"
+                  >
+                    <p class="flex items-center justify-between gap-2 text-[11px] font-semibold text-slate-500">
+                      <span class="inline-flex items-center gap-2">
+                        <i class="fas fa-layer-group text-[10px] text-indigo-500"></i>
+                        <span x-text="slide.layoutKey"></span>
+                      </span>
+                      <span class="rounded-full bg-indigo-50 px-2 py-0.5 text-[10px] font-semibold text-indigo-600" x-text="presentation.selectedSlideId === slide.id ? 'Active' : 'Preview'"></span>
+                    </p>
+                    <p class="mt-2 text-sm font-semibold text-slate-900" x-text="slide.title"></p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="slide.context"></p>
+                  </button>
+                </template>
+              </div>
+            </div>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-4 text-xs text-indigo-700">
+              <p class="font-semibold">AI activity</p>
+              <ul class="mt-2 space-y-1">
+                <template x-for="action in presentation.state.aiActions" :key="action.id">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-robot text-[10px]"></i>
+                    <span>
+                      <span class="font-semibold" x-text="action.label"></span>
+                      <span class="block text-indigo-600/80" x-text="action.result"></span>
+                    </span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-16">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Design control"
+          title="Smart layouts and brand kit orchestration"
+          description="Switch between layout families, fine-tune brand kits, and keep every slide cohesive without leaving the workspace."
+        />
+        <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+          <div class="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900">Layout library</h3>
+                <p class="text-sm text-slate-600">Tap to explore the slide patterns that power your deck.</p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                <i class="fas fa-layer-group text-[10px]"></i>
+                <span x-text="presentation.state.slideLayouts.length + ' layouts'"></span>
+              </span>
+            </header>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="layout in presentation.state.slideLayouts" :key="layout.key">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="light"
+                  class="border text-slate-600"
+                  :class="presentation.state.selectedLayoutKey === layout.key ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white'"
+                  @click.prevent="presentation.selectLayout(layout.key)"
+                >
+                  <i class="fas fa-circle text-[7px]" :class="presentation.state.selectedLayoutKey === layout.key ? 'text-indigo-600' : 'text-slate-300'"></i>
+                  <span class="capitalize" x-text="layout.name"></span>
+                </Button>
+              </template>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-5">
+              <h4 class="text-sm font-semibold text-slate-900" x-text="presentation.selectedLayout.name"></h4>
+              <p class="mt-2 text-sm text-slate-600" x-text="presentation.selectedLayout.description"></p>
+              <dl class="mt-4 grid gap-4 text-xs text-slate-500 sm:grid-cols-2">
+                <div>
+                  <dt class="font-semibold uppercase tracking-wide">Best for</dt>
+                  <ul class="mt-2 space-y-1">
+                    <template x-for="item in presentation.selectedLayout.bestFor" :key="item">
+                      <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-[9px] text-emerald-500"></i>
+                        <span x-text="item"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+                <div>
+                  <dt class="font-semibold uppercase tracking-wide">Highlights</dt>
+                  <ul class="mt-2 space-y-1">
+                    <template x-for="point in presentation.selectedLayout.bullets" :key="point">
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-sparkles text-[9px] text-indigo-500"></i>
+                        <span x-text="point"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </dl>
+            </div>
+          </div>
+          <div class="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 class="text-lg font-semibold text-slate-900">Brand kit</h3>
+                <p class="text-sm text-slate-600">Color, typography, watermark, and footer defaults.</p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <i class="fas fa-shield-check text-[10px]"></i>
+                Brand locked-in
+              </span>
+            </header>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="theme in presentation.state.brandThemes" :key="theme.key">
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="light"
+                  class="border text-slate-600"
+                  :class="presentation.state.selectedThemeKey === theme.key ? 'border-indigo-400 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white'"
+                  @click.prevent="presentation.selectTheme(theme.key)"
+                >
+                  <i class="fas fa-swatchbook text-[10px]"></i>
+                  <span x-text="theme.name"></span>
+                </Button>
+              </template>
+            </div>
+            <div class="rounded-2xl border border-slate-100 bg-slate-50/70 p-5">
+              <h4 class="text-sm font-semibold text-slate-900" x-text="presentation.state.brandKit.name"></h4>
+              <div class="mt-4 flex flex-wrap gap-3">
+                <template x-for="color in presentation.state.brandKit.palette" :key="color">
+                  <div class="flex items-center gap-2">
+                    <span class="h-10 w-10 rounded-xl border border-white shadow" :style="`background:${color}`"></span>
+                    <span class="text-xs font-medium text-slate-600" x-text="color"></span>
+                  </div>
+                </template>
+              </div>
+              <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-xl border border-white bg-white/80 p-4 text-xs text-slate-600 shadow-sm">
+                  <p class="font-semibold text-slate-900">Fonts</p>
+                  <p class="mt-1">Heading: <span x-text="presentation.state.brandKit.headingFont"></span></p>
+                  <p>Body: <span x-text="presentation.state.brandKit.bodyFont"></span></p>
+                </div>
+                <div class="rounded-xl border border-white bg-white/80 p-4 text-xs text-slate-600 shadow-sm">
+                  <p class="font-semibold text-slate-900">Footer</p>
+                  <p class="mt-1" x-text="presentation.state.brandKit.footerNote"></p>
+                  <p class="mt-2 font-semibold text-indigo-600" x-text="presentation.state.brandKit.watermark"></p>
+                </div>
+              </div>
+            </div>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-4 text-xs text-indigo-700">
+              <p class="font-semibold">Workspace snapshot</p>
+              <div class="mt-2 grid gap-3 sm:grid-cols-2">
+                <div class="rounded-xl bg-white/80 p-3 text-center shadow-sm">
+                  <p class="text-2xl font-semibold text-indigo-900" x-text="presentation.state.workspaceInsights.decks"></p>
+                  <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Decks</p>
+                </div>
+                <div class="rounded-xl bg-white/80 p-3 text-center shadow-sm">
+                  <p class="text-2xl font-semibold text-indigo-900" x-text="presentation.state.workspaceInsights.exports"></p>
+                  <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Exports</p>
+                </div>
+                <div class="rounded-xl bg-white/80 p-3 text-center shadow-sm">
+                  <p class="text-2xl font-semibold text-indigo-900" x-text="presentation.state.workspaceInsights.brandKits"></p>
+                  <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Brand kits</p>
+                </div>
+                <div class="rounded-xl bg-white/80 p-3 text-center shadow-sm">
+                  <p class="text-2xl font-semibold text-indigo-900" x-text="presentation.state.workspaceInsights.drafts"></p>
+                  <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-600">Drafts in progress</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-16">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Coaching & delivery"
+          title="Assistants, presenter notes, and pacing insight"
+          description="Rewrite content, manage speaking notes, and pace your delivery with AI guidance and estimated timings."
+        />
+        <div class="grid gap-6 lg:grid-cols-[1fr_1fr]">
+          <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-slate-900">Rewrite assistants</h3>
+              <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                <i class="fas fa-robot text-[10px]"></i>
+                Always-on
+              </span>
+            </header>
+            <p class="text-sm text-slate-600">Apply tone tweaks, story arcs, or executive summaries to any selected slide. Assistants respect your brand kit and update presenter notes automatically.</p>
+            <div class="space-y-3">
+              <template x-for="assistant in presentation.state.assistants" :key="assistant.id">
+                <button
+                  type="button"
+                  class="w-full rounded-2xl border bg-white px-4 py-3 text-left text-sm shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  :class="presentation.state.selectedAssistantId === assistant.id ? 'border-indigo-300 ring-2 ring-indigo-200' : 'border-slate-200'"
+                  @click="presentation.applyAssistant(assistant.id)"
+                >
+                  <div class="flex items-center justify-between gap-3">
+                    <div>
+                      <p class="font-semibold text-slate-900" x-text="assistant.label"></p>
+                      <p class="mt-1 text-xs text-slate-500" x-text="assistant.description"></p>
+                    </div>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[11px] font-semibold text-slate-600" x-text="assistant.tone"></span>
+                  </div>
+                  <p class="mt-3 rounded-xl bg-indigo-50/70 p-3 text-xs text-indigo-700" x-text="assistant.sampleResult"></p>
+                </button>
+              </template>
+            </div>
+          </div>
+          <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex items-center justify-between">
+              <h3 class="text-lg font-semibold text-slate-900">Timeline & presenter notes</h3>
+              <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                <i class="fas fa-stopwatch text-[10px]"></i>
+                <span x-text="presentation.timelineTotalMinutes + ' min total'"></span>
+              </span>
+            </header>
+            <p class="text-sm text-slate-600">Each segment keeps you on pace. Notes adjust when assistants rewrite slides so your delivery stays aligned.</p>
+            <ul class="space-y-3">
+              <template x-for="segment in presentation.state.timeline" :key="segment.id">
+                <li class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                  <div class="flex items-center justify-between">
+                    <p class="text-sm font-semibold text-slate-900" x-text="segment.label"></p>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs font-semibold text-slate-600">
+                      <i class="fas fa-clock text-[10px] text-indigo-500"></i>
+                      <span x-text="segment.minutes + 'm'"></span>
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs text-slate-500" x-text="segment.description"></p>
+                </li>
+              </template>
+            </ul>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-4 text-xs text-indigo-700">
+              <p class="font-semibold">Latest log</p>
+              <template x-if="presentation.state.activityLog.length">
+                <p class="mt-1" x-text="`${presentation.state.activityLog[0].timestamp} • ${presentation.state.activityLog[0].message}`"></p>
+              </template>
+              <template x-if="!presentation.state.activityLog.length">
+                <p class="mt-1">Workspace ready for first edit.</p>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Automation ready"
+          title="API endpoints, exports, and history"
+          description="Use Presentation Designer as part of your workflow automation. Every endpoint mirrors the workspace actions shown above."
+        />
+        <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="space-y-5">
+            <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
+              <table class="min-w-full divide-y divide-slate-100 text-sm">
+                <thead class="bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+                  <tr>
+                    <th scope="col" class="px-4 py-3 text-left">Method</th>
+                    <th scope="col" class="px-4 py-3 text-left">Path</th>
+                    <th scope="col" class="px-4 py-3 text-left">Summary</th>
+                    <th scope="col" class="px-4 py-3 text-right">Sample</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                  <template x-for="endpoint in presentation.endpoints" :key="endpoint.id">
+                    <tr class="text-xs text-slate-600">
+                      <td class="px-4 py-3 font-semibold">
+                        <span class="rounded-full px-2 py-1 text-[11px] font-semibold" :class="endpoint.method === 'POST' ? 'bg-indigo-100 text-indigo-700' : 'bg-slate-100 text-slate-600'" x-text="endpoint.method"></span>
+                      </td>
+                      <td class="px-4 py-3 font-mono text-[11px] text-slate-500" x-text="endpoint.path"></td>
+                      <td class="px-4 py-3" x-text="endpoint.summary"></td>
+                      <td class="px-4 py-3 text-right">
+                        <Button type="button" size="sm" variant="light" class="border border-slate-200 text-slate-600" @click.prevent="presentation.simulateEndpoint(endpoint.id)">
+                          <i class="fas fa-eye text-[10px]"></i>
+                          Preview
+                        </Button>
+                      </td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold text-slate-900">Sample response</h3>
+              <template x-if="presentation.state.lastEndpointResponse">
+                <pre class="mt-3 max-h-64 overflow-auto rounded-2xl bg-slate-900/90 p-4 text-xs text-slate-100"><code x-text="JSON.stringify(presentation.state.lastEndpointResponse.response, null, 2)"></code></pre>
+              </template>
+              <template x-if="!presentation.state.lastEndpointResponse">
+                <p class="mt-3 text-xs text-slate-500">Select an endpoint preview to view sample payload.</p>
+              </template>
+            </div>
+          </div>
+          <div class="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Activity log</h3>
+            <ul class="space-y-3 text-xs text-slate-600">
+              <template x-for="entry in presentation.state.activityLog" :key="entry.timestamp + entry.message">
+                <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/80 p-3">
+                  <span class="mt-0.5 inline-flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100 text-[11px] font-semibold text-indigo-600" x-text="entry.timestamp"></span>
+                  <p class="flex-1" x-text="entry.message"></p>
+                </li>
+              </template>
+            </ul>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-4 text-xs text-indigo-700">
+              <p class="font-semibold">Latest export</p>
+              <p class="mt-1" x-text="presentation.state.deckMetrics.lastExport"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-24">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Roadmap"
+          title="What&apos;s next for Presentation Designer"
+          description="We&apos;re shipping fast — here&apos;s the near-term roadmap, plus the deliberate non-goals for this release."
+        />
+        <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-sm font-semibold text-slate-900">Upcoming highlights</h3>
+            <ul class="space-y-3 text-sm text-slate-600">
+              {roadmapHighlights.map((item) => (
+                <li class="rounded-2xl border border-slate-100 bg-slate-50/70 p-4" key={item.title}>
+                  <div class="flex items-center justify-between">
+                    <p class="font-semibold text-slate-900">{item.title}</p>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-600">
+                      <i class="fas fa-seedling text-[10px]"></i>
+                      {item.status}
+                    </span>
+                  </div>
+                  <p class="mt-2 text-xs text-slate-500">{item.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-sm font-semibold text-slate-900">Non-goals for v1</h3>
+            <ul class="space-y-3 text-sm text-slate-600">
+              {nonGoals.map((item) => (
+                <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-slate-50/70 p-4" key={item}>
+                  <i class="fas fa-ban text-[11px] text-slate-400"></i>
+                  <span class="text-xs text-slate-500">{item}</span>
+                </li>
+              ))}
+            </ul>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/80 p-4 text-xs text-indigo-700">
+              <p class="font-semibold">Feedback loop</p>
+              <p class="mt-1">Share requirements from your team to help prioritise next iterations.</p>
+              <Button href="mailto:hello@ansiversa.com" size="sm" variant="ghost" class="mt-3 text-indigo-700">
+                <i class="fas fa-envelope-open-text text-[10px]"></i>
+                Email product team
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

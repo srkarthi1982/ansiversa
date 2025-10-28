@@ -42,3 +42,4 @@ import '../pages/concept/stores/conceptExplainer';
 import '../pages/puzzle/stores/puzzleZone';
 import '../pages/fortune/stores/fortuneOracle';
 import '../pages/emoji/stores/guessTheEmoji';
+import '../pages/presentation/stores';
