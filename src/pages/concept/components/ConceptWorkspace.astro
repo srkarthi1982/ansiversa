@@ -1,0 +1,294 @@
+---
+---
+<section id="concept-explainer-app" class="relative border-t border-slate-100 bg-white">
+  <div class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+    <div class="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+      <aside class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+          <div class="flex items-start justify-between gap-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900">Input playground</h2>
+              <p class="mt-1 text-sm text-slate-500">Adjust the concept, learner level, and storytelling style before regenerating.</p>
+            </div>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-slate-700"
+              @click="$store.concept.toggleMode()"
+            >
+              <i class="fas fa-repeat text-[10px]"></i>
+              <span x-text="$store.concept.state.options.mode === 'generate' ? 'Switch to revise' : 'Switch to generate'"></span>
+            </button>
+          </div>
+          <form class="mt-6 space-y-5">
+            <label class="block space-y-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Concept</span>
+              <input
+                type="text"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                :value="$store.concept.state.options.concept"
+                @input="$store.concept.updateOption('concept', $event.target.value)"
+                placeholder="e.g., Plate tectonics"
+              />
+            </label>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <label class="block space-y-2">
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Language</span>
+                <input
+                  type="text"
+                  class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  :value="$store.concept.state.options.language"
+                  @input="$store.concept.updateOption('language', $event.target.value)"
+                />
+              </label>
+              <label class="block space-y-2">
+                <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Region / board</span>
+                <input
+                  type="text"
+                  class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                  :value="$store.concept.state.options.region"
+                  @input="$store.concept.updateOption('region', $event.target.value)"
+                />
+              </label>
+            </div>
+            <label class="block space-y-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Subject</span>
+              <input
+                type="text"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                :value="$store.concept.state.options.subject"
+                @input="$store.concept.updateOption('subject', $event.target.value)"
+              />
+            </label>
+            <label class="block space-y-2">
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Exam tag (optional)</span>
+              <input
+                type="text"
+                class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 shadow-sm focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-200"
+                :value="$store.concept.state.options.examTag ?? ''"
+                @input="$store.concept.updateOption('examTag', $event.target.value || null)"
+              />
+            </label>
+          </form>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold text-slate-900">Audience presets</h3>
+          <p class="mt-1 text-xs text-slate-500">Tap a preset to jump between reading levels.</p>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <template x-for="level in ['Kids','Teen','Undergrad','Professional','Expert']" :key="level">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition"
+                :class="level === $store.concept.state.options.level
+                  ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                  : 'border-slate-200 bg-slate-50 text-slate-600 hover:border-emerald-200 hover:bg-white'"
+                @click="$store.concept.updateOption('level', level)"
+              >
+                <i class="fas fa-user-graduate text-[10px]"></i>
+                <span x-text="level"></span>
+              </button>
+            </template>
+          </div>
+          <div class="mt-6 grid gap-3 sm:grid-cols-2">
+            <button
+              type="button"
+              class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm transition hover:border-emerald-300 hover:bg-white"
+              @click="$store.concept.updateOption('style', 'Story')"
+            >
+              <i class="fas fa-book-open text-emerald-500"></i>
+              <div>
+                <p class="font-semibold text-slate-900">Story mode</p>
+                <p class="text-xs text-slate-500">Narrative hook with characters and scenes.</p>
+              </div>
+            </button>
+            <button
+              type="button"
+              class="flex items-center gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm transition hover:border-emerald-300 hover:bg-white"
+              @click="$store.concept.updateOption('style', 'Cheatsheet')"
+            >
+              <i class="fas fa-layer-group text-sky-500"></i>
+              <div>
+                <p class="font-semibold text-slate-900">Cheatsheet</p>
+                <p class="text-xs text-slate-500">Dense bullet summary for revision nights.</p>
+              </div>
+            </button>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-sm text-emerald-800 shadow-sm">
+          <div class="flex items-start gap-3">
+            <i class="fas fa-circle-info mt-1 text-emerald-500"></i>
+            <div class="space-y-2">
+              <p class="font-semibold">Quick facilitation tips</p>
+              <ul class="space-y-1">
+                <template x-for="check in $store.concept.state.quickChecks" :key="check">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-star text-[10px]"></i>
+                    <span x-text="check"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </aside>
+      <div class="space-y-10">
+        <section class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h2 class="text-base font-semibold text-slate-900">Step-by-step breakdown</h2>
+              <p class="text-xs text-slate-500">Definition → light reaction → Calvin cycle → impact map.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+              <i class="fas fa-diagram-project text-[10px]"></i>
+              Structured for <span x-text="$store.concept.state.options.level"></span>
+            </span>
+          </header>
+          <div class="mt-6 space-y-4">
+            <template x-for="stage in $store.concept.state.breakdown" :key="stage.id">
+              <article class="rounded-2xl border border-slate-200 bg-slate-50 px-5 py-4 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <h3 class="text-sm font-semibold text-slate-900" x-text="stage.title"></h3>
+                  <span class="text-[11px] font-semibold uppercase tracking-wide text-slate-400" x-text="stage.id"></span>
+                </div>
+                <p class="mt-2 text-sm text-slate-600" x-text="stage.summary"></p>
+                <ul class="mt-3 space-y-1 text-sm text-slate-600">
+                  <template x-for="point in stage.keyPoints" :key="point">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-check text-emerald-500"></i>
+                      <span x-text="point"></span>
+                    </li>
+                  </template>
+                </ul>
+                <template x-if="stage.levelNotes[$store.concept.state.options.level]">
+                  <div class="mt-3 rounded-2xl border border-emerald-200 bg-white px-4 py-3 text-xs text-emerald-700">
+                    <p class="font-semibold">Level tweak</p>
+                    <p class="mt-1" x-text="stage.levelNotes[$store.concept.state.options.level]"></p>
+                  </div>
+                </template>
+                <template x-if="stage.example">
+                  <p class="mt-3 rounded-2xl bg-white px-4 py-3 text-xs text-slate-600">
+                    <span class="font-semibold text-slate-700">Classroom move:</span>
+                    <span x-text="stage.example"></span>
+                  </p>
+                </template>
+              </article>
+            </template>
+          </div>
+        </section>
+        <section class="grid gap-6 lg:grid-cols-2">
+          <div class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 class="text-base font-semibold text-slate-900">Analogy shelf</h2>
+              <p class="mt-1 text-xs text-slate-500">Choose one that matches the learner mood.</p>
+              <div class="mt-4 space-y-3">
+                <template x-for="analogy in $store.concept.filteredAnalogies" :key="analogy.title">
+                  <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
+                    <p class="font-semibold" x-text="analogy.title"></p>
+                    <p class="mt-1" x-text="analogy.description"></p>
+                  </div>
+                </template>
+                <template x-if="$store.concept.filteredAnalogies.length === 0">
+                  <p class="rounded-2xl border border-dashed border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-500">No direct analogy — switch levels for more ideas.</p>
+                </template>
+              </div>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 class="text-base font-semibold text-slate-900">Pitfalls & corrections</h2>
+              <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                <template x-for="pitfall in $store.concept.state.pitfalls" :key="pitfall.title">
+                  <li class="rounded-2xl border border-red-100 bg-red-50/60 px-4 py-3">
+                    <p class="font-semibold text-red-600" x-text="pitfall.title"></p>
+                    <p class="mt-1 text-slate-600" x-text="pitfall.fix"></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+          <div class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 class="text-base font-semibold text-slate-900">Visual prompts</h2>
+              <div class="mt-4 space-y-4">
+                <template x-for="visual in $store.concept.state.visuals" :key="visual.title">
+                  <figure class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                    <figcaption class="font-semibold text-slate-900" x-text="visual.title"></figcaption>
+                    <pre class="mt-3 overflow-x-auto whitespace-pre-wrap rounded-2xl bg-white px-4 py-3 font-mono text-xs text-slate-800" x-text="visual.ascii"></pre>
+                    <p class="mt-2 text-xs text-slate-500" x-text="visual.caption"></p>
+                    <p class="mt-2 inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-[11px] font-semibold text-emerald-700">
+                      <i class="fas fa-highlighter text-[10px]"></i>
+                      <span x-text="visual.highlight"></span>
+                    </p>
+                  </figure>
+                </template>
+              </div>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h2 class="text-base font-semibold text-slate-900">Mini-quiz check</h2>
+              <p class="mt-2 text-sm text-slate-600" x-text="$store.concept.state.miniQuiz.prompt"></p>
+              <div class="mt-4 space-y-2 text-sm text-slate-700">
+                <template x-for="option in $store.concept.state.miniQuiz.options" :key="option">
+                  <div class="flex items-start gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <i class="fas fa-circle text-[8px] text-slate-400"></i>
+                    <span x-text="option"></span>
+                  </div>
+                </template>
+              </div>
+              <div class="mt-4 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs text-emerald-700">
+                <p><span class="font-semibold">Answer:</span> <span x-text="$store.concept.state.miniQuiz.answer"></span></p>
+                <p class="mt-1" x-text="$store.concept.state.miniQuiz.explanation"></p>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="grid gap-6 lg:grid-cols-[0.8fr_1.2fr]">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-base font-semibold text-slate-900">Export & share</h2>
+            <p class="mt-1 text-xs text-slate-500">Ready-to-download packets for class or LMS uploads.</p>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600">
+              <template x-for="preset in $store.concept.state.exportPresets" :key="preset.format">
+                <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <div class="flex items-center justify-between text-sm">
+                    <div>
+                      <p class="font-semibold text-slate-900" x-text="preset.format.toUpperCase()"></p>
+                      <p class="text-xs text-slate-500" x-text="preset.description"></p>
+                    </div>
+                    <div class="text-right text-xs text-slate-400">
+                      <p x-text="preset.estimatedSize"></p>
+                      <p x-text="`Updated ${preset.updatedAt}`"></p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    class="mt-3 inline-flex items-center gap-2 rounded-full bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white shadow hover:bg-emerald-700"
+                  >
+                    <i class="fas fa-download text-[10px]"></i>
+                    Queue export
+                  </button>
+                </li>
+              </template>
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-base font-semibold text-slate-900">Linked workspaces</h2>
+            <p class="mt-1 text-xs text-slate-500">Continue building momentum with neighbouring apps.</p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              <template x-for="link in $store.concept.state.linkedWorkspaces" :key="link.href">
+                <a
+                  class="group flex h-full flex-col justify-between rounded-2xl border border-slate-200 bg-slate-50 p-4 transition hover:border-emerald-300 hover:bg-white"
+                  :href="link.href"
+                >
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900" x-text="link.title"></p>
+                    <p class="mt-2 text-xs text-slate-500" x-text="link.description"></p>
+                  </div>
+                  <span class="mt-4 inline-flex items-center gap-2 text-xs font-semibold text-emerald-600 group-hover:text-emerald-700">
+                    <i class="fas fa-arrow-right"></i>
+                    <span x-text="link.actionLabel"></span>
+                  </span>
+                </a>
+              </template>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
+</section>

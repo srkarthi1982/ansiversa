@@ -1,0 +1,21 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ConceptHero from './components/ConceptHero.astro';
+import ConceptWorkspace from './components/ConceptWorkspace.astro';
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-emerald-500"
+    href="#concept-explainer-app"
+  >
+    Skip to Concept Explainer workspace
+  </a>
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ concept: $store.concept })"
+    x-init="concept.init()"
+  >
+    <ConceptHero />
+    <ConceptWorkspace />
+  </main>
+</Layout>
