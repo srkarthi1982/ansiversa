@@ -1,7 +1,7 @@
 import type { AstroCookies } from 'astro';
 import { db, Session, User, eq } from 'astro:db';
 
-const { createHash } = await import('node:crypto');
+const { createHash, createCipheriv, createDecipheriv, randomBytes } = await import('node:crypto');
 
 import type { SessionUser } from '../types/session-user';
 
@@ -12,15 +12,71 @@ type MaybeCookies = {
 const SESSION_COOKIE_NAME = 'session';
 const USER_COOKIE_NAME = 'session_user';
 
+const USER_COOKIE_ALGORITHM = 'aes-256-gcm';
+const USER_COOKIE_IV_LENGTH = 12;
+const USER_COOKIE_AUTH_TAG_LENGTH = 16;
+
+let cachedUserCookieKey: Buffer | null = null;
+let cachedUserCookieSecret: string | null = null;
+let hasWarnedForMissingSecret = false;
+
+function resolveUserCookieSecret() {
+  if (cachedUserCookieSecret) {
+    return cachedUserCookieSecret;
+  }
+
+  const secret =
+    import.meta.env.USER_COOKIE_SECRET || process.env.USER_COOKIE_SECRET || null;
+
+  if (!secret) {
+    if (import.meta.env.PROD) {
+      throw new Error('USER_COOKIE_SECRET is not configured.');
+    }
+    if (!hasWarnedForMissingSecret) {
+      console.warn(
+        'USER_COOKIE_SECRET is not configured. Falling back to a development-only secret. Do not use this fallback in production.'
+      );
+      hasWarnedForMissingSecret = true;
+    }
+    cachedUserCookieSecret = 'development-only-user-cookie-secret';
+    return cachedUserCookieSecret;
+  }
+
+  cachedUserCookieSecret = secret;
+  return cachedUserCookieSecret;
+}
+
+function getUserCookieKey() {
+  if (!cachedUserCookieKey) {
+    const secret = resolveUserCookieSecret();
+    cachedUserCookieKey = createHash('sha256').update(secret).digest();
+  }
+  return cachedUserCookieKey;
+}
+
 function encodeSessionUser(user: SessionUser) {
-  return Buffer.from(JSON.stringify(user), 'utf8').toString('base64url');
+  const json = JSON.stringify(user);
+  const iv = randomBytes(USER_COOKIE_IV_LENGTH);
+  const cipher = createCipheriv(USER_COOKIE_ALGORITHM, getUserCookieKey(), iv);
+  const encrypted = Buffer.concat([cipher.update(json, 'utf8'), cipher.final()]);
+  const authTag = cipher.getAuthTag();
+  return Buffer.concat([iv, authTag, encrypted]).toString('base64url');
 }
 
 function decodeSessionUser(encoded: string | undefined): SessionUser | null {
   if (!encoded) return null;
   try {
-    const json = Buffer.from(encoded, 'base64url').toString('utf8');
-    const parsed = JSON.parse(json);
+    const raw = Buffer.from(encoded, 'base64url');
+    if (raw.length <= USER_COOKIE_IV_LENGTH + USER_COOKIE_AUTH_TAG_LENGTH) {
+      return null;
+    }
+    const iv = raw.subarray(0, USER_COOKIE_IV_LENGTH);
+    const authTag = raw.subarray(USER_COOKIE_IV_LENGTH, USER_COOKIE_IV_LENGTH + USER_COOKIE_AUTH_TAG_LENGTH);
+    const ciphertext = raw.subarray(USER_COOKIE_IV_LENGTH + USER_COOKIE_AUTH_TAG_LENGTH);
+    const decipher = createDecipheriv(USER_COOKIE_ALGORITHM, getUserCookieKey(), iv);
+    decipher.setAuthTag(authTag);
+    const decrypted = Buffer.concat([decipher.update(ciphertext), decipher.final()]).toString('utf8');
+    const parsed = JSON.parse(decrypted);
     if (
       parsed &&
       typeof parsed === 'object' &&
