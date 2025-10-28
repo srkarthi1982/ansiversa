@@ -1,0 +1,41 @@
+<section class="bg-white py-16 text-slate-900" x-data="{ fortune: $store.fortuneOracle }">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Safety, ethics, and tone</h2>
+      <p class="mt-3 text-base text-slate-600">
+        Fortune Teller stays playful by foregrounding disclaimers, filtering sensitive questions, and offering redirect links to
+        professional resources when needed.
+      </p>
+    </div>
+    <div class="mt-10 grid gap-6 md:grid-cols-2">
+      <template x-for="item in fortune.state.safety" :key="item.title">
+        <article class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
+          <div class="flex items-center gap-3 text-slate-500">
+            <i :class="item.icon" class="text-indigo-500"></i>
+            <h3 class="text-lg font-semibold text-slate-900" x-text="item.title"></h3>
+          </div>
+          <p class="mt-3 text-sm text-slate-600" x-text="item.description"></p>
+          <template x-if="item.linkHref">
+            <a
+              class="mt-3 inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+              :href="item.linkHref"
+            >
+              <span x-text="item.linkLabel ?? 'Learn more'"></span>
+              <i class="fas fa-arrow-right text-xs"></i>
+            </a>
+          </template>
+        </article>
+      </template>
+    </div>
+    <div class="mt-8 rounded-3xl border border-dashed border-slate-200 bg-slate-50 px-6 py-5 text-xs text-slate-500">
+      <p>
+        <strong>Content moderation:</strong> We hash user questions to detect repeats, flag topics mentioning diagnoses or
+        deterministic promises, and offer non-judgmental redirection copy.
+      </p>
+      <p class="mt-2">
+        <strong>Accessibility:</strong> Card reveals support reduced motion, transcripts, and screen-reader friendly labels. RTL
+        typography is part of v1 launch.
+      </p>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,168 @@
+<section
+  id="fortune-personalize"
+  class="relative overflow-hidden bg-slate-950 py-16 text-white"
+  x-data="{
+    fortune: $store.fortuneOracle,
+    nickname: $store.fortuneOracle.state.nickname,
+    timezone: $store.fortuneOracle.state.timezone,
+    updateNickname() {
+      this.fortune.setNickname(this.nickname);
+    },
+    updateTimezone() {
+      this.fortune.setTimezone(this.timezone);
+    },
+  }"
+>
+  <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/40 via-purple-500/30 to-sky-500/40 opacity-70 blur-3xl"></div>
+  <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Personalize the ritual</h2>
+      <p class="mt-3 text-base text-white/70">
+        Set nicknames, moods, and focus areas. Everything feeds the seeded randomness so fortunes feel cohesive while avoiding
+        repetition.
+      </p>
+    </div>
+    <div class="mt-12 grid gap-8 lg:grid-cols-[2fr,1fr]">
+      <div class="space-y-6 rounded-3xl border border-white/10 bg-white/10 p-6 shadow-xl shadow-indigo-900/40 backdrop-blur">
+        <div class="grid gap-6 md:grid-cols-2">
+          <label class="flex flex-col gap-2 text-sm text-white/80">
+            <span class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Nickname</span>
+            <input
+              type="text"
+              maxlength="24"
+              minlength="2"
+              class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white placeholder:text-white/40 focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+              placeholder="Stargazer"
+              x-model="nickname"
+              @blur="updateNickname()"
+            />
+            <span class="text-xs text-white/50">Used in seeds — keep it playful.</span>
+          </label>
+          <label class="flex flex-col gap-2 text-sm text-white/80">
+            <span class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Timezone</span>
+            <select
+              class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3 text-sm text-white focus:border-indigo-400 focus:outline-none focus:ring-2 focus:ring-indigo-400/40"
+              x-model="timezone"
+              @change="updateTimezone()"
+            >
+              <option value="UTC" class="text-slate-900">UTC</option>
+              <option value="Asia/Kolkata" class="text-slate-900">Asia/Kolkata</option>
+              <option value="America/New_York" class="text-slate-900">America/New_York</option>
+              <option value="Europe/London" class="text-slate-900">Europe/London</option>
+              <option value="Australia/Sydney" class="text-slate-900">Australia/Sydney</option>
+            </select>
+            <span class="text-xs text-white/50">Aligns reminders, streak resets, and exports.</span>
+          </label>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Deck themes</p>
+          <div class="mt-4 grid gap-4 md:grid-cols-2">
+            <template x-for="theme in fortune.state.themes" :key="theme.key">
+              <button
+                type="button"
+                class="flex h-full flex-col items-start gap-3 rounded-3xl border px-4 py-4 text-left transition"
+                :class="fortune.state.activeTheme === theme.key ? 'border-white/70 bg-white/10 shadow-lg shadow-indigo-900/40' : 'border-white/20 bg-white/5 hover:border-white/50'"
+                @click="fortune.setTheme(theme.key)"
+              >
+                <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-white/70">
+                  <span class="inline-flex h-2 w-2 rounded-full bg-gradient-to-r" :class="theme.accentGradient"></span>
+                  <span x-text="theme.name"></span>
+                </span>
+                <p class="text-sm text-white/80" x-text="theme.tagline"></p>
+                <p class="text-xs text-white/60">
+                  Best for: <span x-text="theme.bestFor.join(', ')"></span>
+                </p>
+                <div class="flex flex-wrap gap-2 text-xs text-white/60">
+                  <template x-for="keyword in theme.previewKeywords" :key="keyword">
+                    <span class="rounded-full border border-white/20 px-3 py-1" x-text="keyword"></span>
+                  </template>
+                </div>
+              </button>
+            </template>
+          </div>
+        </div>
+        <div class="grid gap-6 md:grid-cols-2">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Mood</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <template x-for="mood in fortune.state.moods" :key="mood.key">
+                <button
+                  type="button"
+                  class="rounded-full border px-4 py-2 text-xs font-semibold transition"
+                  :class="fortune.state.activeMood === mood.key ? 'border-white/70 bg-white/15 text-white' : 'border-white/20 text-white/70 hover:border-white/60'"
+                  @click="fortune.setMood(mood.key)"
+                >
+                  <span class="mr-1" x-text="mood.emoji"></span>
+                  <span x-text="mood.label"></span>
+                </button>
+              </template>
+            </div>
+            <p class="mt-3 text-xs text-white/60" x-text="fortune.state.moods.find((item) => item.key === fortune.state.activeMood)?.description ?? ''"></p>
+          </div>
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Focus</p>
+            <div class="mt-3 flex flex-wrap gap-2">
+              <template x-for="intent in fortune.state.intents" :key="intent.key">
+                <button
+                  type="button"
+                  class="rounded-full border px-4 py-2 text-xs font-semibold transition"
+                  :class="fortune.state.activeIntent === intent.key ? 'border-white/70 bg-white/15 text-white' : 'border-white/20 text-white/70 hover:border-white/60'"
+                  @click="fortune.setIntent(intent.key)"
+                >
+                  <span class="mr-1" x-text="intent.emoji"></span>
+                  <span x-text="intent.label"></span>
+                </button>
+              </template>
+            </div>
+            <p class="mt-3 text-xs text-white/60" x-text="fortune.state.intents.find((item) => item.key === fortune.state.activeIntent)?.description ?? ''"></p>
+          </div>
+        </div>
+      </div>
+      <aside class="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl shadow-indigo-900/30 backdrop-blur">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Seed breakdown</p>
+          <dl class="mt-3 space-y-2 text-xs text-white/70">
+            <div class="flex justify-between">
+              <dt>Nickname</dt>
+              <dd class="font-semibold" x-text="fortune.state.nickname"></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt>Mood</dt>
+              <dd class="font-semibold" x-text="fortune.state.activeMood"></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt>Intent</dt>
+              <dd class="font-semibold" x-text="fortune.state.activeIntent"></dd>
+            </div>
+            <div class="flex justify-between">
+              <dt>Theme</dt>
+              <dd class="font-semibold" x-text="fortune.state.activeTheme"></dd>
+            </div>
+          </dl>
+        </div>
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Journal prompts</p>
+          <ul class="mt-3 space-y-3 text-sm text-white/80">
+            <template x-for="prompt in fortune.state.journalPrompts.slice(0,3)" :key="prompt.id">
+              <li class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+                <p class="font-semibold" x-text="prompt.prompt"></p>
+                <p class="mt-1 text-xs text-white/60">
+                  Mood tag:
+                  <span class="font-semibold" x-text="prompt.mood ? prompt.mood : 'Any'"></span>
+                </p>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="text-xs text-white/60">
+          <p class="font-semibold uppercase tracking-[0.35em] text-white/60">Safety & privacy</p>
+          <ul class="mt-2 space-y-2">
+            <li>Seeds avoid exact repeats within 7 days per user.</li>
+            <li>Saved journals stay private unless exported.</li>
+            <li>Reminder emails respect local quiet hours.</li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

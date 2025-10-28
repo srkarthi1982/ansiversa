@@ -1,0 +1,66 @@
+<section class="bg-white py-16 text-slate-900" x-data="{ fortune: $store.fortuneOracle }">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="text-center">
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Deck collections & shareable artifacts</h2>
+      <p class="mt-3 text-base text-slate-600">
+        Rotate between classic tarot vibes, mythic line-art, neon sci-fi grids, or minimalist ink — every deck packs localized
+        copy, high-contrast assets, and export-ready cards.
+      </p>
+    </div>
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      <template x-for="theme in fortune.state.themes" :key="theme.key">
+        <article class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-xl">
+          <div class="absolute inset-0 bg-gradient-to-br opacity-0 transition group-hover:opacity-30" :class="theme.accentGradient"></div>
+          <div class="relative flex flex-col gap-4">
+            <header class="flex items-center justify-between">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Deck</p>
+                <h3 class="text-xl font-semibold text-slate-900" x-text="theme.name"></h3>
+              </div>
+              <span class="rounded-full bg-slate-200 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-slate-700">
+                <span x-text="theme.cardBack"></span>
+              </span>
+            </header>
+            <p class="text-sm text-slate-600" x-text="theme.tagline"></p>
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Preview keywords</p>
+            <div class="flex flex-wrap gap-2 text-xs text-slate-500">
+              <template x-for="keyword in theme.previewKeywords" :key="keyword">
+                <span class="rounded-full border border-slate-200 px-3 py-1" x-text="keyword"></span>
+              </template>
+            </div>
+            <p class="text-xs text-slate-500">
+              Best for: <span class="font-semibold text-slate-700" x-text="theme.bestFor.join(', ')"></span>
+            </p>
+            <div class="rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-inner">
+              <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Card back preview</p>
+              <div class="mt-3 h-28 rounded-2xl bg-gradient-to-br" :class="theme.accentGradient"></div>
+            </div>
+          </div>
+        </article>
+      </template>
+    </div>
+    <div class="mt-12 grid gap-6 md:grid-cols-3">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Shareables</p>
+        <h3 class="mt-2 text-lg font-semibold text-slate-900">PNG postcards & markdown exports</h3>
+        <p class="mt-3 text-sm text-slate-600">
+          Export a fortune as a postcard, markdown log, or PDF. Pro removes watermarks and unlocks unlimited exports.
+        </p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Journaling</p>
+        <h3 class="mt-2 text-lg font-semibold text-slate-900">Mood-tagged journal with streaks</h3>
+        <p class="mt-3 text-sm text-slate-600">
+          Save readings, add reflections, and earn streak badges. Journals stay private with optional calendar exports.
+        </p>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">Reminders</p>
+        <h3 class="mt-2 text-lg font-semibold text-slate-900">Opt-in nudges & notifications</h3>
+        <p class="mt-3 text-sm text-slate-600">
+          Schedule gentle reminders with timezone-aware quiet hours. Great for daily rituals or weekly co-op sessions.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
