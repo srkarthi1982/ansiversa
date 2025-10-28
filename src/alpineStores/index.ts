@@ -37,3 +37,4 @@ import '../pages/job-analyzer/stores';
 import '../pages/visiting-card-maker/stores/visitingCard';
 import '../pages/cover-letter-writer/stores/coverLetter';
 import '../pages/memory-trainer/stores/memoryTrainer';
+import '../pages/trivia/stores/triviaArena';

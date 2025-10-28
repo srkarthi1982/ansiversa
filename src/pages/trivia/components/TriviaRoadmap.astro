@@ -1,0 +1,51 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-900 py-16 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Roadmap"
+      title="Live rooms and tournaments on deck"
+      description="Version 2 introduces real-time multiplayer rooms and seasonal tournaments. Infrastructure builds on Astro SSR routes, Astro DB, and optional WebSockets."
+      align="center"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-white/70"
+    />
+    <div class="grid gap-6 md:grid-cols-2">
+      <article class="rounded-3xl border border-white/10 bg-white/10 p-6">
+        <h3 class="text-lg font-semibold">Live Rooms</h3>
+        <ul class="mt-4 space-y-3 text-sm text-white/80">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-podcast text-amber-300"></i>
+            <span>Host console controls pacing, question queues, and reveal animations.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-wifi text-amber-300"></i>
+            <span>WebSocket broadcast keeps timers, scores, and reactions in sync.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-comments text-amber-300"></i>
+            <span>Optional emoji reactions with moderation filters and slow mode.</span>
+          </li>
+        </ul>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/10 p-6">
+        <h3 class="text-lg font-semibold">Tournaments</h3>
+        <ul class="mt-4 space-y-3 text-sm text-white/80">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-sitemap text-amber-300"></i>
+            <span>Auto-generate brackets with group-stage seeding and elimination rounds.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-star text-amber-300"></i>
+            <span>Custom scoring profiles weight accuracy, speed, and streaks differently.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-file-certificate text-amber-300"></i>
+            <span>Export sponsor-ready leaderboards with theming, logo overlays, and share links.</span>
+          </li>
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>

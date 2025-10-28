@@ -1,0 +1,36 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import TriviaHero from './components/TriviaHero.astro';
+import TriviaLivePreview from './components/TriviaLivePreview.astro';
+import TriviaModes from './components/TriviaModes.astro';
+import TriviaPowerUps from './components/TriviaPowerUps.astro';
+import TriviaScoring from './components/TriviaScoring.astro';
+import TriviaQuestionBank from './components/TriviaQuestionBank.astro';
+import TriviaAnalytics from './components/TriviaAnalytics.astro';
+import TriviaPlanGating from './components/TriviaPlanGating.astro';
+import TriviaRoadmap from './components/TriviaRoadmap.astro';
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#trivia-arena"
+  >
+    Skip to Trivia Arena preview
+  </a>
+  <main
+    id="trivia-arena"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ trivia: $store.triviaArena })"
+    x-init="trivia.init()"
+  >
+    <TriviaHero />
+    <TriviaLivePreview />
+    <TriviaModes />
+    <TriviaPowerUps />
+    <TriviaScoring />
+    <TriviaQuestionBank />
+    <TriviaAnalytics />
+    <TriviaPlanGating />
+    <TriviaRoadmap />
+  </main>
+</Layout>

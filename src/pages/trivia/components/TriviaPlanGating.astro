@@ -1,0 +1,58 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-950 py-16 text-white" x-data="() => ({ store: $store.triviaArena })">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plans"
+      title="Free vs Pro access"
+      description="Launch with a generous free tier for casual play while keeping premium analytics, imports, and arenas exclusive to Pro."
+      align="center"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-white/70"
+    />
+    <div class="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+      <table class="min-w-full divide-y divide-white/10 text-sm">
+        <thead class="bg-white/10">
+          <tr>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-white/70">Feature</th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-white/70">Free</th>
+            <th class="px-4 py-3 text-left font-semibold uppercase tracking-wide text-white/70">Pro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10">
+          <template x-for="feature in store.state.planFeatures" :key="feature.label">
+            <tr class="transition hover:bg-white/5">
+              <td class="px-4 py-3 font-semibold text-white" x-text="feature.label"></td>
+              <td class="px-4 py-3 text-white/80">
+                <template x-if="feature.free === true">
+                  <span class="inline-flex items-center gap-2"><i class="fas fa-check text-emerald-300"></i>Included</span>
+                </template>
+                <template x-if="feature.free === false">
+                  <span class="inline-flex items-center gap-2"><i class="fas fa-minus text-white/50"></i>Not available</span>
+                </template>
+                <template x-if="typeof feature.free === 'string'">
+                  <span x-text="feature.free"></span>
+                </template>
+              </td>
+              <td class="px-4 py-3 text-white">
+                <template x-if="feature.pro === true">
+                  <span class="inline-flex items-center gap-2"><i class="fas fa-crown text-amber-300"></i>Included</span>
+                </template>
+                <template x-if="feature.pro === false">
+                  <span class="inline-flex items-center gap-2"><i class="fas fa-minus text-white/50"></i>Not available</span>
+                </template>
+                <template x-if="typeof feature.pro === 'string'">
+                  <span x-text="feature.pro"></span>
+                </template>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <p class="text-center text-xs text-white/60">
+      Live Rooms and Tournaments graduate from roadmap to production under the Pro tier with early access for partner communities.
+    </p>
+  </div>
+</section>

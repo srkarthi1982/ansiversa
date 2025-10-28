@@ -1,0 +1,48 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import FeatureCard from '../../../components/FeatureCard.astro';
+---
+<section class="bg-white py-16" x-data="() => ({ store: $store.triviaArena })">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Modes"
+      title="Every trivia format, one cohesive hub"
+      description="From quick solo drills to pro-grade arenas, Trivia Arena unifies multiple playstyles without fragmenting data or UX."
+      align="center"
+    />
+    <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <template x-for="mode in store.state.modes" :key="mode.key">
+        <FeatureCard
+          class="h-full"
+          title={mode.label}
+          description={mode.description}
+          eyebrow={mode.badge ?? 'Mode'}
+        >
+          <ul class="space-y-2 text-xs text-slate-600">
+            <template x-for="highlight in mode.highlights" :key="highlight">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-sparkles mt-0.5 text-indigo-500"></i>
+                <span x-text="highlight"></span>
+              </li>
+            </template>
+          </ul>
+          <template x-if="mode.status === 'coming-soon'">
+            <p class="mt-4 inline-flex items-center gap-2 rounded-full bg-amber-100 px-3 py-1 text-xs font-semibold text-amber-600">
+              <i class="fas fa-road"></i>
+              Roadmap highlight
+            </p>
+          </template>
+          <template x-if="mode.cta && mode.status !== 'coming-soon'">
+            <div slot="footer" class="flex items-center justify-between text-sm text-indigo-600">
+              <a :href="mode.cta" class="inline-flex items-center gap-2 font-semibold hover:underline">
+                Open workspace
+                <i class="fas fa-arrow-up-right-from-square text-xs"></i>
+              </a>
+              <span class="text-xs uppercase tracking-wide text-slate-400">Stack ready</span>
+            </div>
+          </template>
+        </FeatureCard>
+      </template>
+    </div>
+  </div>
+</section>

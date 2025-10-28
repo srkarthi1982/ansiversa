@@ -1,0 +1,66 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-white py-16" x-data="() => ({ store: $store.triviaArena })">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Analytics"
+      title="Rich insights for players, teachers, and teams"
+      description="Leaderboard snapshots, accuracy trends, and category heatmaps give players and admins the data they need to improve."
+      align="center"
+    />
+    <div class="grid gap-6 lg:grid-cols-3">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+        <h3 class="text-lg font-semibold text-slate-900">Personal dashboard</h3>
+        <ul class="mt-4 space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-chart-simple text-indigo-500"></i>
+            <span>Accuracy trend, streak history, and average answer time visualised per category.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-trophy text-indigo-500"></i>
+            <span>Compare Solo vs Daily vs Arena performance to find training opportunities.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-file-export text-indigo-500"></i>
+            <span>Export CSV/JSON summaries for classrooms or esports sponsors.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+        <h3 class="text-lg font-semibold text-slate-900">Leaderboards</h3>
+        <ul class="mt-4 space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-earth-americas text-indigo-500"></i>
+            <span>Global season rankings with pagination and plan-specific perks.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-people-group text-indigo-500"></i>
+            <span>Friends leaderboards seeded per user for privacy-conscious competition.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-arrows-rotate text-indigo-500"></i>
+            <span>Daily leaderboard resets with archived snapshots for Pro subscribers.</span>
+          </li>
+        </ul>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+        <h3 class="text-lg font-semibold text-slate-900">Live ops & alerts</h3>
+        <ul class="mt-4 space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-bell text-indigo-500"></i>
+            <span>Notify players about streak milestones, upcoming daily challenge deadlines, or arena invitations.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-shield-halved text-indigo-500"></i>
+            <span>Monitor suspicious activity with anomaly detection on submit timestamps.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-language text-indigo-500"></i>
+            <span>Localization-ready strings and RTL support for global rollouts.</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
