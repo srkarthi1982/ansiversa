@@ -1,0 +1,76 @@
+<section class="bg-slate-900 py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+    <header class="space-y-4 text-center text-white lg:text-left">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold">
+        <i class="fas fa-lightbulb-on text-xs text-amber-300"></i>
+        Smart hints & scoring
+      </span>
+      <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Strategic assists that keep the challenge alive</h2>
+      <p class="text-base text-slate-300">
+        Hint tokens, streak multipliers, and normalization rules are all enforced server-side, so aliases like “burgerhouse”
+        stay valid without opening the door to exploits.
+      </p>
+    </header>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <template x-for="hint in emoji.state.hints" :key="hint.id">
+        <article class="flex h-full flex-col rounded-3xl border border-white/10 bg-white/5 p-6 text-left text-slate-100">
+          <div class="flex items-center justify-between gap-3">
+            <span class="inline-flex h-11 w-11 items-center justify-center rounded-full bg-amber-400/20 text-amber-200">
+              <i class="fas" :class="hint.icon"></i>
+            </span>
+            <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-amber-200" x-text="hint.penalty"></span>
+          </div>
+          <h3 class="mt-4 text-lg font-semibold text-white" x-text="hint.name"></h3>
+          <p class="mt-2 text-sm text-slate-200" x-text="hint.description"></p>
+          <p class="mt-4 rounded-2xl border border-white/10 bg-white/5 p-3 text-xs text-slate-200" x-text="hint.sample"></p>
+          <button
+            type="button"
+            class="mt-6 inline-flex items-center gap-2 self-start rounded-full bg-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white transition hover:bg-white/20"
+            @click.prevent="emoji.useHint(hint.id)"
+          >
+            <i class="fas fa-magic text-[10px]"></i>
+            Simulate hint
+          </button>
+        </article>
+      </template>
+    </div>
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 text-slate-200">
+      <div class="grid gap-6 lg:grid-cols-2">
+        <div class="space-y-3">
+          <h3 class="text-lg font-semibold text-white">Answer normalization</h3>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-start gap-2">
+              <i class="fas fa-equals text-[10px] text-amber-300"></i>
+              Case folding, punctuation stripping, and whitespace collapsing keep aliases tidy.
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-language text-[10px] text-amber-300"></i>
+              Diacritics are removed and “&” or “+” are rewritten as words before matching.
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-wand-magic-sparkles text-[10px] text-amber-300"></i>
+              Optional fuzzy mode (Pro) allows Damerau-Levenshtein ≤ 1 for close calls.
+            </li>
+          </ul>
+        </div>
+        <div class="space-y-3">
+          <h3 class="text-lg font-semibold text-white">Scoring safeguards</h3>
+          <ul class="space-y-2 text-sm">
+            <li class="flex items-start gap-2">
+              <i class="fas fa-shield-check text-[10px] text-amber-300"></i>
+              Anti-cheat timers validate submission windows and flag replay attempts.
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-stopwatch-20 text-[10px] text-amber-300"></i>
+              Time multipliers apply only when input cadence stays human realistic.
+            </li>
+            <li class="flex items-start gap-2">
+              <i class="fas fa-scale-balanced text-[10px] text-amber-300"></i>
+              Hint penalties are enforced server-side to prevent client tampering.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
