@@ -1,0 +1,55 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { integrityPrinciples, planGating } from "../data/researchData";
+---
+<section class="bg-white py-16 sm:py-20" id="research-integrity" aria-labelledby="research-integrity-title">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Trust & access"
+      title="Integrity guardrails and plan gating"
+      description="Compliance, neutrality, and privacy considerations are baked into every workflow while subscriptions unlock deeper automation."
+      id="research-integrity-title"
+    />
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <article class="rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Integrity principles</h3>
+        <ul class="mt-4 space-y-4">
+          {integrityPrinciples.map((principle) => (
+            <li class="rounded-2xl border border-slate-100 bg-white p-4" key={principle.title}>
+              <p class="text-sm font-semibold text-slate-900">{principle.title}</p>
+              <p class="mt-2 text-sm text-slate-600">{principle.description}</p>
+            </li>
+          ))}
+        </ul>
+      </article>
+      <article class="flex flex-col gap-4 rounded-3xl border border-indigo-100 bg-indigo-50/80 p-6 shadow-sm">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Plan gating</h3>
+        <p class="text-sm text-indigo-900">
+          Align pricing with value: Free tiers showcase the workflow, while Pro unlocks large document processing, plagiarism
+          checks, and full export formats.
+        </p>
+        <div class="grid gap-4 sm:grid-cols-2">
+          {planGating.map((tier) => (
+            <section class="rounded-2xl border border-white/60 bg-white/80 p-4 text-sm text-slate-700 shadow" key={tier.plan}>
+              <header class="mb-3 flex items-center justify-between">
+                <p class="text-base font-semibold text-slate-900">{tier.plan}</p>
+                <span class="rounded-full bg-indigo-500/10 px-3 py-1 text-xs font-semibold text-indigo-700">
+                  <i class="fas fa-unlock-keyhole text-[10px]"></i>
+                  Access
+                </span>
+              </header>
+              <ul class="space-y-2 text-xs text-slate-600">
+                {tier.limits.map((limit) => (
+                  <li class="flex items-start gap-2" key={limit}>
+                    <i class="fas fa-check text-[10px] text-indigo-500 mt-0.5"></i>
+                    <span>{limit}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ))}
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
