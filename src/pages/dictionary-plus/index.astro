@@ -1,0 +1,498 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const heroStats = [
+  {
+    label: "Language pairs",
+    value: "EN↔ES, AR, TA",
+    description: "Auto-detect input, swap base/target instantly.",
+  },
+  {
+    label: "Offline cache",
+    value: "50–500 entries",
+    description: "Keeps your last lookups ready, even without signal.",
+  },
+  {
+    label: "Learning links",
+    value: "4 apps",
+    description: "Flashcards, Study Planner, Research Assistant, EduPrompt.",
+  },
+];
+
+const searchHighlights = [
+  {
+    title: "Smart multi-lingual search",
+    description:
+      "Prefix, fuzzy, and phonetic search with language auto-detect so typos or inflections still surface the right lemma.",
+    icon: "fas fa-wand-magic-sparkles",
+  },
+  {
+    title: "Live bilingual toggles",
+    description:
+      "Flip base↔target languages, apply CEFR or part-of-speech filters, and see translations inline without losing context.",
+    icon: "fas fa-language",
+  },
+  {
+    title: "Speed-first caching",
+    description:
+      "Recent lookups stay available offline with background refreshes and deduplicated history.",
+    icon: "fas fa-bolt",
+  },
+];
+
+const entryHighlights = [
+  {
+    eyebrow: "Sense detail",
+    title: "Definitions built for learners",
+    description:
+      "Each sense bundles definitions, usage notes, CEFR and frequency badges, and bilingual explanations in one tidy card.",
+    icon: "fas fa-book-open",
+  },
+  {
+    eyebrow: "Pronunciation",
+    title: "Hear it, then try it",
+    description:
+      "Tap TTS audio, view IPA, and (on Pro) record your own pronunciation to see similarity scores.",
+    icon: "fas fa-waveform",
+  },
+  {
+    eyebrow: "Connections",
+    title: "Synonyms, antonyms & collocations",
+    description:
+      "Jump into mini thesaurus mode, compare tricky pairs side-by-side, and save phrases or idioms to your lists.",
+    icon: "fas fa-diagram-project",
+  },
+];
+
+const workflowSteps = [
+  {
+    eyebrow: "Step 1",
+    title: "Search & discover",
+    description:
+      "Type or paste any form — the app lemmatizes common inflections and suggests closest matches if you slip.",
+    icon: "fas fa-search",
+  },
+  {
+    eyebrow: "Step 2",
+    title: "Deep-dive the entry",
+    description:
+      "Scroll through tabs for senses, examples, collocations, and phrases. Bookmark or add to lists with one tap.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    eyebrow: "Step 3",
+    title: "Turn it into practice",
+    description:
+      "Send the lemma to Language Flashcards or Study Planner, or export to Markdown/CSV for class prep.",
+    icon: "fas fa-share-nodes",
+  },
+];
+
+const listHighlights = [
+  {
+    title: "Curated CEFR packs",
+    description:
+      "Browse prebuilt A1–B2 lists for exam prep with progress meters and streak tracking.",
+    icon: "fas fa-graduation-cap",
+  },
+  {
+    title: "Personal notebooks",
+    description:
+      "Create unlimited themed lists on Pro, tag them, and queue them for review sessions.",
+    icon: "fas fa-bookmark",
+  },
+  {
+    title: "History with superpowers",
+    description:
+      "Filter searches by language, export to CSV, or bulk bookmark your last study streak.",
+    icon: "fas fa-clock-rotate-left",
+  },
+];
+
+const planRows = [
+  { feature: "Lookups per day", free: "200", pro: "Unlimited" },
+  { feature: "Custom lists", free: "Up to 3", pro: "Unlimited" },
+  { feature: "Pronunciation", free: "TTS", pro: "TTS + record & compare" },
+  { feature: "Offline cache", free: "50 entries", pro: "500 entries" },
+  { feature: "History retention", free: "90 days", pro: "Unlimited" },
+  { feature: "Exports", free: "—", pro: "Markdown & CSV" },
+  { feature: "Integrations", free: "Links to other apps", pro: "One-click send" },
+];
+
+const apiRoutes = [
+  { method: "GET", path: "/dictionary/api/search", summary: "Smart lookup with fuzzy, phonetic, and bilingual filters." },
+  { method: "GET", path: "/dictionary/api/word", summary: "Return full lemma data, senses, morphology, and audio." },
+  { method: "GET", path: "/dictionary/api/related", summary: "Fetch synonyms, antonyms, collocations, and phrases." },
+  { method: "GET", path: "/dictionary/api/examples", summary: "Serve bilingual example banks with optional sources." },
+  { method: "POST", path: "/dictionary/api/list/create", summary: "Spin up curated or personal vocab lists." },
+  { method: "POST", path: "/dictionary/api/flashcards/send", summary: "Pipe entries into Language Flashcards instantly." },
+  { method: "POST", path: "/dictionary/api/pronounce/record", summary: "Upload learner recordings and score pronunciation." },
+];
+
+const dataModelEntities = [
+  "Language",
+  "Lemma",
+  "Sense",
+  "Example",
+  "Relation",
+  "PronAudio",
+  "List",
+  "ListItem",
+  "Bookmark",
+  "History",
+  "Tag",
+];
+
+const accessibilityNotes = [
+  "High-contrast palettes and large base fonts keep entries legible in long study sessions.",
+  "RTL layouts, localized digits, and mirrored icons render automatically for Arabic.",
+  "All playback, bookmark, and list buttons expose descriptive ARIA labels and focus states.",
+  "Reduced motion mode tones down celebratory streak animations and tab transitions.",
+];
+---
+
+<Layout title="Dictionary+">
+  <main class="min-h-screen bg-slate-50">
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-sky-600 to-purple-700 py-16 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.2),_rgba(37,99,235,0.05))]"></div>
+      <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+        <div class="flex-1 space-y-6">
+          <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+            Dictionary+
+          </span>
+          <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+            A learner's dictionary that connects every lookup to action
+          </h1>
+          <p class="max-w-2xl text-white/80">
+            Search bilingual entries, hear natural pronunciation, explore collocations, and launch flashcards or study plans without leaving the page. Dictionary+ keeps your recent lookups cached and ready wherever you study.
+          </p>
+          <div class="flex flex-wrap gap-4">
+            <Button href="#search" variant="secondary">
+              <i class="fas fa-search text-sm"></i>
+              Explore search workspace
+            </Button>
+            <Button href="#entry" variant="outline">
+              <i class="fas fa-book-open text-sm"></i>
+              See entry anatomy
+            </Button>
+            <Button href="#plans" variant="ghost">
+              <i class="fas fa-crown text-sm"></i>
+              Compare plans
+            </Button>
+          </div>
+        </div>
+        <div class="grid w-full max-w-md gap-4 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+          {heroStats.map((stat) => (
+            <div class="rounded-2xl border border-white/20 bg-white/10 px-4 py-3" aria-label={stat.label}>
+              <p class="text-xs font-semibold uppercase tracking-wide text-white/70">{stat.label}</p>
+              <p class="mt-2 text-2xl font-bold">{stat.value}</p>
+              <p class="mt-1 text-xs text-white/70">{stat.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="search" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Search workspace"
+          title="Find the right word in milliseconds"
+          description="Dictionary+ lemmatizes input, detects languages, and serves instant preview cards while you type."
+        />
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+          {searchHighlights.map((feature) => (
+            <FeatureCard
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-sky-500/10 text-sky-600"
+            />
+          ))}
+        </div>
+        <div class="mt-10 grid gap-8 rounded-3xl border border-slate-200 bg-slate-50/60 p-8 sm:grid-cols-[0.75fr_1.25fr]">
+          <div class="space-y-4">
+            <h3 class="text-xl font-semibold text-slate-900">Search controls</h3>
+            <p class="text-sm text-slate-600">
+              Learners can switch base and target languages, add CEFR and part-of-speech filters, or jump straight into compare view. A Did you mean helper offers phonetic alternates when spelling gets tricky.
+            </p>
+            <ul class="space-y-2 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-bullseye text-sky-500"></i>
+                Prefix, fuzzy, and phonetic matching prioritises exact lemmas first, then inflections and close variants.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-wifi text-sky-500"></i>
+                Offline cache stores the last 50–500 entries depending on plan with scheduled background refresh.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-clock text-sky-500"></i>
+                History timeline shows when you last opened a lemma with quick export to CSV or Markdown.
+              </li>
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-dashed border-slate-200 bg-white p-6 shadow-sm">
+            <h4 class="text-lg font-semibold text-slate-900">Instant results preview</h4>
+            <p class="mt-3 text-sm text-slate-600">
+              Results stream in as you type, showing part of speech, IPA, frequency band, and snippet examples. Selecting a card slides open the entry drawer while keeping search controls visible for fast pivots.
+            </p>
+            <div class="mt-6 grid gap-4 text-sm text-slate-600">
+              <div class="rounded-2xl border border-slate-200 bg-slate-100/70 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Auto-detect</p>
+                <p class="mt-1 font-semibold text-slate-900">Recognises English, Spanish, Arabic, Tamil input instantly.</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-100/70 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Compare toggle</p>
+                <p class="mt-1 font-semibold text-slate-900">Send two lemmas into side-by-side view to contrast nuance.</p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-100/70 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">List shortcut</p>
+                <p class="mt-1 font-semibold text-slate-900">Bookmark or add to word lists without breaking your flow.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="entry" class="bg-slate-50 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Entry anatomy"
+          title="Every lemma becomes a guided lesson"
+          description="Tabs organise senses, examples, collocations, and phrases so learners can jump between clarity and depth."
+        />
+        <div class="mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-xl font-semibold text-slate-900">What learners see</h3>
+            <p class="text-sm text-slate-600">
+              The main tab surfaces IPA, audio buttons, morphology tables, CEFR levels, and example sentences in both languages. Related words and idioms sit in collapsible panels ready for quick review.
+            </p>
+            <ul class="space-y-3 text-sm text-slate-600">
+              <li class="flex items-start gap-3">
+                <i class="fas fa-volume-high text-indigo-500"></i>
+                Inline controls play TTS in preferred accent, while Pro members record and compare their pronunciation.
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fas fa-diagram-next text-indigo-500"></i>
+                Relation chips open Compare view for tricky synonyms, antonyms, collocations, or phrasal verbs.
+              </li>
+              <li class="flex items-start gap-3">
+                <i class="fas fa-layer-group text-indigo-500"></i>
+                Morphology tables cover plurals, tense shifts, comparatives, and derived forms for quick mastery.
+              </li>
+            </ul>
+          </div>
+          <div class="grid gap-6 md:grid-cols-2">
+            {entryHighlights.map((highlight) => (
+              <FeatureCard
+                eyebrow={highlight.eyebrow}
+                title={highlight.title}
+                description={highlight.description}
+                icon={highlight.icon}
+                iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="workflow" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workflow"
+          title="From lookup to lasting knowledge"
+          description="Dictionary+ pairs fast discovery with tools that nudge learners into practice and retention."
+        />
+        <div class="mt-10 grid gap-6 md:grid-cols-3">
+          {workflowSteps.map((step) => (
+            <FeatureCard
+              eyebrow={step.eyebrow}
+              title={step.title}
+              description={step.description}
+              icon={step.icon}
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600"
+            />
+          ))}
+        </div>
+        <div class="mt-12 grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-8">
+            <h3 class="text-xl font-semibold text-slate-900">Lists, history & streaks</h3>
+            <p class="mt-3 text-sm text-slate-600">
+              Organise vocabulary into curated CEFR packs or personal collections. Track review streaks, set reminders, and sync with flashcard decks in one click.
+            </p>
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              {listHighlights.map((item) => (
+                <FeatureCard
+                  as="div"
+                  baseClass="h-full rounded-3xl border border-white/0 bg-white p-5 shadow-inner"
+                  title={item.title}
+                  description={item.description}
+                  icon={item.icon}
+                  iconWrapperClass="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10 text-emerald-600"
+                  titleClass="text-base font-semibold text-slate-900"
+                  descriptionClass="mt-2 text-sm text-slate-600"
+                />
+              ))}
+          </div>
+          <div class="rounded-3xl border border-dashed border-emerald-200 bg-emerald-50/60 p-8">
+            <h3 class="text-xl font-semibold text-emerald-800">Integrations that accelerate learning</h3>
+            <p class="mt-3 text-sm text-emerald-700">
+              Export directly into Language Flashcards for spaced repetition, schedule study tasks with Study Planner, cite terminology in Research Assistant, or build glossary cards inside EduPrompt.
+            </p>
+            <ul class="mt-6 space-y-3 text-sm text-emerald-700">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-layer-group text-emerald-500"></i>
+                Flashcards: auto-create bilingual cards with IPA, audio, and example sentences.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-calendar-check text-emerald-500"></i>
+                Study Planner: schedule micro reviews or exam prep sessions using saved lists.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-flask text-emerald-500"></i>
+                Research Assistant: send terminology bundles to cite in reports or lesson plans.
+              </li>
+            </ul>
+            <Button href="/langcards" variant="secondary" class="mt-8">
+              <i class="fas fa-arrow-up-right-from-square text-xs"></i>
+              Visit Language Flashcards
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="data" class="bg-slate-900 py-16 text-slate-100">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Under the hood"
+          title="Structured data that keeps entries consistent"
+          description="Dictionary+ uses a clean schema to index languages, lemmas, senses, and every relation between them."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-sky-400"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-slate-200"
+        />
+        <div class="mt-10 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+            <h3 class="text-xl font-semibold text-white">Core entities</h3>
+            <p class="mt-3 text-sm text-slate-200">
+              Everything revolves around the Lemma table. Senses, examples, and relations all reference it, unlocking compare views, word lists, and pronunciation history.
+            </p>
+            <ul class="mt-6 grid gap-2 text-sm text-slate-200 sm:grid-cols-2">
+              {dataModelEntities.map((entity) => (
+                <li class="flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 font-semibold">
+                  <i class="fas fa-database text-sky-300"></i>
+                  {entity}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div id="plans" class="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur">
+            <h3 class="text-xl font-semibold text-white">Plans & limits</h3>
+            <p class="mt-3 text-sm text-slate-200">
+              Generous free limits help classrooms get started, while Pro unlocks advanced pronunciation tools, exports, and deeper history retention.
+            </p>
+            <div class="mt-6 overflow-hidden rounded-2xl border border-white/10">
+              <table class="min-w-full divide-y divide-white/10 text-left text-sm">
+                <thead class="bg-white/10 text-xs uppercase tracking-wide text-slate-200">
+                  <tr>
+                    <th scope="col" class="px-4 py-3 font-semibold">Feature</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Free</th>
+                    <th scope="col" class="px-4 py-3 font-semibold">Pro</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-white/5">
+                  {planRows.map((row) => (
+                    <tr>
+                      <th scope="row" class="px-4 py-3 text-slate-100">{row.feature}</th>
+                      <td class="px-4 py-3 text-slate-200">{row.free}</td>
+                      <td class="px-4 py-3 text-sky-200">{row.pro}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="api" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Developer surface"
+          title="API endpoints ready for SSR"
+          description="Server-rendered routes keep lookups snappy and secure while client-side caches accelerate repeat visits."
+        />
+        <div class="mt-10 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50/70 p-8">
+            <h3 class="text-xl font-semibold text-slate-900">Key endpoints</h3>
+            <ul class="mt-6 space-y-4 text-sm text-slate-600">
+              {apiRoutes.map((route) => (
+                <li class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                    {route.method} <span class="text-slate-400">{route.path}</span>
+                  </p>
+                  <p class="mt-2 text-sm text-slate-600">{route.summary}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-dashed border-slate-200 bg-white p-8">
+            <h3 class="text-xl font-semibold text-slate-900">Performance & reliability</h3>
+            <p class="mt-3 text-sm text-slate-600">
+              Dictionary+ balances SSR accuracy with client responsiveness using web workers for fuzzy matching, prefetching for frequently visited lemmas, and gentle rate limits.
+            </p>
+            <ul class="mt-6 space-y-3 text-sm text-slate-600">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-gauge-high text-indigo-500"></i>
+                60 requests/minute on search endpoints keep abuse in check without slowing sessions.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-shield text-indigo-500"></i>
+                Authentication-aware routes for list, history, and pronunciation recording respect user privacy.
+              </li>
+              <li class="flex items-start gap-2">
+                <i class="fas fa-robot text-indigo-500"></i>
+                Web workers handle local caches, phonetic keys, and did-you-mean suggestions offline.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="accessibility" class="bg-slate-50 py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Inclusive design"
+          title="Accessibility commitments"
+          description="Learners everywhere — including screen reader users and right-to-left readers — can rely on Dictionary+."
+          align="center"
+        />
+        <div class="mt-10 grid gap-6 sm:grid-cols-2">
+          {accessibilityNotes.map((note) => (
+            <FeatureCard
+              as="div"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+              title={note}
+              icon="fas fa-universal-access"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-100 text-indigo-600"
+              titleClass="text-base font-semibold text-slate-900"
+              descriptionClass="hidden"
+            />
+          ))}
+        </div>
+        <p class="mt-10 text-center text-sm text-slate-600">
+          Ready to weave Dictionary+ into your classroom or organisation? Combine it with Language Flashcards, Study Planner, and Research Assistant to create a connected language learning toolkit.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
