@@ -1,0 +1,38 @@
+---
+import FeatureCard from '../../../components/FeatureCard.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-white py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Integrations"
+      title="Anchored to the rest of the Ansiversa learning stack"
+      description="Study Planner plugs into FlashNote, Quiz Institute, Homework Helper, and Course Tracker for a full learning feedback loop."
+    />
+    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <template x-for="integration in planner.integrations" :key="integration.id">
+        <FeatureCard
+          :title="integration.name"
+          :description="integration.description"
+          class="h-full"
+          iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+          :icon="integration.icon"
+          titleClass="text-base font-semibold text-slate-900"
+          descriptionClass="text-sm text-slate-600"
+        >
+          <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <i class="fas fa-plug text-[10px]"></i>
+            <span x-text="integration.status"></span>
+          </span>
+        </FeatureCard>
+      </template>
+    </div>
+    <div class="mt-12 rounded-3xl border border-slate-200 bg-slate-50 p-6 text-sm text-slate-600">
+      <p class="font-semibold text-slate-900">Need calendar export?</p>
+      <p class="mt-1">
+        Upgrade to Pro to unlock ICS export, Google Classroom sync, and CSV downloads of Pomodoro and review history. Free plan
+        keeps a printable weekly agenda ready for download.
+      </p>
+    </div>
+  </div>
+</section>

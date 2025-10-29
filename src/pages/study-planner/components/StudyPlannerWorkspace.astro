@@ -1,0 +1,277 @@
+---
+import Button from '../../../components/Button.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-50 py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Planner workspace"
+      title="Subjects, backlog, and availability in one command view"
+      description="Promote priority topics, respect rest-day guardrails, and see the smart scheduler translate goals into concrete blocks."
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Subjects &amp; mastery</h3>
+              <p class="mt-1 text-sm text-slate-500">CBSE board-aligned structure keeps coverage visible across disciplines.</p>
+            </div>
+            <Button type="button" size="sm" variant="light" class="border border-slate-200" @click.prevent="planner.setFocusSubject('all')">
+              <i class="fas fa-layer-group text-xs"></i>
+              View all
+            </Button>
+          </header>
+          <ul class="mt-6 space-y-4">
+            <template x-for="subject in planner.subjects" :key="subject.id">
+              <li class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+                <div class="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <p class="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                        <i :class="subject.icon"></i>
+                      </span>
+                      <span x-text="subject.name"></span>
+                    </p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="`${subject.board} · ${subject.gradeBand}`"></p>
+                    <p class="mt-2 text-xs text-slate-500" x-text="`Next: ${subject.upcomingAssessment}`"></p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Mastery</p>
+                    <p class="mt-1 text-2xl font-bold text-slate-900" x-text="`${subject.mastery}%`"></p>
+                    <p class="text-xs text-emerald-600" x-text="`${subject.weeklyHours} hrs scheduled`"></p>
+                  </div>
+                </div>
+                <div class="mt-3 grid gap-3 sm:grid-cols-3">
+                  <template x-for="topic in subject.topics" :key="topic.name">
+                    <div class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs text-slate-600">
+                      <p class="font-semibold text-slate-800" x-text="topic.name"></p>
+                      <p class="mt-1" x-text="`${topic.nextSession}`"></p>
+                      <p class="mt-1 inline-flex items-center gap-1 rounded-full px-2 py-0.5"
+                        :class="topic.status === 'mastered'
+                          ? 'bg-emerald-100 text-emerald-700'
+                          : topic.status === 'in-progress'
+                            ? 'bg-indigo-100 text-indigo-600'
+                            : 'bg-amber-100 text-amber-600'">
+                        <i class="fas fa-chart-simple text-[10px]"></i>
+                        <span x-text="topic.status === 'mastered' ? 'Mastered' : topic.status === 'in-progress' ? 'In progress' : 'Scheduled'"></span>
+                      </p>
+                    </div>
+                  </template>
+                </div>
+                <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
+                  <Button type="button" size="sm" variant="outline" @click.prevent="planner.setFocusSubject(subject.id)">
+                    <i class="fas fa-target text-xs"></i>
+                    Focus this subject
+                  </Button>
+                  <div class="flex items-center gap-2 text-xs text-slate-500">
+                    <i class="fas fa-chart-pie text-[10px]"></i>
+                    <span>
+                      <template x-if="planner.getFocusShare(subject.id)">
+                        <span x-text="`${planner.getFocusShare(subject.id)?.hours ?? 0} hrs vs ${planner.getFocusShare(subject.id)?.target ?? 0} target`"></span>
+                      </template>
+                      <template x-if="!planner.getFocusShare(subject.id)">
+                        <span>No data yet</span>
+                      </template>
+                    </span>
+                  </div>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Backlog &amp; priorities</h3>
+              <p class="mt-1 text-sm text-slate-500">Priority scores update as you boost tasks or clear reviews.</p>
+            </div>
+            <Button type="button" size="sm" variant="light" class="border border-slate-200" @click.prevent="planner.autoScheduleWeek()">
+              <i class="fas fa-wand-magic-sparkles text-xs"></i>
+              Auto place top tasks
+            </Button>
+          </header>
+          <ul class="mt-6 space-y-3">
+            <template x-for="task in planner.filteredBacklog" :key="task.id">
+              <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900" x-text="task.title"></p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="`${task.topic} · ${task.difficulty}`"></p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="`${task.estimatedMinutes} min · ${task.urgencyLabel}`"></p>
+                    <p class="mt-2 text-xs text-slate-500" x-text="task.notes"></p>
+                    <p class="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-slate-500">
+                      <template x-if="task.linkedDeck">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-2 py-0.5 text-indigo-600">
+                          <i class="fas fa-clone text-[10px]"></i>
+                          <span x-text="task.linkedDeck"></span>
+                        </span>
+                      </template>
+                      <template x-if="task.integrationSource">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-emerald-700">
+                          <i class="fas fa-plug text-[10px]"></i>
+                          <span x-text="task.integrationSource"></span>
+                        </span>
+                      </template>
+                    </p>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Priority</p>
+                    <p class="mt-1 text-2xl font-bold text-indigo-600" x-text="task.priorityScore"></p>
+                    <Button type="button" size="sm" variant="ghost" class="mt-3 text-indigo-600" @click.prevent="planner.boostTask(task.id)">
+                      <i class="fas fa-arrow-trend-up text-xs"></i>
+                      Boost
+                    </Button>
+                  </div>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Smart schedule</h3>
+              <p class="mt-1 text-sm text-slate-500">Respect availability caps, board pacing, and energy curves.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <Button type="button" size="sm" variant="outline" @click.prevent="planner.autoScheduleWeek()">
+                <i class="fas fa-wand-magic-sparkles text-xs"></i>
+                Re-run scheduler
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant="ghost"
+                class="text-slate-600"
+                @click.prevent="planner.setActiveDay(planner.activeDay)"
+              >
+                <i class="fas fa-rotate text-xs"></i>
+                Refresh view
+              </Button>
+            </div>
+          </header>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <template x-for="day in planner.weekDays" :key="`workspace-${day}`">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+                :class="day === planner.activeDay ? 'border-indigo-500 bg-indigo-100 text-indigo-700' : 'border-slate-200 bg-white text-slate-600 hover:border-indigo-200 hover:text-indigo-600'"
+                @click="planner.setActiveDay(day)"
+              >
+                <i class="fas fa-calendar-day text-[10px]"></i>
+                <span x-text="day"></span>
+              </button>
+            </template>
+          </div>
+          <ul class="mt-6 space-y-3 text-sm text-slate-600">
+            <template x-if="planner.agenda.length">
+              <template x-for="slot in planner.agenda" :key="`workspace-slot-${slot.id}`">
+                <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-base font-semibold text-slate-900" x-text="slot.focus"></p>
+                      <p class="mt-1 flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5">
+                          <i class="fas fa-clock text-[10px]"></i>
+                          <span x-text="`${slot.start} – ${slot.end}`"></span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5"
+                          :class="slot.type === 'review' ? 'bg-emerald-100 text-emerald-700' : slot.type === 'buffer' ? 'bg-amber-100 text-amber-700' : 'bg-indigo-100 text-indigo-700'">
+                          <i class="fas fa-layer-group text-[10px]"></i>
+                          <span x-text="slot.type === 'review' ? 'Review' : slot.type === 'buffer' ? 'Buffer' : 'Study'"></span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-slate-200 px-2 py-0.5 text-slate-600" x-text="`${slot.durationMinutes} min`"></span>
+                      </p>
+                      <p class="mt-2 text-xs text-slate-500" x-text="slot.notes"></p>
+                    </div>
+                    <div class="text-right text-xs text-slate-500">
+                      <p class="font-semibold text-slate-700" x-text="slot.status === 'completed' ? 'Completed' : 'Scheduled'"></p>
+                      <button
+                        type="button"
+                        class="mt-3 inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-3 py-1 font-semibold text-emerald-600"
+                        @click="planner.startPomodoro(slot.taskId)"
+                      >
+                        <i class="fas fa-stopwatch text-[10px]"></i>
+                        Focus now
+                      </button>
+                    </div>
+                  </div>
+                </li>
+              </template>
+            </template>
+            <template x-if="!planner.agenda.length">
+              <li class="rounded-2xl border border-dashed border-slate-200 bg-white/60 p-6 text-center text-xs text-slate-500">
+                No blocks scheduled. Use Auto-schedule or drag tasks from backlog.
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+              <h3 class="text-base font-semibold text-slate-900">Availability &amp; guardrails</h3>
+              <p class="mt-1 text-sm text-slate-500">Toggle rest days or adjust caps before re-running the scheduler.</p>
+            </div>
+            <Button type="button" size="sm" variant="light" class="border border-slate-200" @click.prevent="planner.autoScheduleWeek()">
+              <i class="fas fa-rotate text-xs"></i>
+              Rebalance
+            </Button>
+          </header>
+          <ul class="mt-6 space-y-3 text-sm text-slate-600">
+            <template x-for="day in planner.availability" :key="`availability-${day.id}`">
+              <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <p class="font-semibold text-slate-900" x-text="day.label"></p>
+                    <p class="text-xs text-slate-500" x-text="day.focusTheme"></p>
+                    <ul class="mt-2 space-y-1 text-xs text-slate-500">
+                      <template x-for="block in day.blocks" :key="`${day.id}-${block.start}`">
+                        <li>
+                          <span x-text="`${block.start} – ${block.end}`"></span>
+                          <template x-if="block.tag">
+                            <span class="ml-2 inline-flex items-center gap-1 rounded-full bg-white px-2 py-0.5 text-[10px] text-slate-600">
+                              <i class="fas fa-circle-nodes"></i>
+                              <span x-text="block.tag"></span>
+                            </span>
+                          </template>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                  <div class="text-right">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Daily cap</p>
+                    <p class="mt-1 text-lg font-bold text-slate-900" x-text="`${day.dailyCapHours} hrs`"></p>
+                    <button
+                      type="button"
+                      class="mt-3 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                      :class="day.enabled ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-200 text-slate-600'"
+                      @click="planner.toggleAvailability(day.id)"
+                    >
+                      <i :class="day.enabled ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
+                      <span x-text="day.enabled ? 'Active' : 'Rest day'"></span>
+                    </button>
+                  </div>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-indigo-200 bg-indigo-50 p-6 shadow-sm">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p class="text-sm font-semibold text-indigo-900">Latest action</p>
+              <p class="mt-1 text-sm text-indigo-700" x-text="planner.lastAction"></p>
+            </div>
+            <div class="text-right text-xs text-indigo-700">
+              <p class="font-semibold">Plan status</p>
+              <p x-text="planner.plan.statusMessage"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

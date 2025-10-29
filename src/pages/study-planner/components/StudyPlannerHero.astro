@@ -1,0 +1,144 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="relative overflow-hidden bg-slate-900">
+  <div class="absolute inset-0">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/20 via-slate-900 to-slate-900"></div>
+    <div class="absolute -top-16 -left-16 h-56 w-56 rounded-full bg-emerald-400/10 blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-12 h-64 w-64 rounded-full bg-indigo-500/20 blur-3xl"></div>
+  </div>
+  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div class="space-y-8 text-center lg:text-left">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-indigo-200">
+          <i class="fas fa-graduation-cap text-xs"></i>
+          Unified study operating system
+        </span>
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          Study Planner orchestrates subjects, habits, and reviews into one rhythm
+        </h1>
+        <p class="max-w-xl text-base text-indigo-100 sm:text-lg">
+          Auto-block your week around board pacing, convert Quiz Institute misses into FlashNote reviews, and stay in flow with
+          Pomodoro-driven focus analytics. It is the command centre that keeps CBSE and international learners exam-ready without
+          burning out.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <Button type="button" @click.prevent="planner.autoScheduleWeek()">
+            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+            Auto-schedule my week
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            class="text-indigo-200 hover:bg-white/10"
+            @click.prevent="planner.toggleTimer()"
+          >
+            <i class="fas fa-stopwatch text-xs"></i>
+            <span x-text="planner.timer.isRunning ? 'Pause focus timer' : 'Start focus timer'"></span>
+          </Button>
+        </div>
+        <dl class="grid gap-4 text-left sm:grid-cols-3">
+          <template x-for="metric in planner.metrics" :key="metric.id">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+              <dt class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-200">
+                <i :class="metric.icon"></i>
+                <span x-text="metric.label"></span>
+              </dt>
+              <dd class="mt-2 text-2xl font-bold text-white" x-text="`${metric.value} ${metric.unit}`"></dd>
+              <dd class="mt-1 text-xs text-indigo-100" x-text="metric.delta"></dd>
+            </div>
+          </template>
+        </dl>
+      </div>
+      <div class="relative">
+        <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-emerald-400/20 blur-2xl"></div>
+        <div class="relative space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_30px_90px_rgba(15,23,42,0.55)]">
+          <header class="flex items-center justify-between">
+            <div>
+              <p class="text-sm font-semibold text-white">Today&apos;s agenda</p>
+              <p class="text-xs text-indigo-100">Smart scheduler balances energy, deadlines, and review decks.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-300/20 px-3 py-1 text-xs font-semibold text-emerald-100">
+              <i class="fas fa-bolt text-[10px]"></i>
+              Smart sync
+            </span>
+          </header>
+          <div class="flex flex-wrap gap-2">
+            <template x-for="day in planner.weekDays" :key="day">
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold transition"
+                :class="day === planner.activeDay
+                  ? 'border-emerald-300 bg-emerald-300/20 text-emerald-100'
+                  : 'border-white/10 bg-white/5 text-indigo-100 hover:border-white/20 hover:bg-white/10'"
+                @click="planner.setActiveDay(day)"
+              >
+                <i class="fas fa-calendar-day text-[10px]"></i>
+                <span x-text="day"></span>
+              </button>
+            </template>
+          </div>
+          <ul class="space-y-4 text-sm text-indigo-100">
+            <template x-if="planner.agenda.length">
+              <template x-for="slot in planner.agenda" :key="slot.id">
+                <li class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div class="flex items-start justify-between gap-3">
+                    <div>
+                      <p class="text-base font-semibold text-white" x-text="slot.focus"></p>
+                      <p class="mt-1 flex flex-wrap items-center gap-2 text-xs text-indigo-100">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5">
+                          <i class="fas fa-clock text-[10px]"></i>
+                          <span x-text="`${slot.start} – ${slot.end}`"></span>
+                        </span>
+                        <span class="inline-flex items-center gap-1 rounded-full bg-emerald-400/10 px-2 py-0.5 text-emerald-100">
+                          <i class="fas fa-battery-three-quarters text-[10px]"></i>
+                          <span x-text="slot.energy === 'peak' ? 'Peak focus' : slot.energy === 'steady' ? 'Steady' : 'Light'"></span>
+                        </span>
+                        <span
+                          class="inline-flex items-center gap-1 rounded-full px-2 py-0.5"
+                          :class="slot.status === 'completed'
+                            ? 'bg-emerald-400/20 text-emerald-100'
+                            : slot.status === 'missed'
+                              ? 'bg-rose-500/20 text-rose-100'
+                              : 'bg-white/10 text-indigo-100'"
+                        >
+                          <i class="fas fa-circle-check text-[10px]"></i>
+                          <span x-text="slot.status === 'completed' ? 'Completed' : 'Scheduled'"></span>
+                        </span>
+                      </p>
+                      <p class="mt-2 text-xs text-indigo-200" x-text="slot.notes"></p>
+                    </div>
+                    <button
+                      type="button"
+                      class="inline-flex items-center gap-1 rounded-full bg-emerald-500/20 px-3 py-1 text-xs font-semibold text-emerald-100 hover:bg-emerald-500/30"
+                      @click="planner.markSlotComplete(slot.id)"
+                    >
+                      <i class="fas fa-check"></i>
+                      Done
+                    </button>
+                  </div>
+                </li>
+              </template>
+            </template>
+            <template x-if="!planner.agenda.length">
+              <li class="rounded-2xl border border-dashed border-white/20 bg-white/5 p-6 text-center text-xs text-indigo-100">
+                No sessions scheduled for this day. Tap Auto-schedule to fill the gaps.
+              </li>
+            </template>
+          </ul>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-indigo-100">
+            <p class="font-semibold text-white">Focus timer</p>
+            <p class="mt-1 flex flex-wrap items-center gap-2">
+              <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5">
+                <i class="fas fa-stopwatch text-[10px]"></i>
+                <span x-text="`${planner.timer.remainingMinutes} min`"></span>
+              </span>
+              <span x-text="planner.timer.status"></span>
+            </p>
+            <p class="mt-2 text-xs text-indigo-200" x-text="`Next: ${planner.timer.upcoming}`"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

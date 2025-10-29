@@ -49,3 +49,4 @@ import '../pages/meals/stores';
 import '../pages/homework/stores/homeworkHelper';
 import '../pages/linkedin-bio/stores';
 import '../pages/notes-summarizer/stores';
+import '../pages/study-planner/stores/studyPlanner';
