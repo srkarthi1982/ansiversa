@@ -1,0 +1,24 @@
+---
+interface Props {
+  icon: string;
+  label: string;
+  value: string;
+  sublabel?: string;
+  accent?: string;
+}
+
+const { icon, label, value, sublabel, accent = 'from-emerald-500 via-sky-500 to-cyan-500' } = Astro.props;
+---
+<div class="relative overflow-hidden rounded-3xl border border-white/10 bg-white/10 p-5 text-white shadow-lg shadow-emerald-900/20">
+  <div class={`absolute inset-0 -z-10 bg-gradient-to-br ${accent} opacity-20`}></div>
+  <div class="flex items-center justify-between gap-4">
+    <div class="flex size-12 items-center justify-center rounded-2xl bg-white/10 text-lg">
+      <i class={icon}></i>
+    </div>
+    <div class="text-right">
+      <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">{label}</p>
+      <p class="mt-2 text-2xl font-semibold text-white">{value}</p>
+      {sublabel && <p class="mt-1 text-xs text-white/70">{sublabel}</p>}
+    </div>
+  </div>
+</div>
