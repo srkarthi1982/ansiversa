@@ -1,192 +1,145 @@
-# 🔎 Research Assistant — Detailed Requirements (Ansiversa)
+# ðŸ”Ž Research Assistant â€” Full Requirements (Ansiversa)
 
-**Owner:** Ansiversa (Karthik)  
-**Module Path:** `/research`  
-**Category:** Learning & Knowledge / Writing & Creativity  
-**Stack:** Astro + Tailwind (islands for reader/notes), Astro SSR API routes, Astro DB / Supabase, optional background workers for long summarization jobs  
-**Goal:** Help users plan, collect, read, highlight, and synthesize information into **evidence-backed notes, outlines, and drafts** with proper **citations**. Optimized for students, creators, founders, and PMs.
-
-> Positioning: A trustworthy “evidence engine” that turns messy sources into clean insights, with one-click exports to essays, decks, and proposals.
+This file contains both a **condensed overview** for Codex onboarding and the **full technical specification** for implementation.
 
 ---
 
-## 1) Objectives & Non-Goals
+## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
-### Objectives
-- **Projects** that hold questions, scope, sources, highlights, notes, claims, bibliographies, and exports.  
-- **Source intake**: URL (article/blog), PDF upload, pasted text, and manual notes. *(v1 avoids live web crawlers; users paste/upload content or provide URLs for server fetch)*  
-- **Reading workspace**: split-pane **Reader** (PDF/HTML) + **Notes** with highlight capture, quote → citation, auto-summaries.  
-- **Synthesis toolkit**: **topic map**, **compare & contrast**, **claim ↔ evidence matrix**, **counter-arguments**, and **bias checks**.  
-- **Writer**: turn insights into **outline** → **section drafts** with citations in APA/MLA/Chicago/IEEE.  
-- **Exports**: MD/DOCX/PDF; **Slides** to Presentation Designer; **Fact pack** to FlashNote; **Data** to CSV/JSON.  
-- **Integrity**: every non-obvious statement maps to a source/line; plagiarism check and quotation handling.
+### Overview
+The **Research Assistant** mini app helps users collect, read, highlight, summarize, and synthesize knowledge into structured drafts with citations. It serves as a workspace for evidence-based writing, academic research, and idea development.
 
-### Non-Goals (v1)
-- No automated large-scale web scraping; no paywall bypass.  
-- No medical/legal/financial advice output; provide neutral summaries with citations.  
-- No collaborative editing (single-user projects; v2 adds sharing).
+### Key Features
+- Create projects with research questions and scopes.
+- Add and parse sources (URLs, PDFs, text, or notes).
+- Built-in reader with highlighting, quoting, and tagging.
+- AI summaries and key point extraction.
+- Compare multiple sources for agreement/disagreement.
+- Build claimâ€“evidence matrices and bias checks.
+- Auto-generate outlines and drafts with citations (APA/MLA/Chicago/IEEE).
+- Export to MD/DOCX/PDF or send outline to Presentation Designer.
+- Integrations: FlashNote, Fact Generator, Proposal Writer, Blog Writer.
 
----
+### Core Pages
+- `/research` â†’ Project list
+- `/research/project/[id]` â†’ Dashboard
+- `/research/project/[id]/reader/[sourceId]` â†’ Reader & Notes
+- `/research/project/[id]/synthesis` â†’ Comparison & Matrix
+- `/research/project/[id]/writer` â†’ Outline & Draft Editor
 
-## 2) User Stories (Acceptance Criteria)
+### Database Summary
+Tables: `User`, `Project`, `Source`, `Excerpt`, `Highlight`, `Note`, `Claim`, `EvidenceLink`, `Outline`, `Draft`, `BibliographyItem`, `PlagiarismReport`.
 
-1. **Start a Project**
-   - *As a user*, I create a project and write a research question + scope (timeframe, geography, audience).  
-   - **AC:** `/research/api/project/create` seeds a question, empty source list, and default bibliography style.
+### Plan Gating
+| Feature | Free | Pro |
+|----------|------|-----|
+| Projects | 1 | Unlimited |
+| Sources/project | 10 | 2,000 |
+| Highlights | 200 | 20,000 |
+| Drafts | Outline only | Outline + Draft |
+| Exports | MD | MD/DOCX/PDF |
+| Plagiarism | â€” | Included |
 
-2. **Add Sources**
-   - *As a user*, I paste URLs or upload PDFs.  
-   - **AC:** `/research/api/source/add` stores metadata (title, author, date, publisher), fetches text (if URL), and fingerprint hash for dedupe.
-
-3. **Read & Highlight**
-   - *As a user*, I open a source in the **Reader** (PDF/HTML view) and select text.  
-   - **AC:** selection → **Highlight** with color/tag; **Quote** saved with page/loc; **Note** linked to the highlight.
-
-4. **Summarize & Extract**
-   - *As a user*, I click **Auto-summary** or **Key points**.  
-   - **AC:** `/research/api/summary` returns a bullet summary + key quotes with citations and confidence.
-
-5. **Claim ↔ Evidence Matrix**
-   - *As a user*, I write a claim (or pick generated claims).  
-   - **AC:** `/research/api/claims/link` associates claim text with one or more source spans; UI shows coverage and counter-evidence opportunities.
-
-6. **Compare Sources**
-   - *As a user*, I select 2–5 sources.  
-   - **AC:** `/research/api/compare` returns **agreement**, **disagreement**, **gaps**, and **recency** differences.
-
-7. **Outline & Draft**
-   - *As a user*, I click **Make outline** → **Draft section**.  
-   - **AC:** `/research/api/outline` generates H2/H3s; `/research/api/draft` produces sections with inline citations in chosen style.
-
-8. **Bibliography**
-   - *As a user*, I pick APA/MLA/Chicago/IEEE.  
-   - **AC:** `/research/api/bib/render` formats all sources accordingly; invalid fields flagged for manual fixes.
-
-9. **Plagiarism & Quotes**
-   - *As a user*, I run **Plagiarism Check**.  
-   - **AC:** `/research/api/plagiarism/check` highlights close paraphrases; UI suggests quotation or re-write with attribution.
-
-10. **Export**
-    - *As a user*, I export MD/DOCX/PDF or **Send to Presentation Designer**.  
-    - **AC:** `/research/api/export` returns a file URL; deck export sends outline + key claims to `/presentation`.
-
-11. **Plan Gating**
-    - Free: 1 project, 10 sources, 200 highlights, basic summaries, MD export.  
-    - Pro: unlimited projects, 2k sources/project, long-doc summarization, DOCX/PDF exports, plagiarism check, outline/draft generator.
+### Integrations
+- **Presentation Designer** â†’ Export slides from outline.
+- **FlashNote** â†’ Create flashcards from highlights.
+- **Fact Generator** â†’ Validate and extract facts.
+- **Proposal Writer / Blog Writer** â†’ Reuse drafted sections.
 
 ---
 
-## 3) Information Architecture & Routes
+## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-- `/research` — Project list + **New project**.  
-- `/research/project/[id]` — Dashboard: question/scope, sources, quick stats.  
-- `/research/project/[id]/sources` — Source manager.  
-- `/research/project/[id]/reader/[sourceId]` — Reader (PDF/HTML) with highlights/notes pane.  
-- `/research/project/[id]/synthesis` — Topic map, compare, claims matrix, bias checks.  
-- `/research/project/[id]/writer` — Outline & draft editor with citation tools.  
-- `/research/settings` — Citation style, language, safety settings.
+### 1. Objectives & Non-Goals
+**Objectives:**
+- Projects manage sources, notes, claims, and drafts.
+- Reader supports highlights, notes, and citation extraction.
+- Summarization, comparison, and synthesis with integrity tracking.
 
-**API (SSR):**  
-- Project: `POST /research/api/project/create` · `GET /research/api/project/list` · `POST /research/api/project/delete`  
-- Sources: `POST /research/api/source/add` · `POST /research/api/source/update` · `POST /research/api/source/delete` · `GET /research/api/source/list`  
-- Content: `POST /research/api/summary` · `POST /research/api/compare` · `POST /research/api/claims/link` · `POST /research/api/claims/suggest`  
-- Notes/Highlights: `POST /research/api/highlight/add` · `POST /research/api/note/add` · `GET /research/api/highlight/list`  
-- Writer: `POST /research/api/outline` · `POST /research/api/draft` · `POST /research/api/bib/render`  
-- Integrity: `POST /research/api/plagiarism/check` · `POST /research/api/safety/check`  
-- Export: `POST /research/api/export` (md|docx|pdf|json|csv)
+**Non-Goals:**
+- No live scraping or collaborative editing in v1.
 
----
+### 2. User Stories
+1. Create project â†’ `/research/api/project/create`
+2. Add sources (URL, PDF, text) â†’ `/research/api/source/add`
+3. Highlight and quote â†’ `/research/api/highlight/add`
+4. Summarize â†’ `/research/api/summary`
+5. Compare â†’ `/research/api/compare`
+6. Outline & draft â†’ `/research/api/outline`, `/research/api/draft`
+7. Generate bibliography â†’ `/research/api/bib/render`
+8. Export â†’ `/research/api/export`
+9. Plagiarism check â†’ `/research/api/plagiarism/check`
 
-## 4) Data Model (Astro DB / SQL)
+### 3. Routes
+- `/research`
+- `/research/project/[id]`
+- `/research/project/[id]/reader/[sourceId]`
+- `/research/project/[id]/synthesis`
+- `/research/project/[id]/writer`
+- `/research/settings`
 
-**User**  
-- `id` (pk), `email`, `plan`, `timezone`, `language`, `createdAt`
+### 4. Database Schema (Astro DB)
+**Project**
+- id, userId, title, question, scope, citationStyle, language, createdAt
 
-**Project**  
-- `id` (pk uuid), `userId` (fk), `title`, `question`, `scope` (json {timeframe, region, audience}), `citationStyle` ('apa'|'mla'|'chicago'|'ieee'), `language`, `createdAt`, `updatedAt`
+**Source**
+- id, projectId, type, title, authors, publisher, url, fileUrl, pubDate, status
 
-**Source**  
-- `id` (pk uuid), `projectId` (fk), `type` ('url'|'pdf'|'text'|'note'), `title`, `authors` (json), `publisher`, `pubDate` (date|null), `accessDate` (date), `url` (string|null), `fileUrl` (string|null), `fingerprint` (hash), `meta` (json), `status` ('added'|'parsed'|'error')
+**Highlight**
+- id, sourceId, color, tags, noteId, createdAt
 
-**Excerpt**  
-- `id` (pk uuid), `sourceId` (fk), `text`, `start` (loc), `end` (loc), `page` (int|null), `meta` (json {selector, context}), `createdAt`
+**Note**
+- id, projectId, textMd, links, createdAt
 
-**Highlight**  
-- `id` (pk uuid), `sourceId` (fk), `excerptId` (fk|null), `color` ('yellow'|'green'|'blue'|'pink'), `tags` (json), `noteId` (fk|null), `createdAt`
+**Claim**
+- id, projectId, text, stance, confidence, createdAt
 
-**Note**  
-- `id` (pk uuid), `projectId` (fk), `textMd`, `links` (json {sourceId, excerptId}), `createdAt`
+**Draft**
+- id, projectId, outlineId, contentMd, citations
 
-**Claim**  
-- `id` (pk uuid), `projectId` (fk), `text`, `stance` ('pro'|'con'|'neutral'), `confidence` (0..1), `createdAt`
+**BibliographyItem**
+- id, projectId, sourceId, style, text
 
-**EvidenceLink**  
-- `id` (pk uuid), `claimId` (fk), `sourceId` (fk), `excerptId` (fk), `role` ('support'|'refute'|'context'), `weight` (0..1)
-
-**Outline**  
-- `id` (pk uuid), `projectId` (fk), `structure` (json H2/H3), `createdAt`
-
-**Draft**  
-- `id` (pk uuid), `projectId` (fk), `outlineId` (fk), `contentMd`, `citations` (json), `createdAt`
-
-**BibliographyItem**  
-- `id` (pk uuid), `projectId` (fk), `sourceId` (fk), `style` ('apa'|'mla'|'chicago'|'ieee'), `text` (string), `createdAt`
-
-**PlagiarismReport**  
-- `id` (pk uuid), `projectId` (fk), `status`, `score` (0..1), `matches` (json), `createdAt`
-
----
-
-## 5) Reader & Capture UX
-
-- **Split layout**: left = document (PDF/HTML), right = notes/highlights.  
-- **Text selection → toolbar**: *Highlight*, *Quote*, *Copy with citation*, *Add note*, *Tag*.  
-- **Citation card** auto-fills author, title, date, page/loc, access date.  
-- **Keyboard**: `H` highlight, `Q` quote, `N` note, `C` copy-citation.  
-- **Search in doc**; page thumbnails for PDFs.  
-- **Tags**: topic, stance, priority (P0-P2), confidence.
-
----
-
-## 6) Synthesis Tools
-
-- **Topic Map**: extracted entities/terms; merge/rename; drag to outline.  
-- **Compare & Contrast**: table of sources with columns for stance, key findings, limitations, and dates.  
-- **Claim Matrix**: rows = claims, columns = sources; cells show support/refute/context; completeness % meter.  
-- **Counter-arguments**: suggest credible opposing views with sources.  
-- **Bias checks**: publisher type (gov/edu/news/blog), funding/conflicts, recency gaps.  
-- **Confidence scoring**: per claim based on source tier, agreement, and recency.
-
----
-
-## 7) Writer & Citations
-
-- **Outline builder**: H2/H3 with drag-drop from notes/claims.  
-- **Draft generator**: section-by-section, with inline citation marks `[1]`/author-year and automatic bibliography.  
-- **Citation styles**: APA, MLA, Chicago, IEEE; locale-aware punctuation.  
-- **Quote management**: quotes limited to short excerpts; auto-paraphrase prompt with attribution.  
-- **Footnotes** (optional): for explanatory asides, not citations.
-
----
-
-## 8) Integrity, Safety, and Ethics
-
-- **Attribution:** every non-obvious sentence in a draft must have at least one evidence link.  
-- **Plagiarism check** (heuristic in v1); flag near-verbatim spans for quoting.  
-- **Sensitive topics**: require neutral phrasing and multiple viewpoints.  
-- **Time-scoping**: store `accessDate` and encourage stating “as of <date>”.  
-- **Privacy**: uploaded files remain private; exports redact personal data.
-
----
-
-## 9) API Contracts (examples)
-
-### `POST /research/api/source/add`
-Req:  
+### 5. API Contract Example
+`POST /research/api/summary`
 ```json
 {
-  "projectId":"<uuid>",
-  "type":"url",
-  "url":"https://example.com/article",
-  "accessDate":"2025-10-29"
+  "sourceId": "uuid",
+  "mode": "keypoints"
 }
+```
+Response:
+```json
+{
+  "bullets": ["Point 1", "Point 2"],
+  "quotes": [{"text": "Excerpt", "page": 3}],
+  "confidence": 0.88
+}
+```
+
+### 6. Validation
+- URLs: must be http(s)
+- PDFs: â‰¤25MB
+- Notes: â‰¤20k chars
+- Highlights: 1â€“2000 chars
+- Draft: â‰¥2 sources per section
+
+### 7. Accessibility
+- Keyboard shortcuts for highlight/note.
+- High-contrast and dyslexia fonts.
+- RTL and multi-language support.
+
+### 8. Integration & Export
+Exports: MD, DOCX, PDF, JSON, CSV  
+Deck export: Outline + key claims â†’ `/presentation`
+
+### 9. Future Enhancements
+- Collaboration & comments.
+- Semantic search across notes/sources.
+- Import from Zotero, Notion, or Drive.
+- Argument graphs and contradiction detection.
+- Video/audio transcript support.
+
+---
+
+**End of Document â€” Ready for Codex Implementation.**
