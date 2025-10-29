@@ -1,0 +1,407 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+
+const summaryId = Astro.url.searchParams.get("id");
+const builderInit = JSON.stringify({ id: summaryId });
+---
+<Layout title="AI Notes Summarizer Workspace">
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ summarizer: $store.notesSummarizer })"
+    x-init={`summarizer.initBuilder(${builderInit})`}
+  >
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 py-6 sm:px-6 lg:max-w-6xl lg:flex-row lg:items-center lg:justify-between lg:py-8">
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-wrap items-center gap-3">
+            <input
+              type="text"
+              class="min-w-[220px] flex-1 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-lg font-semibold text-slate-900 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Summary title"
+              :value="summarizer.state.builder.title"
+              @input="summarizer.setBuilderTitle($event.target.value)"
+            />
+            <label class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <i class="fas fa-language text-xs text-slate-400"></i>
+              <span class="sr-only">Summary language</span>
+              <select
+                class="bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="summarizer.state.builder.language"
+                @change="summarizer.setLanguage($event.target.value)"
+              >
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="hi">Hindi</option>
+                <option value="de">German</option>
+              </select>
+            </label>
+            <label class="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-600 shadow-sm">
+              <i class="fas fa-feather-pointed text-xs text-slate-400"></i>
+              <span class="sr-only">Tone</span>
+              <select
+                class="bg-transparent text-sm font-medium text-slate-700 focus:outline-none"
+                :value="summarizer.state.builder.tone"
+                @change="summarizer.setTone($event.target.value)"
+              >
+                <option value="neutral">Neutral</option>
+                <option value="professional">Professional</option>
+                <option value="academic">Academic</option>
+                <option value="creative">Creative</option>
+              </select>
+            </label>
+          </div>
+          <p class="text-xs text-slate-500">
+            <span class="font-semibold text-slate-700" x-text="summarizer.state.plan === 'pro' ? 'Pro plan' : 'Free plan'"></span>
+            · Last saved
+            <span class="font-semibold text-slate-700" x-text="summarizer.state.builder.lastSavedAt ? new Date(summarizer.state.builder.lastSavedAt).toLocaleString() : 'moments ago'"></span>
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <Button type="button" variant="ghost" class="text-sm" :class="summarizer.state.builder.aiBusy ? 'pointer-events-none opacity-60' : ''" @click.prevent="summarizer.summarize()">
+            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+            AI summarize
+          </Button>
+          <Button type="button" variant="outline" class="text-sm" @click.prevent="summarizer.saveSummary()">
+            <i class="fas fa-floppy-disk text-xs"></i>
+            Save summary
+          </Button>
+          <Button type="button" class="text-sm" @click.prevent="summarizer.requestExport('markdown')">
+            <i class="fas fa-file-arrow-down text-xs"></i>
+            Export Markdown
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            class="text-sm"
+            :class="summarizer.state.plan !== 'pro' ? 'opacity-60' : ''"
+            @click.prevent="summarizer.requestExport('pdf')"
+          >
+            <i class="fas fa-file-pdf text-xs"></i>
+            Export PDF
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            class="text-sm"
+            :class="summarizer.state.plan !== 'pro' ? 'opacity-60' : ''"
+            @click.prevent="summarizer.requestExport('flashnote')"
+          >
+            <i class="fas fa-clone text-xs"></i>
+            FlashNote deck
+          </Button>
+        </div>
+      </div>
+    </header>
+
+    <template x-if="summarizer.state.toast">
+      <div class="mx-auto mt-4 w-full max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div
+          class="flex items-center justify-between gap-4 rounded-2xl border px-4 py-3 text-sm"
+          :class="summarizer.state.toast.type === 'error' ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'"
+        >
+          <div class="flex items-center gap-3">
+            <i :class="summarizer.state.toast.type === 'error' ? 'fas fa-circle-exclamation text-xs' : 'fas fa-circle-check text-xs'"></i>
+            <p class="font-semibold" x-text="summarizer.state.toast.message"></p>
+          </div>
+          <button type="button" class="text-xs font-semibold uppercase tracking-wide" @click="summarizer.state.toast = null">Dismiss</button>
+        </div>
+      </div>
+    </template>
+
+    <div class="mx-auto grid max-w-6xl gap-6 px-4 pb-20 pt-8 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+      <section class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">Source input</h2>
+              <p class="text-xs text-slate-500">Paste text or upload a PDF. Character limit <span class="font-semibold">50,000</span>.</p>
+            </div>
+            <div class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-600">
+              <span x-text="`${summarizer.state.builder.inputChars.toLocaleString()} / ${summarizer.state.builder.inputLimit.toLocaleString()} chars`"></span>
+              <span class="h-1 w-1 rounded-full bg-slate-300"></span>
+              <span x-text="summarizer.state.builder.limitWarning ? 'Near limit' : 'Within limit'"></span>
+            </div>
+          </header>
+          <div class="flex flex-wrap items-center gap-3">
+            <button
+              type="button"
+              class="rounded-full px-3 py-1 text-xs font-semibold"
+              :class="summarizer.state.builder.inputType === 'text' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600'"
+              @click="summarizer.setInputType('text')"
+            >
+              <i class="fas fa-keyboard mr-1 text-[10px]"></i>
+              Paste text
+            </button>
+            <button
+              type="button"
+              class="rounded-full px-3 py-1 text-xs font-semibold"
+              :class="summarizer.state.builder.inputType === 'pdf' ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600'"
+              @click="$refs.pdfPicker.click()"
+            >
+              <i class="fas fa-file-pdf mr-1 text-[10px]"></i>
+              Upload PDF
+            </button>
+            <input type="file" accept="application/pdf" class="sr-only" x-ref="pdfPicker" @change="if ($event.target.files?.[0]) { const file = $event.target.files[0]; summarizer.attachPdf(file.name, Math.round((file.size/1024/1024)*10)/10); }" />
+          </div>
+          <template x-if="summarizer.state.builder.inputType === 'text'">
+            <textarea
+              rows="10"
+              class="mt-4 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-800 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Paste notes, transcripts, or doc content..."
+              :value="summarizer.state.builder.inputText"
+              @input="summarizer.updateInputText($event.target.value)"
+            ></textarea>
+          </template>
+          <template x-if="summarizer.state.builder.inputType === 'pdf'">
+            <div class="mt-4 flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+              <div class="flex items-center gap-3">
+                <span class="rounded-full bg-indigo-500/10 p-2 text-indigo-600"><i class="fas fa-file text-xs"></i></span>
+                <div>
+                  <p class="font-semibold" x-text="summarizer.state.builder.pdfName"></p>
+                  <p class="text-xs text-slate-500" x-text="`${summarizer.state.builder.pdfSizeMb ?? 0} MB`"></p>
+                </div>
+              </div>
+              <button type="button" class="text-xs font-semibold text-rose-600" @click="summarizer.removePdf()">Remove</button>
+            </div>
+          </template>
+          <template x-if="summarizer.state.builder.limitExceeded">
+            <p class="mt-3 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-semibold text-rose-700">
+              Reduce the input length to stay within the 50,000 character limit.
+            </p>
+          </template>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="mb-4 flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">Mode & tagging</h2>
+              <p class="text-xs text-slate-500">Switch modes, adjust tone, and manage tags before summarizing.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-2">
+              <template x-for="mode in ['concise','detailed','bullet','abstract','action']" :key="mode">
+                <button
+                  type="button"
+                  class="rounded-full px-3 py-1 text-xs font-semibold capitalize"
+                  :class="summarizer.state.builder.mode === mode ? 'bg-indigo-600 text-white shadow-sm' : 'bg-slate-100 text-slate-600'"
+                  @click="summarizer.setMode(mode)"
+                  x-text="mode"
+                ></button>
+              </template>
+            </div>
+          </header>
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tags</label>
+              <div class="mt-2 flex flex-wrap items-center gap-2">
+                <template x-for="tag in summarizer.state.builder.tags" :key="tag">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                    <span x-text="tag"></span>
+                    <button type="button" class="text-[10px]" @click="summarizer.removeTag(tag)"><i class="fas fa-xmark"></i></button>
+                  </span>
+                </template>
+                <input
+                  type="text"
+                  class="rounded-full border border-slate-200 bg-slate-50 px-3 py-1 text-xs focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Add tag"
+                  @keydown.enter.prevent="summarizer.addTag($event.target.value); $event.target.value='';"
+                />
+              </div>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-3">
+              <label class="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+                <span class="font-semibold uppercase tracking-wide text-slate-500">FlashNote sync</span>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-semibold text-slate-800">Create cards</span>
+                  <input type="checkbox" class="h-4 w-4" :checked="summarizer.state.builder.includeFlashnote" @change="summarizer.toggleIntegration('flashnote')" />
+                </div>
+              </label>
+              <label class="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+                <span class="font-semibold uppercase tracking-wide text-slate-500">Research Assistant</span>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-semibold text-slate-800">Attach sources</span>
+                  <input type="checkbox" class="h-4 w-4" :checked="summarizer.state.builder.includeResearch" @change="summarizer.toggleIntegration('research')" />
+                </div>
+              </label>
+              <label class="flex flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+                <span class="font-semibold uppercase tracking-wide text-slate-500">Meeting Minutes AI</span>
+                <div class="flex items-center justify-between">
+                  <span class="text-sm font-semibold text-slate-800">Sync actions</span>
+                  <input type="checkbox" class="h-4 w-4" :checked="summarizer.state.builder.includeMeetingMinutes" @change="summarizer.toggleIntegration('meeting')" />
+                </div>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">Action items</h2>
+            <Button type="button" variant="ghost" size="sm" @click.prevent="summarizer.addActionItem()">
+              <i class="fas fa-plus text-[10px]"></i>
+              Add item
+            </Button>
+          </header>
+          <template x-if="summarizer.state.builder.actionItems.length === 0">
+            <p class="text-sm text-slate-500">Capture follow-ups, owners, and due dates to keep teams accountable.</p>
+          </template>
+          <div class="space-y-4">
+            <template x-for="item in summarizer.state.builder.actionItems" :key="item.id">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="grid gap-3 sm:grid-cols-[1fr_0.6fr_0.4fr]">
+                  <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Task</label>
+                    <textarea
+                      rows="2"
+                      class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="item.text"
+                      @input="summarizer.updateActionItem(item.id, { text: $event.target.value })"
+                    ></textarea>
+                  </div>
+                  <div>
+                    <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Owner</label>
+                    <input
+                      type="text"
+                      class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      :value="item.owner"
+                      @input="summarizer.updateActionItem(item.id, { owner: $event.target.value })"
+                    />
+                  </div>
+                  <div class="flex items-end gap-2">
+                    <div class="flex-1">
+                      <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Due</label>
+                      <input
+                        type="date"
+                        class="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-800 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        :value="item.due"
+                        @change="summarizer.updateActionItem(item.id, { due: $event.target.value })"
+                      />
+                    </div>
+                    <button type="button" class="rounded-full bg-rose-100 p-2 text-rose-600" @click="summarizer.removeActionItem(item.id)">
+                      <i class="fas fa-trash text-[10px]"></i>
+                      <span class="sr-only">Remove</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <section class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="mb-4 flex items-center justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-slate-900">AI summary</h2>
+              <p class="text-xs text-slate-500">Review the generated summary, highlights, and metadata.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">
+              <i class="fas fa-bolt text-[10px]"></i>
+              <span x-text="summarizer.state.builder.autosaveLabel"></span>
+            </span>
+          </header>
+          <template x-if="summarizer.state.builder.aiBusy">
+            <div class="rounded-2xl border border-indigo-200 bg-indigo-50 px-4 py-3 text-sm text-indigo-700">
+              <p x-text="summarizer.state.builder.progressLabel ?? 'Summarizing…'"></p>
+            </div>
+          </template>
+          <div class="space-y-4 text-sm text-slate-700" x-show="!summarizer.state.builder.aiBusy" x-cloak>
+            <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3" x-text="summarizer.state.builder.summaryText || 'Run a summary to see condensed insights here.'"></p>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900">Key points</h3>
+              <ul class="mt-2 space-y-2">
+                <template x-for="point in summarizer.state.builder.keyPoints" :key="point">
+                  <li class="flex items-start gap-2">
+                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                    <span x-text="point"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900">Highlights</h3>
+              <ul class="mt-2 space-y-3">
+                <template x-for="highlight in summarizer.state.builder.highlights" :key="highlight.id">
+                  <li class="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                    <p class="font-semibold text-slate-800" x-text="highlight.quote"></p>
+                    <p class="mt-1" x-text="highlight.context"></p>
+                    <p class="mt-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-600" x-text="highlight.tag"></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="grid gap-3 sm:grid-cols-2">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                <p><span class="font-semibold text-slate-900">Sentiment:</span> <span x-text="summarizer.state.builder.sentiment"></span></p>
+                <p><span class="font-semibold text-slate-900">Compression:</span> <span x-text="`${(summarizer.state.builder.summaryRatio * 100).toFixed(1)}%`"></span></p>
+                <p><span class="font-semibold text-slate-900">Confidence:</span> <span x-text="(summarizer.state.builder.confidence * 100).toFixed(0) + '%' "></span></p>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-3 text-xs text-slate-600">
+                <p class="font-semibold text-slate-900">References</p>
+                <ul class="mt-1 space-y-1">
+                  <template x-for="reference in summarizer.state.builder.references" :key="reference.id">
+                    <li>
+                      <i class="fas fa-link mr-1 text-[10px] text-indigo-500"></i>
+                      <a :href="reference.href" class="text-indigo-600" x-text="reference.label"></a>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <header class="mb-4 flex items-center justify-between">
+            <h2 class="text-lg font-semibold text-slate-900">History snapshot</h2>
+            <Button href="/notes-summarizer/history" variant="ghost" size="sm">
+              <i class="fas fa-clock text-[10px]"></i>
+              View all
+            </Button>
+          </header>
+          <template x-if="summarizer.state.history.filtered.length === 0">
+            <p class="text-sm text-slate-500">Saved summaries will appear here with plan, mode, and sentiment metadata.</p>
+          </template>
+          <ul class="space-y-3">
+            <template x-for="record in summarizer.state.history.filtered.slice(0,3)" :key="record.id">
+              <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                <div class="flex items-center justify-between gap-3">
+                  <div>
+                    <p class="font-semibold text-slate-900" x-text="record.title"></p>
+                    <p class="text-xs text-slate-500" x-text="`${record.mode.charAt(0).toUpperCase()+record.mode.slice(1)} · ${record.sentiment}`"></p>
+                  </div>
+                  <button type="button" class="text-xs font-semibold text-indigo-600" @click.prevent="location.href = `/notes-summarizer/summary/${record.id}`">Open</button>
+                </div>
+                <p class="mt-2 text-xs text-slate-500" x-text="new Date(record.createdAt).toLocaleString()"></p>
+              </li>
+            </template>
+          </ul>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-lg font-semibold text-slate-900">Keyboard shortcuts</h2>
+          <dl class="mt-4 grid gap-3 text-xs text-slate-600 sm:grid-cols-2">
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+              <dt class="font-semibold text-slate-800">Summarize</dt>
+              <dd>Ctrl/Cmd + Enter</dd>
+            </div>
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+              <dt class="font-semibold text-slate-800">Save</dt>
+              <dd>Ctrl/Cmd + S</dd>
+            </div>
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+              <dt class="font-semibold text-slate-800">Change mode</dt>
+              <dd>Ctrl/Cmd + 1-5</dd>
+            </div>
+            <div class="flex items-center justify-between rounded-xl bg-slate-50 px-3 py-2">
+              <dt class="font-semibold text-slate-800">Toggle flashcards</dt>
+              <dd>Ctrl/Cmd + Shift + F</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+    </div>
+  </main>
+</Layout>

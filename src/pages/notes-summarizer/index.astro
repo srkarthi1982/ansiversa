@@ -1,0 +1,35 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Loader from "../../components/Loader.astro";
+import NotesSummarizerHero from "./components/NotesSummarizerHero.astro";
+import NotesSummarizerIngestion from "./components/NotesSummarizerIngestion.astro";
+import NotesSummarizerModes from "./components/NotesSummarizerModes.astro";
+import NotesSummarizerWorkflow from "./components/NotesSummarizerWorkflow.astro";
+import NotesSummarizerPlans from "./components/NotesSummarizerPlans.astro";
+import NotesSummarizerIntegrations from "./components/NotesSummarizerIntegrations.astro";
+import NotesSummarizerQuality from "./components/NotesSummarizerQuality.astro";
+import NotesSummarizerApi from "./components/NotesSummarizerApi.astro";
+import NotesSummarizerDataModel from "./components/NotesSummarizerDataModel.astro";
+import NotesSummarizerUx from "./components/NotesSummarizerUx.astro";
+---
+<Layout title="AI Notes Summarizer">
+  <Loader />
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#notes-summarizer-ingestion"
+  >
+    Skip to ingestion overview
+  </a>
+  <main x-data="() => ({ summarizer: $store.notesSummarizer })" x-init="summarizer.initLanding()">
+    <NotesSummarizerHero />
+    <NotesSummarizerIngestion />
+    <NotesSummarizerModes />
+    <NotesSummarizerWorkflow />
+    <NotesSummarizerPlans />
+    <NotesSummarizerIntegrations />
+    <NotesSummarizerQuality />
+    <NotesSummarizerApi />
+    <NotesSummarizerDataModel />
+    <NotesSummarizerUx />
+  </main>
+</Layout>
