@@ -366,3 +366,87 @@ export const planGating = [
     ],
   },
 ];
+
+export const validationRules = [
+  {
+    label: "URLs",
+    description: "Only accepts secure http(s) links to maintain provenance and avoid unsupported protocols.",
+  },
+  {
+    label: "PDF uploads",
+    description: "Files must be 25MB or smaller so parsing queues stay responsive for every plan tier.",
+  },
+  {
+    label: "Notes",
+    description: "Individual notes are capped at 20k characters to keep sync snappy across devices.",
+  },
+  {
+    label: "Highlights",
+    description: "Highlight spans require 1-2000 characters, reinforcing precise evidence capture.",
+  },
+  {
+    label: "Draft checks",
+    description: "Draft sections need citations from at least two sources before export unlocks.",
+  },
+];
+
+export const accessibilityFeatures = [
+  "Keyboard shortcuts for highlight, quote, note, and copy actions.",
+  "High-contrast palette options plus dyslexia-friendly typography.",
+  "Right-to-left and multi-language layout support for global researchers.",
+];
+
+export const integrations = [
+  {
+    name: "FlashNote",
+    description: "Send curated highlights into spaced-repetition decks for long-term retention.",
+  },
+  {
+    name: "Fact Generator",
+    description: "Validate claims and extract structured facts from trusted excerpts.",
+  },
+  {
+    name: "Proposal Writer",
+    description: "Reuse synthesized sections when preparing stakeholder-ready proposals.",
+  },
+  {
+    name: "Blog Writer",
+    description: "Push outlines and citations into publication workflows for content teams.",
+  },
+  {
+    name: "Presentation Designer",
+    description: "Transform outlines and key claims into decks without reformatting.",
+  },
+];
+
+export const exportFormats = [
+  "Markdown (MD)",
+  "DOCX",
+  "PDF",
+  "JSON data bundle",
+  "CSV matrices",
+  "Presentation Designer deck hand-off",
+];
+
+export const futureEnhancements = [
+  {
+    title: "Collaboration and comments",
+    description: "Real-time co-authoring, reviewer suggestions, and decision trails for teams.",
+  },
+  {
+    title: "Semantic search across evidence",
+    description: "Vector-powered discovery spanning notes, highlights, and claims to close gaps fast.",
+  },
+  {
+    title: "Zotero, Notion, and Drive import",
+    description: "Direct connectors pull in existing libraries with citation metadata intact.",
+  },
+  {
+    title: "Argument graphs and contradiction detection",
+    description: "Visualize stance networks and surface conflicting evidence before drafting.",
+  },
+  {
+    title: "Video and audio transcript support",
+    description: "Ingest multimedia sources with timestamped highlights and searchable captions.",
+  },
+];
