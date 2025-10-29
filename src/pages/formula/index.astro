@@ -1,0 +1,27 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import FormulaCTA from "./components/FormulaCTA.astro";
+import FormulaCardDetails from "./components/FormulaCardDetails.astro";
+import FormulaDataModel from "./components/FormulaDataModel.astro";
+import FormulaHero from "./components/FormulaHero.astro";
+import FormulaPlansIntegrations from "./components/FormulaPlansIntegrations.astro";
+import FormulaSearchShowcase from "./components/FormulaSearchShowcase.astro";
+import FormulaSolverTools from "./components/FormulaSolverTools.astro";
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#formula-finder-app"
+  >
+    Skip to Formula Finder content
+  </a>
+  <main id="formula-finder-app" class="bg-slate-950 text-white">
+    <FormulaHero />
+    <FormulaSearchShowcase />
+    <FormulaCardDetails />
+    <FormulaSolverTools />
+    <FormulaPlansIntegrations />
+    <FormulaDataModel />
+    <FormulaCTA />
+  </main>
+</Layout>
