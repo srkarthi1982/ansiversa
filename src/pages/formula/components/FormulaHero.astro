@@ -1,0 +1,176 @@
+---
+import Button from "../../../components/Button.astro";
+
+const heroMetrics = [
+  {
+    label: "Seeded formulas",
+    value: "120+",
+    annotation: "Physics • Math • Chemistry",
+  },
+  {
+    label: "Variable isolates",
+    value: "6,500+",
+    annotation: "Pre-computed rearrangements",
+  },
+  {
+    label: "Unit conversions",
+    value: "40+",
+    annotation: "SI & classroom-friendly",
+  },
+];
+
+const heroHighlights = [
+  "Search by symbol, topic, or board syllabus",
+  "Understand variables with units & dimensions",
+  "Solve for any variable with unit-aware math",
+  "Export clean LaTeX, Markdown, or PDF sheets",
+];
+---
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 py-20 text-white sm:py-28"
+>
+  <div class="absolute inset-x-1/2 top-10 -z-10 h-96 w-[60rem] -translate-x-1/2 rounded-full bg-indigo-500/30 blur-3xl"></div>
+  <div class="absolute inset-y-0 right-0 -z-10 w-1/3 bg-gradient-to-t from-indigo-500/40 via-transparent to-transparent blur-2xl"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-16 px-4 sm:px-6 lg:flex-row lg:items-center lg:gap-20 lg:px-8">
+    <div class="max-w-2xl space-y-8">
+      <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.35em] text-white/80">
+        <i class="fas fa-atom text-[11px]" aria-hidden="true"></i>
+        Learning & Knowledge mini-app
+      </span>
+      <div class="space-y-4">
+        <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+          Formula Finder
+        </h1>
+        <p class="max-w-xl text-base text-white/80 sm:text-lg">
+          A structured, unit-aware library for Physics, Math, and Chemistry formulas. Surface exactly what students need, interpret symbols instantly, and drive problem solving with dimensional confidence.
+        </p>
+      </div>
+      <ul class="grid gap-3 sm:grid-cols-2">
+        {heroHighlights.map((highlight) => (
+          <li
+            class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/10 p-4 text-sm text-white/80"
+            aria-label={highlight}
+          >
+            <span class="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/30 text-indigo-100">
+              <i class="fas fa-check" aria-hidden="true"></i>
+            </span>
+            <span>{highlight}</span>
+          </li>
+        ))}
+      </ul>
+      <div class="flex flex-wrap items-center gap-3">
+        <Button href="#library" size="lg" class="shadow-lg shadow-indigo-500/30">
+          <i class="fas fa-book-open text-sm" aria-hidden="true"></i>
+          Explore library
+        </Button>
+        <Button href="#solver" variant="outline" size="lg">
+          <i class="fas fa-calculator text-sm" aria-hidden="true"></i>
+          Try solver
+        </Button>
+        <Button href="#data-model" variant="ghost" size="lg" class="text-white/80 hover:text-white">
+          <i class="fas fa-database text-sm" aria-hidden="true"></i>
+          View data model
+        </Button>
+      </div>
+      <dl class="grid gap-4 sm:grid-cols-3">
+        {heroMetrics.map((metric) => (
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-4" aria-label={`${metric.label} metric`}>
+            <dt class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+              {metric.label}
+            </dt>
+            <dd class="mt-2 text-3xl font-bold text-white">
+              {metric.value}
+            </dd>
+            <p class="mt-1 text-xs text-white/70">{metric.annotation}</p>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <div class="relative w-full max-w-md">
+      <div class="absolute inset-0 -translate-y-10 translate-x-6 rounded-3xl bg-indigo-400/20 blur-2xl"></div>
+      <div class="relative space-y-4 rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur">
+        <header class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+          <span class="inline-flex items-center gap-2">
+            <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+            Library preview
+          </span>
+          <span>Search + Filters</span>
+        </header>
+        <div class="space-y-3">
+          <div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4">
+            <label class="text-[10px] font-semibold uppercase tracking-[0.35em] text-white/40" for="hero-search">
+              Find formula
+            </label>
+            <div class="mt-2 flex items-center gap-2 rounded-xl bg-white/10 px-3 py-2">
+              <i class="fas fa-magnifying-glass text-white/50" aria-hidden="true"></i>
+              <input
+                id="hero-search"
+                value="distance"
+                readonly
+                class="w-full bg-transparent text-sm text-white placeholder:text-white/50 focus:outline-none"
+              />
+              <span class="inline-flex items-center gap-1 rounded-full bg-indigo-500/20 px-2 py-1 text-[11px] font-semibold text-indigo-100">
+                Physics
+              </span>
+            </div>
+            <div class="mt-3 flex flex-wrap gap-2 text-[11px]">
+              <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 text-white/70">
+                <i class="fas fa-tag" aria-hidden="true"></i>
+                Kinematics
+              </span>
+              <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 text-white/70">
+                <i class="fas fa-chalkboard-user" aria-hidden="true"></i>
+                CBSE Class 11
+              </span>
+              <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-1 text-white/70">
+                <i class="fas fa-swatchbook" aria-hidden="true"></i>
+                SI Units
+              </span>
+            </div>
+          </div>
+          <div class="space-y-3">
+            <article class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Formula</p>
+                  <p class="mt-2 text-lg font-semibold text-white">
+                    v = Δx / Δt
+                  </p>
+                  <p class="mt-2 text-xs text-white/70">
+                    Average velocity equals displacement over elapsed time. Valid for uniform motion intervals.
+                  </p>
+                </div>
+                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-400/20 px-2 py-1 text-[11px] font-semibold text-emerald-100">
+                  Dimension L T⁻¹
+                </span>
+              </div>
+              <dl class="mt-4 grid gap-3 rounded-2xl border border-white/10 bg-slate-950/60 p-3 text-[11px] text-white/70">
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="font-semibold text-white">v</dt>
+                  <dd class="text-right">Velocity • m/s • L T⁻¹</dd>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="font-semibold text-white">Δx</dt>
+                  <dd class="text-right">Displacement • m • L</dd>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="font-semibold text-white">Δt</dt>
+                  <dd class="text-right">Time interval • s • T</dd>
+                </div>
+              </dl>
+            </article>
+            <div class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/10 px-4 py-3 text-xs text-white/70">
+              <span class="inline-flex items-center gap-2">
+                <i class="fas fa-arrow-turn-down-right text-white/60" aria-hidden="true"></i>
+                Solve for Δx
+              </span>
+              <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-indigo-100">
+                Δx = v · Δt
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,106 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+
+const entities = [
+  {
+    name: "Topic",
+    fields: "id, subject, name, board, class, tags",
+    purpose: "Organizes formulas by curriculum subject and board alignment.",
+  },
+  {
+    name: "Formula",
+    fields: "id, topicId, code, latex, plainText, description, assumptions, dim, difficulty, sources",
+    purpose: "Stores canonical representation with metadata used across the UI.",
+  },
+  {
+    name: "Variable",
+    fields: "id, formulaId, symbol, name, unit, dimension, isKnown",
+    purpose: "Lists each symbol with semantic meaning for tables and solver forms.",
+  },
+  {
+    name: "Identity",
+    fields: "id, formulaId, latex, notes",
+    purpose: "Captures alternate forms and rearrangements curated by editors.",
+  },
+  {
+    name: "Derivation",
+    fields: "id, formulaId, stepsMd, references",
+    purpose: "Markdown steps for deeper dives and teacher exports.",
+  },
+  {
+    name: "Example",
+    fields: "id, formulaId, problemMd, solutionMd, inputs, answer, graphSpec",
+    purpose: "Worked examples, stored as Markdown + optional Vega-like graph spec.",
+  },
+  {
+    name: "Unit",
+    fields: "id, code, factorToSI, offsetToSI, dimension",
+    purpose: "Lookup table powering unit conversions and dimensional validation.",
+  },
+  {
+    name: "Collection",
+    fields: "id, name, board, class, tags, formulaIds",
+    purpose: "Bundles formulas for board packs and curated study sets.",
+  },
+  {
+    name: "Favorite",
+    fields: "id, userId, formulaId, note, createdAt",
+    purpose: "Stores saved formulas and annotations for Pro subscribers.",
+  },
+  {
+    name: "History",
+    fields: "id, userId, formulaId, openedAt",
+    purpose: "Tracks recently viewed formulas for quick resume.",
+  },
+];
+---
+<section id="data-model" class="bg-white py-20 sm:py-24">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Data architecture"
+      title="Structured schema keeps formulas consistent"
+      description="Astro DB schema supports units, dimensional metadata, and relationships across collections, solver, and exports."
+      align="center"
+      containerClass="max-w-3xl"
+    />
+    <div class="mt-16 grid gap-6 sm:grid-cols-2">
+      {entities.map((entity) => (
+        <article class="rounded-3xl border border-slate-200 bg-slate-50/70 p-6 shadow-sm">
+          <header class="flex items-center justify-between gap-2">
+            <h3 class="text-lg font-semibold text-slate-900">{entity.name}</h3>
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">
+              Core
+            </span>
+          </header>
+          <dl class="mt-3 space-y-2 text-sm text-slate-600">
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-400">Fields</dt>
+              <dd class="mt-1 font-mono text-xs text-slate-500">{entity.fields}</dd>
+            </div>
+            <div>
+              <dt class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-400">Purpose</dt>
+              <dd class="mt-1 text-sm">{entity.purpose}</dd>
+            </div>
+          </dl>
+        </article>
+      ))}
+    </div>
+    <div class="mt-12 rounded-3xl border border-indigo-100 bg-indigo-50/70 p-6 shadow-inner">
+      <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-indigo-500">Validation rules</h3>
+      <ul class="mt-3 grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+        <li class="rounded-2xl border border-indigo-100 bg-white/90 px-4 py-3">
+          Max 2k LaTeX chars per formula; 1-20 variables per entry.
+        </li>
+        <li class="rounded-2xl border border-indigo-100 bg-white/90 px-4 py-3">
+          Every variable requires name and dimension; unit optional but recommended.
+        </li>
+        <li class="rounded-2xl border border-indigo-100 bg-white/90 px-4 py-3">
+          Dimensional check must pass before publishing to collections.
+        </li>
+        <li class="rounded-2xl border border-indigo-100 bg-white/90 px-4 py-3">
+          Example inputs include units whenever the formula is dimensional.
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
