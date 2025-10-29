@@ -50,3 +50,4 @@ import '../pages/homework/stores/homeworkHelper';
 import '../pages/linkedin-bio/stores';
 import '../pages/notes-summarizer/stores';
 import '../pages/study-planner/stores/studyPlanner';
+import '../pages/langcards/stores/languageFlashcards';
