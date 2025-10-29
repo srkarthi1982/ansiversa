@@ -1,0 +1,75 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-900 py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-8 shadow-[0_35px_120px_rgba(15,23,42,0.45)]">
+      <SectionHeading
+        eyebrow="Plan gating"
+        title="Free learners explore, Pros go unlimited"
+        description="Guardrails keep core tutoring accessible while reserving exports and dashboards for Ansiversa Pro."
+        align="center"
+        titleClass="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl"
+        descriptionClass="mt-4 text-base text-indigo-100"
+        eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-emerald-200"
+      />
+      <div class="mt-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/60">
+        <table class="min-w-full divide-y divide-white/5 text-left text-sm text-indigo-100">
+          <thead class="bg-white/5 text-xs uppercase tracking-wide text-indigo-200">
+            <tr>
+              <th scope="col" class="px-6 py-3 font-semibold">Capability</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Free</th>
+              <th scope="col" class="px-6 py-3 font-semibold">Pro</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-white/5">
+            <tr>
+              <td class="px-6 py-4 font-semibold text-white">Questions per day</td>
+              <td class="px-6 py-4">10 guided sessions</td>
+              <td class="px-6 py-4 text-emerald-300">Unlimited + teacher dashboard</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-white">Hints & step reveal</td>
+              <td class="px-6 py-4">Hints 1–2 + Step 1–2</td>
+              <td class="px-6 py-4 text-emerald-300">Full ladder + alternative methods</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-white">Citations & fact tiers</td>
+              <td class="px-6 py-4">Visible after completion</td>
+              <td class="px-6 py-4 text-emerald-300">Live citations with tier badges</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-white">Practice generator</td>
+              <td class="px-6 py-4">3 variants per topic</td>
+              <td class="px-6 py-4 text-emerald-300">Adaptive sets + FlashNote export</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-white">Exports</td>
+              <td class="px-6 py-4">None</td>
+              <td class="px-6 py-4 text-emerald-300">PDF, Markdown, FlashNote deck</td>
+            </tr>
+            <tr>
+              <td class="px-6 py-4 font-semibold text-white">Teacher/parent snapshots</td>
+              <td class="px-6 py-4">Weekly email summary</td>
+              <td class="px-6 py-4 text-emerald-300">Live dashboard + student notes</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-indigo-100">
+        <p>
+          <span class="font-semibold">Reminder:</span>
+          Free quota resets nightly at midnight local time. Usage indicators appear beside the workspace action button.
+        </p>
+        <button
+          type="button"
+          class="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
+          @click="homework.upgradePlan()"
+        >
+          <i class="fas fa-lock-open"></i>
+          Try Pro for educators
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
