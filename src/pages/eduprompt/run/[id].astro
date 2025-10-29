@@ -1,0 +1,314 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
+import FeatureCard from "../../../components/FeatureCard.astro";
+import SectionHeading from "../../../components/SectionHeading.astro";
+
+export const prerender = false;
+
+const runId = Astro.params.id ?? "preview";
+const displayRunId = runId === "sample" ? "RUN-EDU-001" : runId.toUpperCase();
+
+const outputModes = [
+  {
+    title: "Persona tabs",
+    description:
+      "Compare teacher, tutor, examiner, and coach outputs side by side. Pin the best response and mark alternates for revision.",
+    icon: "fas fa-users",
+  },
+  {
+    title: "Rubric grading",
+    description:
+      "Each completion receives rubric scores per criterion with weighted totals. Trigger auto-revise up to three times.",
+    icon: "fas fa-check-double",
+  },
+  {
+    title: "Citations & references",
+    description:
+      "Outputs highlight extracted citations and flag missing sources when bibliography enforcement is enabled.",
+    icon: "fas fa-quote-right",
+  },
+];
+
+const evaluationStats = [
+  { label: "Persona", value: "Teacher" },
+  { label: "Score", value: "4.6 / 5" },
+  { label: "Revision loops", value: "2/3" },
+  { label: "Guardrail flags", value: "0" },
+];
+
+const actionButtons = [
+  {
+    label: "Send to Lesson Builder",
+    icon: "fas fa-chalkboard",
+    description: "Exports Markdown to Lesson Builder with objectives and activities grouped automatically.",
+  },
+  {
+    label: "Create FlashNote",
+    icon: "fas fa-bolt",
+    description: "Generates FlashNote JSON schema ready for spaced repetition decks.",
+  },
+  {
+    label: "Schedule in Study Planner",
+    icon: "fas fa-calendar-check",
+    description: "Turns the prompt output into a revision task or assignment with due dates.",
+  },
+];
+
+const sidebarHighlights = [
+  {
+    title: "Prompt snapshot",
+    points: [
+      "Role, task, context, constraints rendered in preview",
+      "Linked template metadata for reference",
+      "Quick edit opens builder in split view",
+    ],
+  },
+  {
+    title: "Run metadata",
+    points: [
+      "Model, temperature, max tokens, seed",
+      "Cost estimation in credits and currency",
+      "Dataset link when run is part of a batch",
+    ],
+  },
+  {
+    title: "Guardrail log",
+    points: [
+      "Plagiarism check summary",
+      "Safety classifications",
+      "Constraint enforcement outcomes",
+    ],
+  },
+];
+
+const qaChecks = [
+  {
+    title: "Plagiarism scan",
+    details: [
+      "Compares against source passages and previous outputs",
+      "Flags similarity >= 0.85 for manual review",
+    ],
+  },
+  {
+    title: "Coverage alignment",
+    details: [
+      "Verifies target Bloom level or topic coverage",
+      "Suggests follow-up prompts if gaps remain",
+    ],
+  },
+  {
+    title: "Tone & reading level",
+    details: [
+      "Confirms grade-appropriate vocabulary",
+      "Highlights sentences exceeding difficulty thresholds",
+    ],
+  },
+];
+---
+<Layout title={`EduPrompt Run ${displayRunId}`}>
+  <main class="bg-slate-50">
+    <section class="border-b border-slate-200 bg-white/80 py-12 backdrop-blur">
+      <div class="mx-auto flex max-w-6xl flex-col gap-6 px-4 sm:px-6 lg:px-8 lg:flex-row lg:items-center lg:justify-between">
+        <div class="space-y-3">
+          <div class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            <span>EduPrompt run console</span>
+            <span class="hidden h-1 w-1 rounded-full bg-slate-300 sm:block"></span>
+            <span class="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-3 py-1 text-indigo-600">{displayRunId}</span>
+          </div>
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Review outputs, evals, and exports</h1>
+          <p class="text-sm text-slate-600 sm:text-base">
+            The run console brings together prompt preview, persona outputs, rubric scoring, guardrail logs, and export actions so educators can iterate quickly.
+          </p>
+          <div class="flex flex-wrap gap-3">
+            <Button href="/eduprompt/builder">
+              <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+              Return to builder
+            </Button>
+            <Button href="/eduprompt/datasets" variant="outline">
+              <i class="fas fa-layer-group text-xs" aria-hidden="true"></i>
+              View dataset queue
+            </Button>
+            <Button href="/eduprompt/history" variant="ghost">
+              <i class="fas fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+              Open history
+            </Button>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-slate-100 shadow-xl">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300">Eval snapshot</p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            {evaluationStats.map((stat) => (
+              <div class="rounded-2xl border border-white/20 bg-white/10 p-3">
+                <p class="text-[11px] uppercase tracking-wide text-slate-300">{stat.label}</p>
+                <p class="mt-2 text-sm font-semibold text-white">{stat.value}</p>
+              </div>
+            ))}
+          </div>
+          <p class="mt-4 text-[11px] text-slate-400">
+            Eval scores update live as persona outputs are re-run. Auto-revise loops reduce effort while preserving rubric transparency.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto grid max-w-6xl gap-10 px-4 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
+        <div class="space-y-6">
+          <SectionHeading
+            eyebrow="OUTPUT REVIEW"
+            title="Persona tabs and rubric scoring"
+            description="Switch between personas, run revisions, and capture feedback in one place."
+            as="h2"
+          />
+          <div class="grid gap-6 sm:grid-cols-2">
+            {outputModes.map((mode) => (
+              <FeatureCard {...mode} />
+            ))}
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <h3 class="text-lg font-semibold text-slate-900">Feedback capture</h3>
+            <p class="mt-2 text-sm text-slate-600">
+              Annotate outputs with inline comments, mark rubric criteria needing attention, and trigger follow-up actions like 'Revise for clarity' or 'Simplify vocabulary'.
+            </p>
+            <div class="mt-4 space-y-3 text-xs text-slate-600">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <div class="flex items-center justify-between text-[11px] font-semibold uppercase text-slate-500">
+                  <span>Criterion</span>
+                  <span>Score</span>
+                </div>
+                <ul class="mt-3 space-y-2">
+                  {[
+                    { name: "Concept clarity", score: "4.8", note: "Excellent analogies for CBSE 11" },
+                    { name: "Differentiation", score: "4.5", note: "Add more scaffolds for struggling learners" },
+                    { name: "Assessment alignment", score: "4.2", note: "Include exit ticket blueprint" },
+                  ].map((row) => (
+                    <li class="rounded-xl border border-white/70 bg-white p-3">
+                      <div class="flex items-center justify-between text-[11px] font-semibold text-slate-500">
+                        <span>{row.name}</span>
+                        <span>{row.score}</span>
+                      </div>
+                      <p class="mt-2 text-xs text-slate-600">{row.note}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <p class="text-[11px] text-slate-500">
+                Feedback and scores sync back to the prompt history so educators can compare iterations.
+              </p>
+            </div>
+          </div>
+        </div>
+        <aside class="space-y-6">
+          {sidebarHighlights.map((panel) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{panel.title}</p>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {panel.points.map((point) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+          <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6">
+            <h3 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Quick actions</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600">
+              {actionButtons.map((action) => (
+                <li class="rounded-2xl border border-white/60 bg-white/80 p-4">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class={`${action.icon} text-xs`} aria-hidden="true"></i>
+                    <span class="font-semibold text-slate-900">{action.label}</span>
+                  </div>
+                  <p class="mt-2 text-xs text-slate-600">{action.description}</p>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="QUALITY CHECKS"
+          title="Guardrails at run time"
+          description="Every output is evaluated for plagiarism, coverage, tone, and safety before educators share it."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {qaChecks.map((check) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{check.title}</p>
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {check.details.map((detail) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                    <span>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-inner">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-3">
+              <h3 class="text-lg font-semibold text-slate-900">Revision queue</h3>
+              <p class="text-sm text-slate-600">
+                Maintain a queue of runs that require educator review. Tag runs for follow-up, assign owners, and mark completion once exports are sent.
+              </p>
+            </div>
+            <div class="space-y-3 text-xs text-slate-600">
+              <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3">
+                <span class="font-semibold text-slate-900">Lesson plan - Thermodynamics</span>
+                <span class="rounded-full bg-emerald-100 px-3 py-1 font-semibold text-emerald-600">Ready</span>
+              </div>
+              <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3">
+                <span class="font-semibold text-slate-900">Quiz - Cell Biology</span>
+                <span class="rounded-full bg-amber-100 px-3 py-1 font-semibold text-amber-600">Needs revision</span>
+              </div>
+              <div class="flex items-center justify-between rounded-2xl border border-slate-200 bg-white p-3">
+                <span class="font-semibold text-slate-900">Worksheet - Trigonometry</span>
+                <span class="rounded-full bg-indigo-100 px-3 py-1 font-semibold text-indigo-600">In progress</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div class="space-y-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Continue the workflow</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Keep iterating or export downstream</h3>
+              <p class="text-sm text-slate-600">
+                Run results sync to history and datasets, ensuring every revision is tracked. Use exports to bridge into Lesson Builder, Quiz Institute, FlashNote, and more.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <Button href="/eduprompt/datasets" class="shadow-sm">
+                <i class="fas fa-database text-xs" aria-hidden="true"></i>
+                Open datasets
+              </Button>
+              <Button href="/eduprompt/history" variant="outline">
+                <i class="fas fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+                View audit log
+              </Button>
+              <Button href="/eduprompt/settings" variant="ghost">
+                <i class="fas fa-gear text-xs" aria-hidden="true"></i>
+                Adjust defaults
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

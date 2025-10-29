@@ -1,0 +1,427 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const builderSteps = [
+  {
+    title: "Select template or start blank",
+    description:
+      "Load fields from a gallery template or create a new prompt with empty sections. Metadata keeps board, class, and tags aligned.",
+    icon: "fas fa-folder-tree",
+  },
+  {
+    title: "Fill structured sections",
+    description:
+      "Role, task, context, inputs, format, examples, constraints, rubric, and parameters are edited with autosave and keyboard shortcuts.",
+    icon: "fas fa-sliders",
+  },
+  {
+    title: "Preview & validate",
+    description:
+      "Live preview concatenates sections with deterministic headers. Validation flags missing required blocks or inconsistent tone settings.",
+    icon: "fas fa-eye",
+  },
+  {
+    title: "Save, duplicate, or run",
+    description:
+      "Store prompts to history, duplicate into variants, or launch single and multi-persona runs without leaving the builder.",
+    icon: "fas fa-paper-plane",
+  },
+];
+
+const fieldGroups = [
+  {
+    name: "Role & persona",
+    bullets: [
+      "Preset personas plus custom descriptions",
+      "Persona notes appear in preview as [ROLE]",
+      "Enable multi-persona comparisons",
+    ],
+  },
+  {
+    name: "Task & objectives",
+    bullets: [
+      "Imperative instruction with desired outcomes",
+      "Supports success metrics and assessment focus",
+      "Links to evaluation rubric criteria",
+    ],
+  },
+  {
+    name: "Context",
+    bullets: [
+      "Board, class, prior knowledge, time limits",
+      "Safety considerations (age range, sensitive topics)",
+      "Resource constraints (materials, devices)",
+    ],
+  },
+  {
+    name: "Inputs",
+    bullets: [
+      "Paste passages, upload docs, or reference datasets",
+      "Annotate sources that must be cited",
+      "Attach example problems or rubrics",
+    ],
+  },
+  {
+    name: "Format",
+    bullets: [
+      "Markdown or JSON with placeholders",
+      "Token limits and heading expectations",
+      "Tables, bullet patterns, numbering",
+    ],
+  },
+  {
+    name: "Examples",
+    bullets: [
+      "Few-shot pairs labelled for reuse",
+      "Toggle inclusion per run",
+      "Highlight exemplar quality and pitfalls",
+    ],
+  },
+  {
+    name: "Constraints",
+    bullets: [
+      "Tone, reading level, language",
+      "Plagiarism, citation, and length guardrails",
+      "Custom checklist items",
+    ],
+  },
+  {
+    name: "Rubric",
+    bullets: [
+      "Criteria, levels, descriptors",
+      "Auto-eval weightings",
+      "Link remediation tips",
+    ],
+  },
+  {
+    name: "Parameters",
+    bullets: [
+      "Temperature, top-p, max tokens, stop sequences",
+      "Seed for reproducibility",
+      "Param profiles for quick switching",
+    ],
+  },
+];
+
+const automations = [
+  {
+    title: "Smart defaults",
+    description:
+      "Template fields remember last used tone, reading level, and export format so educators spend less time configuring repetitive prompts.",
+    icon: "fas fa-wand-magic-sparkles",
+  },
+  {
+    title: "Autocomplete & snippets",
+    description:
+      'Type `/` to insert common blocks like "lesson objectives" or "Socratic questioning". Snippets pull in board-specific phrasing.',
+    icon: "fas fa-keyboard",
+  },
+  {
+    title: "Validation assistant",
+    description:
+      "Detects missing context, conflicting tone vs audience, and warns if rubric criteria do not match task objectives.",
+    icon: "fas fa-circle-exclamation",
+  },
+];
+
+const previewHighlights = [
+  {
+    title: "Diff history",
+    description:
+      "Every save creates a version diff so teams can compare how prompts evolve before pushing to production runs.",
+    icon: "fas fa-code-branch",
+  },
+  {
+    title: "Persona preview",
+    description:
+      "Toggle persona tabs to view how role, tone, and constraint adjustments change the assembled prompt.",
+    icon: "fas fa-users",
+  },
+  {
+    title: "Rubric check",
+    description:
+      "Rubric panel shows scoring weights and available auto-eval loops before running prompts.",
+    icon: "fas fa-scale-balanced",
+  },
+];
+
+const quickActions = [
+  {
+    label: "Run single persona",
+    detail: "Opens run console with current configuration",
+    icon: "fas fa-play",
+  },
+  {
+    label: "Create dataset",
+    detail: "Push settings into batch generation mode",
+    icon: "fas fa-database",
+  },
+  {
+    label: "Export prompt",
+    detail: "Copy Markdown, download JSON, or send to companion apps",
+    icon: "fas fa-file-export",
+  },
+  {
+    label: "Save template",
+    detail: "Convert current prompt into a reusable template with defaults",
+    icon: "fas fa-bookmark",
+  },
+];
+---
+<Layout title="EduPrompt Builder">
+  <main class="bg-slate-50">
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-sliders text-xs" aria-hidden="true"></i>
+              EduPrompt Builder
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Structured prompts with live validation
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Capture every detail — from persona and task to rubric and exports — using guided sections designed for curriculum-aligned teaching workflows.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <Button href="/eduprompt">
+                <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+                Back to EduPrompt
+              </Button>
+              <Button href="/eduprompt/run/sample" variant="outline">
+                <i class="fas fa-terminal text-xs" aria-hidden="true"></i>
+                View run console
+              </Button>
+              <Button href="/eduprompt/datasets" variant="ghost">
+                <i class="fas fa-database text-xs" aria-hidden="true"></i>
+                Explore dataset mode
+              </Button>
+            </div>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-indigo-500">Builder workflow</h2>
+            <div class="mt-5 grid gap-4 sm:grid-cols-2">
+              {builderSteps.map((step) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class={`${step.icon} text-sm`} aria-hidden="true"></i>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">{step.title}</span>
+                  </div>
+                  <p class="mt-3 text-xs text-slate-600">{step.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="FIELD GROUPS"
+          title="Everything you need to craft a high-quality prompt"
+          description="Each builder column focuses on a specific aspect of instructional design."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {fieldGroups.map((group) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{group.name}</p>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {group.bullets.map((bullet) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="PRODUCTIVITY"
+          title="Automations keep builders in flow"
+          description="Shortcuts, snippets, and validation reduce time-to-prompt."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {automations.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <h3 class="text-xl font-semibold text-slate-900">Quick actions</h3>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {quickActions.map((action) => (
+              <div class="rounded-2xl border border-white/60 bg-white/80 p-4">
+                <div class="flex items-center gap-2 text-indigo-600">
+                  <i class={`${action.icon} text-sm`} aria-hidden="true"></i>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">{action.label}</p>
+                </div>
+                <p class="mt-2 text-xs text-slate-600">{action.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="PREVIEW & HISTORY"
+          title="See the impact of every change"
+          description="Version diffing and persona tabs ensure prompts stay intentional."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {previewHighlights.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div class="space-y-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Autosave & versions</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Version history with restore</h3>
+              <p class="text-sm text-slate-600">
+                Restore any previous version and compare diffs inline. The builder keeps a changelog that feeds the history vault for accountability.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+              <div class="space-y-3 text-xs text-slate-600">
+                <div class="flex items-center justify-between">
+                  <span class="font-semibold text-slate-900">Revision log</span>
+                  <span class="rounded-full bg-indigo-100 px-3 py-1 font-semibold text-indigo-600">Autosaved</span>
+                </div>
+                <ul class="space-y-2">
+                  {[
+                    { time: "2m ago", note: "Adjusted tone to friendly" },
+                    { time: "5m ago", note: "Added Bloom-level coverage constraint" },
+                    { time: "12m ago", note: "Linked rubric criteria to objectives" },
+                  ].map((entry) => (
+                    <li class="rounded-2xl border border-white/60 bg-white p-3">
+                      <p class="text-[11px] font-semibold text-slate-500">{entry.time}</p>
+                      <p class="text-xs text-slate-700">{entry.note}</p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="MULTI-PERSONA"
+          title="Compare tone and depth in parallel"
+          description="Run multiple personas from the same prompt configuration to see which style resonates."
+        />
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div class="space-y-3">
+              <h3 class="text-xl font-semibold text-slate-900">Persona matrix</h3>
+              <p class="text-sm text-slate-600">
+                Choose up to four personas (teacher, tutor, examiner, coach) with individual tone overrides. Results sync to the run console where rubric scoring highlights the best variant.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
+              <div class="grid gap-3 text-xs text-slate-600 sm:grid-cols-2">
+                {[
+                  { persona: "Teacher", tone: "Structured", reading: "B2" },
+                  { persona: "Tutor", tone: "Friendly", reading: "B1" },
+                  { persona: "Examiner", tone: "Formal", reading: "C1" },
+                  { persona: "Coach", tone: "Motivational", reading: "B2" },
+                ].map((row) => (
+                  <div class="rounded-xl border border-white/70 bg-white/80 p-4">
+                    <p class="font-semibold text-slate-900">{row.persona}</p>
+                    <p class="mt-1 text-[11px] text-slate-500">Tone: {row.tone}</p>
+                    <p class="text-[11px] text-slate-500">Reading level: {row.reading}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <h3 class="text-xl font-semibold text-slate-900">Parameter profiles</h3>
+          <p class="mt-2 text-sm text-slate-600">
+            Save parameter bundles (e.g., "Quiz drafting" or "Worksheet remix") and swap them instantly. Profiles capture temperature, max tokens, stop sequences, and guardrail presets.
+          </p>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3 text-xs text-slate-600">
+            {[
+              { name: "Lesson Builder hand-off", temp: "0.3", tokens: "900", notes: "Focus on clarity and actionable steps" },
+              { name: "Quiz variants", temp: "0.6", tokens: "700", notes: "Allow creative distractors with strict rubric" },
+              { name: "FlashNote summaries", temp: "0.4", tokens: "500", notes: "Keep answers concise with source citations" },
+            ].map((profile) => (
+              <div class="rounded-2xl border border-white/60 bg-white/80 p-4">
+                <p class="font-semibold text-slate-900">{profile.name}</p>
+                <p class="mt-1">Temp {profile.temp} · {profile.tokens} tokens</p>
+                <p class="text-[11px] text-slate-500">{profile.notes}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div class="space-y-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Next actions</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Ready to launch?
+              </h3>
+              <p class="text-sm text-slate-600">
+                When your prompt is dialled in, jump to run mode or dataset generation. History keeps every iteration accessible for audits and collaboration.
+              </p>
+              <div class="flex flex-wrap gap-3">
+                <Button href="/eduprompt/run/sample">
+                  <i class="fas fa-play text-xs" aria-hidden="true"></i>
+                  Launch run
+                </Button>
+                <Button href="/eduprompt/history" variant="outline">
+                  <i class="fas fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+                  Review history
+                </Button>
+              </div>
+            </div>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/60 p-6 text-xs text-slate-600">
+              <p class="font-semibold text-slate-900">Remember</p>
+              <ul class="mt-3 space-y-2">
+                <li class="flex gap-2">
+                  <i class="fas fa-robot text-[11px] text-indigo-500 mt-1"></i>
+                  <span>Auto-eval loops can trigger up to three revisions per run using your rubric criteria.</span>
+                </li>
+                <li class="flex gap-2">
+                  <i class="fas fa-shield text-[11px] text-indigo-500 mt-1"></i>
+                  <span>Guardrails run before, during, and after completion to keep prompts safe.</span>
+                </li>
+                <li class="flex gap-2">
+                  <i class="fas fa-link text-[11px] text-indigo-500 mt-1"></i>
+                  <span>Exports feed Lesson Builder, Quiz Institute, FlashNote, Presentation Designer, Study Planner, and Research Assistant.</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
