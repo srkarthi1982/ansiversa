@@ -1,0 +1,425 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const heroStats = [
+  {
+    label: "Daily pack cadence",
+    value: "3–5 items",
+    description: "Rotates by language, CEFR level, and theme every sunrise.",
+  },
+  {
+    label: "Task variety",
+    value: "4 core modes",
+    description: "Definition, usage, synonym/antonym, and cloze fill — audio unlocks on Pro.",
+  },
+  {
+    label: "Learning ties",
+    value: "3 integrations",
+    description: "Dictionary+, Language Flashcards, and Study Planner keep wins sticky.",
+  },
+];
+
+const taskTypes = [
+  {
+    title: "Definition showdown",
+    description:
+      "Pick the right meaning from leveled distractors with CEFR badges and context hints.",
+    icon: "fas fa-spell-check",
+  },
+  {
+    title: "Usage detective",
+    description:
+      "Spot the sentence that nails the nuance. Examples draw from curated corpora with tone labels.",
+    icon: "fas fa-highlighter",
+  },
+  {
+    title: "Synonym & antonym sprint",
+    description:
+      "Type or select the closest semantic match with lenient checking and part-of-speech guidance.",
+    icon: "fas fa-shuffle",
+  },
+  {
+    title: "Cloze mastery",
+    description:
+      "Fill the blank inside adaptive sentences. Optional hints reveal IPA, POS, or short usage notes.",
+    icon: "fas fa-underline",
+  },
+  {
+    title: "Audio-to-word (Pro)",
+    description:
+      "Listen to crisp TTS, then type what you hear. Perfect for accent drills and listening warm-ups.",
+    icon: "fas fa-headphones",
+  },
+];
+
+const gameLoop = [
+  {
+    eyebrow: "Step 1",
+    title: "Preview the pack",
+    description:
+      "See language, level, theme, and the time estimate before you dive in. Streak badge keeps motivation front and center.",
+    icon: "fas fa-calendar-day",
+  },
+  {
+    eyebrow: "Step 2",
+    title: "Sprint through tasks",
+    description:
+      "Progress dots, timer, keyboard shortcuts, and hint controls keep the flow quick while respecting accessibility.",
+    icon: "fas fa-stopwatch",
+  },
+  {
+    eyebrow: "Step 3",
+    title: "Review and convert",
+    description:
+      "Celebrate with confetti, inspect item-by-item feedback, then send misses to Language Flashcards or plan a drill.",
+    icon: "fas fa-trophy",
+  },
+];
+
+const scoringHighlights = [
+  {
+    title: "Point formula that rewards focus",
+    description:
+      "Base 100 points per item plus accuracy and speed bonuses. Hints deduct 10 points each so learners strategize.",
+    icon: "fas fa-calculator",
+  },
+  {
+    title: "Streak safety nets",
+    description:
+      "Meet the daily threshold to advance. Pro members get a skip-day grace every two weeks to avoid losing momentum.",
+    icon: "fas fa-fire",
+  },
+  {
+    title: "Live progress telemetry",
+    description:
+      "Timer, accuracy meter, and task history update instantly. Server recomputes scores so data stays honest.",
+    icon: "fas fa-signal",
+  },
+];
+
+const integrations = [
+  {
+    title: "Dictionary+ sidekick",
+    description:
+      "Open any lemma in Dictionary+ without leaving the run to unpack senses, IPA, and deeper usage notes.",
+    icon: "fas fa-book-open",
+  },
+  {
+    title: "Language Flashcards",
+    description:
+      "Export all misses — or just tricky tags — straight into spaced-review decks with a single click.",
+    icon: "fas fa-clone",
+  },
+  {
+    title: "Study Planner",
+    description:
+      "Schedule a 10-minute recovery session automatically so today’s learnings get reinforced later in the week.",
+    icon: "fas fa-calendar-check",
+  },
+  {
+    title: "Exam Simulator",
+    description:
+      "Pipe vocab wins into exam-style drills to keep test prep aligned with real assessment formats.",
+    icon: "fas fa-clipboard-check",
+  },
+];
+
+const planRows = [
+  { feature: "Items per day", free: "3", pro: "5" },
+  { feature: "Archive access", free: "Today only", pro: "Full calendar" },
+  { feature: "Hints", free: "Basic", pro: "IPA, audio, usage" },
+  { feature: "Skip-day grace", free: "—", pro: "1 every 14 days" },
+  { feature: "Leaderboard", free: "—", pro: "Daily & weekly" },
+  { feature: "History retention", free: "60 days", pro: "Unlimited" },
+  { feature: "Exports", free: "Flashcards", pro: "Flashcards + Planner" },
+];
+
+const apiRoutes = [
+  {
+    method: "GET",
+    path: "/dwchallenge/api/today",
+    summary: "Serve today’s pack metadata filtered by language and level.",
+  },
+  {
+    method: "POST",
+    path: "/dwchallenge/api/attempt",
+    summary: "Record per-item responses, hint usage, and time spent.",
+  },
+  {
+    method: "POST",
+    path: "/dwchallenge/api/finish",
+    summary: "Finalize totals, update streak, and return breakdown analytics.",
+  },
+  {
+    method: "GET",
+    path: "/dwchallenge/api/stats",
+    summary: "Stream streak calendars, accuracy trends, and weakness tags.",
+  },
+  {
+    method: "POST",
+    path: "/dwchallenge/api/flashcards/send",
+    summary: "Send selected words to Language Flashcards decks.",
+  },
+  {
+    method: "POST",
+    path: "/dwchallenge/api/notify/register",
+    summary: "Store reminder preferences for gentle push notifications.",
+  },
+];
+
+const dataModelEntities = [
+  "DailyPack",
+  "DailyItem",
+  "Attempt",
+  "Score",
+  "Streak",
+  "Settings",
+  "Leaderboard",
+  "Hint",
+  "Tag",
+];
+
+const accessibilityNotes = [
+  "High-contrast palettes, focus rings, and skip links across every view.",
+  "RTL-aware layouts with mirrored progress meters for Arabic and Hebrew packs.",
+  "Reduced-motion preference respects learners who disable confetti or animated timers.",
+  "Screen reader landmarks label task zones, hint buttons, and result tables for quick navigation.",
+];
+---
+<Layout title="Daily Word Challenge">
+  <main class="bg-slate-50">
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-700 via-sky-600 to-purple-700 py-20 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.2),_rgba(14,116,144,0.05))]"></div>
+      <div class="relative mx-auto max-w-7xl px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,_1fr)_minmax(0,_320px)] lg:items-center">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.35em] text-indigo-200">Mini app</p>
+            <h1 class="mt-4 text-4xl font-bold tracking-tight sm:text-5xl">Daily Word Challenge</h1>
+            <p class="mt-6 max-w-2xl text-lg text-slate-100">
+              Ship a daily, theme-aware vocabulary sprint that nudges learners to keep their streaks alive. Curated packs, adaptive hints, and instant integrations turn quick wins into lasting retention.
+            </p>
+            <div class="mt-8 flex flex-wrap items-center gap-4">
+              <Button href="#core-loop" variant="light" class="bg-white/90 text-slate-900 hover:bg-white">
+                Explore today’s flow
+              </Button>
+              <Button href="#plans" variant="tinted">
+                Compare Free vs Pro
+              </Button>
+            </div>
+          </div>
+          <div class="grid gap-4 rounded-3xl border border-white/20 bg-white/10 p-6 backdrop-blur">
+            {heroStats.map((stat) => (
+              <div class="rounded-2xl border border-white/20 bg-white/10 p-4" key={stat.label}>
+                <p class="text-xs font-semibold uppercase tracking-wide text-indigo-100/80">{stat.label}</p>
+                <p class="mt-2 text-3xl font-semibold text-white">{stat.value}</p>
+                <p class="mt-1 text-sm text-indigo-100/90">{stat.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+      <SectionHeading
+        eyebrow="Core experience"
+        title="What ships in the first release"
+        description="Everything centers on a lightning-fast daily pack that feels fresh, fair, and connected to the rest of the Ansiversa learning stack."
+      />
+      <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {taskTypes.map((task) => (
+          <FeatureCard
+            key={task.title}
+            title={task.title}
+            description={task.description}
+            icon={task.icon}
+          />
+        ))}
+      </div>
+    </section>
+
+    <section id="core-loop" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Game loop"
+          title="Designed for quick momentum and meaningful review"
+          description="Learners preview the challenge, blitz through polished tasks, then convert insights into long-term study artifacts."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {gameLoop.map((step) => (
+            <FeatureCard
+              key={step.title}
+              eyebrow={step.eyebrow}
+              title={step.title}
+              description={step.description}
+              icon={step.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+      <SectionHeading
+        eyebrow="Scoring & streaks"
+        title="Reward consistent, speedy mastery"
+        description="A transparent scoring model keeps sessions motivating while preserving academic integrity across devices."
+      />
+      <div class="mt-12 grid gap-6 md:grid-cols-3">
+        {scoringHighlights.map((item) => (
+          <FeatureCard
+            key={item.title}
+            title={item.title}
+            description={item.description}
+            icon={item.icon}
+          />
+        ))}
+      </div>
+      <div class="mt-10 rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+        <h3 class="text-lg font-semibold text-slate-900">Thresholds that matter</h3>
+        <p class="mt-3 text-sm text-slate-600">
+          Daily totals of 250+ points advance the streak. Replays from the archive never inflate the counter, and server-side recalculation ensures fairness even if clients go offline. Pro streak keeps grant one automatic skip-day credit every 14 days.
+        </p>
+      </div>
+    </section>
+
+    <section class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Connected learning"
+          title="Integrations that turn wins into habits"
+          description="Daily Word Challenge is built to flow into the broader Ansiversa toolkit so vocabulary never lives in isolation."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-indigo-100"
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {integrations.map((integration) => (
+            <FeatureCard
+              key={integration.title}
+              title={integration.title}
+              description={integration.description}
+              icon={integration.icon}
+              baseClass="rounded-3xl border border-white/20 bg-white/10 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-indigo-100/90"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-white"
+              iconClass="text-base"
+            />
+          ))}
+        </div>
+        <div class="mt-10 flex flex-wrap justify-center gap-4 text-sm text-indigo-100">
+          <span>One-click exports • Deep links to Dictionary+ senses • Study Planner drill scheduling • Exam-style vocabulary sync</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" class="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+      <SectionHeading
+        eyebrow="Plans"
+        title="Free learners get hooked, Pro members go all-in"
+        description="The baseline experience delights casual learners, while Pro unlocks deeper analytics, archive play, and richer hints."
+      />
+      <div class="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
+        <div class="overflow-x-auto">
+          <table class="min-w-full divide-y divide-slate-200 text-left">
+            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                <th scope="col" class="px-6 py-4 text-slate-500">Feature</th>
+                <th scope="col" class="px-6 py-4 text-slate-500">Free</th>
+                <th scope="col" class="px-6 py-4 text-slate-500">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-sm text-slate-700">
+              {planRows.map((row) => (
+                <tr key={row.feature}>
+                  <th scope="row" class="whitespace-nowrap px-6 py-4 font-medium text-slate-900">{row.feature}</th>
+                  <td class="px-6 py-4">{row.free}</td>
+                  <td class="px-6 py-4">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <p class="mt-6 text-sm text-slate-600">
+        Rate limits keep things fair: attempts 60/minute, finishes 10/day, and flashcard exports 50/day. Leaderboard entries only post when the streak threshold is met.
+      </p>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="APIs & data"
+          title="Built for reliability and analytics"
+          description="Structured contracts and a deliberate schema keep the experience fast today and extensible for future duel or classroom modes."
+        />
+        <div class="mt-12 grid gap-10 lg:grid-cols-[minmax(0,_2fr)_minmax(0,_1fr)]">
+          <div class="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-soft">
+            <div class="bg-slate-100 px-6 py-4 text-sm font-semibold uppercase tracking-wide text-slate-600">
+              API surface
+            </div>
+            <div class="divide-y divide-slate-200">
+              {apiRoutes.map((route) => (
+                <div class="flex flex-col gap-2 px-6 py-5 md:flex-row md:items-center md:justify-between" key={`${route.method}-${route.path}`}>
+                  <span class="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-600">
+                    <span class="rounded-md border border-indigo-200 bg-indigo-50 px-2 py-1">{route.method}</span>
+                    {route.path}
+                  </span>
+                  <p class="text-sm text-slate-600 md:max-w-md">{route.summary}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <h3 class="text-lg font-semibold text-slate-900">Astro DB schema anchors</h3>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {dataModelEntities.map((entity) => (
+                  <li key={entity} class="flex items-center gap-2">
+                    <span class="h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                    {entity}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div class="rounded-3xl border border-indigo-100 bg-indigo-50 p-6 shadow-soft">
+              <h3 class="text-lg font-semibold text-indigo-900">Validation guardrails</h3>
+              <p class="mt-3 text-sm text-indigo-900/80">
+                Packs ship between 3 and 10 items, attempts respect 0–120 second timers, and server-side scoring keeps totals trustworthy. Reminder preferences capture valid HH:MM strings and only send when streak thresholds dip.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-6 py-16 lg:px-8">
+      <SectionHeading
+        eyebrow="Accessibility & inclusivity"
+        title="Delight every learner"
+        description="From first-time vocabulary explorers to polyglots, the interface honors accessibility standards, localization, and wellbeing."
+      />
+      <div class="mt-10 grid gap-6 md:grid-cols-2">
+        {accessibilityNotes.map((note, index) => (
+          <FeatureCard
+            key={note}
+            title={`Accessibility focus ${index + 1}`}
+            description={note}
+            icon="fas fa-universal-access"
+          />
+        ))}
+      </div>
+      <div class="mt-12 rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+        <h3 class="text-lg font-semibold text-slate-900">Notifications without nagging</h3>
+        <p class="mt-3 text-sm text-slate-600">
+          Learners opt into gentle reminders at their preferred local time. We store consent in the Settings entity and expose a "snooze" control from summary screens so streaks feel supported, not pressured.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
