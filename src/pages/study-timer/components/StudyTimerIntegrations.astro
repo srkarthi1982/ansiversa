@@ -1,0 +1,73 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-white py-20" x-data="() => ({ timer: $store.studyTimer })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-8 lg:flex-row lg:items-center lg:justify-between">
+      <SectionHeading
+        eyebrow="Integrations"
+        title="Linked to the rest of your Ansiversa workspace"
+        description="Launch Quiz Institute drills, drop notes into FlashNote, or sync sessions with Study Planner without breaking your flow."
+        containerClass="max-w-2xl"
+      />
+      <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6 text-sm text-indigo-900 shadow-inner">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-500">Automation ideas</p>
+        <ul class="mt-4 space-y-3">
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm">
+              <i class="fas fa-calendar-day text-xs"></i>
+            </span>
+            <div class="space-y-1">
+              <p class="text-sm font-semibold">Planner sync</p>
+              <p class="text-xs text-indigo-700">Auto-create a Study Planner task when you log a new tag.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm">
+              <i class="fas fa-brain text-xs"></i>
+            </span>
+            <div class="space-y-1">
+              <p class="text-sm font-semibold">FlashNote boost</p>
+              <p class="text-xs text-indigo-700">Transform session notes into revision cards with one tap.</p>
+            </div>
+          </li>
+          <li class="flex items-start gap-3">
+            <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white text-indigo-600 shadow-sm">
+              <i class="fas fa-flask text-xs"></i>
+            </span>
+            <div class="space-y-1">
+              <p class="text-sm font-semibold">Research queue</p>
+              <p class="text-xs text-indigo-700">Send open questions to Research Assistant at session end.</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <template x-for="integration in timer.state.integrations" :key="integration.id">
+        <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-soft transition hover:-translate-y-1 hover:border-indigo-200 hover:shadow-lg">
+          <div class="space-y-4">
+            <div class="flex items-center justify-between">
+              <span class="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-100 text-indigo-600">
+                <i class="fas" :class="integration.icon"></i>
+              </span>
+              <template x-if="integration.badge">
+                <span class="rounded-full bg-indigo-100 px-3 py-1 text-[11px] font-semibold text-indigo-600" x-text="integration.badge"></span>
+              </template>
+            </div>
+            <h3 class="text-lg font-semibold text-slate-900" x-text="integration.name"></h3>
+            <p class="text-sm text-slate-600" x-text="integration.description"></p>
+          </div>
+          <button
+            type="button"
+            class="mt-6 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-4 py-2 text-xs font-semibold text-indigo-600 transition hover:bg-indigo-100"
+          >
+            <i class="fas fa-link text-[10px]"></i>
+            <span x-text="integration.actionLabel"></span>
+          </button>
+        </article>
+      </template>
+    </div>
+  </div>
+</section>

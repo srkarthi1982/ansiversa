@@ -1,0 +1,25 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Loader from '../../components/Loader.astro';
+import StudyTimerHero from './components/StudyTimerHero.astro';
+import StudyTimerWorkspace from './components/StudyTimerWorkspace.astro';
+import StudyTimerHighlights from './components/StudyTimerHighlights.astro';
+import StudyTimerIntegrations from './components/StudyTimerIntegrations.astro';
+import StudyTimerPlans from './components/StudyTimerPlans.astro';
+---
+<Layout title="Study Timer">
+  <Loader />
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#study-timer-workspace"
+  >
+    Skip to Study Timer workspace
+  </a>
+  <main id="study-timer-workspace" class="bg-white" x-data="{}" x-init="$store.studyTimer.init()">
+    <StudyTimerHero />
+    <StudyTimerWorkspace />
+    <StudyTimerHighlights />
+    <StudyTimerIntegrations />
+    <StudyTimerPlans />
+  </main>
+</Layout>

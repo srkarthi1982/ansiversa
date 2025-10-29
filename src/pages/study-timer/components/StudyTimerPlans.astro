@@ -1,0 +1,83 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-50 py-20" x-data="() => ({ timer: $store.studyTimer })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plans"
+      title="Free to get started, Pro to unlock automations"
+      description="Every plan includes reliable timing, focus tags, and history. Upgrade for exports, unlimited presets, and one-click integrations."
+      align="center"
+      containerClass="max-w-3xl"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      <article class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-2xl font-semibold text-slate-900">Free</h3>
+            <p class="text-sm text-slate-600">Everything you need for solo study sprints.</p>
+          </div>
+          <span class="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">Included in Ansiversa</span>
+        </div>
+        <ul class="mt-6 space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-3">
+            <i class="fas fa-check mt-1 text-emerald-500"></i>
+            Pomodoro + custom cycles, manual tags, 60-day history.
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="fas fa-check mt-1 text-emerald-500"></i>
+            Daily minutes goal with streak tracking.
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="fas fa-check mt-1 text-emerald-500"></i>
+            Basic sounds and notifications.
+          </li>
+        </ul>
+      </article>
+      <article class="rounded-3xl border border-indigo-200 bg-white p-8 shadow-lg ring-2 ring-indigo-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-2xl font-semibold text-slate-900">Pro</h3>
+            <p class="text-sm text-slate-600">Automation-ready for multi-subject planners.</p>
+          </div>
+          <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">Popular</span>
+        </div>
+        <ul class="mt-6 space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-3">
+            <i class="fas fa-star mt-1 text-indigo-500"></i>
+            Unlimited presets with import/export and custom sounds.
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="fas fa-star mt-1 text-indigo-500"></i>
+            Weekly goals, Pomodoro streak analytics, CSV + ICS exports.
+          </li>
+          <li class="flex items-start gap-3">
+            <i class="fas fa-star mt-1 text-indigo-500"></i>
+            One-click Study Planner, FlashNote, and Quiz Institute automations.
+          </li>
+        </ul>
+      </article>
+    </div>
+
+    <div class="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+          <tr>
+            <th class="px-6 py-4 text-left">Feature</th>
+            <th class="px-6 py-4 text-left">Free</th>
+            <th class="px-6 py-4 text-left">Pro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 bg-white">
+          <template x-for="feature in timer.state.planFeatures" :key="feature.label">
+            <tr>
+              <td class="px-6 py-4 text-slate-800" x-text="feature.label"></td>
+              <td class="px-6 py-4 text-slate-600" x-text="feature.free"></td>
+              <td class="px-6 py-4 text-slate-600" x-text="feature.pro"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
