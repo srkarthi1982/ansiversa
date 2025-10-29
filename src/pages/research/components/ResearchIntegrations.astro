@@ -1,0 +1,46 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { exportFormats, integrations } from "../data/researchData";
+---
+<section class="bg-white py-16 sm:py-20" aria-labelledby="research-integrations-title">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Ecosystem"
+      title="Integrations and export surfaces extend the workbench"
+      description="Research outputs flow into neighboring Ansiversa tools while preserving citation fidelity across every format."
+      id="research-integrations-title"
+    />
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <article class="rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Connected apps</h3>
+        <ul class="mt-4 space-y-3 text-sm text-slate-600">
+          {integrations.map((integration) => (
+            <li class="flex items-start gap-3 rounded-2xl border border-slate-100 bg-white px-4 py-3" key={integration.name}>
+              <span class="mt-1 text-indigo-500">
+                <i class="fas fa-link text-xs"></i>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-slate-900">{integration.name}</p>
+                <p class="text-xs text-slate-600">{integration.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </article>
+      <article class="rounded-3xl border border-indigo-100 bg-indigo-50/80 p-6 shadow-sm">
+        <h3 class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Export formats</h3>
+        <p class="text-sm text-indigo-900">
+          Drafts, matrices, and bibliographies publish cleanly for downstream review—supporting documents, decks, and data pipes.
+        </p>
+        <ul class="mt-4 grid gap-3 sm:grid-cols-2">
+          {exportFormats.map((format) => (
+            <li class="flex items-center gap-3 rounded-2xl border border-white/60 bg-white/80 px-4 py-3 text-sm text-slate-700" key={format}>
+              <i class="fas fa-file-export text-[12px] text-indigo-500"></i>
+              <span>{format}</span>
+            </li>
+          ))}
+        </ul>
+      </article>
+    </div>
+  </div>
+</section>
