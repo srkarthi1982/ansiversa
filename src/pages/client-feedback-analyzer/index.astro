@@ -1,0 +1,695 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+---
+
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#feedback-hub"
+  >
+    Skip to Client Feedback Analyzer
+  </a>
+  <main
+    id="feedback-hub"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ feedback: $store.feedback, view: 'themes' })"
+    x-init="feedback.initHub()"
+  >
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent opacity-90"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-chart-simple text-xs"></i>
+              CX · Insights · Actions
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Client Feedback Analyzer workspace
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Import feedback from CSVs, forms, or quick paste, then extract sentiment, aspects, urgency, and action items in one cohesive dashboard. Built for PMs, CX leaders, and account teams shipping faster reactions.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button type="button" @click.prevent="feedback.runAnalysis('full')">
+                <i class="fas fa-bolt text-xs"></i>
+                Run full analysis
+              </Button>
+              <Button type="button" variant="outline" @click.prevent="feedback.runAnalysis('urgent')">
+                <i class="fas fa-fire text-xs"></i>
+                Refresh urgent queue
+              </Button>
+              <Button variant="ghost" href="/requirements/CLIENT_FEEDBACK_ANALYZER.md">
+                <i class="fas fa-file-lines text-xs"></i>
+                View requirements
+              </Button>
+            </div>
+            <p class="text-xs text-slate-500">
+              Linked with Email Polisher for reply drafts, Presentation Designer for exec summaries, and Proposal Writer for action roadmaps.
+            </p>
+          </div>
+          <aside class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-60 blur-2xl"></div>
+            <div class="relative space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl backdrop-blur">
+              <header class="flex items-center justify-between">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Latest snapshot</p>
+                  <p class="text-xs text-slate-500" x-text="feedback.activeAnalysis ? new Date(feedback.activeAnalysis.lastRun ?? Date.now()).toLocaleString() : 'No runs yet'"></p>
+                </div>
+                <span
+                  class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                  :class="feedback.activeProject?.plan === 'pro' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'"
+                >
+                  <i class="fas" :class="feedback.activeProject?.plan === 'pro' ? 'fa-star' : 'fa-circle'" class="text-[10px]"></i>
+                  <span x-text="feedback.activeProject?.plan === 'pro' ? 'Pro plan' : 'Free plan'"></span>
+                </span>
+              </header>
+              <dl class="grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Feedback rows</dt>
+                  <dd class="mt-2 flex items-baseline gap-2 text-2xl font-semibold text-slate-900" x-text="feedback.activeProject ? feedback.activeProject.metrics.total.toLocaleString() : '0'"></dd>
+                  <p class="text-xs text-slate-500" x-text="feedback.activeProject?.metrics.timeframe"></p>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Urgent signals</dt>
+                  <dd class="mt-2 flex items-center gap-2 text-2xl font-semibold text-rose-600" x-text="feedback.activeProject?.metrics.urgent ?? 0"></dd>
+                  <p class="text-xs text-slate-500">Flagged for escalation + reply drafts</p>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">NPS / CSAT</dt>
+                  <dd class="mt-2 flex items-center gap-3 text-2xl font-semibold text-slate-900">
+                    <span x-text="feedback.activeProject?.metrics.nps ?? 0"></span>
+                    <span class="text-sm font-medium text-slate-500" x-text="`${feedback.activeProject?.metrics.csat ?? 0}/5`"></span>
+                  </dd>
+                  <p class="text-xs text-slate-500">Auto parsed from surveys</p>
+                </div>
+                <div class="rounded-2xl bg-slate-50 p-4">
+                  <dt class="text-xs font-medium uppercase tracking-wide text-slate-500">Churn risk</dt>
+                  <dd class="mt-2 flex items-baseline gap-2 text-2xl font-semibold text-slate-900" x-text="`${feedback.activeProject?.metrics.churnRisk ?? 0}%`"></dd>
+                  <p class="text-xs text-slate-500">Weighted by plan & recency</p>
+                </div>
+              </dl>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-16">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <header class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-semibold text-slate-900">Projects & ingestion sources</h2>
+            <p class="text-sm text-slate-600">Switch between workspaces to compare themes, plan coverage, and ingestion pipelines.</p>
+          </div>
+          <Button variant="ghost" href="mailto:cx@ansiversa.com">
+            <i class="fas fa-life-ring text-xs"></i>
+            Need onboarding help?
+          </Button>
+        </header>
+        <div class="grid gap-4 lg:grid-cols-[minmax(0,320px)_minmax(0,1fr)]">
+          <aside class="space-y-3">
+            <template x-for="project in feedback.hub.projects" :key="project.id">
+              <button
+                type="button"
+                class="w-full rounded-2xl border p-4 text-left transition"
+                :class="project.id === feedback.hub.activeProjectId ? 'border-indigo-300 bg-white shadow-sm' : 'border-slate-200 bg-white/80 hover:border-indigo-200 hover:bg-white'"
+                @click="feedback.setActiveProject(project.id)"
+              >
+                <div class="flex items-center justify-between gap-2">
+                  <p class="text-sm font-semibold text-slate-900" x-text="project.name"></p>
+                  <span
+                    class="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold"
+                    :class="project.plan === 'pro' ? 'bg-emerald-100 text-emerald-700' : 'bg-indigo-100 text-indigo-700'"
+                  >
+                    <i class="fas" :class="project.plan === 'pro' ? 'fa-rocket' : 'fa-seedling'"></i>
+                    <span x-text="project.plan === 'pro' ? 'Pro' : 'Free'"></span>
+                  </span>
+                </div>
+                <p class="mt-2 text-xs text-slate-500" x-text="project.description"></p>
+                <dl class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-600">
+                  <div>
+                    <dt class="font-medium uppercase tracking-wide text-slate-400">New rows</dt>
+                    <dd class="mt-1 text-base font-semibold text-slate-900" x-text="project.metrics.newSince"></dd>
+                  </div>
+                  <div>
+                    <dt class="font-medium uppercase tracking-wide text-slate-400">Urgent</dt>
+                    <dd class="mt-1 text-base font-semibold text-rose-600" x-text="project.metrics.urgent"></dd>
+                  </div>
+                </dl>
+              </button>
+            </template>
+          </aside>
+          <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div class="grid gap-4 md:grid-cols-3">
+              <template x-for="section in ['plan', 'region', 'version']" :key="section">
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <h3 class="text-sm font-semibold text-slate-900 capitalize" x-text="section"></h3>
+                  <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                    <template x-for="item in feedback.activeProject?.cohorts[section] ?? []" :key="item.label">
+                      <li class="flex items-center justify-between gap-3">
+                        <span x-text="item.label"></span>
+                        <span class="inline-flex items-center gap-1 font-semibold"
+                          :class="item.trend >= 0 ? 'text-emerald-600' : 'text-rose-600'"
+                        >
+                          <i class="fas" :class="item.trend >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></i>
+                          <span x-text="`${item.value}%`"></span>
+                        </span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </template>
+            </div>
+            <div class="rounded-2xl border border-dashed border-indigo-200 bg-indigo-50/60 p-5 text-sm text-indigo-700">
+              <p class="font-semibold">Ingestion options</p>
+              <ul class="mt-2 grid gap-2 text-xs text-indigo-600 sm:grid-cols-2">
+                <li class="flex items-center gap-2"><i class="fas fa-file-import text-[11px]"></i>CSV upload with header mapper</li>
+                <li class="flex items-center gap-2"><i class="fas fa-paste text-[11px]"></i>Quick paste & language detection</li>
+                <li class="flex items-center gap-2"><i class="fas fa-wand-magic-sparkles text-[11px]"></i>Auto PII masking + dedupe</li>
+                <li class="flex items-center gap-2"><i class="fas fa-plug text-[11px]"></i>Form embed with webhooks</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-semibold text-slate-900">Insights & urgency</h2>
+            <p class="text-sm text-slate-600">Dive into dominant themes, aspect health, and urgent feedback ready for replies or tickets.</p>
+          </div>
+          <div class="flex flex-wrap gap-2 text-xs">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-semibold transition"
+              :class="view === 'themes' ? 'border-indigo-300 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-600'"
+              @click="view = 'themes'"
+            >
+              <i class="fas fa-diagram-project text-[11px]"></i>
+              Themes
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border px-3 py-1.5 font-semibold transition"
+              :class="view === 'aspects' ? 'border-indigo-300 bg-indigo-50 text-indigo-700' : 'border-slate-200 bg-white text-slate-600'"
+              @click="view = 'aspects'"
+            >
+              <i class="fas fa-gauge text-[11px]"></i>
+              Aspects
+            </button>
+          </div>
+        </div>
+        <div class="grid gap-8 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div class="space-y-6">
+            <template x-if="view === 'themes'">
+              <div class="grid gap-4 md:grid-cols-2">
+                <template x-for="theme in feedback.activeAnalysis?.topThemes ?? []" :key="theme.id">
+                  <article
+                    class="group relative rounded-3xl border bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+                    :class="theme.id === feedback.hub.selectedThemeId ? 'border-indigo-300' : 'border-slate-200'
+                    "
+                    @click="feedback.selectTheme(theme.id)"
+                  >
+                    <header class="flex items-start justify-between gap-3">
+                      <div>
+                        <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Theme</p>
+                        <h3 class="mt-1 text-lg font-semibold text-slate-900" x-text="theme.label"></h3>
+                      </div>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                        <i class="fas fa-message text-[11px]"></i>
+                        <span x-text="`${theme.volume} mentions`"></span>
+                      </span>
+                    </header>
+                    <p class="mt-3 text-sm text-slate-600" x-text="theme.summary"></p>
+                    <dl class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-600">
+                      <div>
+                        <dt class="font-medium uppercase tracking-wide text-slate-400">Sentiment</dt>
+                        <dd class="mt-1 inline-flex items-center gap-2 text-sm font-semibold" :class="theme.sentiment >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+                          <i class="fas" :class="theme.sentiment >= 0 ? 'fa-arrow-trend-up' : 'fa-arrow-trend-down'"></i>
+                          <span x-text="theme.sentiment.toFixed(2)"></span>
+                        </dd>
+                      </div>
+                      <div>
+                        <dt class="font-medium uppercase tracking-wide text-slate-400">Urgent</dt>
+                        <dd class="mt-1 text-sm font-semibold text-rose-600" x-text="theme.urgent"></dd>
+                      </div>
+                      <div>
+                        <dt class="font-medium uppercase tracking-wide text-slate-400">Share</dt>
+                        <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="`${Math.round(theme.share * 100)}%`"></dd>
+                      </div>
+                      <div>
+                        <dt class="font-medium uppercase tracking-wide text-slate-400">Change</dt>
+                        <dd class="mt-1 inline-flex items-center gap-2 text-sm font-semibold" :class="theme.change >= 0 ? 'text-emerald-600' : 'text-rose-600'">
+                          <i class="fas" :class="theme.change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                          <span x-text="`${theme.change}%`"></span>
+                        </dd>
+                      </div>
+                    </dl>
+                    <footer class="mt-4 space-y-2">
+                      <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Drivers</p>
+                      <ul class="flex flex-wrap gap-2 text-[11px] text-slate-600">
+                        <template x-for="driver in theme.drivers" :key="driver">
+                          <li class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1">
+                            <i class="fas fa-sparkles text-[9px] text-indigo-500"></i>
+                            <span x-text="driver"></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </footer>
+                  </article>
+                </template>
+              </div>
+            </template>
+            <template x-if="view === 'aspects'">
+              <div class="grid gap-4 md:grid-cols-2">
+                <template x-for="aspect in feedback.activeAnalysis?.aspects ?? []" :key="aspect.key">
+                  <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                    <header class="flex items-center justify-between">
+                      <h3 class="text-lg font-semibold text-slate-900" x-text="aspect.label"></h3>
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                        <i class="fas fa-chart-line text-[11px]"></i>
+                        <span x-text="`${Math.round(aspect.coverage * 100)}% coverage`"></span>
+                      </span>
+                    </header>
+                    <p class="mt-3 text-sm text-slate-600">Aspect sentiment trend</p>
+                    <div class="mt-4 flex items-center gap-3">
+                      <span class="text-3xl font-semibold" :class="aspect.sentiment >= 0 ? 'text-emerald-600' : 'text-rose-600'" x-text="aspect.sentiment.toFixed(2)"></span>
+                      <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                        :class="aspect.change >= 0 ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'"
+                      >
+                        <i class="fas" :class="aspect.change >= 0 ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                        <span x-text="`${aspect.change}%`"></span>
+                      </span>
+                    </div>
+                    <ul class="mt-4 space-y-2 text-xs text-slate-600">
+                      <template x-for="highlight in aspect.highlights" :key="highlight">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-check text-[10px] text-indigo-500"></i>
+                          <span x-text="highlight"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </article>
+                </template>
+              </div>
+            </template>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <header class="flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h3 class="text-lg font-semibold text-slate-900">Urgent queue</h3>
+                  <p class="text-xs text-slate-500">Prioritised by urgency × impact with ready-to-draft replies.</p>
+                </div>
+                <Button variant="outline" type="button" @click.prevent="feedback.runAnalysis('urgent')">
+                  <i class="fas fa-rotate text-xs"></i>
+                  Refresh
+                </Button>
+              </header>
+              <ul class="mt-4 space-y-3">
+                <template x-for="id in feedback.activeAnalysis?.urgentQueue ?? []" :key="id">
+                  <li class="rounded-2xl border border-rose-200 bg-rose-50/60 p-4 text-sm text-rose-700">
+                    <p class="flex items-center justify-between gap-3 text-xs font-semibold uppercase tracking-wide">
+                      <span x-text="id"></span>
+                      <span>High urgency</span>
+                    </p>
+                    <p class="mt-2 text-slate-700" x-text="feedback.activeProject?.feedback.find((item) => item.id === id)?.message ?? 'Feedback no longer available'"></p>
+                    <div class="mt-3 flex flex-wrap gap-2 text-[11px] text-rose-700">
+                      <span class="inline-flex items-center gap-1 rounded-full bg-white/80 px-3 py-1">
+                        <i class="fas fa-tag text-[9px]"></i>
+                        <span x-text="feedback.activeProject?.feedback.find((item) => item.id === id)?.topic"></span>
+                      </span>
+                      <span class="inline-flex items-center gap-1 rounded-full bg-white/80 px-3 py-1">
+                        <i class="fas fa-globe text-[9px]"></i>
+                        <span x-text="feedback.activeProject?.feedback.find((item) => item.id === id)?.cohort.region"></span>
+                      </span>
+                    </div>
+                  </li>
+                </template>
+                <template x-if="(feedback.activeAnalysis?.urgentQueue.length ?? 0) === 0">
+                  <li class="rounded-2xl border border-slate-200 bg-white p-6 text-center text-sm text-slate-500">
+                    All clear — no urgent items flagged.
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+          <aside class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Active theme focus</h3>
+              <template x-if="feedback.activeTheme">
+                <div class="mt-4 space-y-3">
+                  <h4 class="text-lg font-semibold text-slate-900" x-text="feedback.activeTheme.label"></h4>
+                  <p class="text-sm text-slate-600" x-text="feedback.activeTheme.sampleQuote"></p>
+                  <div class="rounded-2xl bg-slate-50 p-3">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Related feedback</p>
+                    <ul class="mt-2 space-y-2 text-xs text-slate-600">
+                      <template x-for="entry in feedback.themeSampleFeedback" :key="entry.id">
+                        <li class="flex items-start gap-2">
+                          <i class="fas fa-comment-dots mt-0.5 text-[9px] text-indigo-500"></i>
+                          <span x-text="entry.message"></span>
+                        </li>
+                      </template>
+                    </ul>
+                  </div>
+                </div>
+              </template>
+              <template x-if="!feedback.activeTheme">
+                <p class="mt-4 text-sm text-slate-500">Select a theme to preview highlights and supporting quotes.</p>
+              </template>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Keyword lift</h3>
+              <ul class="mt-3 space-y-2 text-xs text-slate-600">
+                <template x-for="keyword in feedback.activeAnalysis?.keywords ?? []" :key="keyword.term">
+                  <li class="flex items-center justify-between gap-3">
+                    <span x-text="keyword.term"></span>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 font-semibold text-slate-700">
+                      <i class="fas fa-wave-square text-[10px]"></i>
+                      <span x-text="keyword.weight.toFixed(2)"></span>
+                    </span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Timeline</h3>
+              <ul class="mt-3 space-y-3 text-xs text-slate-600">
+                <template x-for="point in feedback.activeAnalysis?.timeline ?? []" :key="point.label">
+                  <li>
+                    <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
+                      <span x-text="point.label"></span>
+                      <span x-text="`${point.total} rows`"></span>
+                    </div>
+                    <div class="mt-2 h-2 w-full overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        class="h-full rounded-full bg-indigo-500"
+                        :style="`width: ${Math.min(100, (point.negative / Math.max(point.total, 1)) * 100)}%`
+                        "
+                      ></div>
+                    </div>
+                    <p class="mt-1 text-[11px] text-slate-500" x-text="`${point.negative} negative · ${point.urgent} urgent`"></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-12">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <h2 class="text-2xl font-semibold text-slate-900">Feedback explorer</h2>
+            <p class="text-sm text-slate-600">Filter by sentiment, aspect, urgency, or cohorts. Each row links to actions, reply drafts, and exports.</p>
+          </div>
+          <Button type="button" variant="ghost" @click.prevent="feedback.clearFilters()">
+            <i class="fas fa-eraser text-xs"></i>
+            Reset filters
+          </Button>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="grid gap-4 md:grid-cols-5">
+            <div class="md:col-span-2">
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Search</label>
+              <input
+                type="search"
+                class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                placeholder="Search quotes, topics, or theme IDs"
+                x-model="feedback.hub.filters.search"
+                @input.debounce.300ms="feedback.updateFilter('search', $event.target.value)"
+              />
+            </div>
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Sentiment</label>
+              <select
+                class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                x-model="feedback.hub.filters.sentiment"
+                @change="feedback.updateFilter('sentiment', $event.target.value)"
+              >
+                <option value="all">All</option>
+                <option value="positive">Positive</option>
+                <option value="neutral">Neutral</option>
+                <option value="negative">Negative</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Aspect</label>
+              <select
+                class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                x-model="feedback.hub.filters.aspect"
+                @change="feedback.updateFilter('aspect', $event.target.value)"
+              >
+                <option value="all">All</option>
+                <template x-for="aspect in ['support','pricing','ux','features','performance','reliability','content','onboarding','docs']" :key="aspect">
+                  <option :value="aspect" x-text="aspect"></option>
+                </template>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Urgency</label>
+              <select
+                class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                x-model="feedback.hub.filters.urgency"
+                @change="feedback.updateFilter('urgency', $event.target.value)"
+              >
+                <option value="all">All</option>
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+          </div>
+          <div class="mt-4 rounded-2xl border border-slate-100 bg-slate-50 p-4">
+            <label class="text-xs font-semibold uppercase tracking-wide text-slate-400">Cohort contains</label>
+            <input
+              type="text"
+              class="mt-2 w-full rounded-2xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+              placeholder="e.g. Pro, Europe, 2.4.1"
+              x-model="feedback.hub.filters.cohort"
+              @input.debounce.300ms="feedback.updateFilter('cohort', $event.target.value)"
+            />
+          </div>
+          <div class="mt-6 overflow-hidden rounded-2xl border border-slate-100">
+            <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+              <thead class="bg-slate-100 text-xs uppercase tracking-wide text-slate-500">
+                <tr>
+                  <th class="px-4 py-3">Feedback</th>
+                  <th class="px-4 py-3">Sentiment</th>
+                  <th class="px-4 py-3">Aspect</th>
+                  <th class="px-4 py-3">Urgency</th>
+                  <th class="px-4 py-3">Cohort</th>
+                  <th class="px-4 py-3">Source</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-200 bg-white">
+                <template x-for="entry in feedback.hub.filtered" :key="entry.id">
+                  <tr class="hover:bg-slate-50/80">
+                    <td class="px-4 py-4">
+                      <p class="font-semibold text-slate-900" x-text="entry.id"></p>
+                      <p class="mt-1 text-xs text-slate-600" x-text="entry.message"></p>
+                    </td>
+                    <td class="px-4 py-4">
+                      <span
+                        class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                        :class="{
+                          positive: 'bg-emerald-100 text-emerald-700',
+                          neutral: 'bg-slate-100 text-slate-700',
+                          negative: 'bg-rose-100 text-rose-700',
+                        }[entry.sentiment]"
+                      >
+                        <i class="fas" :class="{
+                          positive: 'fa-face-smile',
+                          neutral: 'fa-face-meh',
+                          negative: 'fa-face-frown',
+                        }[entry.sentiment]"></i>
+                        <span x-text="entry.sentiment"></span>
+                      </span>
+                    </td>
+                    <td class="px-4 py-4">
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                        <i class="fas fa-layer-group text-[10px]"></i>
+                        <span x-text="entry.aspect"></span>
+                      </span>
+                    </td>
+                    <td class="px-4 py-4">
+                      <span
+                        class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                        :class="{
+                          low: 'bg-slate-100 text-slate-600',
+                          medium: 'bg-amber-100 text-amber-700',
+                          high: 'bg-rose-100 text-rose-700',
+                        }[entry.urgency]"
+                      >
+                        <i class="fas" :class="{
+                          low: 'fa-arrow-down',
+                          medium: 'fa-arrows-left-right',
+                          high: 'fa-arrow-up',
+                        }[entry.urgency]"></i>
+                        <span x-text="entry.urgency"></span>
+                      </span>
+                    </td>
+                    <td class="px-4 py-4 text-xs text-slate-600">
+                      <p x-text="entry.cohort.plan"></p>
+                      <p x-text="entry.cohort.region"></p>
+                      <p class="text-slate-400" x-text="entry.cohort.version"></p>
+                    </td>
+                    <td class="px-4 py-4 text-xs text-slate-500">
+                      <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-slate-600">
+                        <i class="fas fa-database text-[10px]"></i>
+                        <span x-text="entry.source.toUpperCase()"></span>
+                      </span>
+                    </td>
+                  </tr>
+                </template>
+                <template x-if="feedback.hub.filtered.length === 0">
+                  <tr>
+                    <td class="px-4 py-8 text-center text-sm text-slate-500" colspan="6">
+                      No feedback matches the current filters. Try widening your search.
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="pb-20">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_320px]">
+          <div class="space-y-6">
+            <header class="flex flex-wrap items-center justify-between gap-4">
+              <div>
+                <h2 class="text-2xl font-semibold text-slate-900">Action board & exports</h2>
+                <p class="text-sm text-slate-600">RICE scoring, owners, and due dates ensure CX momentum. Export reports directly to stakeholders.</p>
+              </div>
+              <Button variant="outline" type="button">
+                <i class="fas fa-share-from-square text-xs"></i>
+                Sync to roadmap
+              </Button>
+            </header>
+            <div class="grid gap-4 md:grid-cols-2">
+              <template x-for="action in feedback.activeAnalysis?.actions ?? []" :key="action.id">
+                <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+                  <header class="flex items-center justify-between">
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-400" x-text="action.id"></span>
+                    <span
+                      class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                      :class="{
+                        todo: 'bg-slate-100 text-slate-600',
+                        doing: 'bg-amber-100 text-amber-700',
+                        done: 'bg-emerald-100 text-emerald-700',
+                      }[action.status]"
+                    >
+                      <i class="fas" :class="{
+                        todo: 'fa-circle',
+                        doing: 'fa-spinner',
+                        done: 'fa-check',
+                      }[action.status]"></i>
+                      <span class="capitalize" x-text="action.status"></span>
+                    </span>
+                  </header>
+                  <h3 class="mt-3 text-lg font-semibold text-slate-900" x-text="action.title"></h3>
+                  <dl class="mt-4 grid grid-cols-2 gap-3 text-xs text-slate-600">
+                    <div>
+                      <dt class="font-medium uppercase tracking-wide text-slate-400">Impact × Effort</dt>
+                      <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="`${action.impact} × ${action.effort}`"></dd>
+                    </div>
+                    <div>
+                      <dt class="font-medium uppercase tracking-wide text-slate-400">Priority</dt>
+                      <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="action.priority.toUpperCase()"></dd>
+                    </div>
+                    <div>
+                      <dt class="font-medium uppercase tracking-wide text-slate-400">Owner</dt>
+                      <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="action.owner ?? 'Unassigned'"></dd>
+                    </div>
+                    <div>
+                      <dt class="font-medium uppercase tracking-wide text-slate-400">Due</dt>
+                      <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="action.due ? new Date(action.due).toLocaleDateString() : 'TBD'"></dd>
+                    </div>
+                  </dl>
+                  <p class="mt-3 inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-700">
+                    <i class="fas fa-diagram-next text-[9px]"></i>
+                    <span x-text="feedback.activeAnalysis?.topThemes.find((theme) => theme.id === action.linkedTheme)?.label ?? 'Linked theme' "></span>
+                  </p>
+                </article>
+              </template>
+            </div>
+          </div>
+          <aside class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Exports</h3>
+              <ul class="mt-3 space-y-2 text-sm text-indigo-600">
+                <template x-for="item in feedback.activeAnalysis?.exports ?? []" :key="item.label">
+                  <li>
+                    <a class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-2 font-semibold text-indigo-700 transition hover:bg-indigo-100" :href="item.href">
+                      <i class="fas fa-arrow-down text-xs"></i>
+                      <span x-text="item.label"></span>
+                    </a>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="rounded-3xl border border-indigo-200 bg-indigo-50/60 p-6 text-sm text-indigo-700">
+              <h3 class="text-sm font-semibold uppercase tracking-wide">API touchpoints</h3>
+              <ul class="mt-3 space-y-2 text-xs">
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-plug mt-0.5 text-[9px]"></i>
+                  <span><strong>POST /feedback/api/ingest/upload</strong> — map CSV headers, mask PII, queue normalization job.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-gear mt-0.5 text-[9px]"></i>
+                  <span><strong>POST /feedback/api/analyze</strong> — trigger analysis job with filters for timeframe, cohorts, and translation target.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-sitemap mt-0.5 text-[9px]"></i>
+                  <span><strong>GET /feedback/api/themes</strong> — return sentiment, counts, examples for each theme.</span>
+                </li>
+                <li class="flex items-start gap-2">
+                  <i class="fas fa-rocket mt-0.5 text-[9px]"></i>
+                  <span><strong>POST /feedback/api/actions/generate</strong> — produce prioritised tickets with impact × effort.</span>
+                </li>
+              </ul>
+            </div>
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-400">Job history</h3>
+              <ul class="mt-3 space-y-3 text-xs text-slate-600">
+                <template x-for="job in feedback.jobs" :key="job.id">
+                  <li class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                    <div class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wide text-slate-400">
+                      <span x-text="job.id"></span>
+                      <span class="inline-flex items-center gap-2 rounded-full px-2.5 py-1"
+                        :class="job.status === 'done' ? 'bg-emerald-100 text-emerald-700' : job.status === 'running' ? 'bg-indigo-100 text-indigo-700' : 'bg-rose-100 text-rose-700'"
+                      >
+                        <i class="fas" :class="job.status === 'done' ? 'fa-circle-check' : job.status === 'running' ? 'fa-spinner' : 'fa-circle-xmark'"></i>
+                        <span class="capitalize" x-text="job.status"></span>
+                      </span>
+                    </div>
+                    <p class="mt-2 text-xs text-slate-500" x-text="job.summary ?? 'Processing latest signals…'"></p>
+                    <p class="mt-2 text-[11px] text-slate-400">
+                      <span x-text="new Date(job.queuedAt).toLocaleString()"></span>
+                      <template x-if="job.completedAt">
+                        <span>
+                          · Completed
+                          <span x-text="new Date(job.completedAt).toLocaleTimeString()"></span>
+                        </span>
+                      </template>
+                    </p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
+

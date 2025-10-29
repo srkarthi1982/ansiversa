@@ -34,6 +34,7 @@ import '../pages/career-planner/stores';
 import '../pages/social-caption-generator/stores';
 import '../pages/course-tracker/stores/courseTracker';
 import '../pages/job-analyzer/stores';
+import '../pages/client-feedback-analyzer/stores';
 import '../pages/visiting-card-maker/stores/visitingCard';
 import '../pages/cover-letter-writer/stores/coverLetter';
 import '../pages/memory-trainer/stores/memoryTrainer';
