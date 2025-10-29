@@ -1,0 +1,770 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const heroHighlights = [
+  {
+    label: "Curriculum-aligned templates",
+    value: "80+ CBSE 9-12, STEM & Humanities",
+    icon: "fas fa-layer-group",
+  },
+  {
+    label: "Builder sections",
+    value: "Role · Task · Context · Inputs · Format",
+    icon: "fas fa-diagram-project",
+  },
+  {
+    label: "Exports & hand-offs",
+    value: "Markdown · JSON · DOCX · Mini-app handoffs",
+    icon: "fas fa-file-export",
+  },
+];
+
+const planMatrix = [
+  {
+    tier: "Free",
+    perks: [
+      "Core subject templates",
+      "5 batch items per dataset run",
+      "Markdown exports",
+      "Basic guardrails (tone, reading level)",
+    ],
+  },
+  {
+    tier: "Pro",
+    perks: [
+      "Full library + custom templates",
+      "200 batch items per run",
+      "DOCX & JSON exports + app send",
+      "Plagiarism scan & coverage reports",
+    ],
+  },
+];
+
+const galleryHighlights = [
+  {
+    title: "Curriculum filters",
+    description:
+      "Search templates by subject, board, and class. Focus on CBSE 9-12 plus STEM and humanities strands with instant filtering.",
+    icon: "fas fa-magnifying-glass",
+  },
+  {
+    title: "Task-focused cards",
+    description:
+      "Preview the structure, tone, and key constraints of every template before opening it. Pin favourites and mark recently used entries.",
+    icon: "fas fa-note-sticky",
+  },
+  {
+    title: "Quick actions",
+    description:
+      "Launch the builder pre-filled, duplicate to create a variant, or export a starter prompt to Lesson Builder, Quiz Institute, and FlashNote.",
+    icon: "fas fa-bolt",
+  },
+];
+
+const galleryFilters = [
+  {
+    label: "Subjects",
+    items: ["Mathematics", "Physics", "Chemistry", "Biology", "History", "Economics"],
+  },
+  {
+    label: "Class/Board",
+    items: ["CBSE 9", "CBSE 10", "CBSE 11", "CBSE 12", "STEM foundations", "Humanities"],
+  },
+  {
+    label: "Prompt type",
+    items: ["Lesson plan", "Concept explainer", "Quiz writer", "Worksheet", "Rubric grader", "Flashcards"],
+  },
+];
+
+const flowSteps = [
+  {
+    eyebrow: "Route: /eduprompt",
+    title: "Template gallery",
+    description:
+      "Browse curated prompts, inspect metadata, and add favourites to the quick-launch bar.",
+    icon: "fas fa-grid-2",
+  },
+  {
+    eyebrow: "Route: /eduprompt/builder",
+    title: "Structured builder",
+    description:
+      "Fill guided sections for role, task, context, inputs, constraints, examples, rubric, and parameters with live preview.",
+    icon: "fas fa-sliders",
+  },
+  {
+    eyebrow: "Route: /eduprompt/run/[id]",
+    title: "Run console",
+    description:
+      "Trigger single or multi-persona generations, review outputs, grade them against the rubric, and iterate.",
+    icon: "fas fa-terminal",
+  },
+  {
+    eyebrow: "Route: /eduprompt/datasets",
+    title: "Dataset mode",
+    description:
+      "Request N prompt completions, monitor progress, dedupe similar responses, and enforce topic coverage goals.",
+    icon: "fas fa-database",
+  },
+  {
+    eyebrow: "Route: /eduprompt/history",
+    title: "History vault",
+    description:
+      "Search saved prompts, tag outputs, compare revisions, and push best results to downstream apps.",
+    icon: "fas fa-archive",
+  },
+  {
+    eyebrow: "Route: /eduprompt/settings",
+    title: "Defaults & guardrails",
+    description:
+      "Define default models, tone, safety toggles, and parameter profiles shared across the workspace.",
+    icon: "fas fa-gear",
+  },
+];
+
+const builderSections = [
+  {
+    title: "Role & persona",
+    points: [
+      "Teacher, tutor, examiner, coach, curriculum specialist presets",
+      "Optional multi-persona runs to compare tone and depth",
+      "Role descriptions are inserted as [ROLE] headers in the final prompt",
+    ],
+    icon: "fas fa-user-graduate",
+  },
+  {
+    title: "Task & objectives",
+    points: [
+      "Single-sentence imperative plus success conditions",
+      "Attach board/class alignment and reference standards",
+      "Add evaluation focus areas for rubric scoring",
+    ],
+    icon: "fas fa-bullseye",
+  },
+  {
+    title: "Context & inputs",
+    points: [
+      "Syllabus snippets, prior knowledge, classroom constraints",
+      "Drop passages, example problems, or datasets for conditioning",
+      "Mark required sources that must be cited in outputs",
+    ],
+    icon: "fas fa-book-open",
+  },
+  {
+    title: "Format & examples",
+    points: [
+      "Markdown or JSON scaffolds with headings and token targets",
+      "Few-shot input/output pairs saved with reusable labels",
+      "Preview concatenation inside the live prompt preview pane",
+    ],
+    icon: "fas fa-code",
+  },
+  {
+    title: "Constraints & rubric",
+    points: [
+      "Reading level (A1–C2) and tone (formal, friendly, coaching)",
+      "Plagiarism guard, sources required, length control",
+      "Rubric criteria scored 1–5 with automated self-check loops",
+    ],
+    icon: "fas fa-scale-balanced",
+  },
+  {
+    title: "Parameters & metadata",
+    points: [
+      "Temperature, top-p, max tokens, stop sequences, seed",
+      "Tag prompts by subject, class, language, skills",
+      "Save param profiles and reuse across prompts and datasets",
+    ],
+    icon: "fas fa-sliders",
+  },
+];
+
+const personaModes = [
+  {
+    title: "Teacher",
+    description: "Classroom-ready delivery with pacing tips, differentiation, and formative checks.",
+  },
+  {
+    title: "Tutor",
+    description: "Conversational guidance, scaffolding questions, and analogies tuned to individual learners.",
+  },
+  {
+    title: "Examiner",
+    description: "Strict evaluation tone with scoring rubrics, grading breakdowns, and retake advice.",
+  },
+  {
+    title: "Coach",
+    description: "Motivational framing, stretch goals, and actionable feedback loops for growth mindset.",
+  },
+];
+
+const datasetHighlights = [
+  {
+    title: "Batch orchestration",
+    description:
+      "Spawn up to 200 completions with smart pacing, queueing, and the option to resume paused runs without losing progress.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Topic coverage goals",
+    description:
+      "Define must-cover subtopics, Bloom levels, or difficulty mixes. Progress bars show completion coverage in real time.",
+    icon: "fas fa-chart-pie",
+  },
+  {
+    title: "Deduplication & QA",
+    description:
+      "N-gram similarity checks flag near duplicates. Human reviewers can mark keep/remove before export.",
+    icon: "fas fa-clone",
+  },
+];
+
+const qualityHighlights = [
+  {
+    title: "Self-check loops",
+    description:
+      "Automated rubric scoring suggests revisions and can trigger up to 3 auto-rewrite passes with tracked deltas.",
+    icon: "fas fa-rotate",
+  },
+  {
+    title: "Plagiarism guard",
+    description:
+      "Compare outputs to provided inputs and web-safe heuristics, flagging high-similarity responses for review.",
+    icon: "fas fa-shield-halved",
+  },
+  {
+    title: "Citations & attribution",
+    description:
+      "When sources are provided, enforce inline or footnote citations with configurable style guides.",
+    icon: "fas fa-quote-right",
+  },
+];
+
+const exportHighlights = [
+  {
+    title: "Lesson Builder",
+    description:
+      "Send lesson outlines, objectives, and differentiation strategies directly into Lesson Builder workspaces.",
+    icon: "fas fa-chalkboard",
+  },
+  {
+    title: "Quiz Institute",
+    description:
+      "Export quiz-ready JSON schemas with blueprint tags aligned to the Ansiversa quiz engine.",
+    icon: "fas fa-square-poll-vertical",
+  },
+  {
+    title: "FlashNote & Presentation Designer",
+    description:
+      "Generate flashcards or slide outlines in one click, with Markdown previews for editing before publishing.",
+    icon: "fas fa-bolt",
+  },
+  {
+    title: "Study Planner & Research Assistant",
+    description:
+      "Attach prompts and outputs as tasks or reference packets for revision workflows and research briefs.",
+    icon: "fas fa-link",
+  },
+];
+
+const apiRoutes = [
+  {
+    label: "Templates",
+    endpoints: [
+      "GET /eduprompt/api/template/list",
+      "GET /eduprompt/api/template?id=",
+      "POST /eduprompt/api/template/create",
+      "POST /eduprompt/api/template/update",
+    ],
+  },
+  {
+    label: "Builder & runs",
+    endpoints: [
+      "POST /eduprompt/api/prompt/preview",
+      "POST /eduprompt/api/run",
+      "GET /eduprompt/api/run?id=",
+    ],
+  },
+  {
+    label: "Datasets & quality",
+    endpoints: [
+      "POST /eduprompt/api/dataset/create",
+      "POST /eduprompt/api/dataset/run",
+      "GET /eduprompt/api/dataset/status",
+      "POST /eduprompt/api/dedupe",
+      "POST /eduprompt/api/coverage",
+    ],
+  },
+  {
+    label: "Exports & integrations",
+    endpoints: [
+      "POST /eduprompt/api/export",
+      "POST /eduprompt/api/send",
+    ],
+  },
+  {
+    label: "Settings & guardrails",
+    endpoints: [
+      "POST /eduprompt/api/settings/save",
+      "POST /eduprompt/api/eval",
+    ],
+  },
+];
+
+const dataModel = [
+  {
+    entity: "Template",
+    attributes: [
+      "id, ownerId, name, type, subject, board, class, language",
+      "fields JSON schema with default section text",
+      "isSystem flag for Ansiversa curated templates",
+    ],
+  },
+  {
+    entity: "Prompt",
+    attributes: [
+      "id, templateId?, ownerId, title, sections JSON",
+      "tags array for subject, skills, language",
+      "createdAt timestamp for ordering",
+    ],
+  },
+  {
+    entity: "Run",
+    attributes: [
+      "model enum, temperature, maxTokens, seed",
+      "status lifecycle (queued → running → done/error)",
+      "costCents for billing visibility",
+    ],
+  },
+  {
+    entity: "Output",
+    attributes: [
+      "contentMd, optional contentJson",
+      "language, grade, feedback text",
+      "exportUrls for cross-app hand-offs",
+    ],
+  },
+  {
+    entity: "Eval",
+    attributes: [
+      "rubric JSON, score float, details JSON",
+      "linked to runId with createdAt auditing",
+    ],
+  },
+  {
+    entity: "Dataset",
+    attributes: [
+      "sizeRequested vs sizeCompleted",
+      "status (pending, running, done, error)",
+      "coverage JSON + dedupeStats JSON",
+    ],
+  },
+  {
+    entity: "Constraint",
+    attributes: [
+      "type (plagiarism, age_safety, sources_required, level_limit, length)",
+      "value JSON payload per constraint",
+    ],
+  },
+  {
+    entity: "ParamProfile",
+    attributes: [
+      "named parameter bundles per user",
+      "params JSON reused across prompts",
+    ],
+  },
+];
+---
+<Layout title="EduPrompt">
+  <main class="bg-slate-50">
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-graduation-cap text-xs" aria-hidden="true"></i>
+              Learning &amp; Knowledge Suite
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              EduPrompt
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Craft curriculum-aware prompts, orchestrate datasets, and enforce quality guardrails tailored for teachers, tutors, and students. EduPrompt unifies templates, a structured builder, evaluation workflows, and exports to the rest of Ansiversa.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <Button href="#flows" class="shadow-sm">
+                <i class="fas fa-route text-xs" aria-hidden="true"></i>
+                Explore workflow
+              </Button>
+              <Button href="#builder" variant="outline">
+                <i class="fas fa-sliders text-xs" aria-hidden="true"></i>
+                Inspect builder
+              </Button>
+              <Button href="#api" variant="ghost">
+                <i class="fas fa-code text-xs" aria-hidden="true"></i>
+                Review API surface
+              </Button>
+            </div>
+          </div>
+          <div class="grid gap-4">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-indigo-500">At a glance</h2>
+              <div class="mt-5 grid gap-4 sm:grid-cols-3">
+                {heroHighlights.map((item) => (
+                  <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 text-left">
+                    <div class="flex items-center gap-2 text-indigo-600">
+                      <i class={`${item.icon} text-sm`} aria-hidden="true"></i>
+                      <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.label}</span>
+                    </div>
+                    <p class="mt-3 text-sm font-medium text-slate-900">{item.value}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6 text-left shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Plan gating</p>
+              <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                {planMatrix.map((tier) => (
+                  <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
+                    <p class="text-sm font-semibold text-slate-900">{tier.tier}</p>
+                    <ul class="mt-2 space-y-1 text-sm text-slate-600">
+                      {tier.perks.map((perk) => (
+                        <li class="flex gap-2">
+                          <i class="fas fa-check text-xs text-emerald-500 mt-1"></i>
+                          <span>{perk}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="OBJECTIVES"
+          title="High-quality educational prompts on demand"
+          description="EduPrompt is built to deliver consistent, curriculum-aligned outputs with structured guardrails and deep integrations."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {galleryHighlights.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="GALLERY EXPERIENCE"
+          title="Discover the right template in seconds"
+          description="Filters, previews, and quick actions keep teachers productive."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {galleryFilters.map((filter) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <div class="flex items-center gap-2 text-indigo-600">
+                <i class="fas fa-filter text-sm" aria-hidden="true"></i>
+                <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">{filter.label}</p>
+              </div>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {filter.items.map((item) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="flows" class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="ROUTE MAP"
+          title="Every EduPrompt route at a glance"
+          description="Each step links to a dedicated workspace page within the EduPrompt experience."
+        />
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {flowSteps.map((step) => (
+            <FeatureCard
+              {...step}
+              baseClass="h-full rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-none"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="builder" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="STRUCTURED BUILDER"
+          title="Guided sections produce reliable prompts"
+          description="The builder concatenates sections with deterministic markers so prompts remain reproducible."
+        >
+          <div class="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-slate-900/95 p-6 text-left text-sm text-slate-100 shadow-xl">
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300">Preview schema</p>
+            <pre class="mt-4 whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200">
+[ROLE] You are a {{role}}.
+[TASK] {{task}}.
+[CONTEXT] {{context}}.
+[INPUT] {{input}}.
+[FORMAT] {{format_instructions}}.
+[CONSTRAINTS] {{constraints}}.
+[EXAMPLES] {{few_shot_pairs}}.
+[RUBRIC] {{criteria}}.
+[PARAMS] temp={{t}}, max_tokens={{k}}.
+            </pre>
+            <p class="mt-4 text-xs text-slate-400">
+              Live preview updates in real time as users edit builder fields. System ensures consistent ordering and optional omission of empty blocks.
+            </p>
+          </div>
+        </SectionHeading>
+        <div class="grid gap-6 lg:grid-cols-3">
+          {builderSections.map((section) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <div class="flex items-center gap-2 text-indigo-600">
+                <i class={`${section.icon} text-sm`} aria-hidden="true"></i>
+                <p class="text-sm font-semibold uppercase tracking-wide text-slate-500">{section.title}</p>
+              </div>
+              <ul class="mt-4 space-y-3 text-sm text-slate-600">
+                {section.points.map((point) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                    <span>{point}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <h3 class="text-xl font-semibold text-slate-900">Persona presets & tone control</h3>
+          <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+            {personaModes.map((mode) => (
+              <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
+                <p class="text-sm font-semibold text-slate-900">{mode.title}</p>
+                <p class="mt-2 text-xs text-slate-600">{mode.description}</p>
+              </div>
+            ))}
+          </div>
+          <p class="mt-4 text-xs text-slate-600">
+            Reading level toggles (A1–C2), tone presets, and language selection feed into constraint blocks and evaluation rubrics for multi-language classrooms.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="DATASETS & QA"
+          title="Generate large prompt batches with confidence"
+          description="Dataset mode scales ideation while maintaining variety and quality."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {datasetHighlights.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div class="space-y-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Coverage tracking</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Topic coverage dashboard</h3>
+              <p class="text-sm text-slate-600">
+                Define expected distribution (e.g., "20% easy, 50% medium, 30% hard" or "Bloom levels Remember → Create"). Progress bars and callouts highlight unmet coverage so educators can adjust prompts mid-run.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-6">
+              <div class="flex items-center justify-between text-xs font-semibold text-slate-500">
+                <span>Bloom level</span>
+                <span>Target → Actual</span>
+              </div>
+              <div class="mt-4 space-y-4 text-sm">
+                {[
+                  { label: "Remember", target: "15%", actual: "12%", accent: "bg-emerald-500" },
+                  { label: "Apply", target: "35%", actual: "36%", accent: "bg-sky-500" },
+                  { label: "Analyze", target: "25%", actual: "24%", accent: "bg-indigo-500" },
+                  { label: "Create", target: "25%", actual: "28%", accent: "bg-purple-500" },
+                ].map((row) => (
+                  <div>
+                    <div class="flex items-center justify-between text-xs text-slate-500">
+                      <span>{row.label}</span>
+                      <span>{row.target} → {row.actual}</span>
+                    </div>
+                    <div class="mt-2 h-2 rounded-full bg-slate-200">
+                      <div class={`h-2 rounded-full ${row.accent}`} style={`width: ${row.actual}`}></div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="QUALITY & SAFETY"
+          title="Guardrails keep prompts classroom-ready"
+          description="Every output passes through evaluation, dedupe, and safety checks."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {qualityHighlights.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-inner">
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-3">
+              <h3 class="text-lg font-semibold text-slate-900">Constraint engine</h3>
+              <p class="text-sm text-slate-600">
+                Attach constraint blocks to prompts or param profiles. Enforcement occurs at run time and dataset batch evaluation.
+              </p>
+            </div>
+            <ul class="space-y-3 text-sm text-slate-600">
+              <li class="flex gap-2">
+                <i class="fas fa-shield text-xs text-indigo-500 mt-1"></i>
+                <span>Plagiarism similarity threshold (default 0.85 Jaccard) triggers manual review.</span>
+              </li>
+              <li class="flex gap-2">
+                <i class="fas fa-book text-xs text-indigo-500 mt-1"></i>
+                <span>Sources required ensures outputs cite provided bibliography in either MLA or author-year format.</span>
+              </li>
+              <li class="flex gap-2">
+                <i class="fas fa-universal-access text-xs text-indigo-500 mt-1"></i>
+                <span>Age safety guard toggles hide sensitive content for learners under 13.</span>
+              </li>
+              <li class="flex gap-2">
+                <i class="fas fa-tachograph-digital text-xs text-indigo-500 mt-1"></i>
+                <span>Length control enforces paragraph or token ceilings and flags overages.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="INTEGRATIONS"
+          title="Exports that feed the Ansiversa learning loop"
+          description="Prompt outputs slot directly into companion mini-apps."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {exportHighlights.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="api" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="API SURFACE"
+          title="Endpoints powering EduPrompt"
+          description="Server-rendered routes manage templates, runs, datasets, exports, and safety controls."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {apiRoutes.map((group) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{group.label}</p>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {group.endpoints.map((endpoint) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-terminal text-xs text-slate-500 mt-1"></i>
+                    <span>{endpoint}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div class="space-y-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Data model snapshot</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Entities &amp; relationships</h3>
+              <p class="text-sm text-slate-600">
+                EduPrompt keeps prompts auditable. Templates feed prompts and runs; outputs and evals link back for quality review. Datasets and param profiles orchestrate batch behaviour across the workspace.
+              </p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              {dataModel.map((node) => (
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p class="text-sm font-semibold text-slate-900">{node.entity}</p>
+                  <ul class="mt-2 space-y-2 text-xs text-slate-600">
+                    {node.attributes.map((attr) => (
+                      <li class="flex gap-2">
+                        <i class="fas fa-circle text-[0.35rem] text-indigo-400 mt-1.5"></i>
+                        <span>{attr}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <div class="grid gap-8 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div class="space-y-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Next steps</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Start building better prompts today</h3>
+              <p class="text-sm text-slate-600">
+                Explore the gallery, configure the builder, and invite EduPrompt to transform your curriculum planning, assessments, and revision workflows.
+              </p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <Button href="/eduprompt/builder" class="shadow-sm">
+                <i class="fas fa-pen-to-square text-xs" aria-hidden="true"></i>
+                Open builder
+              </Button>
+              <Button href="/eduprompt/datasets" variant="outline">
+                <i class="fas fa-database text-xs" aria-hidden="true"></i>
+                Review datasets
+              </Button>
+              <Button href="/eduprompt/history" variant="ghost">
+                <i class="fas fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+                View history
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

@@ -1,0 +1,348 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const datasetHighlights = [
+  {
+    title: "Batch generation",
+    description:
+      "Queue up to 200 prompt completions per run with autoscaling workers and pause/resume controls.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Coverage tracking",
+    description:
+      "Define topic, Bloom level, or difficulty distributions. Progress meters show how close you are to the target mix.",
+    icon: "fas fa-chart-pie",
+  },
+  {
+    title: "Deduplication",
+    description:
+      "N-gram similarity checks and educator review steps remove near duplicates before export.",
+    icon: "fas fa-clone",
+  },
+];
+
+const queueColumns = [
+  { label: "Dataset", key: "name" },
+  { label: "Status", key: "status" },
+  { label: "Completed", key: "completed" },
+  { label: "Coverage", key: "coverage" },
+  { label: "Actions", key: "actions" },
+];
+
+const queueRows = [
+  {
+    name: "Physics Quiz Variants",
+    status: "Running",
+    completed: "36 / 60",
+    coverage: "Bloom mix 82%",
+    actions: "Resume",
+  },
+  {
+    name: "Lesson Hooks - Poetry",
+    status: "Pending",
+    completed: "0 / 20",
+    coverage: "Awaiting",
+    actions: "Start",
+  },
+  {
+    name: "Worksheet - Algebra",
+    status: "Done",
+    completed: "45 / 45",
+    coverage: "Targets met",
+    actions: "Export",
+  },
+];
+
+const coverageMetrics = [
+  { label: "Topics", goal: "8", actual: "7", detail: "Needs 'Oscillations'" },
+  { label: "Difficulty", goal: "Easy 20% / Medium 50% / Hard 30%", actual: "18 / 52 / 30", detail: "Slightly low on easy" },
+  { label: "Language", goal: "English & Hindi", actual: "English 70% / Hindi 30%", detail: "Met" },
+];
+
+const qaSteps = [
+  {
+    title: "Similarity scan",
+    bullets: [
+      "Lowercase, strip numbers, compare tokens",
+      "Flag duplicates when Jaccard >= 0.85",
+      "Educators approve or reject flagged items",
+    ],
+  },
+  {
+    title: "Coverage validation",
+    bullets: [
+      "Topic tagging ensures distribution goals",
+      "Bloom level recommendations for gaps",
+      "Auto-generate follow-up prompts",
+    ],
+  },
+  {
+    title: "Export readiness",
+    bullets: [
+      "Markdown, JSON, DOCX packaging",
+      "Send to Lesson Builder, Quiz Institute, FlashNote",
+      "Attach evaluation summary per batch",
+    ],
+  },
+];
+
+const automationHighlights = [
+  {
+    title: "Adaptive pacing",
+    description:
+      "Workers throttle based on guardrail queue length so evaluation never falls behind generation.",
+    icon: "fas fa-gauge-high",
+  },
+  {
+    title: "Failure recovery",
+    description:
+      "Failed completions retry with exponential backoff and optional prompt adjustments.",
+    icon: "fas fa-rotate",
+  },
+  {
+    title: "Notifications",
+    description:
+      "Email or in-app alerts when datasets finish, encounter guardrail flags, or need manual review.",
+    icon: "fas fa-bell",
+  },
+];
+---
+<Layout title="EduPrompt Datasets">
+  <main class="bg-slate-50">
+    <section class="relative overflow-hidden py-16 sm:py-24">
+      <div class="absolute inset-0 -z-10 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-database text-xs" aria-hidden="true"></i>
+              Dataset mode
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Batch prompts with coverage and quality guardrails
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              EduPrompt datasets help educators generate entire banks of lesson plans, quiz questions, or flashcards while maintaining topic coverage, tone, and safety.
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+              <Button href="/eduprompt">
+                <i class="fas fa-arrow-left text-xs" aria-hidden="true"></i>
+                Back to EduPrompt
+              </Button>
+              <Button href="/eduprompt/run/sample" variant="outline">
+                <i class="fas fa-terminal text-xs" aria-hidden="true"></i>
+                View run console
+              </Button>
+              <Button href="/eduprompt/history" variant="ghost">
+                <i class="fas fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+                Open history
+              </Button>
+            </div>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-indigo-500">Capabilities</h2>
+            <div class="mt-5 grid gap-4 sm:grid-cols-3">
+              {datasetHighlights.map((item) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4 text-left">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class={`${item.icon} text-sm`} aria-hidden="true"></i>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.title}</span>
+                  </div>
+                  <p class="mt-3 text-xs text-slate-600">{item.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="QUEUE OVERVIEW"
+          title="Monitor batches in real time"
+          description="Pause, resume, or reprioritize datasets without losing progress."
+        />
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
+          <table class="min-w-full divide-y divide-slate-200 text-left text-sm text-slate-600">
+            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                {queueColumns.map((column) => (
+                  <th scope="col" class="px-4 py-3">{column.label}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              {queueRows.map((row) => (
+                <tr>
+                  <td class="px-4 py-3 font-semibold text-slate-900">{row.name}</td>
+                  <td class="px-4 py-3">
+                    <span class={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      row.status === 'Done'
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : row.status === 'Running'
+                        ? 'bg-indigo-100 text-indigo-700'
+                        : 'bg-slate-100 text-slate-600'
+                    }`}>{row.status}</span>
+                  </td>
+                  <td class="px-4 py-3 text-slate-600">{row.completed}</td>
+                  <td class="px-4 py-3 text-slate-600">{row.coverage}</td>
+                  <td class="px-4 py-3">
+                    <Button href="#" variant="light" size="sm">{row.actions}</Button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="COVERAGE DASHBOARD"
+          title="Ensure every target is met"
+          description="Datasets visualise coverage metrics to catch gaps early."
+        />
+        <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+          <div class="space-y-4">
+            {coverageMetrics.map((metric) => (
+              <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-soft">
+                <p class="text-sm font-semibold text-slate-900">{metric.label}</p>
+                <p class="mt-2 text-xs text-slate-500">Goal: {metric.goal}</p>
+                <p class="text-xs text-slate-500">Actual: {metric.actual}</p>
+                <p class="mt-2 text-xs text-indigo-600">{metric.detail}</p>
+              </div>
+            ))}
+          </div>
+          <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+            <h3 class="text-xl font-semibold text-slate-900">Progress chart</h3>
+            <p class="mt-2 text-sm text-slate-600">
+              Visual bars display how many completions meet each coverage rule. Alerts indicate when additional prompts are needed to hit targets.
+            </p>
+            <div class="mt-4 space-y-4 text-xs text-slate-600">
+              {[
+                { label: "Bloom: Analyze", percent: "68%" },
+                { label: "Topic: Heat transfer", percent: "75%" },
+                { label: "Tone: Friendly", percent: "54%" },
+              ].map((row) => (
+                <div>
+                  <div class="flex items-center justify-between">
+                    <span>{row.label}</span>
+                    <span>{row.percent}</span>
+                  </div>
+                  <div class="mt-2 h-2 rounded-full bg-white/60">
+                    <div class="h-2 rounded-full bg-indigo-500" style={`width: ${row.percent}`}></div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="QUALITY REVIEW"
+          title="Guardrails before export"
+          description="Review dedupe, coverage, and export readiness in one flow."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {qaSteps.map((step) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{step.title}</p>
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {step.bullets.map((bullet) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="AUTOMATION"
+          title="Datasets stay resilient"
+          description="Background workers keep runs stable even during long batches."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {automationHighlights.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+            <div class="space-y-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Dataset history</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Audit everything</h3>
+              <p class="text-sm text-slate-600">
+                Each dataset records prompts, parameter profiles, guardrail outcomes, and exports. History links back to individual runs for granular investigation.
+              </p>
+            </div>
+            <div class="grid gap-3 text-xs text-slate-600">
+              {[
+                { label: "Dataset created", detail: "Ms. Patel · 12 Aug 2024 · Template: Quiz Writer" },
+                { label: "Coverage met", detail: "Bloom mix achieved · 54 completions" },
+                { label: "Exports", detail: "FlashNote JSON · Lesson Builder Markdown" },
+              ].map((entry) => (
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p class="font-semibold text-slate-900">{entry.label}</p>
+                  <p class="mt-1">{entry.detail}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <div class="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-center">
+            <div class="space-y-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Next steps</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Scale your prompts responsibly</h3>
+              <p class="text-sm text-slate-600">
+                Jump into the builder to craft prompts, then queue datasets when you need entire libraries of aligned outputs.
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-3">
+              <Button href="/eduprompt/builder" class="shadow-sm">
+                <i class="fas fa-pen-to-square text-xs" aria-hidden="true"></i>
+                Open builder
+              </Button>
+              <Button href="/eduprompt/history" variant="outline">
+                <i class="fas fa-clock-rotate-left text-xs" aria-hidden="true"></i>
+                View history
+              </Button>
+              <Button href="/eduprompt/settings" variant="ghost">
+                <i class="fas fa-gear text-xs" aria-hidden="true"></i>
+                Adjust defaults
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
