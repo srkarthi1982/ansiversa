@@ -1,0 +1,334 @@
+<section
+  id="homework-workspace"
+  class="bg-slate-50 py-16 sm:py-20"
+>
+  <div class="mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <h2 class="text-xl font-semibold text-slate-900">Ask a question</h2>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-xs font-semibold"
+              :class="homework.intake.board === 'cbse' ? 'border-indigo-200 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-500'"
+              @click="homework.toggleBoard()"
+            >
+              <i class="fas fa-globe"></i>
+              <span x-text="homework.intake.board === 'cbse' ? 'CBSE' : 'International'"></span>
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1 text-xs font-semibold text-slate-500"
+              @click="homework.cycleLanguage()"
+            >
+              <i class="fas fa-language"></i>
+              <span x-text="homework.intake.language"></span>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <template x-for="mode in ['text','image','link']" :key="mode">
+            <button
+              type="button"
+              class="flex-1 min-w-[100px] rounded-full border px-4 py-2 text-sm font-semibold"
+              :class="homework.intake.mode === mode ? 'border-indigo-200 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-500 hover:border-indigo-200 hover:text-indigo-600'"
+              @click="homework.setMode(mode)"
+            >
+              <span class="flex items-center justify-center gap-2">
+                <i
+                  class="text-xs"
+                  :class="{
+                    text: 'fas fa-pen',
+                    image: 'fas fa-camera',
+                    link: 'fas fa-link'
+                  }[mode]"
+                ></i>
+                <span class="capitalize" x-text="mode"></span>
+              </span>
+            </button>
+          </template>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">Grade band</span>
+          <template x-for="band in ['5-8','9-10','11-12','UG']" :key="band">
+            <button
+              type="button"
+              class="rounded-full border px-3 py-1 text-xs font-semibold"
+              :class="homework.intake.gradeBand === band ? 'border-indigo-200 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-500 hover:border-indigo-200 hover:text-indigo-600'"
+              @click="homework.setGradeBand(band)"
+            >
+              <span x-text="band"></span>
+            </button>
+          </template>
+        </div>
+        <div class="space-y-4">
+          <label class="block text-sm font-semibold text-slate-700">Subject</label>
+          <div class="grid gap-2 sm:grid-cols-2">
+            <template x-for="subject in homework.highlights.subjects" :key="subject.name">
+              <button
+                type="button"
+                class="rounded-2xl border px-4 py-3 text-left text-sm"
+                :class="homework.intake.subject === subject.name ? 'border-indigo-200 bg-indigo-50 text-indigo-700' : 'border-slate-200 text-slate-600 hover:border-indigo-200 hover:text-indigo-600'"
+                @click="homework.setSubject(subject.name)"
+              >
+                <div class="flex items-center gap-3">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                    <i :class="subject.icon"></i>
+                  </span>
+                  <div>
+                    <p class="font-semibold" x-text="subject.name"></p>
+                    <p class="text-xs text-slate-500" x-text="subject.coverage"></p>
+                  </div>
+                </div>
+              </button>
+            </template>
+          </div>
+        </div>
+        <div x-show="homework.intake.mode === 'text'" x-transition x-cloak>
+          <label class="block text-sm font-semibold text-slate-700" for="homework-question">Question</label>
+          <textarea
+            id="homework-question"
+            class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            rows="5"
+            x-model="homework.intake.question"
+            @input="homework.updateQuestion($event.target.value)"
+          ></textarea>
+          <p class="mt-2 text-xs text-slate-500">Paste a word problem, essay prompt, or lab question. We auto-detect difficulty.</p>
+        </div>
+        <div x-show="homework.intake.mode === 'image'" x-transition x-cloak class="space-y-3">
+          <label class="block text-sm font-semibold text-slate-700">Upload worksheet</label>
+          <div class="rounded-2xl border-2 border-dashed border-slate-200 bg-slate-50 p-6 text-center">
+            <i class="fas fa-cloud-arrow-up text-2xl text-indigo-500"></i>
+            <p class="mt-3 text-sm text-slate-600">Drop a clear page snapshot (JPG/PNG). OCR keeps formatting.</p>
+            <button
+              type="button"
+              class="mt-4 inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-600"
+              @click="homework.attachFile('worksheet-photo.jpg')"
+            >
+              <i class="fas fa-file-import text-xs"></i>
+              Attach sample image
+            </button>
+            <template x-if="homework.intake.fileName">
+              <div class="mt-4 flex items-center justify-center gap-3 text-xs text-slate-500">
+                <i class="fas fa-image"></i>
+                <span x-text="homework.intake.fileName"></span>
+                <button type="button" class="text-rose-500" @click="homework.detachFile()">Remove</button>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div x-show="homework.intake.mode === 'link'" x-transition x-cloak class="space-y-3">
+          <label class="block text-sm font-semibold text-slate-700" for="homework-url">Worksheet URL</label>
+          <input
+            id="homework-url"
+            type="url"
+            placeholder="https://school.edu/worksheets/algebra-problem"
+            class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            x-model="homework.intake.resourceUrl"
+            @input="homework.updateResourceUrl($event.target.value)"
+          />
+          <p class="text-xs text-slate-500">We pull text-only versions, strip ads, and respect LMS honour codes.</p>
+        </div>
+          <div class="flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-slate-900 px-4 py-4 text-xs text-indigo-100">
+            <div class="flex items-center gap-3">
+              <span class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-500/20 text-indigo-200">
+                <i class="fas fa-info"></i>
+              </span>
+              <div>
+                <p class="font-semibold text-white"><span x-text="homework.solution.lastAction"></span></p>
+                <p class="text-[11px] text-indigo-100/80">Workspace status updates as students interact.</p>
+              </div>
+            </div>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-2 font-semibold text-indigo-100 hover:bg-white/20"
+            @click="homework.consumeFreeQuestion()"
+          >
+            <i class="fas fa-play text-xs"></i>
+            Run sample solve
+          </button>
+        </div>
+      </div>
+      <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Step-by-step guidance</h2>
+          <div class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <i class="fas fa-bolt"></i>
+            Progressive reveal
+          </div>
+        </div>
+        <div class="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+          <div class="space-y-3">
+            <template x-for="step in homework.solution.snapshot.steps" :key="step.n">
+              <button
+                type="button"
+                class="w-full rounded-2xl border px-4 py-3 text-left"
+                :class="{
+                  'border-indigo-200 bg-indigo-50 text-indigo-700': homework.solution.activeStep === step.n && step.n <= homework.solution.revealedSteps,
+                  'border-slate-200 text-slate-500 hover:border-indigo-200 hover:text-indigo-600': step.n <= homework.solution.revealedSteps,
+                  'border-dashed border-slate-200 text-slate-400': step.n > homework.solution.revealedSteps
+                }"
+                @click="homework.setActiveStep(step.n)"
+              >
+                <div class="flex items-start gap-3">
+                  <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-full"
+                    :class="step.n <= homework.solution.revealedSteps ? 'bg-indigo-500 text-white' : 'bg-slate-200 text-slate-500'">
+                    <span x-text="step.n"></span>
+                  </span>
+                  <div>
+                    <p class="text-sm font-semibold" x-text="step.title"></p>
+                    <p class="text-xs text-slate-500" x-show="step.n > homework.solution.revealedSteps">Locked · reveal earlier steps</p>
+                  </div>
+                </div>
+              </button>
+            </template>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-600 hover:border-indigo-200 hover:text-indigo-600"
+              @click="homework.revealNextStep()"
+            >
+              <i class="fas fa-eye"></i>
+              Show next step
+            </button>
+          </div>
+          <div class="space-y-4">
+            <template x-for="step in homework.solution.snapshot.steps" :key="`body-${step.n}`">
+              <div x-show="homework.solution.activeStep === step.n && step.n <= homework.solution.revealedSteps" x-transition class="rounded-2xl border border-indigo-100 bg-indigo-50/50 p-5">
+                <h3 class="text-sm font-semibold text-indigo-900" x-text="`Step ${step.n}: ${step.title}`"></h3>
+                <p class="mt-3 whitespace-pre-wrap text-sm text-slate-700" x-html="step.bodyMd"></p>
+                <div class="mt-4 flex flex-wrap items-center gap-3">
+                  <button
+                    type="button"
+                    class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-white px-3 py-1.5 text-xs font-semibold text-indigo-600"
+                    @click="homework.toggleHint(step.n)"
+                  >
+                    <i class="fas fa-lightbulb text-[10px]"></i>
+                    <span x-text="homework.solution.showHintFor === step.n ? 'Hide hint' : 'Show hint'"></span>
+                  </button>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-2.5 py-1 text-[11px] font-semibold text-slate-600">
+                    <i class="fas fa-graduation-cap"></i>
+                    CBSE <span x-text="homework.intake.gradeBand"></span>
+                  </span>
+                </div>
+                <p
+                  class="mt-3 rounded-2xl bg-white/70 px-4 py-3 text-xs text-slate-600"
+                  x-show="homework.solution.showHintFor === step.n"
+                  x-text="step.hint"
+                  x-transition
+                ></p>
+              </div>
+            </template>
+            <div
+              x-show="homework.solution.showAnswer"
+              x-transition
+              class="space-y-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-5"
+            >
+              <div class="flex items-center gap-3">
+                <span class="flex h-9 w-9 items-center justify-center rounded-full bg-emerald-500 text-white">
+                  <i class="fas fa-check"></i>
+                </span>
+                <div>
+                  <p class="text-sm font-semibold text-emerald-900">Final answer</p>
+                  <p class="text-xs text-emerald-700">Displayed only after all steps are revealed.</p>
+                </div>
+              </div>
+              <p class="text-base font-semibold text-emerald-900" x-text="homework.solution.snapshot.finalAnswer.value"></p>
+              <p class="text-sm text-emerald-800" x-text="homework.solution.snapshot.finalAnswer.explanation"></p>
+              <ul class="space-y-2 text-xs text-emerald-700">
+                <template x-for="citation in homework.solution.snapshot.citations" :key="citation.url">
+                  <li class="flex items-center justify-between gap-2 rounded-xl bg-white/70 px-3 py-2">
+                    <a class="text-emerald-700 hover:text-emerald-900" :href="citation.url" target="_blank" rel="noreferrer" x-text="citation.title"></a>
+                    <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-1 text-[10px] font-semibold text-emerald-700" x-text="`Tier ${citation.tier}`"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-600"
+              x-show="!homework.solution.showAnswer"
+              @click="homework.showFinalAnswer()"
+            >
+              <i class="fas fa-lock-open"></i>
+              Reveal full solution
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Check my work</h2>
+          <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
+            <i class="fas fa-microscope"></i>
+            Precision feedback
+          </span>
+        </div>
+        <div class="space-y-4">
+          <textarea
+            class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 focus:border-indigo-300 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+            rows="4"
+            placeholder="Paste your attempt or describe where you got stuck..."
+          ></textarea>
+          <div class="rounded-2xl border border-indigo-100 bg-indigo-50/70 p-4 text-sm text-slate-700">
+            <p class="font-semibold text-indigo-900">Common mistakes flagged</p>
+            <ul class="mt-3 space-y-2 text-xs text-slate-600">
+              <template x-for="(attempt, index) in homework.solution.snapshot.attempts" :key="attempt.highlight">
+                <li class="rounded-xl bg-white px-3 py-2">
+                  <div class="flex items-center justify-between gap-3">
+                    <span class="font-semibold text-slate-700" x-text="attempt.highlight"></span>
+                    <button
+                      type="button"
+                      class="text-[11px] font-semibold text-indigo-600 hover:text-indigo-800"
+                      @click="homework.markAttemptReviewed(index)"
+                    >
+                      Share feedback
+                    </button>
+                  </div>
+                  <p class="mt-2 text-slate-600" x-text="attempt.feedback"></p>
+                  <p class="mt-1 text-xs text-indigo-500" x-text="attempt.recommendation"></p>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <h2 class="text-xl font-semibold text-slate-900">Generate similar practice</h2>
+          <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+            <i class="fas fa-layer-group"></i>
+            Differentiated sets
+          </span>
+        </div>
+        <div class="flex flex-wrap items-center justify-between gap-3">
+          <p class="text-xs text-slate-500">Focus: <span class="font-semibold text-slate-700" x-text="homework.practice.focusSubject"></span></p>
+          <button
+            type="button"
+            class="inline-flex items-center gap-2 rounded-full border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:border-emerald-200 hover:text-emerald-700"
+            @click="homework.generateMorePractice()"
+          >
+            <i class="fas fa-rotate"></i>
+            Refresh set
+          </button>
+        </div>
+        <ul class="space-y-3">
+          <template x-for="item in homework.practice.items" :key="item.id">
+            <li class="rounded-2xl border border-emerald-100 bg-emerald-50/50 p-4 text-sm text-slate-700">
+              <div class="flex items-start justify-between gap-3">
+                <div>
+                  <p class="font-semibold text-emerald-900" x-text="item.prompt"></p>
+                  <p class="mt-2 text-xs text-emerald-700" x-text="item.answer"></p>
+                </div>
+                <span class="inline-flex items-center gap-1 rounded-full bg-white px-2.5 py-1 text-[11px] font-semibold text-emerald-700" x-text="item.skillFocus"></span>
+              </div>
+            </li>
+          </template>
+        </ul>
+        <p class="text-[11px] text-slate-500" x-text="'Generated ' + homework.practice.lastGeneratedAt"></p>
+      </div>
+    </div>
+  </div>
+</section>

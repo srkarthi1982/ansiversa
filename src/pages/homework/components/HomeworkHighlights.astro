@@ -1,0 +1,40 @@
+---
+import FeatureCard from '../../../components/FeatureCard.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-white py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Subjects & Guardrails"
+      title="Five disciplines, one tutoring language"
+      description="Homework Helper recognises the subject, adjusts grade-level scaffolding, and stays aligned with academic integrity."
+      align="center"
+    />
+    <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <template x-for="subject in homework.highlights.subjects" :key="subject.name">
+        <FeatureCard
+          :title="subject.name"
+          :description="subject.coverage"
+          class="h-full"
+          titleClass="text-lg font-semibold text-slate-900"
+        >
+          <div class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-500">
+            <i :class="subject.icon"></i>
+            Subject scope
+          </div>
+        </FeatureCard>
+      </template>
+    </div>
+    <div class="mt-16 grid gap-6 md:grid-cols-3">
+      <template x-for="guardrail in homework.highlights.guardrails" :key="guardrail.title">
+        <FeatureCard
+          :title="guardrail.title"
+          :description="guardrail.description"
+          class="h-full"
+          iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-600"
+          :icon="guardrail.icon"
+        />
+      </template>
+    </div>
+  </div>
+</section>

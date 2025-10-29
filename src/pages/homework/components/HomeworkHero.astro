@@ -1,0 +1,92 @@
+---
+import Button from '../../../components/Button.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="relative overflow-hidden bg-slate-900">
+  <div class="absolute inset-0">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/30 via-slate-900 to-slate-900"></div>
+    <div class="absolute -top-24 -left-24 h-72 w-72 rounded-full bg-emerald-400/10 blur-3xl"></div>
+    <div class="absolute -bottom-24 -right-12 h-64 w-64 rounded-full bg-indigo-400/20 blur-3xl"></div>
+  </div>
+  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+      <div class="space-y-8 text-center lg:text-left">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-indigo-200">
+          <i class="fas fa-graduation-cap text-xs"></i>
+          Guided homework workspace
+        </span>
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          Homework Helper keeps learning at the centre of every solution
+        </h1>
+        <p class="max-w-xl text-base text-indigo-100 sm:text-lg">
+          Scaffold tough assignments with progressive hints, cross-subject practice, and integrity-first guardrails.
+          Students reveal each step at their own pace, teachers get clarity, and every factual response carries citations.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <Button
+            type="button"
+            @click.prevent="document.getElementById('homework-workspace')?.scrollIntoView({ behavior: 'smooth' })"
+          >
+            <i class="fas fa-magic-wand-sparkles text-xs"></i>
+            Explore the workspace
+          </Button>
+          <Button type="button" variant="ghost" class="text-indigo-200 hover:bg-white/10" @click.prevent="homework.upgradePlan()">
+            <i class="fas fa-rocket text-xs"></i>
+            Unlock Pro features
+          </Button>
+        </div>
+        <dl class="grid gap-4 text-left sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Subjects covered</dt>
+            <dd class="mt-2 text-2xl font-bold text-white">5 disciplines</dd>
+            <dd class="mt-1 text-xs text-indigo-100">Math, Science, English, Social Science, Programming</dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Guided steps</dt>
+            <dd class="mt-2 text-2xl font-bold text-white">4.2M+</dd>
+            <dd class="mt-1 text-xs text-indigo-100">Generated with progressive hints since launch</dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Integrity score</dt>
+            <dd class="mt-2 text-2xl font-bold text-white">99.1%</dd>
+            <dd class="mt-1 text-xs text-indigo-100">Verified by teacher feedback on originality</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="relative">
+        <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-emerald-400/20 blur-2xl"></div>
+        <div class="relative rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_25px_80px_rgba(15,23,42,0.35)]">
+          <SectionHeading
+            eyebrow="Learning disclaimer"
+            title="Use this to learn, not to cheat"
+            description="Homework Helper acts like a tutor—guiding steps, exposing thinking, and pointing to reputable citations."
+            align="left"
+            titleClass="text-2xl font-semibold text-white"
+            eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-emerald-200"
+            descriptionClass="mt-3 text-sm text-indigo-100"
+          />
+          <ul class="mt-6 space-y-4 text-sm text-indigo-100">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-300/20 text-emerald-200">
+                <i class="fas fa-lightbulb"></i>
+              </span>
+              <p>Reveal hints gradually—students control the depth: Hint 1, Hint 2, Reveal Step, and Full Solution.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-300/20 text-emerald-200">
+                <i class="fas fa-network-wired"></i>
+              </span>
+              <p>Connects with Quiz Institute, Concept Explainer, Fact Generator, and FlashNote for spiral learning.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex h-8 w-8 items-center justify-center rounded-full bg-emerald-300/20 text-emerald-200">
+                <i class="fas fa-file-arrow-down"></i>
+              </span>
+              <p>Export tailored study sheets, annotated PDFs, or FlashNote decks in one click (Pro feature).</p>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
