@@ -1,0 +1,110 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-white py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Analytics"
+      title="Progress, velocity, and risk signals at a glance"
+      description="Review weekly focus distribution, mastery milestones, and wellbeing guardrails before locking your plan."
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+          <h3 class="text-base font-semibold text-slate-900">Weekly focus vs target</h3>
+          <p class="mt-1 text-sm text-slate-500">Compare hours logged per subject against plan targets.</p>
+          <ul class="mt-6 space-y-4">
+            <template x-for="item in planner.analytics.weeklyFocus" :key="item.subjectId">
+              <li>
+                <div class="flex items-center justify-between text-sm text-slate-600">
+                  <p class="font-semibold text-slate-800" x-text="item.subjectName"></p>
+                  <p>
+                    <span x-text="`${item.hours} hrs`"></span>
+                    <span class="text-slate-400">· target <span x-text="item.target"></span> hrs</span>
+                  </p>
+                </div>
+                <div class="mt-2 h-2 rounded-full bg-slate-200">
+                  <div
+                    class="h-full rounded-full bg-indigo-500"
+                    :style="{ width: `${Math.min(100, Math.round((item.hours / item.target) * 100))}%` }"
+                  ></div>
+                </div>
+                <p class="mt-1 text-xs text-slate-500">
+                  <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5"
+                    :class="item.trend === 'up' ? 'bg-emerald-100 text-emerald-700' : item.trend === 'down' ? 'bg-amber-100 text-amber-700' : 'bg-slate-200 text-slate-600'">
+                    <i class="fas fa-chart-line text-[10px]"></i>
+                    <span x-text="item.trend === 'up' ? 'Ahead' : item.trend === 'down' ? 'Behind' : 'On track'"></span>
+                  </span>
+                </p>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+          <h3 class="text-base font-semibold text-slate-900">Mastery milestones</h3>
+          <p class="mt-1 text-sm text-slate-500">Track upcoming assessments and mastery checkpoints.</p>
+          <ul class="mt-5 space-y-4 text-sm text-slate-600">
+            <template x-for="milestone in planner.analytics.masteryMilestones" :key="milestone.label">
+              <li class="rounded-2xl border border-slate-200 bg-white p-4">
+                <p class="text-sm font-semibold text-slate-900" x-text="milestone.label"></p>
+                <div class="mt-2 h-2 rounded-full bg-slate-200">
+                  <div
+                    class="h-full rounded-full bg-emerald-500"
+                    :style="{ width: `${Math.min(100, milestone.progress)}%` }"
+                  ></div>
+                </div>
+                <p class="mt-2 text-xs text-slate-500" x-text="milestone.description"></p>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+          <h3 class="text-base font-semibold text-slate-900">Velocity tracker</h3>
+          <p class="mt-1 text-sm text-slate-500">Check if you are ahead of last week&apos;s completion rate.</p>
+          <div class="mt-6 grid gap-4 sm:grid-cols-2">
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">This week</p>
+              <p class="mt-1 text-3xl font-bold text-slate-900" x-text="planner.analytics.velocity.thisWeek"></p>
+              <p class="text-xs text-slate-500">Sessions completed</p>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-4 text-center">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Last week</p>
+              <p class="mt-1 text-3xl font-bold text-slate-900" x-text="planner.analytics.velocity.lastWeek"></p>
+              <p class="text-xs text-slate-500">Sessions completed</p>
+            </div>
+          </div>
+          <p class="mt-4 flex items-center justify-center gap-2 text-sm font-semibold text-emerald-600">
+            <i class="fas fa-arrow-trend-up"></i>
+            <span x-text="planner.analytics.velocity.trendLabel"></span>
+          </p>
+        </div>
+        <div class="rounded-3xl border border-rose-100 bg-rose-50 p-6 shadow-sm">
+          <h3 class="text-base font-semibold text-rose-900">Risk signals</h3>
+          <p class="mt-1 text-sm text-rose-700">Address gaps before they turn into stress.</p>
+          <ul class="mt-5 space-y-3 text-sm">
+            <template x-for="signal in planner.analytics.riskSignals" :key="signal.id">
+              <li class="rounded-2xl border border-rose-100 bg-white p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="text-sm font-semibold text-rose-900" x-text="signal.title"></p>
+                    <p class="mt-1 text-xs text-rose-700" x-text="signal.detail"></p>
+                    <p class="mt-2 text-xs text-rose-600" x-text="signal.recommendation"></p>
+                  </div>
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                    :class="planner.getRiskBadge(signal)"
+                  >
+                    <i class="fas fa-triangle-exclamation text-[10px]"></i>
+                    <span x-text="signal.severity === 'high' ? 'High' : signal.severity === 'medium' ? 'Medium' : 'Low'"></span>
+                  </span>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
