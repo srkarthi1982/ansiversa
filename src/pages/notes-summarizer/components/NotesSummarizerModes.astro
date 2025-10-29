@@ -1,0 +1,51 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { summaryModes, summaryOutputs } from "../data/notesSummarizerData";
+---
+<section class="bg-slate-900 py-16 text-white sm:py-20" aria-labelledby="notes-summarizer-modes">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Summary engines"
+      title="Multiple modes for briefs, abstracts, and action plans"
+      description="Switch between concise, detailed, bullet, abstract, or action-oriented output without losing context. Each mode tunes structure, tone, and metadata."
+      id="notes-summarizer-modes"
+      variant="light"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[1.2fr_0.8fr]">
+      <div class="grid gap-4 sm:grid-cols-2">
+        {summaryModes.map((mode) => (
+          <article
+            key={mode.key}
+            class="rounded-3xl border border-white/10 bg-white/5 p-6 text-slate-200 shadow-lg backdrop-blur transition hover:border-indigo-200/80 hover:bg-indigo-500/10"
+          >
+            <h3 class="text-lg font-semibold text-white">{mode.title}</h3>
+            <p class="mt-2 text-sm text-slate-300">{mode.description}</p>
+            <p class="mt-4 text-xs font-semibold uppercase tracking-wide text-indigo-200">Shortcut</p>
+            <p class="text-xs text-slate-300">
+              Ctrl/Cmd + {mode.key === 'action' ? 'Shift + A' : mode.key === 'abstract' ? 'Shift + B' : mode.key === 'bullet' ? 'B' : mode.key === 'detailed' ? 'D' : 'C'}
+            </p>
+          </article>
+        ))}
+      </div>
+      <div class="space-y-5 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-xl backdrop-blur">
+        <h3 class="text-lg font-semibold text-white">Structured outputs</h3>
+        <p class="text-sm text-slate-300">
+          Every summary returns a predictable schema with highlights, sentiment, and references to keep downstream automations consistent.
+        </p>
+        <ul class="space-y-4 text-sm text-slate-200">
+          {summaryOutputs.map((output) => (
+            <li key={output.title} class="flex items-start gap-3 rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+              <span class="mt-1 rounded-full bg-indigo-500/20 p-2 text-indigo-200">
+                <i class={`${output.icon} text-xs`}></i>
+              </span>
+              <div>
+                <p class="font-semibold text-white">{output.title}</p>
+                <p class="text-xs text-slate-300">{output.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,34 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { planMatrix } from "../data/notesSummarizerData";
+---
+<section class="bg-white py-16 sm:py-20" aria-labelledby="notes-summarizer-plans">
+  <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plan-aware controls"
+      title="Free vs Pro capabilities"
+      description="Entitlements enforce character limits, export formats, and integrations so teams understand exactly what unlocks with Pro."
+      id="notes-summarizer-plans"
+    />
+    <div class="mt-10 overflow-hidden rounded-3xl border border-slate-200">
+      <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+        <thead class="bg-slate-50 text-slate-600">
+          <tr>
+            <th scope="col" class="px-6 py-3 font-semibold uppercase tracking-wide">Feature</th>
+            <th scope="col" class="px-6 py-3 font-semibold uppercase tracking-wide">Free</th>
+            <th scope="col" class="px-6 py-3 font-semibold uppercase tracking-wide">Pro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 bg-white text-slate-700">
+          {planMatrix.map((row) => (
+            <tr key={row.feature}>
+              <th scope="row" class="px-6 py-4 text-sm font-semibold text-slate-900">{row.feature}</th>
+              <td class="px-6 py-4">{row.free}</td>
+              <td class="px-6 py-4 text-indigo-700">{row.pro}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

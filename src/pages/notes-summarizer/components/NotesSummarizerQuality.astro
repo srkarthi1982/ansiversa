@@ -1,0 +1,44 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { qualitySignals, complianceNotes } from "../data/notesSummarizerData";
+---
+<section class="bg-slate-50 py-16 sm:py-20" aria-labelledby="notes-summarizer-quality">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Trustworthy by design"
+      title="Guardrails, validation, and compliance"
+      description="We enforce plan gating, length requirements, and accessibility best practices so teams can safely operationalize AI summarization."
+      id="notes-summarizer-quality"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div class="grid gap-4">
+        {qualitySignals.map((group) => (
+          <article key={group.title} class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">{group.title}</h3>
+            <ul class="mt-4 space-y-3 text-sm text-slate-600">
+              {group.points.map((point) => (
+                <li key={point} class="flex items-start gap-3">
+                  <span class="mt-1 h-2 w-2 rounded-full bg-indigo-500"></span>
+                  <span>{point}</span>
+                </li>
+              ))}
+            </ul>
+          </article>
+        ))}
+      </div>
+      <aside class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">Compliance notes</h3>
+        <ul class="mt-4 space-y-3 text-sm text-slate-600">
+          {complianceNotes.map((note) => (
+            <li key={note} class="flex items-start gap-3">
+              <span class="mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-slate-100 text-[11px] text-indigo-600">
+                <i class="fas fa-shield-check"></i>
+              </span>
+              <span>{note}</span>
+            </li>
+          ))}
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>

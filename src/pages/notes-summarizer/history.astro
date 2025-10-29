@@ -1,0 +1,197 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+---
+<Layout title="AI Notes Summarizer History">
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ summarizer: $store.notesSummarizer, filters: $store.notesSummarizer.state.history.filters })"
+    x-init="summarizer.initHistory()"
+  >
+    <section class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 py-10 sm:px-6 lg:max-w-6xl lg:flex-row lg:items-center lg:justify-between lg:py-12">
+        <div class="space-y-3">
+          <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1 text-xs font-semibold text-indigo-700">
+            <i class="fas fa-clock-rotate-left text-[10px]"></i>
+            Summary history
+          </span>
+          <div class="space-y-2">
+            <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Saved summaries & exports</h1>
+            <p class="text-sm text-slate-600">
+              Filter summaries by mode, sentiment, or plan requirement. Pin key documents, share links, or open them in the summary viewer.
+            </p>
+          </div>
+        </div>
+        <div class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-center">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Saved</p>
+            <p class="mt-1 text-2xl font-semibold text-slate-900" x-text="summarizer.state.history.stats.total"></p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-center">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Pinned</p>
+            <p class="mt-1 text-2xl font-semibold text-indigo-700" x-text="summarizer.state.history.stats.pinned"></p>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-white px-4 py-3 text-center">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Integrations</p>
+            <p class="mt-1 text-2xl font-semibold text-slate-900" x-text="summarizer.state.history.stats.integrations"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 class="text-lg font-semibold text-slate-900">Filters</h2>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Mode
+            <select
+              class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              x-model="filters.mode"
+              @change="summarizer.setHistoryFilter('mode', filters.mode)"
+            >
+              <option value="all">All modes</option>
+              <option value="concise">Concise</option>
+              <option value="detailed">Detailed</option>
+              <option value="bullet">Bullet</option>
+              <option value="abstract">Abstract</option>
+              <option value="action">Action</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Sentiment
+            <select
+              class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              x-model="filters.sentiment"
+              @change="summarizer.setHistoryFilter('sentiment', filters.sentiment)"
+            >
+              <option value="all">Any sentiment</option>
+              <option value="positive">Positive</option>
+              <option value="neutral">Neutral</option>
+              <option value="mixed">Mixed</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Plan
+            <select
+              class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              x-model="filters.plan"
+              @change="summarizer.setHistoryFilter('plan', filters.plan)"
+            >
+              <option value="all">All plans</option>
+              <option value="free">Free</option>
+              <option value="pro">Pro</option>
+            </select>
+          </label>
+          <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+            Tag
+            <select
+              class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              x-model="filters.tag"
+              @change="summarizer.setHistoryFilter('tag', filters.tag)"
+            >
+              <option value="all">All tags</option>
+              <template x-for="tag in summarizer.state.history.tags" :key="tag">
+                <option :value="tag" x-text="tag"></option>
+              </template>
+            </select>
+          </label>
+        </div>
+        <div class="mt-4">
+          <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Search</label>
+          <div class="mt-2 flex items-center gap-2">
+            <div class="relative flex-1">
+              <i class="fas fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-xs text-slate-400"></i>
+              <input
+                type="search"
+                class="w-full rounded-2xl border border-slate-200 bg-slate-50 pl-8 pr-3 py-2 text-sm text-slate-700 focus:border-indigo-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Search title, tags, or key points"
+                @input.debounce.300ms="summarizer.setHistorySearch($event.target.value)"
+              />
+            </div>
+            <Button type="button" variant="ghost" size="sm" @click.prevent="filters.mode='all';filters.sentiment='all';filters.plan='all';filters.tag='all';summarizer.setHistoryFilter('mode','all');summarizer.setHistoryFilter('sentiment','all');summarizer.setHistoryFilter('plan','all');summarizer.setHistoryFilter('tag','all');summarizer.setHistorySearch('');">
+              Reset
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mt-8 space-y-4">
+        <template x-if="summarizer.state.history.filtered.length === 0">
+          <p class="rounded-3xl border border-slate-200 bg-white px-6 py-8 text-center text-sm text-slate-600">
+            No summaries match these filters yet. Adjust filters or create a new summary.
+          </p>
+        </template>
+        <template x-for="record in summarizer.state.history.filtered" :key="record.id">
+          <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <h3 class="text-xl font-semibold text-slate-900" x-text="record.title"></h3>
+                <p class="text-xs text-slate-500" x-text="`${record.mode.charAt(0).toUpperCase()+record.mode.slice(1)} · ${record.sentiment} · ${new Date(record.createdAt).toLocaleString()}`"></p>
+              </div>
+              <div class="flex flex-wrap items-center gap-2">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-id-card-clip text-[10px]"></i>
+                  <span x-text="record.planRequired === 'pro' ? 'Pro' : 'Free'"></span>
+                </span>
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                  :class="record.pinned ? 'bg-indigo-600 text-white' : 'bg-slate-100 text-slate-600'"
+                  @click.prevent="summarizer.togglePin(record.id)"
+                >
+                  <i class="fas fa-thumbtack text-[10px]" :class="record.pinned ? 'rotate-45' : ''"></i>
+                  <span x-text="record.pinned ? 'Pinned' : 'Pin'"></span>
+                </button>
+              </div>
+            </header>
+            <div class="mt-4 grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+              <div class="space-y-3 text-sm text-slate-600">
+                <p x-text="record.summaryText"></p>
+                <ul class="space-y-2 text-xs">
+                  <template x-for="point in record.keyPoints" :key="point">
+                    <li class="flex items-start gap-2">
+                      <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                      <span x-text="point"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+              <div class="space-y-3">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-xs text-slate-600">
+                  <p><span class="font-semibold text-slate-900">Highlights:</span> <span x-text="record.highlights.length"></span></p>
+                  <p><span class="font-semibold text-slate-900">Action items:</span> <span x-text="record.actionItems.length"></span></p>
+                  <p><span class="font-semibold text-slate-900">Integrations:</span>
+                    <span x-text="[record.integration.flashnote ? 'FlashNote' : null, record.integration.research ? 'Research Assistant' : null, record.integration.meeting ? 'Meeting Minutes AI' : null].filter(Boolean).join(', ') || 'None'"></span>
+                  </p>
+                </div>
+                <div class="flex flex-wrap items-center gap-2 text-xs text-slate-500">
+                  <template x-for="tag in record.tags" :key="tag">
+                    <span class="rounded-full bg-indigo-50 px-3 py-1 text-[11px] font-semibold text-indigo-700" x-text="tag"></span>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <footer class="mt-4 flex flex-wrap items-center gap-3">
+              <Button size="sm" :href="`/notes-summarizer/summary/${record.id}`">
+                <i class="fas fa-eye text-[10px]"></i>
+                View summary
+              </Button>
+              <Button size="sm" variant="outline" @click.prevent="summarizer.shareSummary(record.id)">
+                <i class="fas fa-share-nodes text-[10px]"></i>
+                Share
+              </Button>
+              <Button size="sm" variant="ghost" :href="`/notes-summarizer/builder?id=${record.id}`">
+                <i class="fas fa-pen text-[10px]"></i>
+                Edit
+              </Button>
+              <template x-if="record.shareLink">
+                <span class="rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Link ready</span>
+              </template>
+            </footer>
+          </article>
+        </template>
+      </div>
+    </section>
+  </main>
+</Layout>

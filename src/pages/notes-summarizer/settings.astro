@@ -1,0 +1,144 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+---
+<Layout title="AI Notes Summarizer Settings">
+  <main
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ summarizer: $store.notesSummarizer })"
+    x-init="summarizer.initSettings()"
+  >
+    <section class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 py-10 sm:px-6 lg:max-w-5xl lg:py-12">
+        <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1 text-xs font-semibold text-indigo-700">
+          <i class="fas fa-sliders text-[10px]"></i>
+          Workspace defaults
+        </span>
+        <div class="space-y-2">
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Preferences & guardrails</h1>
+          <p class="text-sm text-slate-600">
+            Configure default modes, tone, and integrations. Settings apply when launching a new summary in the workspace.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <div class="space-y-8">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-lg font-semibold text-slate-900">Defaults</h2>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Summary mode
+              <select
+                class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                x-model="summarizer.state.settings.defaultMode"
+                @change="summarizer.updateSetting('defaultMode', summarizer.state.settings.defaultMode)"
+              >
+                <option value="concise">Concise</option>
+                <option value="detailed">Detailed</option>
+                <option value="bullet">Bullet</option>
+                <option value="abstract">Abstract</option>
+                <option value="action">Action</option>
+              </select>
+            </label>
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Tone
+              <select
+                class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                x-model="summarizer.state.settings.defaultTone"
+                @change="summarizer.updateSetting('defaultTone', summarizer.state.settings.defaultTone)"
+              >
+                <option value="neutral">Neutral</option>
+                <option value="professional">Professional</option>
+                <option value="academic">Academic</option>
+                <option value="creative">Creative</option>
+              </select>
+            </label>
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Language
+              <select
+                class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                x-model="summarizer.state.settings.defaultLanguage"
+                @change="summarizer.updateSetting('defaultLanguage', summarizer.state.settings.defaultLanguage)"
+              >
+                <option value="en">English</option>
+                <option value="es">Spanish</option>
+                <option value="fr">French</option>
+                <option value="hi">Hindi</option>
+                <option value="pt">Portuguese</option>
+              </select>
+            </label>
+            <label class="flex flex-col gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Highlight strategy
+              <select
+                class="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-medium text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                x-model="summarizer.state.settings.highlightStrategy"
+                @change="summarizer.updateSetting('highlightStrategy', summarizer.state.settings.highlightStrategy)"
+              >
+                <option value="balanced">Balanced</option>
+                <option value="dense">Dense</option>
+                <option value="minimal">Minimal</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-lg font-semibold text-slate-900">Automation</h2>
+          <div class="mt-4 grid gap-4 sm:grid-cols-2">
+            <label class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+              <div>
+                <p class="font-semibold text-slate-900">Autosave summaries</p>
+                <p class="text-xs text-slate-500">Automatically save drafts after each generation.</p>
+              </div>
+              <input type="checkbox" class="h-5 w-5" x-model="summarizer.state.settings.autosaveEnabled" @change="summarizer.updateSetting('autosaveEnabled', summarizer.state.settings.autosaveEnabled)" />
+            </label>
+            <label class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+              <div>
+                <p class="font-semibold text-slate-900">Include references</p>
+                <p class="text-xs text-slate-500">Attach detected citations in exports by default.</p>
+              </div>
+              <input type="checkbox" class="h-5 w-5" x-model="summarizer.state.settings.includeReferences" @change="summarizer.updateSetting('includeReferences', summarizer.state.settings.includeReferences)" />
+            </label>
+            <label class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+              <div>
+                <p class="font-semibold text-slate-900">FlashNote auto-sync</p>
+                <p class="text-xs text-slate-500">Create card drafts when saving summaries.</p>
+              </div>
+              <input type="checkbox" class="h-5 w-5" x-model="summarizer.state.settings.flashnoteAuto" @change="summarizer.updateSetting('flashnoteAuto', summarizer.state.settings.flashnoteAuto)" />
+            </label>
+            <label class="flex items-center justify-between rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700">
+              <div>
+                <p class="font-semibold text-slate-900">Default share setting</p>
+                <p class="text-xs text-slate-500">Choose whether new summaries stay private or workspace-visible.</p>
+              </div>
+              <select
+                class="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-700 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                x-model="summarizer.state.settings.defaultShare"
+                @change="summarizer.updateSetting('defaultShare', summarizer.state.settings.defaultShare)"
+              >
+                <option value="private">Private</option>
+                <option value="workspace">Workspace</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h2 class="text-lg font-semibold text-slate-900">Save preferences</h2>
+          <p class="text-sm text-slate-600">Settings apply to new summaries. Existing drafts keep their original configuration.</p>
+          <div class="mt-4 flex flex-wrap items-center gap-3">
+            <Button type="button" @click.prevent="summarizer.saveSettings()">
+              <i class="fas fa-floppy-disk text-[10px]"></i>
+              Save settings
+            </Button>
+            <Button type="button" variant="ghost" @click.prevent="summarizer.updateSetting('defaultMode', 'detailed'); summarizer.updateSetting('defaultTone', 'professional'); summarizer.updateSetting('defaultLanguage', 'en'); summarizer.updateSetting('highlightStrategy', 'balanced'); summarizer.updateSetting('autosaveEnabled', true); summarizer.updateSetting('includeReferences', true); summarizer.updateSetting('flashnoteAuto', false); summarizer.updateSetting('defaultShare', 'private');">
+              Restore defaults
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
