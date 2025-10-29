@@ -1,0 +1,111 @@
+<section id="langcards-analytics" class="bg-slate-900 py-16 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <header class="text-center lg:text-left">
+      <p class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
+        <i class="fas fa-chart-simple text-xs"></i>
+        Analytics & goals
+      </p>
+      <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Retention, accuracy, and due forecast in one dashboard</h2>
+      <p class="mt-3 text-base text-white/70 sm:text-lg">Monitor forgetting curves, accuracy by tag and part of speech, and upcoming review load. Export CSVs on Pro.</p>
+    </header>
+    <div class="grid gap-6 lg:grid-cols-3">
+      <template x-for="metric in app.state.analytics.retention" :key="metric.label">
+        <article class="rounded-3xl border border-white/10 bg-white/10 p-5 shadow-lg shadow-indigo-900/40 backdrop-blur">
+          <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60" x-text="metric.label"></p>
+          <p class="mt-3 text-3xl font-bold text-white" x-text="metric.value + '%' "></p>
+          <p class="text-xs text-emerald-300" x-text="metric.delta"></p>
+          <p class="mt-3 text-xs text-white/70">Rolling retention based on SM-2 ease factors and completed reviews.</p>
+        </article>
+      </template>
+    </div>
+    <div class="grid gap-8 lg:grid-cols-[1.1fr_1fr]">
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/30 backdrop-blur">
+          <header class="flex items-center justify-between">
+            <div>
+              <h3 class="text-lg font-semibold text-white">Accuracy by tag</h3>
+              <p class="text-xs text-white/60">Identify weak spots by category and plan review focus.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/70">
+              <i class="fas fa-arrow-trend-up text-[10px]"></i>
+              Trend view
+            </span>
+          </header>
+          <div class="mt-6 space-y-3">
+            <template x-for="tag in app.state.analytics.accuracyByTag" :key="tag.label">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/70">
+                <div class="flex items-center justify-between">
+                  <p class="font-semibold text-white" x-text="tag.label"></p>
+                  <span class="text-white" x-text="tag.value + '%' "></span>
+                </div>
+                <div class="mt-2 h-2 rounded-full bg-white/10">
+                  <div class="h-full rounded-full bg-gradient-to-r from-indigo-400 via-sky-400 to-emerald-400" :style="`width: ${tag.value}%`"></div>
+                </div>
+                <p class="mt-1 text-xs" x-text="tag.delta"></p>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/30 backdrop-blur">
+          <h3 class="text-lg font-semibold text-white">Accuracy by part of speech</h3>
+          <div class="mt-5 space-y-3">
+            <template x-for="pos in app.state.analytics.accuracyByPos" :key="pos.label">
+              <div class="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-white/5 px-4 py-2 text-sm text-white/70">
+                <span class="font-semibold text-white" x-text="pos.label"></span>
+                <span class="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white" x-text="pos.value + '%' "></span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/30 backdrop-blur">
+          <h3 class="text-lg font-semibold text-white">Due forecast (7 days)</h3>
+          <div class="mt-4 grid grid-cols-7 gap-2 text-center text-xs">
+            <template x-for="point in app.state.analytics.dueForecast" :key="point.day">
+              <div class="flex flex-col items-center gap-1 rounded-2xl bg-white/10 px-3 py-3">
+                <span class="text-white/60" x-text="point.day"></span>
+                <span class="text-sm font-semibold text-white" x-text="point.due"></span>
+                <div class="h-10 w-2 rounded-full bg-white/15">
+                  <div class="h-full w-full rounded-full bg-gradient-to-t from-indigo-400 to-sky-300" :style="`height: ${Math.min(100, point.due)}%`"></div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/30 backdrop-blur">
+          <h3 class="text-lg font-semibold text-white">Deck breakdown</h3>
+          <div class="mt-4 space-y-3 text-sm text-white/70">
+            <template x-for="deck in app.state.analytics.deckBreakdown" :key="deck.deckId">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="flex items-center justify-between">
+                  <p class="font-semibold text-white" x-text="deck.deckName"></p>
+                  <span class="text-xs text-white/60">Due <span x-text="deck.due"></span></span>
+                </div>
+                <div class="mt-2 flex flex-wrap gap-3 text-xs text-white/60">
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">Accuracy <span class="font-semibold text-white" x-text="deck.accuracy + '%' "></span></span>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">Ease avg <span class="font-semibold text-white">2.5</span></span>
+                </div>
+              </div>
+            </template>
+          </div>
+          <div class="mt-4 rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-xs text-white/60">
+            <p>Export CSV of analytics is available for Pro members.</p>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/30 backdrop-blur">
+          <h3 class="text-lg font-semibold text-white">Time spent</h3>
+          <ul class="mt-4 space-y-2 text-sm text-white/70">
+            <template x-for="entry in app.state.analytics.timeSpent" :key="entry.label">
+              <li class="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-2">
+                <span x-text="entry.label"></span>
+                <span class="text-white" x-text="entry.value + ' min'"></span>
+                <span class="text-emerald-300" x-text="entry.delta"></span>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

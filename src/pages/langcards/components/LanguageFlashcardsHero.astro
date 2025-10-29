@@ -1,0 +1,116 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="relative overflow-hidden bg-slate-950 py-16 text-white sm:py-20">
+  <div class="absolute inset-0 bg-gradient-to-br from-indigo-600/60 via-sky-500/40 to-purple-600/60 opacity-80"></div>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.16),_rgba(15,23,42,0.95))]"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+    <div class="flex-1 space-y-8 text-center lg:text-left">
+      <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-[0.3em] text-white/80">
+        <i class="fas fa-language text-xs"></i>
+        Adaptive language studio
+      </span>
+      <h1 class="text-4xl font-bold tracking-tight sm:text-5xl">Language Flashcards</h1>
+      <p class="max-w-2xl text-base text-white/80 sm:text-lg">
+        Spaced repetition, pronunciation drills, and script practice unified in one workspace. Queue bilingual decks, auto-generate vocabulary from any text, and sync progress with Study Planner and Course Tracker.
+      </p>
+      <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+        <Button type="button" class="shadow-lg shadow-indigo-500/30" @click.prevent="app.prepareReview('due')">
+          <i class="fas fa-play text-xs"></i>
+          Start today&apos;s queue
+        </Button>
+        <Button type="button" variant="outline" class="border-white/30 text-white/80 hover:border-white/60 hover:text-white" @click.prevent="app.setPanel('generator')">
+          <i class="fas fa-wand-magic-sparkles text-xs"></i>
+          Open generator
+        </Button>
+        <Button type="button" variant="ghost" class="text-white/80 hover:text-white" @click.prevent="app.setPanel('analytics')">
+          <i class="fas fa-chart-line text-xs"></i>
+          View analytics
+        </Button>
+      </div>
+      <dl class="grid gap-4 text-left sm:grid-cols-3">
+        <div class="rounded-2xl border border-white/15 bg-white/10 p-4 shadow-sm backdrop-blur">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/70">Daily target</dt>
+          <dd class="mt-2 flex items-baseline gap-2 text-3xl font-bold">
+            <span x-text="app.state.daily.completed"></span>
+            <span class="text-base font-semibold text-white/60">/ <span x-text="app.state.daily.target"></span></span>
+          </dd>
+          <dd class="text-xs text-white/60" x-text="`Last review · ${new Intl.DateTimeFormat('en', { hour: 'numeric', minute: '2-digit' }).format(new Date(app.state.daily.lastReviewAt))}`"></dd>
+        </div>
+        <div class="rounded-2xl border border-white/15 bg-white/10 p-4 shadow-sm backdrop-blur">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/70">Due today</dt>
+          <dd class="mt-2 flex items-baseline gap-2 text-3xl font-bold">
+            <span x-text="app.state.daily.dueToday"></span>
+            <span class="text-xs font-semibold text-white/60">next <span x-text="app.activeDeck?.name ?? 'deck'"></span></span>
+          </dd>
+          <dd class="text-xs text-emerald-300" x-text="`Tomorrow: ${app.state.daily.dueTomorrow}`"></dd>
+        </div>
+        <div class="rounded-2xl border border-white/15 bg-white/10 p-4 shadow-sm backdrop-blur">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/70">Streak</dt>
+          <dd class="mt-2 flex items-baseline gap-2 text-3xl font-bold">
+            <span x-text="app.state.daily.streak"></span>
+            <span class="text-xs font-semibold text-white/60">best <span x-text="app.state.daily.bestStreak"></span></span>
+          </dd>
+          <dd class="text-xs text-white/60">Timezone: <span x-text="app.state.daily.timezone"></span></dd>
+        </div>
+      </dl>
+      <p class="text-xs text-white/60" x-show="app.state.lastAction" x-cloak>
+        <i class="fas fa-sparkles mr-2 text-[10px] text-indigo-300"></i>
+        <span x-text="app.state.lastAction"></span>
+      </p>
+    </div>
+    <div class="relative w-full max-w-md self-stretch rounded-[32px] border border-white/10 bg-white/10 p-6 shadow-2xl shadow-indigo-900/40 backdrop-blur">
+      <header class="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/70">
+        <span class="inline-flex items-center gap-2">
+          <span class="h-2 w-2 rounded-full bg-emerald-400"></span>
+          Queue preview
+        </span>
+        <span x-text="app.activeDeck?.pairLabel"></span>
+      </header>
+      <div class="mt-6 space-y-4 text-left text-sm text-white/80">
+        <template x-if="app.activeDeck">
+          <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+            <p class="flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/70">
+              <span>Deck focus</span>
+              <span x-text="app.activeDeck?.level"></span>
+            </p>
+            <p class="mt-2 text-base font-semibold text-white" x-text="app.activeDeck?.name"></p>
+            <p class="mt-2 text-xs text-white/70" x-text="app.activeDeck?.focus"></p>
+            <div class="mt-4 grid gap-3 sm:grid-cols-2">
+              <div class="rounded-xl border border-white/15 bg-white/10 p-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">Due</p>
+                <p class="mt-1 flex items-baseline gap-1 text-lg font-bold">
+                  <span x-text="app.activeDeck?.dueToday"></span>
+                  <span class="text-xs text-white/60">cards</span>
+                </p>
+              </div>
+              <div class="rounded-xl border border-white/15 bg-white/10 p-3">
+                <p class="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/60">New</p>
+                <p class="mt-1 flex items-baseline gap-1 text-lg font-bold">
+                  <span x-text="app.activeDeck?.newToday"></span>
+                  <span class="text-xs text-white/60">queued</span>
+                </p>
+              </div>
+            </div>
+            <div class="mt-4 rounded-xl border border-dashed border-white/20 p-3 text-xs text-white/70">
+              <p class="font-semibold text-white">Due forecast</p>
+              <ul class="mt-2 grid grid-cols-3 gap-2 text-[11px]">
+                <template x-for="point in app.activeDeck?.dueForecast" :key="point.day">
+                  <li class="rounded-lg bg-white/10 px-2 py-1 text-center">
+                    <span class="block font-semibold text-white" x-text="point.due"></span>
+                    <span class="text-white/60" x-text="point.day"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </template>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-white/70">
+          <p class="font-semibold text-white">SM-2 scheduling snapshot</p>
+          <p class="mt-1">Grades map to ease between 1.3 and 3.0, intervals capped at 3650 days.</p>
+          <p class="mt-2">Hotkeys 1–6 available across review modes.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

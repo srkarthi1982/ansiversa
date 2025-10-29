@@ -1,0 +1,42 @@
+<section class="bg-slate-950 py-16 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <header class="text-center lg:text-left">
+      <p class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-4 py-1.5 text-sm font-semibold uppercase tracking-[0.3em] text-white/70">
+        <i class="fas fa-sitemap text-xs"></i>
+        Connected apps
+      </p>
+      <h2 class="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">Sync with Study Planner, Course Tracker, and Exam Simulator</h2>
+      <p class="mt-3 text-base text-white/70 sm:text-lg">Review sessions show up in planners, exam misses return as cards, and research glossaries become shareable decks.</p>
+    </header>
+    <div class="grid gap-6 lg:grid-cols-2">
+      <template x-for="integration in app.state.integrations" :key="integration.id">
+        <article class="relative overflow-hidden rounded-3xl border border-white/10 bg-white/10 p-6 shadow-lg shadow-indigo-900/30 backdrop-blur transition hover:-translate-y-1 hover:bg-white/15">
+          <div class="absolute inset-0 opacity-20">
+            <div class="absolute inset-0 bg-gradient-to-br" :class="integration.accent"></div>
+          </div>
+          <div class="relative flex items-start justify-between gap-3">
+            <div>
+              <p class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-white/80">
+                <i class="fas" :class="integration.icon"></i>
+                <span x-text="integration.title"></span>
+              </p>
+              <p class="mt-3 text-sm text-white/80" x-text="integration.description"></p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1 text-xs font-semibold text-white/70">
+              <i class="fas fa-link text-[10px]"></i>
+              Connected
+            </span>
+          </div>
+          <div class="relative mt-5 flex flex-wrap gap-2 text-xs text-white/70">
+            <template x-for="action in integration.actions" :key="action">
+              <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                <i class="fas fa-circle text-[6px] text-indigo-200"></i>
+                <span x-text="action"></span>
+              </span>
+            </template>
+          </div>
+        </article>
+      </template>
+    </div>
+  </div>
+</section>
