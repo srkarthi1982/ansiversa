@@ -1,0 +1,52 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { duelPlanBenefits } from "../../../data/knowledgeDuel";
+---
+<section class="bg-slate-950 py-16 text-white">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plan gating"
+      title="Scale from free duels to competitive leagues"
+      description="Generous free limits get players hooked while pro unlocks advanced analytics, rematches, and unlimited play."
+      align="center"
+      containerClass="max-w-3xl"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-sky-400"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-200"
+    />
+    <div class="mt-12 overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+      <table class="min-w-full divide-y divide-white/10 text-sm">
+        <thead class="bg-white/5 text-xs font-semibold uppercase tracking-[0.3em] text-slate-200">
+          <tr>
+            <th scope="col" class="px-6 py-4 text-left">Feature</th>
+            <th scope="col" class="px-6 py-4 text-left">Free</th>
+            <th scope="col" class="px-6 py-4 text-left">Pro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-white/10">
+          {duelPlanBenefits.map((benefit) => (
+            <tr class="text-slate-100">
+              <td class="px-6 py-4 text-sm font-semibold">{benefit.feature}</td>
+              <td class="px-6 py-4 text-sm text-slate-200">{benefit.free}</td>
+              <td class="px-6 py-4 text-sm text-slate-200">{benefit.pro}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <div class="mt-8 grid gap-6 lg:grid-cols-3">
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200">
+        <h3 class="text-lg font-semibold text-white">Free tier sweet spot</h3>
+        <p class="mt-2">10 daily matches cover casual head-to-heads while daily practice remains unlimited to encourage skill growth.</p>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200">
+        <h3 class="text-lg font-semibold text-white">Pro unlocks</h3>
+        <p class="mt-2">Unlimited duels, rematch tools, and exportable analytics make the pro plan ideal for clubs, schools, and esports orgs.</p>
+      </article>
+      <article class="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200">
+        <h3 class="text-lg font-semibold text-white">Admin controls</h3>
+        <p class="mt-2">Toggle per-plan perks, add limited-time boosts, and preview changes instantly in the sandbox environment.</p>
+      </article>
+    </div>
+  </div>
+</section>
