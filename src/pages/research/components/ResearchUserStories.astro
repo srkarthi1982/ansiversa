@@ -1,0 +1,32 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { userStories } from "../data/researchData";
+---
+<section class="bg-white py-16 sm:py-20" id="research-user-stories" aria-labelledby="research-user-stories-title">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="User stories"
+      title="Acceptance criteria that drive product readiness"
+      description="Each API-backed story covers core flows from intake to export so teams can estimate effort and verify outcomes."
+      id="research-user-stories-title"
+    />
+    <div class="grid gap-6 lg:grid-cols-2">
+      {userStories.map((story) => (
+        <article class="flex h-full flex-col gap-4 rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm" key={story.title}>
+          <header class="flex items-center justify-between gap-3">
+            <h3 class="text-lg font-semibold text-slate-900">{story.title}</h3>
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700">
+              <i class="fas fa-check-double text-[10px]"></i>
+              AC
+            </span>
+          </header>
+          <p class="text-sm text-slate-600">{story.description}</p>
+          <div class="rounded-2xl border border-indigo-100 bg-white p-4 text-sm text-slate-700">
+            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Acceptance criteria</p>
+            <p class="mt-2 text-sm">{story.acceptanceCriteria}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
