@@ -47,3 +47,4 @@ import '../pages/presentation/stores';
 import '../pages/events/stores';
 import '../pages/meals/stores';
 import '../pages/homework/stores/homeworkHelper';
+import '../pages/linkedin-bio/stores';

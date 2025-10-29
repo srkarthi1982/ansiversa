@@ -51,7 +51,7 @@ export const MINI_APP_DEFINITIONS = [
   { slug: 'language-flashcards', name: 'Language Flashcards' },
   { slug: 'language-learning-buddy', name: 'Language Learning Buddy' },
   { slug: 'lesson-builder', name: 'Lesson Builder' },
-  { slug: 'linkedin-bio-optimizer', name: 'LinkedIn Bio Optimizer' },
+  { slug: 'linkedin-bio', name: 'LinkedIn Bio Optimizer' },
   { slug: 'markdown-editor', name: 'Markdown Editor' },
   { slug: 'meal-planner', name: 'Meal Planner' },
   { slug: 'meditation-script-maker', name: 'Meditation Script Maker' },
