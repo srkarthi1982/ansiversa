@@ -1,0 +1,76 @@
+---
+import FeatureCard from '../../../components/FeatureCard.astro';
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-950 py-20" x-data="() => ({ timer: $store.studyTimer })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="flex flex-col gap-10 lg:flex-row lg:items-center lg:justify-between">
+      <SectionHeading
+        eyebrow="Analytics"
+        title="Know exactly where your focus is going"
+        description="Daily cards, weekly charts, and tag streaks are all part of the built-in insights — no spreadsheets required."
+        containerClass="max-w-xl"
+        titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+        descriptionClass="mt-4 text-base text-slate-300"
+        eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+      />
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-200 shadow-lg backdrop-blur">
+        <p class="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-300">Weekly focus</p>
+        <p class="mt-3 text-3xl font-semibold text-white" x-text="`${timer.state.totalFocusMinutesToday} min today`"></p>
+        <p class="mt-1 text-xs text-slate-400">Heartbeat sync keeps timers accurate across tabs.</p>
+        <div class="mt-6 space-y-3">
+          <template x-for="point in timer.state.trend" :key="`trend-${point.label}`">
+            <div>
+              <div class="flex items-center justify-between text-xs text-slate-400">
+                <span class="font-semibold text-slate-200" x-text="point.label"></span>
+                <span>
+                  <i class="fas fa-stopwatch text-indigo-300"></i>
+                  <span class="ml-1" x-text="`${point.minutes}m`"></span>
+                </span>
+              </div>
+              <div class="mt-1 h-2 rounded-full bg-white/10">
+                <div class="h-full rounded-full bg-gradient-to-r from-indigo-400 to-sky-400"
+                  :style="`width: ${Math.min(100, Math.round((point.minutes / 240) * 100))}%`"
+                ></div>
+              </div>
+              <div class="mt-1 flex items-center justify-between text-[11px] text-slate-400">
+                <span>
+                  <i class="fas fa-fire text-emerald-300"></i>
+                  <span class="ml-1" x-text="`${point.pomodoros} pomos`"></span>
+                </span>
+                <span>
+                  <i class="fas fa-exclamation-triangle text-amber-300"></i>
+                  <span class="ml-1" x-text="`${point.interruptions} interruptions`"></span>
+                </span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      <template x-for="highlight in timer.state.highlights" :key="highlight.label">
+        <FeatureCard
+          class="bg-white/5 text-slate-100 shadow-lg backdrop-blur border border-white/10"
+          titleClass="text-lg font-semibold text-white"
+          descriptionClass="mt-3 text-sm text-slate-300"
+          iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-400/20 text-indigo-200"
+          iconClass="text-lg"
+          :title="highlight.label"
+        >
+          <template slot="icon">
+            <i class="fas" :class="highlight.icon"></i>
+          </template>
+          <div class="mt-4 space-y-1">
+            <p class="text-2xl font-bold text-white" x-text="highlight.value"></p>
+            <p class="text-xs"
+              :class="highlight.trend === 'down' ? 'text-rose-300' : highlight.trend === 'steady' ? 'text-slate-300' : 'text-emerald-300'"
+              x-text="highlight.delta"
+            ></p>
+          </div>
+        </FeatureCard>
+      </template>
+    </div>
+  </div>
+</section>
