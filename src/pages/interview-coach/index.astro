@@ -1,0 +1,480 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+
+const featureHighlights = [
+  {
+    icon: "fas fa-file-pen",
+    title: "JD-aware interview plans",
+    description:
+      "Paste a job description or drop in a URL. We extract skills, competencies, keywords, and craft a role-specific interview arc in seconds.",
+  },
+  {
+    icon: "fas fa-comments",
+    title: "Guided mock sessions",
+    description:
+      "Behavioral, technical, case, and lightning drills keep you in the flow with timers, hints, and curated follow-ups for each mode.",
+  },
+  {
+    icon: "fas fa-gauge-high",
+    title: "Real-time feedback",
+    description:
+      "Score every answer against STAR or competency rubrics, highlight gaps, and surface actionable rewrites while the session runs.",
+  },
+  {
+    icon: "fas fa-diagram-project",
+    title: "Next-practice plans",
+    description:
+      "Push focused action items into Study Planner, refresh bullets in Resume Builder, and sync post-interview emails instantly.",
+  },
+];
+
+const mockModes = [
+  {
+    name: "Behavioral Coach",
+    description:
+      "STAR-led conversations with automatic follow-up prompts, highlight detectors, and resume highlight insertion for polished storytelling.",
+    badge: "Core",
+  },
+  {
+    name: "Technical Q&A",
+    description:
+      "Conceptual coding, systems, and debugging questions with scaffolding hints and competency tags for SDE, data, and platform roles.",
+    badge: "Core",
+  },
+  {
+    name: "Case & Scenario",
+    description:
+      "Product, business, and estimation drills with structure overlays so you never lose track of hypotheses or frameworks.",
+    badge: "Pro",
+  },
+  {
+    name: "Lightning Round",
+    description:
+      "Ten rapid-fire prompts tuned for warmups or daily reps. Track streaks, timing, and confidence per response.",
+    badge: "Core",
+  },
+  {
+    name: "Voice Mock",
+    description:
+      "Text-to-speech delivery plus answer recording and transcripts for playback, filler-word insights, and speaker notes.",
+    badge: "Pro",
+  },
+];
+
+const workflow = [
+  {
+    step: "01",
+    title: "Import the role",
+    description:
+      "Analyze a pasted JD or preset to detect skills, competencies, and company focus areas that drive question selection.",
+  },
+  {
+    step: "02",
+    title: "Configure the session",
+    description:
+      "Pick mode, duration, difficulty, and packs. Voice, rubric, and follow-up intensity can be tuned to match the upcoming loop.",
+  },
+  {
+    step: "03",
+    title: "Run the mock",
+    description:
+      "Timer, notes, hint cards, and resume snippet insertions keep you composed. Flag questions, request drills, or swap topics on demand.",
+  },
+  {
+    step: "04",
+    title: "Review feedback",
+    description:
+      "Scorecards outline strengths, metric gaps, delivery cues, and suggested rewrites with STAR scaffolding and competency weights.",
+  },
+  {
+    step: "05",
+    title: "Plan the next reps",
+    description:
+      "Schedule follow-ups in Study Planner, push rewrites to Resume Builder or Email Polisher, and export polished summaries.",
+  },
+];
+
+const feedbackHighlights = [
+  {
+    title: "Rubric-driven scoring",
+    description:
+      "Prebuilt STAR, competency, and custom rubrics show weighted criteria, notes, and improvement deltas between sessions.",
+  },
+  {
+    title: "Answer drafting",
+    description:
+      "Generate starter STAR responses using resume highlights, then iterate with coaching prompts and confidence sliders.",
+  },
+  {
+    title: "Comparative insights",
+    description:
+      "Track streaks, time-to-answer, rubric deltas, and sentiment to see how your storytelling and technical clarity evolve.",
+  },
+  {
+    title: "Exports & share links",
+    description:
+      "Generate PDFs instantly. Pro adds CSV datasets and watermark-free share pages for mentors or accountability partners.",
+  },
+];
+
+const integrations = [
+  {
+    title: "Resume Builder",
+    description:
+      "Pull quantified wins into prompts and push refined bullets back when feedback uncovers stronger metrics.",
+    href: "/resume-builder",
+  },
+  {
+    title: "Job Description Analyzer",
+    description:
+      "Sync JD-derived skills and competencies so interview plans stay aligned with the exact role expectations.",
+    href: "/job-analyzer",
+  },
+  {
+    title: "Study Planner",
+    description:
+      "Schedule drills, allocate prep hours, and receive reminders tuned to the next interview loops or recruiter calls.",
+    href: "/study-planner",
+  },
+  {
+    title: "Email Polisher",
+    description:
+      "Send thank-you notes, recap key talking points, and request feedback while momentum is still warm.",
+    href: "/email-polisher",
+  },
+  {
+    title: "Portfolio Creator",
+    description:
+      "Attach case studies, demos, or presentations surfaced during the mock interview to showcase your work proactively.",
+    href: "/portfolio-creator",
+  },
+  {
+    title: "Presentation Designer",
+    description:
+      "Transform interview debriefs into stakeholder-ready decks for loops that require formal readouts or vision exercises.",
+    href: "/presentation",
+  },
+];
+
+const planRows = [
+  { feature: "Sessions per day", free: "1", pro: "Unlimited" },
+  { feature: "Voice mock (TTS + recording)", free: "—", pro: "Included" },
+  { feature: "Case & design modes", free: "Limited", pro: "Full library" },
+  { feature: "Question packs", free: "Core sets", pro: "Full + company-style" },
+  { feature: "Exports", free: "PDF", pro: "PDF + CSV + share link" },
+  { feature: "Analytics", free: "Basic trends", pro: "Detailed insights" },
+  { feature: "History retention", free: "30 days", pro: "Unlimited" },
+];
+
+const apiContracts = [
+  { method: "POST", path: "/interview/api/jd/analyze", description: "Normalize JD input and extract skills, competencies, and keywords." },
+  { method: "POST", path: "/interview/api/setup", description: "Create a role-aware session with mode, difficulty, packs, and rubric." },
+  { method: "POST", path: "/interview/api/session/next", description: "Return the next prompt, hints, and targeted competencies." },
+  { method: "POST", path: "/interview/api/answer/text", description: "Submit an answer transcript for scoring and feedback." },
+  { method: "POST", path: "/interview/api/score", description: "Generate rubric scores, gap analysis, and rewrite recommendations." },
+  { method: "POST", path: "/interview/api/export", description: "Deliver PDF/CSV/Share link exports with plan-aware limits." },
+];
+
+const validationRules = [
+  "Session durations run 10–120 minutes with a 40-question ceiling.",
+  "Follow-ups per prompt stay under three to keep coaching focused.",
+  "Audio uploads accept mp3/webm under 10MB and transcribe up to 10k characters.",
+  "Rubrics require 3–10 weighted criteria totalling exactly 1.0.",
+  "Packs remain curator-owned; copy to personal packs before editing content.",
+  "Export and voice endpoints enforce friendly rate limits before throttling.",
+];
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#interview-coach-content"
+  >
+    Skip to content
+  </a>
+  <main id="interview-coach-content" class="min-h-screen bg-slate-50">
+    <section class="relative overflow-hidden py-16 sm:py-20">
+      <div class="absolute inset-0 bg-gradient-to-br from-indigo-100 via-white to-transparent"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div class="space-y-6 text-center lg:text-left">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
+              <i class="fas fa-user-tie text-xs"></i>
+              Interview mastery workspace
+            </span>
+            <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
+              Interview Coach — Practice loops engineered for every role
+            </h1>
+            <p class="text-base text-slate-600 sm:text-lg">
+              Generate role-aware prompts from a job description, rehearse behavioral and technical drills, capture voice answers, and receive rubric-driven coaching that flows into your Ansiversa prep stack.
+            </p>
+            <div class="flex flex-wrap justify-center gap-3 lg:justify-start">
+              <Button href="/interview/setup">
+                <i class="fas fa-play text-xs"></i>
+                Start a mock session
+              </Button>
+              <Button href="/interview/banks" variant="outline">
+                <i class="fas fa-layer-group text-xs"></i>
+                Browse question packs
+              </Button>
+              <Button href="/interview/settings" variant="ghost">
+                <i class="fas fa-gear text-xs"></i>
+                Configure workspace
+              </Button>
+            </div>
+            <p class="text-xs text-slate-500">
+              Free plan includes one session per day with PDF exports. Upgrade for unlimited practice, voice mocks, and deeper analytics.
+            </p>
+          </div>
+          <aside class="relative">
+            <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-200 opacity-40 blur-xl"></div>
+            <div class="relative space-y-5 rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-xl backdrop-blur">
+              <header class="flex items-center justify-between gap-4">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900">Upcoming sessions</p>
+                  <p class="text-xs text-slate-500">Auto-synced with Study Planner</p>
+                </div>
+                <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-700">
+                  <i class="fas fa-bolt text-[10px]"></i>
+                  JD-ready
+                </span>
+              </header>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="font-semibold text-slate-900">SDE Systems Mock</p>
+                    <span class="text-xs font-semibold text-indigo-600">Tomorrow · 45 min</span>
+                  </div>
+                  <p class="mt-1 text-xs text-slate-500">Focus: ownership, REST, latency</p>
+                </li>
+                <li class="rounded-2xl border border-slate-100 bg-white px-4 py-3 shadow-inner">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="font-semibold text-slate-900">Behavioral Loop Warmup</p>
+                    <span class="text-xs font-semibold text-indigo-600">Fri · 30 min</span>
+                  </div>
+                  <p class="mt-1 text-xs text-slate-500">Focus: conflict resolution, leadership</p>
+                </li>
+                <li class="rounded-2xl border border-slate-100 bg-slate-50 px-4 py-3">
+                  <div class="flex items-center justify-between gap-3">
+                    <p class="font-semibold text-slate-900">Product Sense Drill</p>
+                    <span class="text-xs font-semibold text-indigo-600">Sun · 60 min</span>
+                  </div>
+                  <p class="mt-1 text-xs text-slate-500">Focus: metrics, roadmap</p>
+                </li>
+              </ul>
+              <footer class="flex items-center justify-between text-xs text-slate-500">
+                <span><i class="fas fa-wave-square mr-1 text-[10px]"></i> Trend: +2 sessions vs. last week</span>
+                <Button href="/interview/review/latest" size="sm" variant="outline">
+                  Review feedback
+                </Button>
+              </footer>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Why candidates choose Ansiversa"
+          title="Smarter interview prep from day zero"
+          description="Purpose-built tooling combines curated content, analytics, and connected workflows so every rehearsal translates into real progress."
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {featureHighlights.map((feature) => (
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md" key={feature.title}>
+              <div class="flex items-center gap-3">
+                <span class="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600/10 text-indigo-600">
+                  <i class={feature.icon}></i>
+                </span>
+                <h3 class="text-lg font-semibold text-slate-900">{feature.title}</h3>
+              </div>
+              <p class="mt-3 text-sm text-slate-600">{feature.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Mock modes"
+          title="Practice every loop with tailored coaching"
+          description="Mix and match interview formats, adjust pacing, and capture transcripts that roll into structured feedback reports."
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {mockModes.map((mode) => (
+            <article class="flex h-full flex-col justify-between rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm" key={mode.name}>
+              <div class="space-y-4">
+                <header class="flex items-center justify-between gap-3">
+                  <h3 class="text-lg font-semibold text-slate-900">{mode.name}</h3>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-slate-900/90 px-3 py-1 text-xs font-semibold text-white">
+                    {mode.badge}
+                  </span>
+                </header>
+                <p class="text-sm text-slate-600">{mode.description}</p>
+              </div>
+              <Button href="/interview/session/preview" variant="ghost" size="sm" class="mt-6 self-start">
+                Preview experience
+                <i class="fas fa-arrow-right text-xs"></i>
+              </Button>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workflow"
+          title="From JD intake to confident delivery"
+          description="Each stage stays connected so you can move seamlessly between preparation, practice, and follow-through."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {workflow.map((stage) => (
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 text-left shadow-sm" key={stage.step}>
+              <p class="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-500">{stage.step}</p>
+              <h3 class="mt-4 text-lg font-semibold text-slate-900">{stage.title}</h3>
+              <p class="mt-3 text-sm text-slate-600">{stage.description}</p>
+            </article>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-dashed border-indigo-200 bg-indigo-50/60 p-6 text-sm text-indigo-900">
+          <p class="font-semibold">Automation across the stack</p>
+          <p class="mt-2 text-indigo-800">
+            Pulling from Resume Builder or Job Description Analyzer keeps your interview plan grounded in real achievements and expectations. Push feedback into Study Planner or Email Polisher without re-entering a single detail.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Feedback & insights"
+          title="Detailed coaching with measurable progress"
+          description="Every session unlocks structured scorecards, rewrites, and analytics so you know exactly where to focus next."
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {feedbackHighlights.map((point) => (
+            <article class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm" key={point.title}>
+              <h3 class="text-lg font-semibold text-slate-900">{point.title}</h3>
+              <p class="mt-3 text-sm text-slate-600">{point.description}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Connected tools"
+          title="Built to work with the Ansiversa ecosystem"
+          description="Launch into your next deliverable without context switching—everything stays synced across companion apps."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {integrations.map((integration) => (
+            <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md" key={integration.title}>
+              <h3 class="text-lg font-semibold text-slate-900">{integration.title}</h3>
+              <p class="mt-3 text-sm text-slate-600">{integration.description}</p>
+              <Button href={integration.href} variant="ghost" size="sm" class="mt-4 px-0 text-indigo-600">
+                Open workspace
+                <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+              </Button>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-slate-200 bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plans"
+          title="Start free, unlock pro-level mastery"
+          description="Soft usage reminders keep you informed before limits are reached, and upgrades land instantly across the stack."
+        />
+        <div class="overflow-hidden rounded-3xl border border-slate-200">
+          <table class="min-w-full divide-y divide-slate-200 bg-white text-left text-sm">
+            <thead class="bg-slate-50">
+              <tr>
+                <th scope="col" class="px-6 py-3 font-semibold text-slate-600">Feature</th>
+                <th scope="col" class="px-6 py-3 font-semibold text-slate-600">Free</th>
+                <th scope="col" class="px-6 py-3 font-semibold text-slate-600">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100 text-slate-600">
+              {planRows.map((row) => (
+                <tr key={row.feature}>
+                  <td class="px-6 py-4 font-semibold text-slate-900">{row.feature}</td>
+                  <td class="px-6 py-4">{row.free}</td>
+                  <td class="px-6 py-4">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <div class="flex flex-wrap justify-center gap-3">
+          <Button href="/app/pricing">View pricing</Button>
+          <Button href="/app/signup" variant="outline">Create free account</Button>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="API & automation"
+          title="Integrate Interview Coach workflows"
+          description="Server-side endpoints power JD analysis, session control, scoring, and exports with plan-aware limits."
+        />
+        <div class="grid gap-4 lg:grid-cols-2">
+          {apiContracts.map((route) => (
+            <article class="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm" key={route.path}>
+              <div class="flex items-center justify-between gap-3">
+                <span class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+                  <i class="fas fa-code text-[10px]"></i>
+                  {route.method}
+                </span>
+                <code class="rounded-full bg-slate-900 px-3 py-1 text-xs font-medium text-white">{route.path}</code>
+              </div>
+              <p class="mt-3 text-sm text-slate-600">{route.description}</p>
+            </article>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-indigo-200 bg-indigo-50/70 p-6 text-sm text-indigo-900">
+          Rate limits: <code class="rounded bg-white px-2 py-1 text-xs text-slate-700">/session/next</code> 10/min, <code class="rounded bg-white px-2 py-1 text-xs text-slate-700">/answer/audio</code> 30/day, <code class="rounded bg-white px-2 py-1 text-xs text-slate-700">/export</code> 5/day. All responses emit descriptive errors before throttling.
+        </div>
+      </div>
+    </section>
+
+    <section class="border-t border-slate-200 bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Guardrails"
+          title="Built-in validation keeps coaching reliable"
+          description="We apply strict checks across content, audio, and rubric configuration to maintain trustworthy sessions."
+          containerClass="text-white"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-slate-200"
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {validationRules.map((rule) => (
+            <article class="rounded-3xl border border-white/10 bg-white/10 p-6 backdrop-blur" key={rule}>
+              <p class="text-sm text-slate-100">{rule}</p>
+            </article>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 text-sm text-slate-100">
+          Future roadmap: live peer panels, coding runners, company research briefs, answer libraries, speech analytics, and an offline-ready PWA keep leveling up your practice environment.
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
