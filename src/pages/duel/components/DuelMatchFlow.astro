@@ -1,0 +1,35 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { duelMatchFlow } from "../../../data/knowledgeDuel";
+---
+<section class="bg-slate-950 py-16 text-white">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Match lifecycle"
+      title="From seed to shareable recap"
+      description="Knowledge Duel orchestrates every duel with a deterministic pipeline so players, spectators, and admins trust the outcome. Each step can surface API hooks or web socket events as you extend the experience."
+      align="center"
+      containerClass="max-w-3xl"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-sky-400"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-200"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-4">
+      {duelMatchFlow.map((step) => (
+        <article class="relative flex h-full flex-col gap-3 rounded-3xl border border-white/10 bg-white/5 p-6">
+          <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-white/60">
+            <span class="inline-flex items-center gap-2">
+              <i class={`${step.icon} text-sm text-sky-300`} aria-hidden="true"></i>
+              {step.id}
+            </span>
+            {step.badge && (
+              <span class="rounded-full bg-white/10 px-3 py-1 text-[11px] text-white/70">{step.badge}</span>
+            )}
+          </div>
+          <h3 class="text-xl font-semibold">{step.title}</h3>
+          <p class="text-sm text-slate-200">{step.summary}</p>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

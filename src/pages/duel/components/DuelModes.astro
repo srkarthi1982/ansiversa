@@ -1,0 +1,48 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { duelModes } from "../../../data/knowledgeDuel";
+---
+<section class="bg-white py-16">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Game modes"
+      title="Three ways to duel on your terms"
+      description="Switch between real-time blitz, asynchronous battles, and solo rehearsal without losing continuity. Each mode uses the same deterministic question seed so you can replay, review, and share results confidently."
+      align="center"
+      containerClass="max-w-3xl"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      {duelModes.map((mode) => (
+        <article
+          class="flex h-full flex-col rounded-3xl border border-slate-200 bg-slate-50/70 p-6 shadow-sm transition hover:-translate-y-1 hover:shadow-lg"
+        >
+          <header class="space-y-2">
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em] text-indigo-600">
+              {mode.tagline}
+            </span>
+            <h3 class="text-2xl font-semibold text-slate-900">{mode.name}</h3>
+            <p class="text-sm text-slate-600">{mode.summary}</p>
+          </header>
+          <dl class="mt-4 grid grid-cols-2 gap-3 text-xs font-semibold text-slate-500">
+            <div class="rounded-2xl border border-slate-200 bg-white p-3">
+              <dt class="uppercase tracking-[0.2em]">Question count</dt>
+              <dd class="mt-1 text-base font-semibold text-slate-900">{mode.questionCount}</dd>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-white p-3">
+              <dt class="uppercase tracking-[0.2em]">Time per question</dt>
+              <dd class="mt-1 text-base font-semibold text-slate-900">{mode.timePerQuestion}</dd>
+            </div>
+          </dl>
+          <ul class="mt-6 space-y-2 text-sm text-slate-600">
+            {mode.highlights.map((highlight) => (
+              <li class="flex items-start gap-2 rounded-2xl border border-slate-200 bg-white p-3">
+                <i class="fas fa-sparkles mt-1 text-indigo-500" aria-hidden="true"></i>
+                <span>{highlight}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

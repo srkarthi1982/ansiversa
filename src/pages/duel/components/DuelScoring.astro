@@ -1,0 +1,73 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { duelScoringRules, duelSpeedTiers } from "../../../data/knowledgeDuel";
+---
+<section class="bg-slate-50 py-16">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-start">
+      <div>
+        <SectionHeading
+          eyebrow="Scoring design"
+          title="Transparent scoring keeps every duel fair"
+          description="The default ladder configuration rewards precision while discouraging guess spam. Toggle negative marking or speed bonuses per tournament, and surface the same formulas in recap screens for instant clarity."
+        />
+        <div class="mt-8 grid gap-4">
+          {duelScoringRules.map((rule) => (
+            <article class="flex items-start gap-4 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+              <span class="mt-1 inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                <i class={`${rule.icon} text-lg`} aria-hidden="true"></i>
+              </span>
+              <div class="flex-1">
+                <h3 class="text-lg font-semibold text-slate-900">{rule.title}</h3>
+                <p class="text-sm text-slate-600">{rule.description}</p>
+              </div>
+              <span class="whitespace-nowrap rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
+                {rule.delta}
+              </span>
+            </article>
+          ))}
+        </div>
+      </div>
+      <aside class="rounded-3xl border border-indigo-100 bg-white p-6 shadow-lg">
+        <h3 class="text-xl font-semibold text-slate-900">Speed bonus ladder</h3>
+        <p class="mt-2 text-sm text-slate-600">
+          Real-time duels award extra points for quick responses. Bonuses scale linearly with the time remaining so players with faster knowledge recall edge ahead without overpowering accuracy.
+        </p>
+        <div class="mt-6 overflow-hidden rounded-2xl border border-indigo-100">
+          <table class="min-w-full divide-y divide-indigo-100 text-sm">
+            <thead class="bg-indigo-50">
+              <tr class="text-left text-xs font-semibold uppercase tracking-[0.3em] text-indigo-600">
+                <th scope="col" class="px-4 py-3">Tier</th>
+                <th scope="col" class="px-4 py-3">Bonus</th>
+                <th scope="col" class="px-4 py-3">Time window</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-indigo-100 text-slate-700">
+              {duelSpeedTiers.map((tier) => (
+                <tr>
+                  <td class="px-4 py-3 font-semibold">{tier.label}</td>
+                  <td class="px-4 py-3">{tier.bonus}</td>
+                  <td class="px-4 py-3">{tier.window}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <ul class="mt-6 space-y-3 text-sm text-slate-600">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-signal text-indigo-500" aria-hidden="true"></i>
+            <span>Turn-based matches optionally require timers to earn bonuses, with server verification on submit.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-scale-balanced text-indigo-500" aria-hidden="true"></i>
+            <span>League presets adjust penalties, sudden-death length, and streak multipliers from the admin console.</span>
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-chart-line text-indigo-500" aria-hidden="true"></i>
+            <span>Rating updates follow an ELO-style delta with decay protection for top-tier players.</span>
+          </li>
+        </ul>
+      </aside>
+    </div>
+  </div>
+</section>
