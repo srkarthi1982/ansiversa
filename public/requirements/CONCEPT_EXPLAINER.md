@@ -1,7 +1,7 @@
 # ðŸ§© Concept Explainer â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/concept`  
+**Module Path:** `/concept-explainer`  
 **Category:** Learning & Knowledge  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Turn any concept (from school topics to pro subjects) into **clear, levelâ€‘appropriate explanations** with **examples, analogies, visuals, stepâ€‘byâ€‘step breakdowns, and quick checks**. Connects to **FlashNote**, **Quiz Institute**, **Lesson Builder**, and **Blog Writer**.
@@ -30,7 +30,7 @@
 
 1. **Explain a Concept**
    - *As a user*, I enter â€œPhotosynthesisâ€ and choose level=Teen, style=teacherâ€‘talk.  
-   - **AC:** `/concept/api/explain` returns sections: definition, steps, key terms, example, analogy, diagram spec, pitfalls, miniâ€‘quiz.
+   - **AC:** `/concept-explainer/api/explain` returns sections: definition, steps, key terms, example, analogy, diagram spec, pitfalls, miniâ€‘quiz.
 
 2. **Refine With Context**
    - *As a user*, I set Board=CBSE, Class=10, Language=Tamil.  
@@ -38,19 +38,19 @@
 
 3. **Generate FlashNotes & Quiz**
    - *As a user*, I click **Create FlashNote** and **Create Quiz**.  
-   - **AC:** `/concept/api/flashnote` and `/concept/api/quiz` return readyâ€‘toâ€‘save items.
+   - **AC:** `/concept-explainer/api/flashnote` and `/concept-explainer/api/quiz` return readyâ€‘toâ€‘save items.
 
 4. **Compare Styles/Levels**
    - *As a user*, I view sideâ€‘byâ€‘side versions (kids vs undergrad; textbook vs story).  
-   - **AC:** `/concept/api/variants` returns two or more formatted variants.
+   - **AC:** `/concept-explainer/api/variants` returns two or more formatted variants.
 
 5. **Upload Source Text (Optional)**
    - *As a user*, I paste a passage (or upload txt/pdf) and ask to â€œexplain simplyâ€.  
-   - **AC:** `/concept/api/explain` extracts topics and rewrites in chosen level/style.
+   - **AC:** `/concept-explainer/api/explain` extracts topics and rewrites in chosen level/style.
 
 6. **Export & Save**
    - *As a user*, I export to MD/PDF/JSON or save a version.  
-   - **AC:** `/concept/api/export` + `/concept/api/save` succeed; slug created.
+   - **AC:** `/concept-explainer/api/export` + `/concept-explainer/api/save` succeed; slug created.
 
 7. **Plan Gating**
    - Free: 10 concepts/day, 1 export/day, watermark.  
@@ -60,21 +60,21 @@
 
 ## 3) Routes & Information Architecture
 
-- `/concept` â€” Landing: quick form (topic, level, style, language) + recent concepts.  
-- `/concept/new` â€” Advanced form (subject, region/board, exam tags, tone, depth, include diagram/quiz).  
-- `/concept/[slug]` â€” Concept page (sections + actions: FlashNote, Quiz, Export, Save, Version diff).  
-- `/concept/variants/[slug]` â€” Sideâ€‘byâ€‘side comparisons.  
-- `/concept/history` â€” Saved concepts and versions.  
-- `/concept/templates` â€” Style presets (teacher, textbook, cheatsheet, story, Socratic).
+- `/concept-explainer` â€” Landing: quick form (topic, level, style, language) + recent concepts.  
+- `/concept-explainer/new` â€” Advanced form (subject, region/board, exam tags, tone, depth, include diagram/quiz).  
+- `/concept-explainer/[slug]` â€” Concept page (sections + actions: FlashNote, Quiz, Export, Save, Version diff).  
+- `/concept-explainer/variants/[slug]` â€” Sideâ€‘byâ€‘side comparisons.  
+- `/concept-explainer/history` â€” Saved concepts and versions.  
+- `/concept-explainer/templates` â€” Style presets (teacher, textbook, cheatsheet, story, Socratic).
 
 **API (SSR)**  
-- `POST /concept/api/explain`  
-- `POST /concept/api/variants`  
-- `POST /concept/api/flashnote`  
-- `POST /concept/api/quiz`  
-- `POST /concept/api/save` Â· `POST /concept/api/duplicate` Â· `POST /concept/api/delete`  
-- `POST /concept/api/export` (md|pdf|json)
-- `POST /concept/api/upload` (txt/pdf) â€” extract text, then explain
+- `POST /concept-explainer/api/explain`  
+- `POST /concept-explainer/api/variants`  
+- `POST /concept-explainer/api/flashnote`  
+- `POST /concept-explainer/api/quiz`  
+- `POST /concept-explainer/api/save` Â· `POST /concept-explainer/api/duplicate` Â· `POST /concept-explainer/api/delete`  
+- `POST /concept-explainer/api/export` (md|pdf|json)
+- `POST /concept-explainer/api/upload` (txt/pdf) â€” extract text, then explain
 
 ---
 
@@ -129,33 +129,33 @@
 
 ## 6) UI / Pages
 
-### `/concept` (Quick Explain)
+### `/concept-explainer` (Quick Explain)
 - Topic input + level/style/language selects.  
 - Output preview panes: definition, steps, examples, analogy, miniâ€‘quiz.  
 - Buttons: **FlashNote**, **Quiz**, **Variants**, **Export**, **Save**.
 
-### `/concept/new`
+### `/concept-explainer/new`
 - Advanced fields: subject, board, class, exam tags (NEET/JEE/CBSE), tone, depth, translations, include diagram.  
 - Option: â€œstrict syllabusâ€ (limits breadth for board exams).
 
-### `/concept/[slug]`
+### `/concept-explainer/[slug]`
 - Tabs: **Explain**, **Examples**, **Diagrams**, **Miniâ€‘Quiz**, **Versions**.  
 - Actions: **Create FlashNote**, **Create Quiz**, **Export** (MD/PDF/JSON), **Duplicate**, **Delete**.
 
-### `/concept/variants/[slug]`
+### `/concept-explainer/variants/[slug]`
 - Sideâ€‘byâ€‘side cards; swap level/style; copy any section into main.
 
-### `/concept/history`
+### `/concept-explainer/history`
 - Filter by subject, board, class, date; quick open.
 
-### `/concept/templates`
+### `/concept-explainer/templates`
 - Preset cards; â€œset as defaultâ€ per user.
 
 ---
 
 ## 7) API Contracts (examples)
 
-### `POST /concept/api/explain`
+### `POST /concept-explainer/api/explain`
 Req:  
 ```json
 {
@@ -171,20 +171,20 @@ Req:
 ```  
 Res: `{ "slug":"photosynthesis-teen-teacher", "output":{...} }`
 
-### `POST /concept/api/variants`
+### `POST /concept-explainer/api/variants`
 Req: `{ "topic":"Entropy", "variants":[{"level":"kids"},{"style":"story"}] }`  
 Res: `{ "items":[{"label":"kids","output":{...}}, {"label":"story","output":{...}}] }`
 
-### `POST /concept/api/flashnote`
+### `POST /concept-explainer/api/flashnote`
 Req: `{ "conceptId":"<uuid>" }` â†’ Res: `{ "flashnoteId":"<uuid>", "url":"/flashnote/<id>" }`
 
-### `POST /concept/api/quiz`
+### `POST /concept-explainer/api/quiz`
 Req: `{ "conceptId":"<uuid>", "count":6, "types":["mcq","tf"] }` â†’ Res: `{ "quizId":"QUIZ-123" }`
 
-### `POST /concept/api/export`
+### `POST /concept-explainer/api/export`
 Req: `{ "conceptId":"<uuid>", "format":"md|pdf|json" }` â†’ Res: `{ "url":"/exports/Concept_Photosynthesis.md" }`
 
-### `POST /concept/api/delete`
+### `POST /concept-explainer/api/delete`
 Req: `{ "id":"<uuid>" }` â†’ Res: `{ "ok":true }`
 
 ---
@@ -232,26 +232,26 @@ Rate limits: `userId`+day for explain/variants; `userId`+month for exports.
 ## 12) Suggested File Layout
 
 ```
-src/pages/concept/index.astro
-src/pages/concept/new.astro
-src/pages/concept/[slug].astro
-src/pages/concept/variants/[slug].astro
-src/pages/concept/history.astro
-src/pages/concept/templates.astro
+src/pages/concept-explainer/index.astro
+src/pages/concept-explainer/new.astro
+src/pages/concept-explainer/[slug].astro
+src/pages/concept-explainer/variants/[slug].astro
+src/pages/concept-explainer/history.astro
+src/pages/concept-explainer/templates.astro
 
-src/pages/concept/api/explain.ts
-src/pages/concept/api/variants.ts
-src/pages/concept/api/flashnote.ts
-src/pages/concept/api/quiz.ts
-src/pages/concept/api/save.ts
-src/pages/concept/api/export.ts
-src/pages/concept/api/delete.ts
-src/pages/concept/api/upload.ts
+src/pages/concept-explainer/api/explain.ts
+src/pages/concept-explainer/api/variants.ts
+src/pages/concept-explainer/api/flashnote.ts
+src/pages/concept-explainer/api/quiz.ts
+src/pages/concept-explainer/api/save.ts
+src/pages/concept-explainer/api/export.ts
+src/pages/concept-explainer/api/delete.ts
+src/pages/concept-explainer/api/upload.ts
 
-src/components/concept/Explain/*.astro
-src/components/concept/Variants/*.astro
-src/components/concept/Quiz/*.astro
-src/components/concept/Diagrams/*.astro
+src/components/concept-explainer/Explain/*.astro
+src/components/concept-explainer/Variants/*.astro
+src/components/concept-explainer/Quiz/*.astro
+src/components/concept-explainer/Diagrams/*.astro
 ```
 
 ---

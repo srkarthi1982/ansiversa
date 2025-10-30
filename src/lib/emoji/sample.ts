@@ -250,6 +250,6 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
       { label: 'Solve', detail: 'Both players solved asynchronously; system tracked timestamps and hint usage.' },
       { label: 'Verify', detail: 'Server validated answers, applied penalties, and published results to the leaderboard.' }
     ],
-    inviteUrl: 'https://ansiversa.app/emoji/versus/versus-demo-483'
+    inviteUrl: 'https://ansiversa.app/guess-the-emoji/versus/versus-demo-483'
   }
 });

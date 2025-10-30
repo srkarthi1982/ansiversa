@@ -27,8 +27,8 @@ const creatorSummit: EventPlannerEvent = {
   countdownLabel: 'Go live in',
   countdownDays: 58,
   lastUpdated: '2025-04-15T16:00:00Z',
-  runSheetLink: '/events/run/evt-creator-summit',
-  rsvpLink: '/events/rsvp/creator-ops',
+  runSheetLink: '/event-planner/run/evt-creator-summit',
+  rsvpLink: '/event-planner/rsvp/creator-ops',
   summary:
     'A two-day playbook for community teams covering creator onboarding, sponsorship ops, and retention with live workshops.',
   metrics: {
@@ -275,8 +275,8 @@ const weddingWeekend: EventPlannerEvent = {
   countdownLabel: 'Weekend kicks off in',
   countdownDays: 32,
   lastUpdated: '2025-04-14T21:10:00Z',
-  runSheetLink: '/events/run/evt-lake-wedding',
-  rsvpLink: '/events/rsvp/lakeview-weekend',
+  runSheetLink: '/event-planner/run/evt-lake-wedding',
+  rsvpLink: '/event-planner/rsvp/lakeview-weekend',
   summary:
     'Family-style celebration with sunset cruise, welcome dinner, lakeside ceremony, and Sunday brunch sendoff.',
   metrics: {

@@ -1,7 +1,7 @@
 # ðŸ”® Fortune Teller â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/fortune`  
+**Module Path:** `/fortune-teller`  
 **Category:** Fun & Engagement  
 **Stack:** Astro + Tailwind (islands), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Provide playful, optâ€‘in entertainment readings (tarotâ€‘style spreads, zodiacâ€‘style horoscopes, numerologyâ€‘like summaries, â€œyes/no coin,â€ crystal ball prompts) with strict **disclaimers** that results are for **fun** and **not advice**. Personalize with user mood/intents and keep things fresh via seeds and daily rotations.
@@ -37,27 +37,27 @@
 
 1. **Daily Fortune**
    - *As a user*, I tap **Daily Fortune** and get a short themed message and â€œlucky focusâ€ for the day.  
-   - **AC:** `/fortune/api/daily` returns a card (title, meaning, action, emoji), seedâ€‘rotated by date+user.
+   - **AC:** `/fortune-teller/api/daily` returns a card (title, meaning, action, emoji), seedâ€‘rotated by date+user.
 
 2. **Yes/No**
    - *As a user*, I ask a question and tap **Yes/No**.  
-   - **AC:** `/fortune/api/yesno` returns yes/no/maybe with a oneâ€‘liner; cooldown enforces 10s minimum between asks.
+   - **AC:** `/fortune-teller/api/yesno` returns yes/no/maybe with a oneâ€‘liner; cooldown enforces 10s minimum between asks.
 
 3. **3â€‘Card & 5â€‘Card**
    - *As a user*, I choose spread and domain (e.g., career).  
-   - **AC:** `/fortune/api/spread` returns positions with meanings and guidance paragraphs.
+   - **AC:** `/fortune-teller/api/spread` returns positions with meanings and guidance paragraphs.
 
 4. **Zodiacâ€‘style Feed**
    - *As a user*, I choose a sign (or â€œsurprise meâ€).  
-   - **AC:** `/fortune/api/zodiac` returns daily/weekly generic text with rotating themes.
+   - **AC:** `/fortune-teller/api/zodiac` returns daily/weekly generic text with rotating themes.
 
 5. **Numerologyâ€‘like Summary**
    - *As a user*, I enter birth date to get a playful, evergreen summary.  
-   - **AC:** `/fortune/api/numsum` returns static descriptors and strengths/growth areas.
+   - **AC:** `/fortune-teller/api/numsum` returns static descriptors and strengths/growth areas.
 
 6. **Save, Share, Journal**
    - *As a user*, I save a reading, export a postcard (PNG), and write a journal note.  
-   - **AC:** `/fortune/api/save` persists reading; `/export` returns image URL; `/journal/create` stores note.
+   - **AC:** `/fortune-teller/api/save` persists reading; `/export` returns image URL; `/journal/create` stores note.
 
 7. **Plan Gating**
    - Free: daily fortune, yes/no, 3â€‘card, limited saves/exports.  
@@ -67,24 +67,24 @@
 
 ## 3) Routes & Information Architecture
 
-- `/fortune` â€” Hub: Daily Fortune, Yes/No, Spreads, Zodiac, â€œMy Journalâ€.  
-- `/fortune/daily` â€” Todayâ€™s fortune; reroll (once) with reason.  
-- `/fortune/yesno` â€” Ask a question â†’ yes/no/maybe with cooldown.  
-- `/fortune/spreads` â€” Choose 3â€‘card or 5â€‘card; pick domain & theme.  
-- `/fortune/zodiac` â€” Pick a sign; switch daily/weekly tabs.  
-- `/fortune/journal` â€” Saved readings + notes; calendar view.  
-- `/fortune/settings` â€” Themes, reminders, language; disclaimer & safety links.
+- `/fortune-teller` â€” Hub: Daily Fortune, Yes/No, Spreads, Zodiac, â€œMy Journalâ€.  
+- `/fortune-teller/daily` â€” Todayâ€™s fortune; reroll (once) with reason.  
+- `/fortune-teller/yesno` â€” Ask a question â†’ yes/no/maybe with cooldown.  
+- `/fortune-teller/spreads` â€” Choose 3â€‘card or 5â€‘card; pick domain & theme.  
+- `/fortune-teller/zodiac` â€” Pick a sign; switch daily/weekly tabs.  
+- `/fortune-teller/journal` â€” Saved readings + notes; calendar view.  
+- `/fortune-teller/settings` â€” Themes, reminders, language; disclaimer & safety links.
 
 **API (SSR):**  
-- `POST /fortune/api/daily`  
-- `POST /fortune/api/yesno`  
-- `POST /fortune/api/spread`  
-- `POST /fortune/api/zodiac`  
-- `POST /fortune/api/numsum`  
-- `POST /fortune/api/save` Â· `POST /fortune/api/delete` Â· `POST /fortune/api/duplicate`  
-- `POST /fortune/api/export` (png|md|pdf)  
-- `POST /fortune/api/journal/create` Â· `POST /fortune/api/journal/update`  
-- `GET  /fortune/api/history`
+- `POST /fortune-teller/api/daily`  
+- `POST /fortune-teller/api/yesno`  
+- `POST /fortune-teller/api/spread`  
+- `POST /fortune-teller/api/zodiac`  
+- `POST /fortune-teller/api/numsum`  
+- `POST /fortune-teller/api/save` Â· `POST /fortune-teller/api/delete` Â· `POST /fortune-teller/api/duplicate`  
+- `POST /fortune-teller/api/export` (png|md|pdf)  
+- `POST /fortune-teller/api/journal/create` Â· `POST /fortune-teller/api/journal/update`  
+- `GET  /fortune-teller/api/history`
 
 ---
 
@@ -168,53 +168,53 @@
 
 ## 7) UI / Pages
 
-### `/fortune` (Hub)
+### `/fortune-teller` (Hub)
 - Big **Daily Fortune** card, **Yes/No** chip, **Spreads** carousel, **Zodiac** shortcut, **Journal** preview.  
 - Footer disclaimer + safety links.
 
-### `/fortune/daily`
+### `/fortune-teller/daily`
 - Animated card reveal; â€œlucky focusâ€, â€œtiny actionâ€; **Save**, **Share**, **Reroll** (once).
 
-### `/fortune/yesno`
+### `/fortune-teller/yesno`
 - Text box + reveal button; animated outcome; timer/cooldown indicator.
 
-### `/fortune/spreads`
+### `/fortune-teller/spreads`
 - Choose spread size, domain, theme; swipe cards; perâ€‘position meaning panel.
 
-### `/fortune/zodiac`
+### `/fortune-teller/zodiac`
 - Grid of signs; toggle daily/weekly; archive (Pro).
 
-### `/fortune/journal`
+### `/fortune-teller/journal`
 - List by date with emoji mood and attached reading; search; export.
 
-### `/fortune/settings`
+### `/fortune-teller/settings`
 - Toggles: reminders, language, theme; edit nickname/birth date (optional).
 
 ---
 
 ## 8) API Contracts (examples)
 
-### `POST /fortune/api/daily`
+### `POST /fortune-teller/api/daily`
 Req: `{ "theme":"classic", "intent":"career" }`  
 Res: `{ "readingId":"<uuid>","card":{...},"action":"Email one person today" }`
 
-### `POST /fortune/api/yesno`
+### `POST /fortune-teller/api/yesno`
 Req: `{ "question":"Should I start today?" }`  
 Res: `{ "outcome":"yes","oneLiner":"Start small and iterate.","cooldown":10 }`
 
-### `POST /fortune/api/spread`
+### `POST /fortune-teller/api/spread`
 Req: `{ "spread":"3","domain":"study","theme":"myth" }`  
 Res: `{ "cards":[...], "actions":[...], "readingId":"<uuid>" }`
 
-### `POST /fortune/api/zodiac`
+### `POST /fortune-teller/api/zodiac`
 Req: `{ "sign":"leo","period":"daily","date":"2025-10-28" }`  
 Res: `{ "title":"Fire & Focus","text":"â€¦","theme":"classic" }`
 
-### `POST /fortune/api/numsum`
+### `POST /fortune-teller/api/numsum`
 Req: `{ "birthdate":"2004-03-09" }`  
 Res: `{ "summary":{"strengths":["curiosity"],"growth":["patience"]},"theme":"minimal" }`
 
-### `POST /fortune/api/export`
+### `POST /fortune-teller/api/export`
 Req: `{ "readingId":"<uuid>", "format":"png" }`  
 Res: `{ "url":"/exports/Fortune_2025-10-28.png" }`
 
@@ -266,31 +266,31 @@ Rate limits: `userId`+minute for yes/no; `userId`+day for daily/spreads/export.
 ## 13) Suggested File Layout
 
 ```
-src/pages/fortune/index.astro
-src/pages/fortune/daily.astro
-src/pages/fortune/yesno.astro
-src/pages/fortune/spreads.astro
-src/pages/fortune/zodiac.astro
-src/pages/fortune/journal.astro
-src/pages/fortune/settings.astro
+src/pages/fortune-teller-teller/index.astro
+src/pages/fortune-teller-teller/daily.astro
+src/pages/fortune-teller-teller/yesno.astro
+src/pages/fortune-teller-teller/spreads.astro
+src/pages/fortune-teller-teller/zodiac.astro
+src/pages/fortune-teller-teller/journal.astro
+src/pages/fortune-teller-teller/settings.astro
 
-src/pages/fortune/api/daily.ts
-src/pages/fortune/api/yesno.ts
-src/pages/fortune/api/spread.ts
-src/pages/fortune/api/zodiac.ts
-src/pages/fortune/api/numsum.ts
-src/pages/fortune/api/save.ts
-src/pages/fortune/api/delete.ts
-src/pages/fortune/api/duplicate.ts
-src/pages/fortune/api/export.ts
-src/pages/fortune/api/journal/create.ts
-src/pages/fortune/api/journal/update.ts
-src/pages/fortune/api/history.ts
+src/pages/fortune-teller-teller/api/daily.ts
+src/pages/fortune-teller-teller/api/yesno.ts
+src/pages/fortune-teller-teller/api/spread.ts
+src/pages/fortune-teller-teller/api/zodiac.ts
+src/pages/fortune-teller-teller/api/numsum.ts
+src/pages/fortune-teller-teller/api/save.ts
+src/pages/fortune-teller-teller/api/delete.ts
+src/pages/fortune-teller-teller/api/duplicate.ts
+src/pages/fortune-teller-teller/api/export.ts
+src/pages/fortune-teller-teller/api/journal/create.ts
+src/pages/fortune-teller-teller/api/journal/update.ts
+src/pages/fortune-teller-teller/api/history.ts
 
-src/components/fortune/Cards/*.astro
-src/components/fortune/Spreads/*.astro
-src/components/fortune/Zodiac/*.astro
-src/components/fortune/Journal/*.astro
+src/components/fortune-teller/Cards/*.astro
+src/components/fortune-teller/Spreads/*.astro
+src/components/fortune-teller/Zodiac/*.astro
+src/components/fortune-teller/Journal/*.astro
 ```
 
 ---

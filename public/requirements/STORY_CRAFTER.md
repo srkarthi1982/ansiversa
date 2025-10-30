@@ -22,14 +22,14 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 - **Integrations**: Prompt Builder (advanced prompts), Research Assistant (background info), Presentation Designer (pitch deck), Grammar Fixer (copy edit).
 
 ### Key Pages
-- `/story` â€” Library/dashboard  
-- `/story/new` â€” Project wizard (template, genre, tone, POV/tense, target length)  
-- `/story/[id]/outline` â€” Beats, chapters, scenes (dragâ€‘drop)  
-- `/story/[id]/characters` â€” Character sheets & arcs  
-- `/story/[id]/world` â€” World entries (locations/factions/items), timeline  
-- `/story/[id]/editor` â€” Scene editor with side notes & AI tools  
-- `/story/[id]/export` â€” Compile & export options  
-- `/story/settings` â€” Defaults (POV/tense, voice presets), safety, backups
+- `/storycrafter` â€” Library/dashboard  
+- `/storycrafter/new` â€” Project wizard (template, genre, tone, POV/tense, target length)  
+- `/storycrafter/[id]/outline` â€” Beats, chapters, scenes (dragâ€‘drop)  
+- `/storycrafter/[id]/characters` â€” Character sheets & arcs  
+- `/storycrafter/[id]/world` â€” World entries (locations/factions/items), timeline  
+- `/storycrafter/[id]/editor` â€” Scene editor with side notes & AI tools  
+- `/storycrafter/[id]/export` â€” Compile & export options  
+- `/storycrafter/settings` â€” Defaults (POV/tense, voice presets), safety, backups
 
 ### Minimal Data Model
 `Project`, `OutlineNode`, `Chapter`, `Scene`, `Character`, `Arc`, `WorldEntry`, `Relation`, `TimelineEvent`, `CanonFact`, `Note`, `Snapshot`, `ExportJob`, `Tag`
@@ -67,30 +67,30 @@ Integrations: **Prompt Builder**, **Research Assistant**, **Presentation Designe
 ### 2) Information Architecture & Routes
 
 **Pages**
-- `/story` â€” Library of projects; create from template; recent scenes; wordâ€‘count progress.  
-- `/story/new` â€” Wizard (title, logline, genre, subâ€‘genre, tone, target length, POV/tense, template).  
-- `/story/[id]/outline` â€” Beat sheet selector (3â€‘Act / Save the Cat); chapters & scenes tree; dragâ€‘drop ordering; word goals & status.  
-- `/story/[id]/characters` â€” Character list; profile editor; arc timeline; relationship matrix.  
-- `/story/[id]/world` â€” World entries table (type: location/faction/item/rule); detail drawer; timeline; link to canon facts.  
-- `/story/[id]/editor` â€” Scene editor: left (notes, outline, canon highlights), right (rich text editor); AI toolbar.  
-- `/story/[id]/export` â€” Compile options (front/back matter, ToC, chapter breaks, styles, formats); preview.  
-- `/story/settings` â€” Defaults: language, POV, tense, autoâ€‘snapshot every N minutes, plagiarism selfâ€‘check toggle.
+- `/storycrafter` â€” Library of projects; create from template; recent scenes; wordâ€‘count progress.  
+- `/storycrafter/new` â€” Wizard (title, logline, genre, subâ€‘genre, tone, target length, POV/tense, template).  
+- `/storycrafter/[id]/outline` â€” Beat sheet selector (3â€‘Act / Save the Cat); chapters & scenes tree; dragâ€‘drop ordering; word goals & status.  
+- `/storycrafter/[id]/characters` â€” Character list; profile editor; arc timeline; relationship matrix.  
+- `/storycrafter/[id]/world` â€” World entries table (type: location/faction/item/rule); detail drawer; timeline; link to canon facts.  
+- `/storycrafter/[id]/editor` â€” Scene editor: left (notes, outline, canon highlights), right (rich text editor); AI toolbar.  
+- `/storycrafter/[id]/export` â€” Compile options (front/back matter, ToC, chapter breaks, styles, formats); preview.  
+- `/storycrafter/settings` â€” Defaults: language, POV, tense, autoâ€‘snapshot every N minutes, plagiarism selfâ€‘check toggle.
 
 **API (SSR)**
-- Projects: `GET /story/api/project/list` Â· `POST /story/api/project/create` Â· `POST /story/api/project/update` Â· `POST /story/api/project/archive`  
-- Outline: `POST /story/api/outline/generate` Â· `POST /story/api/outline/update` Â· `GET /story/api/outline?id=`  
-- Characters: `POST /story/api/character/create` Â· `POST /story/api/character/update` Â· `GET /story/api/character?id=`  
-- World: `POST /story/api/world/create` Â· `POST /story/api/world/update` Â· `GET /story/api/world?id=`  
-- Scenes: `POST /story/api/scene/generate` Â· `POST /story/api/scene/update` Â· `GET /story/api/scene?id=`  
-- Passes: `POST /story/api/pass/dialogue` `.../show` `.../pacing` `.../style` `.../consistency`  
-- Canon: `POST /story/api/canon/rebuild` Â· `POST /story/api/canon/check`  
-- Timeline: `POST /story/api/timeline/add` Â· `GET /story/api/timeline`  
-- Pitch: `POST /story/api/pitchpack/generate` (logline, synopsis, blurb; variants)  
-- Export: `POST /story/api/export` (md|docx|epub) Â· `GET /story/api/export/status?id=`  
-- Notes/Snapshots: `POST /story/api/note/add` Â· `POST /story/api/snapshot/create` Â· `GET /story/api/snapshot/compare?id1&id2`  
-- Settings: `POST /story/api/settings/save`
+- Projects: `GET /storycrafter/api/project/list` Â· `POST /storycrafter/api/project/create` Â· `POST /storycrafter/api/project/update` Â· `POST /storycrafter/api/project/archive`  
+- Outline: `POST /storycrafter/api/outline/generate` Â· `POST /storycrafter/api/outline/update` Â· `GET /storycrafter/api/outline?id=`  
+- Characters: `POST /storycrafter/api/character/create` Â· `POST /storycrafter/api/character/update` Â· `GET /storycrafter/api/character?id=`  
+- World: `POST /storycrafter/api/world/create` Â· `POST /storycrafter/api/world/update` Â· `GET /storycrafter/api/world?id=`  
+- Scenes: `POST /storycrafter/api/scene/generate` Â· `POST /storycrafter/api/scene/update` Â· `GET /storycrafter/api/scene?id=`  
+- Passes: `POST /storycrafter/api/pass/dialogue` `.../show` `.../pacing` `.../style` `.../consistency`  
+- Canon: `POST /storycrafter/api/canon/rebuild` Â· `POST /storycrafter/api/canon/check`  
+- Timeline: `POST /storycrafter/api/timeline/add` Â· `GET /storycrafter/api/timeline`  
+- Pitch: `POST /storycrafter/api/pitchpack/generate` (logline, synopsis, blurb; variants)  
+- Export: `POST /storycrafter/api/export` (md|docx|epub) Â· `GET /storycrafter/api/export/status?id=`  
+- Notes/Snapshots: `POST /storycrafter/api/note/add` Â· `POST /storycrafter/api/snapshot/create` Â· `GET /storycrafter/api/snapshot/compare?id1&id2`  
+- Settings: `POST /storycrafter/api/settings/save`
 
-Optional WebSocket `/story/ws` for live wordâ€‘count and snapshot notifications.
+Optional WebSocket `/storycrafter/ws` for live wordâ€‘count and snapshot notifications.
 
 ---
 
@@ -184,7 +184,7 @@ Shortcuts: `Ctrl/Cmd+B` beat, `Ctrl/Cmd+Shift+N` new scene, `Ctrl/Cmd+K` command
 ### 6) API Contracts (Examples)
 
 **Generate outline**  
-`POST /story/api/outline/generate`  
+`POST /storycrafter/api/outline/generate`  
 ```json
 {
   "projectId":"p1",
@@ -197,14 +197,14 @@ Shortcuts: `Ctrl/Cmd+B` beat, `Ctrl/Cmd+Shift+N` new scene, `Ctrl/Cmd+K` command
 Res: `{ "nodes":[{"type":"beat","title":"Catalyst","summary":"A body is found..."}] }`
 
 **Create character**  
-`POST /story/api/character/create`  
+`POST /storycrafter/api/character/create`  
 ```json
 { "projectId":"p1", "name":"Asha Raman", "role":"protagonist", "age":29, "arcType":"positive" }
 ```
 Res: `{ "characterId":"c9" }`
 
 **Generate scene**  
-`POST /story/api/scene/generate`  
+`POST /storycrafter/api/scene/generate`  
 ```json
 {
   "projectId":"p1",
@@ -221,18 +221,18 @@ Res: `{ "characterId":"c9" }`
 Res: `{ "sceneId":"s42", "draftMd":"..." }`
 
 **Run dialogue pass**  
-`POST /story/api/pass/dialogue`  
+`POST /storycrafter/api/pass/dialogue`  
 ```json
 { "sceneId":"s42", "instructions":"Punch up banter; keep clues intact; shorten by 10%." }
 ```
 Res: `{ "diffMd":"...", "notes":["Reduced exposition","Sharper retorts"] }`
 
 **Canon check**  
-`POST /story/api/canon/check` â†’ `{ "conflicts":[{"type":"name","where":["s17","s42"],"detail":"Riya vs Ria"}] }`
+`POST /storycrafter/api/canon/check` â†’ `{ "conflicts":[{"type":"name","where":["s17","s42"],"detail":"Riya vs Ria"}] }`
 
 **Export**  
-`POST /story/api/export` â†’ `{ "jobId":"e7" }`  
-`GET /story/api/export/status?id=e7` â†’ `{ "status":"done","url":"/exports/p1_book_v1.epub" }`
+`POST /storycrafter/api/export` â†’ `{ "jobId":"e7" }`  
+`GET /storycrafter/api/export/status?id=e7` â†’ `{ "status":"done","url":"/exports/p1_book_v1.epub" }`
 
 ---
 
@@ -266,52 +266,52 @@ Rate limits: `/outline/generate` 30/day (Free) 200/day (Pro); `/scene/generate` 
 ### 9) Suggested File Layout
 
 ```
-src/pages/story/index.astro
-src/pages/story/new.astro
-src/pages/story/[id]/outline.astro
-src/pages/story/[id]/characters.astro
-src/pages/story/[id]/world.astro
-src/pages/story/[id]/editor.astro
-src/pages/story/[id]/export.astro
-src/pages/story/settings.astro
+src/pages/storycrafter/index.astro
+src/pages/storycrafter/new.astro
+src/pages/storycrafter/[id]/outline.astro
+src/pages/storycrafter/[id]/characters.astro
+src/pages/storycrafter/[id]/world.astro
+src/pages/storycrafter/[id]/editor.astro
+src/pages/storycrafter/[id]/export.astro
+src/pages/storycrafter/settings.astro
 
-src/pages/story/api/project/list.ts
-src/pages/story/api/project/create.ts
-src/pages/story/api/project/update.ts
-src/pages/story/api/project/archive.ts
-src/pages/story/api/outline/generate.ts
-src/pages/story/api/outline/update.ts
-src/pages/story/api/outline/index.ts
-src/pages/story/api/character/create.ts
-src/pages/story/api/character/update.ts
-src/pages/story/api/character/index.ts
-src/pages/story/api/world/create.ts
-src/pages/story/api/world/update.ts
-src/pages/story/api/world/index.ts
-src/pages/story/api/scene/generate.ts
-src/pages/story/api/scene/update.ts
-src/pages/story/api/scene/index.ts
-src/pages/story/api/pass/dialogue.ts
-src/pages/story/api/pass/show.ts
-src/pages/story/api/pass/pacing.ts
-src/pages/story/api/pass/style.ts
-src/pages/story/api/canon/rebuild.ts
-src/pages/story/api/canon/check.ts
-src/pages/story/api/timeline/add.ts
-src/pages/story/api/timeline/index.ts
-src/pages/story/api/pitchpack/generate.ts
-src/pages/story/api/export.ts
-src/pages/story/api/export/status.ts
-src/pages/story/api/note/add.ts
-src/pages/story/api/snapshot/create.ts
-src/pages/story/api/snapshot/compare.ts
-src/pages/story/api/settings/save.ts
+src/pages/storycrafter/api/project/list.ts
+src/pages/storycrafter/api/project/create.ts
+src/pages/storycrafter/api/project/update.ts
+src/pages/storycrafter/api/project/archive.ts
+src/pages/storycrafter/api/outline/generate.ts
+src/pages/storycrafter/api/outline/update.ts
+src/pages/storycrafter/api/outline/index.ts
+src/pages/storycrafter/api/character/create.ts
+src/pages/storycrafter/api/character/update.ts
+src/pages/storycrafter/api/character/index.ts
+src/pages/storycrafter/api/world/create.ts
+src/pages/storycrafter/api/world/update.ts
+src/pages/storycrafter/api/world/index.ts
+src/pages/storycrafter/api/scene/generate.ts
+src/pages/storycrafter/api/scene/update.ts
+src/pages/storycrafter/api/scene/index.ts
+src/pages/storycrafter/api/pass/dialogue.ts
+src/pages/storycrafter/api/pass/show.ts
+src/pages/storycrafter/api/pass/pacing.ts
+src/pages/storycrafter/api/pass/style.ts
+src/pages/storycrafter/api/canon/rebuild.ts
+src/pages/storycrafter/api/canon/check.ts
+src/pages/storycrafter/api/timeline/add.ts
+src/pages/storycrafter/api/timeline/index.ts
+src/pages/storycrafter/api/pitchpack/generate.ts
+src/pages/storycrafter/api/export.ts
+src/pages/storycrafter/api/export/status.ts
+src/pages/storycrafter/api/note/add.ts
+src/pages/storycrafter/api/snapshot/create.ts
+src/pages/storycrafter/api/snapshot/compare.ts
+src/pages/storycrafter/api/settings/save.ts
 
-src/components/story/Outline/*.astro
-src/components/story/Characters/*.astro
-src/components/story/World/*.astro
-src/components/story/Editor/*.astro
-src/components/story/Export/*.astro
+src/components/storycrafter/Outline/*.astro
+src/components/storycrafter/Characters/*.astro
+src/components/storycrafter/World/*.astro
+src/components/storycrafter/Editor/*.astro
+src/components/storycrafter/Export/*.astro
 ```
 
 ---

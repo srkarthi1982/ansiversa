@@ -20,15 +20,15 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 - **Readâ€‘aloud (TTS)** and performance timer for spokenâ€‘word pacing.  
 - **Chapbook builder**: sequence multiple poems with title/section pages.  
 - **Exports**: MD, PDF (server), DOCX; keep stanza spacing and small caps options.  
-- **Integrations**: Story Crafter (lyrics/poems into scenes), Presentation Designer (poetry slides), Grammar Fixer (light copy edit).
+- **Integrations**: Story Crafter (lyrics/poem-studios into scenes), Presentation Designer (poetry slides), Grammar Fixer (light copy edit).
 
 ### Key Pages
-- `/poem` â€” Library/dashboard  
-- `/poem/new` â€” Create poem (form, theme, tone, constraints)  
-- `/poem/[id]/edit` â€” Editor + craft/analysis tools  
-- `/poem/[id]/analyze` â€” Detailed meter/rhyme/imagery report  
-- `/poem/chapbook` â€” Build/preview/export a collection  
-- `/poem/settings` â€” Defaults (language, tone, fonts), privacy
+- `/poem-studio` â€” Library/dashboard  
+- `/poem-studio/new` â€” Create poem (form, theme, tone, constraints)  
+- `/poem-studio/[id]/edit` â€” Editor + craft/analysis tools  
+- `/poem-studio/[id]/analyze` â€” Detailed meter/rhyme/imagery report  
+- `/poem-studio/chapbook` â€” Build/preview/export a collection  
+- `/poem-studio/settings` â€” Defaults (language, tone, fonts), privacy
 
 ### Minimal Data Model
 `Poem`, `Form`, `Constraint`, `Draft`, `Analysis`, `Suggestion`, `Revision`, `Collection`, `ExportJob`, `Tag`
@@ -63,26 +63,26 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ### 2) Information Architecture & Routes
 
 **Pages**
-- `/poem` â€” Library; quick actions; recent analyses; collection progress.  
-- `/poem/new` â€” Choose form, theme, tone, constraints (syllables/rhyme), language.  
-- `/poem/[id]/edit` â€” Main editor with craft panel: analysis chips; inline warnings; generator & pass toolbar.  
-- `/poem/[id]/analyze` â€” Full report: meter scan, rhyme map, imagery density, abstractness index, clichÃ©s, repeated words, line length histogram.  
-- `/poem/chapbook` â€” Collection builder; order poems; section titles; dedication/acknowledgments.  
-- `/poem/settings` â€” Defaults: font family/size, line spacing, language, tone, privacy.
+- `/poem-studio` â€” Library; quick actions; recent analyses; collection progress.  
+- `/poem-studio/new` â€” Choose form, theme, tone, constraints (syllables/rhyme), language.  
+- `/poem-studio/[id]/edit` â€” Main editor with craft panel: analysis chips; inline warnings; generator & pass toolbar.  
+- `/poem-studio/[id]/analyze` â€” Full report: meter scan, rhyme map, imagery density, abstractness index, clichÃ©s, repeated words, line length histogram.  
+- `/poem-studio/chapbook` â€” Collection builder; order poems; section titles; dedication/acknowledgments.  
+- `/poem-studio/settings` â€” Defaults: font family/size, line spacing, language, tone, privacy.
 
 **API (SSR)**
-- Poems: `GET /poem/api/list` Â· `POST /poem/api/create` Â· `POST /poem/api/update` Â· `POST /poem/api/archive`  
-- Generate: `POST /poem/api/generate` (seed â†’ draft by form/tone)  
-- Analyze: `POST /poem/api/analyze` (returns metrics + issues)  
-- Passes: `POST /poem/api/pass/imagery` `.../verbs` `.../compress` `.../enjambment` `.../breaks` `.../style`  
-- Rhyme: `GET /poem/api/rhyme?word=&near=`  
-- Meter: `POST /poem/api/meter/scan` (heuristic stress)  
-- Form: `POST /poem/api/form/validate`  
-- Collections: `POST /poem/api/collection/create` Â· `POST /poem/api/collection/add` Â· `GET /poem/api/collection?id=`  
-- Export: `POST /poem/api/export` (md|pdf|docx) Â· `GET /poem/api/export/status?id=`  
-- Settings: `POST /poem/api/settings/save`
+- Poems: `GET /poem-studio/api/list` Â· `POST /poem-studio/api/create` Â· `POST /poem-studio/api/update` Â· `POST /poem-studio/api/archive`  
+- Generate: `POST /poem-studio/api/generate` (seed â†’ draft by form/tone)  
+- Analyze: `POST /poem-studio/api/analyze` (returns metrics + issues)  
+- Passes: `POST /poem-studio/api/pass/imagery` `.../verbs` `.../compress` `.../enjambment` `.../breaks` `.../style`  
+- Rhyme: `GET /poem-studio/api/rhyme?word=&near=`  
+- Meter: `POST /poem-studio/api/meter/scan` (heuristic stress)  
+- Form: `POST /poem-studio/api/form/validate`  
+- Collections: `POST /poem-studio/api/collection/create` Â· `POST /poem-studio/api/collection/add` Â· `GET /poem-studio/api/collection?id=`  
+- Export: `POST /poem-studio/api/export` (md|pdf|docx) Â· `GET /poem-studio/api/export/status?id=`  
+- Settings: `POST /poem-studio/api/settings/save`
 
-Optional WebSocket `/poem/ws` for live meter feedback and diff previews.
+Optional WebSocket `/poem-studio/ws` for live meter feedback and diff previews.
 
 ---
 
@@ -169,38 +169,38 @@ Shortcuts: `Ctrl/Cmd+Enter` analyze, `Ctrl/Cmd+Shift+E` export, `Ctrl/Cmd+S` sav
 ### 7) API Contracts (Examples)
 
 **Create poem**  
-`POST /poem/api/create`  
+`POST /poem-studio/api/create`  
 ```json
 { "title":"Kitchen Light", "formId":"sonnet", "language":"en", "tone":"intimate", "theme":"memory" }
 ```
 Res: `{ "poemId":"p42" }`
 
 **Generate seed**  
-`POST /poem/api/generate`  
+`POST /poem-studio/api/generate`  
 ```json
 { "form":"villanelle", "theme":"monsoon in Chennai", "tone":"lyrical", "constraints":{"refrain":"..."} }
 ```
 Res: `{ "poemMd":"..." }`
 
 **Analyze**  
-`POST /poem/api/analyze`  
+`POST /poem-studio/api/analyze`  
 ```json
 { "poemId":"p42", "text":"Your poem text..." }
 ```
 Res: `{ "meter":{"score":0.72}, "rhyme":{"scheme":"ABAB"}, "issues":[{"type":"cliche","line":3,"hint":"Avoid 'cold as ice'"}] }`
 
 **Run pass**  
-`POST /poem/api/pass/imagery`  
+`POST /poem-studio/api/pass/imagery`  
 ```json
 { "poemId":"p42", "instructions":"Make concrete with sensory detail; keep Tamil cultural references." }
 ```
 Res: `{ "diffMd":"...", "notes":["Replaced 'flower' with 'jasmine garland'"] }`
 
 **Validate form**  
-`POST /poem/api/form/validate` â†’ `{ "ok":false, "problems":[{"line":14,"issue":"syllables=9 expectedâ‰ˆ10"}] }`
+`POST /poem-studio/api/form/validate` â†’ `{ "ok":false, "problems":[{"line":14,"issue":"syllables=9 expectedâ‰ˆ10"}] }`
 
 **Export chapbook**  
-`POST /poem/api/export`  
+`POST /poem-studio/api/export`  
 ```json
 { "collectionId":"c7", "format":"pdf", "options":{"font":"Garamond","smallCaps":true} }
 ```
@@ -238,37 +238,37 @@ Rate limits: `/analyze` 60/day (Free) 400/day (Pro); `/pass/*` 40/day (Free) 300
 ### 10) Suggested File Layout
 
 ```
-src/pages/poem/index.astro
-src/pages/poem/new.astro
-src/pages/poem/[id]/edit.astro
-src/pages/poem/[id]/analyze.astro
-src/pages/poem/chapbook.astro
-src/pages/poem/settings.astro
+src/pages/poem-studio/index.astro
+src/pages/poem-studio/new.astro
+src/pages/poem-studio/[id]/edit.astro
+src/pages/poem-studio/[id]/analyze.astro
+src/pages/poem-studio/chapbook.astro
+src/pages/poem-studio/settings.astro
 
-src/pages/poem/api/list.ts
-src/pages/poem/api/create.ts
-src/pages/poem/api/update.ts
-src/pages/poem/api/archive.ts
-src/pages/poem/api/generate.ts
-src/pages/poem/api/analyze.ts
-src/pages/poem/api/pass/imagery.ts
-src/pages/poem/api/pass/verbs.ts
-src/pages/poem/api/pass/compress.ts
-src/pages/poem/api/pass/enjambment.ts
-src/pages/poem/api/pass/breaks.ts
-src/pages/poem/api/pass/style.ts
-src/pages/poem/api/rhyme.ts
-src/pages/poem/api/meter/scan.ts
-src/pages/poem/api/form/validate.ts
-src/pages/poem/api/collection/create.ts
-src/pages/poem/api/collection/add.ts
-src/pages/poem/api/collection/index.ts
-src/pages/poem/api/export.ts
-src/pages/poem/api/export/status.ts
+src/pages/poem-studio/api/list.ts
+src/pages/poem-studio/api/create.ts
+src/pages/poem-studio/api/update.ts
+src/pages/poem-studio/api/archive.ts
+src/pages/poem-studio/api/generate.ts
+src/pages/poem-studio/api/analyze.ts
+src/pages/poem-studio/api/pass/imagery.ts
+src/pages/poem-studio/api/pass/verbs.ts
+src/pages/poem-studio/api/pass/compress.ts
+src/pages/poem-studio/api/pass/enjambment.ts
+src/pages/poem-studio/api/pass/breaks.ts
+src/pages/poem-studio/api/pass/style.ts
+src/pages/poem-studio/api/rhyme.ts
+src/pages/poem-studio/api/meter/scan.ts
+src/pages/poem-studio/api/form/validate.ts
+src/pages/poem-studio/api/collection/create.ts
+src/pages/poem-studio/api/collection/add.ts
+src/pages/poem-studio/api/collection/index.ts
+src/pages/poem-studio/api/export.ts
+src/pages/poem-studio/api/export/status.ts
 
-src/components/poem/Editor/*.astro
-src/components/poem/Analysis/*.astro
-src/components/poem/Chapbook/*.astro
+src/components/poem-studio/Editor/*.astro
+src/components/poem-studio/Analysis/*.astro
+src/components/poem-studio/Chapbook/*.astro
 ```
 
 ---

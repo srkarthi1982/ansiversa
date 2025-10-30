@@ -1,0 +1,551 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+
+const heroHighlights = [
+  {
+    label: "Inputs",
+    value: "PDF, EPUB, TXT uploads or pasted text",
+    icon: "fas fa-file-import",
+  },
+  {
+    label: "Outputs",
+    value: "Layered summaries, quotes, cards, quizzes",
+    icon: "fas fa-layer-group",
+  },
+  {
+    label: "Integrations",
+    value: "FlashNote · Language Flashcards · Study Planner",
+    icon: "fas fa-link",
+  },
+];
+
+const coreCapabilities = [
+  {
+    title: "Robust ingestion pipeline",
+    description:
+      "Upload large books or paste chapters directly. Automatic chapter detection, checksum tracking, and ingest job telemetry ensure reliable parsing across formats.",
+    icon: "fas fa-cloud-upload-alt",
+  },
+  {
+    title: "Layered summarisation",
+    description:
+      "Generate TL;DR, five-key-idea bullets, one-page executive narratives, and chapter-by-chapter treatments tuned to audience, tone, and purpose controls.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Evidence-backed insights",
+    description:
+      "Quote extraction attaches page and location references, flags unsupported claims, and captures references or footnotes so summaries stay grounded.",
+    icon: "fas fa-quote-right",
+  },
+  {
+    title: "Concept graphs & timelines",
+    description:
+      "Derive characters, entities, relationships, and timelines to build concept maps, highlight conflicts, and visualise progression for fiction or frameworks for non-fiction.",
+    icon: "fas fa-project-diagram",
+  },
+  {
+    title: "Study artefacts",
+    description:
+      "Auto-create flashcards, cloze deletions, quizzes, and push highlights to FlashNote, Language Flashcards, Exam Simulator, and Study Planner.",
+    icon: "fas fa-clipboard-check",
+  },
+  {
+    title: "Exports & sharing",
+    description:
+      "Deliver Markdown, PDF, DOCX, CSV, and PNG mind map exports with status tracking plus sharing links for mentors and study groups.",
+    icon: "fas fa-file-export",
+  },
+];
+
+const layers = [
+  {
+    title: "TL;DR capsule",
+    eyebrow: "LAYER",
+    description:
+      "One or two punchy sentences anchored to the book's thesis, built for instant recall without hallucinations.",
+    icon: "fas fa-bolt",
+  },
+  {
+    title: "Five key ideas",
+    eyebrow: "LAYER",
+    description:
+      "Concise bullets limited to twelve words each, with optional evidence tags referencing supporting pages or quotes.",
+    icon: "fas fa-list-ol",
+  },
+  {
+    title: "Executive one-pager",
+    eyebrow: "LAYER",
+    description:
+      "Structured ~500 word narrative covering thesis, arguments, evidence, critique, and actionable takeaways.",
+    icon: "fas fa-file-lines",
+  },
+  {
+    title: "Chapter synopses",
+    eyebrow: "LAYER",
+    description:
+      "100–300 word breakdown per chapter with two or three cited quotes, bias flags, and persona-aware phrasing.",
+    icon: "fas fa-book-open",
+  },
+];
+
+const controlHighlights = [
+  {
+    title: "Audience and tone",
+    description:
+      "Switch between kid, teen, adult, and academic voices, and blend neutral, persuasive, storytelling, or analytical tones per export.",
+    icon: "fas fa-person-chalkboard",
+  },
+  {
+    title: "Purpose presets",
+    description:
+      "Optimise summaries for exam prep, business takeaways, literature analysis, or quick briefings with automatic emphasis tweaks.",
+    icon: "fas fa-bullseye",
+  },
+  {
+    title: "Hallucination guard rails",
+    description:
+      "Cross-check facts against ingested text, mark unsupported opinions, surface biases, and request clarifications when confidence is low.",
+    icon: "fas fa-shield-alt",
+  },
+];
+
+const workspaceFlows = [
+  {
+    title: "Library dashboard",
+    description:
+      "Browse recent books, tag collections, and resume progress. Displays ingest status and reading percentage for each title.",
+    icon: "fas fa-gauge-high",
+    eyebrow: "Route: /book-summary-generator",
+  },
+  {
+    title: "Ingest wizard",
+    description:
+      "Upload files or paste text, capture metadata, set desired persona, and confirm privacy controls before parsing begins.",
+    icon: "fas fa-wand-magic-sparkles",
+    eyebrow: "Route: /book-summary-generator/new",
+  },
+  {
+    title: "Summary hub",
+    description:
+      "Tabbed overview across summaries, chapters, quotes, cards, graphs, and personal notes with export shortcuts and integrations.",
+    icon: "fas fa-table-columns",
+    eyebrow: "Route: /book-summary-generator/[id]",
+  },
+  {
+    title: "Compare editions",
+    description:
+      "Place two books side-by-side to contrast overlapping themes, conflicting claims, and unique contributions.",
+    icon: "fas fa-scale-balanced",
+    eyebrow: "Route: /book-summary-generator/compare",
+  },
+  {
+    title: "Export centre",
+    description:
+      "Queue Markdown, PDF, DOCX, CSV, and PNG exports with progress tracking, notifications, and download history.",
+    icon: "fas fa-download",
+    eyebrow: "Route: /book-summary-generator/export/[id]",
+  },
+  {
+    title: "Defaults & privacy",
+    description:
+      "Define preferred audience, tone, and data retention policies while managing connected FlashNote or Study Planner accounts.",
+    icon: "fas fa-sliders",
+    eyebrow: "Route: /book-summary-generator/settings",
+  },
+];
+
+const studyArtifacts = [
+  {
+    title: "Quotes & citations",
+    description:
+      "Filter quotes by chapter, theme, or sentiment; copy with MLA, APA, or Chicago citations and maintain evidence provenance.",
+    icon: "fas fa-quote-left",
+  },
+  {
+    title: "Cards & quizzes",
+    description:
+      "Generate cloze, definition, concept cards, MCQ, true/false, and short-form quizzes with CSV export or direct pushes to Exam Simulator.",
+    icon: "fas fa-clone",
+  },
+  {
+    title: "Concept maps",
+    description:
+      "Visualise entity relationships, timelines, and frameworks; export PNG mind maps for presentations or revision decks.",
+    icon: "fas fa-network-wired",
+  },
+];
+
+const dataModel = [
+  {
+    name: "BookItem",
+    details: [
+      "UUID id, user linkage, title metadata, language, edition, ISBN, total pages",
+      "References Source and aggregates ingest progress, history, and tags",
+    ],
+  },
+  {
+    name: "IngestJob",
+    details: [
+      "Tracks queued → running → done pipeline state with logs, detected pages, and chapters",
+      "Linked to optional WebSocket notifications for live progress",
+    ],
+  },
+  {
+    name: "Chapter & Section",
+    details: [
+      "Index-aligned ranges with optional headings and page spans for accurate mapping",
+      "Feeds chapter summaries, quotes, highlights, and note placement",
+    ],
+  },
+  {
+    name: "Quote & Entity",
+    details: [
+      "Store extracted text, page/loc references, sentiment, and thematic tags",
+      "Entities connect to Relation and TimelineEvent to power graphs and bias detection",
+    ],
+  },
+  {
+    name: "Summary, Card, QuizItem",
+    details: [
+      "Layer-specific outputs keyed by audience, tone, and purpose",
+      "Flashcards and quizzes preserve source evidence for auditability",
+    ],
+  },
+  {
+    name: "Note, Highlight, ExportJob",
+    details: [
+      "Learner-authored annotations with colour coding, retention policies, and exports",
+      "Export jobs track format, options, status, and generated artifact URLs",
+    ],
+  },
+];
+
+const planGating = [
+  {
+    tier: "Free",
+    details: [
+      "Upload up to 50 MB or paste text with 30-day history",
+      "Access TL;DR and five-bullet summaries with 10 quoted highlights",
+      "Basic concept graph and CSV flashcard export",
+    ],
+  },
+  {
+    tier: "Pro",
+    details: [
+      "Upload up to 200 MB with unlimited retention and compare editions",
+      "Unlock one-page, chapter summaries, unlimited quotes, and PNG graph exports",
+      "Push study artefacts to FlashNote, Language Flashcards, Study Planner, and Exam Simulator",
+    ],
+  },
+];
+
+const apiSurface = [
+  {
+    label: "Ingestion",
+    endpoints: [
+      "POST /book-summary-generator/api/ingest",
+      "GET /book-summary-generator/api/ingest/status?id=",
+      "WebSocket /book-summary-generator/ws (optional) for progress",
+    ],
+  },
+  {
+    label: "Summaries",
+    endpoints: [
+      "POST /book-summary-generator/api/summarize (layer=tldr|bullets|onepager|chapters)",
+      "GET /book-summary-generator/api/summary?id=&layer=",
+    ],
+  },
+  {
+    label: "Extraction",
+    endpoints: [
+      "POST /book-summary-generator/api/quotes/extract",
+      "POST /book-summary-generator/api/entities/extract",
+      "POST /book-summary-generator/api/relations/derive",
+    ],
+  },
+  {
+    label: "Study aids",
+    endpoints: [
+      "POST /book-summary-generator/api/cards/generate",
+      "POST /book-summary-generator/api/quiz/generate",
+      "POST /book-summary-generator/api/export",
+      "GET /book-summary-generator/api/export/status?id=",
+    ],
+  },
+  {
+    label: "Workspace",
+    endpoints: [
+      "POST /book-summary-generator/api/highlight/add",
+      "POST /book-summary-generator/api/note/add",
+      "POST /book-summary-generator/api/settings/save",
+    ],
+  },
+  {
+    label: "Compare",
+    endpoints: [
+      "POST /book-summary-generator/api/compare",
+    ],
+  },
+];
+
+const reliabilityNotes = [
+  "Semantic chunking with overlap keeps context windows within safe limits while retaining citations.",
+  "Bias detection flags author assumptions, distinguishes opinion from evidence, and suggests counterpoints.",
+  "Validation step cross-checks quotes against ingested text, deduplicates overlaps, and annotates low-confidence areas.",
+  "Progress tracking stores resume points, highlights, and notes with synced percentages for each user.",
+];
+---
+<Layout title="Book Summary Generator">
+  <main class="bg-white">
+    <HeroSection
+      eyebrow="LEARNING & RESEARCH"
+      title="Book Summary Generator"
+      description="Ingest books in any format and produce layered, citation-aware summaries with study artefacts, concept graphs, and integrations across the Ansiversa learning stack."
+      background="bg-gradient-to-br from-slate-950 via-indigo-900 to-slate-900 text-white"
+      padding="py-16"
+    >
+      <div slot="actions" class="flex flex-wrap items-center justify-center gap-3">
+        <a
+          href="#capabilities"
+          class="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-white/20"
+        >
+          <i class="fas fa-compass text-xs" aria-hidden="true"></i>
+          Explore capabilities
+        </a>
+        <a
+          href="#api"
+          class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100"
+        >
+          <i class="fas fa-code text-xs" aria-hidden="true"></i>
+          Review API surface
+        </a>
+      </div>
+    </HeroSection>
+
+    <section class="-mt-12 pb-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div class="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-soft backdrop-blur">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.35em] text-indigo-500">At a glance</h2>
+            <div class="mt-5 grid gap-4 sm:grid-cols-3">
+              {heroHighlights.map((item) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-left">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class={`${item.icon} text-sm`} aria-hidden="true"></i>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.label}</span>
+                  </div>
+                  <p class="mt-3 text-sm font-medium text-slate-900">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6 shadow-soft">
+            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Plan gating</p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              {planGating.map((tier) => (
+                <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
+                  <p class="text-sm font-semibold text-slate-900">{tier.tier}</p>
+                  <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                    {tier.details.map((detail) => (
+                      <li class="flex gap-2">
+                        <i class="fas fa-check text-xs text-emerald-500 mt-1"></i>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="capabilities" class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="CORE CAPABILITIES"
+          title="Every layer of the reading journey in one workspace"
+          description="From ingest to export, Book Summary Generator captures structure, evidence, and revision artefacts without leaving Ansiversa."
+        />
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {coreCapabilities.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="SUMMARISATION ENGINE"
+          title="Layered outputs tuned to context and purpose"
+          description="Choose the depth you need while maintaining citation integrity and persona-specific voice."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          {layers.map((layer) => (
+            <FeatureCard
+              {...layer}
+              baseClass="h-full rounded-3xl border border-indigo-100 bg-white p-6 shadow-none"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+              titleClass="mt-3 text-lg font-semibold text-slate-900"
+              eyebrowClass="text-xs font-semibold uppercase tracking-[0.3em] text-indigo-500"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+        <div class="grid gap-6 lg:grid-cols-3">
+          {controlHighlights.map((item) => (
+            <FeatureCard
+              {...item}
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900/5 text-slate-900"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16" id="flows">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="WORKSPACE FLOWS"
+          title="Guided routes from ingestion to revision"
+          description="Each workspace route keeps context, citations, and study progress synchronised across Ansiversa apps."
+        />
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {workspaceFlows.map((flow) => (
+            <FeatureCard
+              {...flow}
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+              eyebrowClass="text-xs font-semibold uppercase tracking-wide text-indigo-500"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="STUDY ARTEFACTS"
+          title="Deepen understanding with quotes, cards, and graphs"
+          description="Unlock revision workflows without retyping notes—every insight remains tied to a source line or page."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {studyArtifacts.map((artifact) => (
+            <FeatureCard {...artifact} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <div class="grid gap-6 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">Integrations</p>
+              <h3 class="mt-3 text-2xl font-semibold text-slate-900">Connected revision ecosystem</h3>
+              <p class="mt-4 text-sm text-slate-600">
+                FlashNote receives highlight bundles and spaced repetition cues, Language Flashcards imports vocabulary with transliterations, and Study Planner schedules revision loops based on chapter mastery. Presentation Designer turns key ideas into slide outlines in one click.
+              </p>
+            </div>
+            <ul class="space-y-3 text-sm text-slate-600">
+              <li class="flex gap-2">
+                <i class="fas fa-link text-xs text-indigo-500 mt-1"></i>
+                <span>Exports push tasks to Exam Simulator for assessment-ready drills.</span>
+              </li>
+              <li class="flex gap-2">
+                <i class="fas fa-clock text-xs text-indigo-500 mt-1"></i>
+                <span>Revision plans sync due dates and completion percentages to Study Planner.</span>
+              </li>
+              <li class="flex gap-2">
+                <i class="fas fa-language text-xs text-indigo-500 mt-1"></i>
+                <span>Vocabulary decks generate pronunciation hints and difficulty scores in Language Flashcards.</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 py-16" id="api">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="DATA & API"
+          title="APIs and schema to power the experience"
+          description="Backed by Astro DB entities, idempotent endpoints, and event-driven notifications for long-running tasks."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {apiSurface.map((group) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{group.label}</p>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {group.endpoints.map((endpoint) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-terminal text-xs text-slate-500 mt-1"></i>
+                    <span>{endpoint}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <div class="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+            <div class="space-y-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Data model snapshot</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Entities and relationships</h3>
+              <p class="text-sm text-slate-600">
+                Entities across ingestion, summarisation, study artefacts, and exports keep provenance intact. Composite indexes on book + layer or page ensure fast retrieval during interactive review.
+              </p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              {dataModel.map((entity) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class="fas fa-database text-sm" aria-hidden="true"></i>
+                    <p class="text-sm font-semibold uppercase tracking-wide text-slate-600">{entity.name}</p>
+                  </div>
+                  <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                    {entity.details.map((detail) => (
+                      <li class="flex gap-2">
+                        <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Reliability & trust</p>
+          <h3 class="mt-3 text-2xl font-semibold text-slate-900">Quality controls built for educators and researchers</h3>
+          <ul class="mt-6 space-y-3 text-sm text-slate-600">
+            {reliabilityNotes.map((note) => (
+              <li class="flex gap-3">
+                <i class="fas fa-shield-check text-sm text-indigo-500 mt-1" aria-hidden="true"></i>
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

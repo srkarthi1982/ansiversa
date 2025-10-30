@@ -1,0 +1,26 @@
+---
+import Button from "../../../components/Button.astro";
+---
+<section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-purple-600 to-slate-900 py-16 text-white">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_rgba(79,70,229,0.25))]"></div>
+  <div class="relative mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+    <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">Launch Formula Finder</h2>
+    <p class="mt-4 text-base text-white/80">
+      Bring dimensional accuracy to every study session. Connect the library, solver, and exports with the rest of Ansiversa’s learning stack.
+    </p>
+    <div class="mt-8 flex flex-wrap justify-center gap-3">
+      <Button href="/formula-finder" size="lg" class="shadow-lg shadow-indigo-900/40">
+        <i class="fas fa-rocket text-sm" aria-hidden="true"></i>
+        View launch checklist
+      </Button>
+      <Button href="/formula-finder/api/search" variant="outline" size="lg" class="border-white/40 text-white/80 hover:text-white">
+        <i class="fas fa-terminal text-sm" aria-hidden="true"></i>
+        API contracts
+      </Button>
+      <Button href="/formula-finder/history" variant="ghost" size="lg" class="text-white/80 hover:text-white">
+        <i class="fas fa-clock-rotate-left text-sm" aria-hidden="true"></i>
+        History workspace
+      </Button>
+    </div>
+  </div>
+</section>

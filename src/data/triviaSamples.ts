@@ -55,7 +55,7 @@ export const triviaModes = (): TriviaModeDefinition[] => [
     tagline: 'Customize category, difficulty, pacing, and power-ups.',
     description: 'Warm up, sharpen skills, or grind streaks with instant feedback and explanations after every question.',
     highlights: modeHighlights('solo'),
-    cta: '/trivia/play',
+    cta: '/trivia-arena/play',
     badge: 'Core mode',
   },
   {
@@ -64,7 +64,7 @@ export const triviaModes = (): TriviaModeDefinition[] => [
     tagline: 'One curated set per day for the whole community.',
     description: 'Compete for the daily crown with seeded questions, ghost replay, and community leaderboard snapshots.',
     highlights: modeHighlights('daily'),
-    cta: '/trivia/daily',
+    cta: '/trivia-arena/daily',
   },
   {
     key: 'arena',
@@ -72,7 +72,7 @@ export const triviaModes = (): TriviaModeDefinition[] => [
     tagline: 'Invite a friend and settle scores asynchronously.',
     description: 'Issue an arena link, play on your own schedule, and compare breakdowns when both players submit.',
     highlights: modeHighlights('arena'),
-    cta: '/trivia/arena',
+    cta: '/trivia-arena/arena',
     badge: 'Pro',
   },
   {

@@ -25,11 +25,11 @@ This document includes a concise **summary** for Codex onboarding and a **full t
 - Exports: MD/LaTeX/PDF; **FlashNote** cards for revision.
 
 ### Key Pages
-- `/formula` â€” Search & browse (topics, filters, recent).  
-- `/formula/[id]` â€” Formula detail (variables, steps, examples).  
-- `/formula/collections` â€” Boards/exams packs.  
-- `/formula/tools/solver` â€” Unit-aware solver.  
-- `/formula/history` â€” Recently viewed & custom saves.
+- `/formula-finder` â€” Search & browse (topics, filters, recent).  
+- `/formula-finder/[id]` â€” Formula detail (variables, steps, examples).  
+- `/formula-finder/collections` â€” Boards/exams packs.  
+- `/formula-finder/tools/solver` â€” Unit-aware solver.  
+- `/formula-finder/history` â€” Recently viewed & custom saves.
 
 ### Minimal Data Model
 `Topic`, `Formula`, `Variable`, `Unit`, `Dimension`, `Identity`, `Derivation`, `Example`, `Collection`, `Tag`
@@ -64,22 +64,22 @@ Integrations: **Homework Helper**, **Concept Explainer**, **Exam Simulator**, **
 ### 2) Information Architecture & Routes
 
 **Pages**
-- `/formula` â€” Explore/search, filters: Subject (Math/Physics/Chem), Topic, Board, Class, Difficulty.  
-- `/formula/[id]` â€” Detail: card, symbols, units, rearrangements, examples, assumptions, tags, related.  
-- `/formula/collections` â€” Packs by exam/board.  
-- `/formula/tools/solver` â€” Numeric/unit solver with step display.  
-- `/formula/history` â€” Viewed, favorites, downloads.
+- `/formula-finder` â€” Explore/search, filters: Subject (Math/Physics/Chem), Topic, Board, Class, Difficulty.  
+- `/formula-finder/[id]` â€” Detail: card, symbols, units, rearrangements, examples, assumptions, tags, related.  
+- `/formula-finder/collections` â€” Packs by exam/board.  
+- `/formula-finder/tools/solver` â€” Numeric/unit solver with step display.  
+- `/formula-finder/history` â€” Viewed, favorites, downloads.
 
 **API (SSR)**
-- `GET  /formula/api/search?q=&topic=&subject=&board=&class=`  
-- `GET  /formula/api/formula?id=`  
-- `POST /formula/api/solve` (solve for variable with units)  
-- `POST /formula/api/rearrange` (algebraic isolate variable)  
-- `POST /formula/api/convert` (unit conversion)  
-- `GET  /formula/api/collections`  
-- `POST /formula/api/export` (md|pdf|tex)  
-- `POST /formula/api/favorite` (Pro)  
-- `GET  /formula/api/history`
+- `GET  /formula-finder/api/search?q=&topic=&subject=&board=&class=`  
+- `GET  /formula-finder/api/formula?id=`  
+- `POST /formula-finder/api/solve` (solve for variable with units)  
+- `POST /formula-finder/api/rearrange` (algebraic isolate variable)  
+- `POST /formula-finder/api/convert` (unit conversion)  
+- `GET  /formula-finder/api/collections`  
+- `POST /formula-finder/api/export` (md|pdf|tex)  
+- `POST /formula-finder/api/favorite` (Pro)  
+- `GET  /formula-finder/api/history`
 
 Web workers (optional) for unit math and rearrangement to keep UI snappy.
 
@@ -135,12 +135,12 @@ Web workers (optional) for unit math and rearrangement to keep UI snappy.
 
 ### 5) Solver & Rearrangement
 
-**`/formula/api/rearrange`**
+**`/formula-finder/api/rearrange`**
 - Input: LaTeX string or internal AST + target symbol.  
 - Allowed algebra: add/subtract both sides, multiply/divide, power/root, log/exp where predefined.  
 - Output: LaTeX of isolated variable + step list `stepsMd`.
 
-**`/formula/api/solve`**
+**`/formula-finder/api/solve`**
 - Input: `formulaId`, `target`, `values` (with units).  
 - Pipeline: validate units â†’ convert to SI â†’ compute â†’ convert to requested output unit.  
 - Output: numeric value + steps (substitution table, unit cancellation).  
@@ -171,22 +171,22 @@ Web workers (optional) for unit math and rearrangement to keep UI snappy.
 ### 8) API Contracts (Examples)
 
 **Search**  
-`GET /formula/api/search?q=velocity&subject=physics&board=cbse&class=11`  
+`GET /formula-finder/api/search?q=velocity&subject=physics&board=cbse&class=11`  
 Res: `{ "items":[{"id":"kin_v1","latex":"v=\frac{\Delta x}{\Delta t}","topic":"Kinematics"}] }`
 
 **Read Formula**  
-`GET /formula/api/formula?id=kin_v1`  
+`GET /formula-finder/api/formula?id=kin_v1`  
 Res: `{ "id":"kin_v1","latex":"v=\frac{\Delta x}{\Delta t}","variables":[{"symbol":"v","unit":"m/s"}], "dim":{"L":1,"T":-1} }`
 
 **Rearrange**  
-`POST /formula/api/rearrange`  
+`POST /formula-finder/api/rearrange`  
 ```json
 { "latex":"s = ut + \tfrac{1}{2} a t^2", "target":"a" }
 ```  
 Res: `{ "latex":"a = \frac{2(s - ut)}{t^2}", "stepsMd":"1) Subtract ut ... 2) Multiply by 2 ... 3) Divide by t^2 ..." }`
 
 **Solve**  
-`POST /formula/api/solve`  
+`POST /formula-finder/api/solve`  
 ```json
 {
   "formulaId":"kin_suvat_2",
@@ -197,11 +197,11 @@ Res: `{ "latex":"a = \frac{2(s - ut)}{t^2}", "stepsMd":"1) Subtract ut ... 2) Mu
 Res: `{ "value":24, "unit":"m", "stepsMd":"Substitute: s = 5*3 + 0.5*2*3^2 ..." }`
 
 **Export**  
-`POST /formula/api/export`  
+`POST /formula-finder/api/export`  
 ```json
 { "formulaId":"kin_v1", "format":"tex" }
 ```  
-Res: `{ "url":"/exports/formula_kin_v1.tex" }`
+Res: `{ "url":"/exports/formula-finder_kin_v1.tex" }`
 
 ---
 
@@ -232,26 +232,26 @@ Rate limits: `/search` 30/min, `/solve` 10/min/user, `/rearrange` 5/min/user.
 ### 11) Suggested File Layout
 
 ```
-src/pages/formula/index.astro
-src/pages/formula/[id].astro
-src/pages/formula/collections.astro
-src/pages/formula/tools/solver.astro
-src/pages/formula/history.astro
+src/pages/formula-finder/index.astro
+src/pages/formula-finder/[id].astro
+src/pages/formula-finder/collections.astro
+src/pages/formula-finder/tools/solver.astro
+src/pages/formula-finder/history.astro
 
-src/pages/formula/api/search.ts
-src/pages/formula/api/formula.ts
-src/pages/formula/api/solve.ts
-src/pages/formula/api/rearrange.ts
-src/pages/formula/api/convert.ts
-src/pages/formula/api/collections.ts
-src/pages/formula/api/export.ts
-src/pages/formula/api/favorite.ts
-src/pages/formula/api/history.ts
+src/pages/formula-finder/api/search.ts
+src/pages/formula-finder/api/formula.ts
+src/pages/formula-finder/api/solve.ts
+src/pages/formula-finder/api/rearrange.ts
+src/pages/formula-finder/api/convert.ts
+src/pages/formula-finder/api/collections.ts
+src/pages/formula-finder/api/export.ts
+src/pages/formula-finder/api/favorite.ts
+src/pages/formula-finder/api/history.ts
 
-src/components/formula/Card/*.astro
-src/components/formula/Solver/*.astro
-src/components/formula/VariablesTable.astro
-src/components/formula/Examples/*.astro
+src/components/formula-finder/Card/*.astro
+src/components/formula-finder/Solver/*.astro
+src/components/formula-finder/VariablesTable.astro
+src/components/formula-finder/Examples/*.astro
 ```
 
 ---

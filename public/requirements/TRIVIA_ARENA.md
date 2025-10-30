@@ -1,7 +1,7 @@
 # ðŸŸï¸ Trivia Arena â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/trivia`  
+**Module Path:** `/trivia-arena`  
 **Category:** Fun & Engagement  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, WebSockets (optional for live rooms)  
 **Goal:** Deliver a fast, addictive trivia experience with **solo drills**, **daily challenge**, and **headâ€‘toâ€‘head arena** play. Includes question packs, streaks, powerâ€‘ups, and rich stats. Integrates with **Quiz Institute** for authoring and imports.
@@ -32,31 +32,31 @@
 
 1. **Start Solo Game**
    - *As a user*, I choose category, difficulty, number of questions (e.g., 10), and start.  
-   - **AC:** `/trivia/api/game/create` returns a `GameSession` with a randomized question set and a countdown timer.
+   - **AC:** `/trivia-arena/api/game/create` returns a `GameSession` with a randomized question set and a countdown timer.
 
 2. **Answer Questions**
    - *As a user*, I answer within the time limit; I see correct/incorrect + explanation.  
-   - **AC:** `/trivia/api/game/answer` validates response, computes points (base + time bonus), applies powerâ€‘ups.
+   - **AC:** `/trivia-arena/api/game/answer` validates response, computes points (base + time bonus), applies powerâ€‘ups.
 
 3. **Daily Challenge**
    - *As a user*, I play **one fixed set** per day (seeded).  
-   - **AC:** `/trivia/api/daily/today` returns the daily session; leaderboard updates after submit.
+   - **AC:** `/trivia-arena/api/daily/today` returns the daily session; leaderboard updates after submit.
 
 4. **Headâ€‘toâ€‘Head (Async)**
    - *As a user*, I challenge a friend via link; both play the same set independently.  
-   - **AC:** `/trivia/api/arena/create` issues a match URL; `/arena/submit` compares totals and declares winner; antiâ€‘replay enforced.
+   - **AC:** `/trivia-arena/api/arena/create` issues a match URL; `/arena/submit` compares totals and declares winner; antiâ€‘replay enforced.
 
 5. **Powerâ€‘Ups**
    - *As a user*, I use a powerâ€‘up once per game (free users: 1, Pro: 3).  
-   - **AC:** `/trivia/api/game/powerup` mutates the current question (50/50, add time, double points, hint).
+   - **AC:** `/trivia-arena/api/game/powerup` mutates the current question (50/50, add time, double points, hint).
 
 6. **Import Questions**
    - *As a user*, I import a CSV/JSON of questions.  
-   - **AC:** `/trivia/api/bank/import` validates schema, dedupes by hash, and reports results.
+   - **AC:** `/trivia-arena/api/bank/import` validates schema, dedupes by hash, and reports results.
 
 7. **Stats & Leaderboards**
    - *As a user*, I view my accuracy, avg answer time, streaks, best categories; compare on leaderboards.  
-   - **AC:** `/trivia/api/stats` aggregates; `/trivia/api/leaderboard` paginates rankings.
+   - **AC:** `/trivia-arena/api/stats` aggregates; `/trivia-arena/api/leaderboard` paginates rankings.
 
 8. **Plan Gating**
    - Free: Solo + Daily Challenge, limited powerâ€‘ups, basic leaderboards.  
@@ -66,24 +66,24 @@
 
 ## 3) Routes & Information Architecture
 
-- `/trivia` â€” Hub: start Solo, Daily Challenge card, Headâ€‘toâ€‘Head invite, stats.  
-- `/trivia/play` â€” Solo game UI (question panel, options, timer, powerâ€‘ups).  
-- `/trivia/daily` â€” Daily Challenge entry and leaderboard.  
-- `/trivia/arena/[matchId]` â€” Async Headâ€‘toâ€‘Head page (join/play/compare).  
-- `/trivia/bank` â€” Question packs (builtâ€‘in + user imports).  
-- `/trivia/stats` â€” Personal analytics.  
-- `/trivia/settings` â€” Preferences (sounds, timer length, language).
+- `/trivia-arena` â€” Hub: start Solo, Daily Challenge card, Headâ€‘toâ€‘Head invite, stats.  
+- `/trivia-arena/play` â€” Solo game UI (question panel, options, timer, powerâ€‘ups).  
+- `/trivia-arena/daily` â€” Daily Challenge entry and leaderboard.  
+- `/trivia-arena/arena/[matchId]` â€” Async Headâ€‘toâ€‘Head page (join/play/compare).  
+- `/trivia-arena/bank` â€” Question packs (builtâ€‘in + user imports).  
+- `/trivia-arena/stats` â€” Personal analytics.  
+- `/trivia-arena/settings` â€” Preferences (sounds, timer length, language).
 
 **API (SSR):**  
-- `POST /trivia/api/game/create` (create solo session)  
-- `POST /trivia/api/game/next` (next question)  
-- `POST /trivia/api/game/answer` (validate & score)  
-- `POST /trivia/api/game/powerup`  
-- `POST /trivia/api/daily/today` Â· `POST /trivia/api/daily/submit`  
-- `POST /trivia/api/arena/create` Â· `POST /trivia/api/arena/join` Â· `POST /trivia/api/arena/submit`  
-- `POST /trivia/api/bank/import` Â· `GET /trivia/api/bank/list`  
-- `GET  /trivia/api/stats` Â· `GET /trivia/api/leaderboard`  
-- `POST /trivia/api/delete` Â· `POST /trivia/api/duplicate`
+- `POST /trivia-arena/api/game/create` (create solo session)  
+- `POST /trivia-arena/api/game/next` (next question)  
+- `POST /trivia-arena/api/game/answer` (validate & score)  
+- `POST /trivia-arena/api/game/powerup`  
+- `POST /trivia-arena/api/daily/today` Â· `POST /trivia-arena/api/daily/submit`  
+- `POST /trivia-arena/api/arena/create` Â· `POST /trivia-arena/api/arena/join` Â· `POST /trivia-arena/api/arena/submit`  
+- `POST /trivia-arena/api/bank/import` Â· `GET /trivia-arena/api/bank/list`  
+- `GET  /trivia-arena/api/stats` Â· `GET /trivia-arena/api/leaderboard`  
+- `POST /trivia-arena/api/delete` Â· `POST /trivia-arena/api/duplicate`
 
 ---
 
@@ -152,78 +152,78 @@
 
 ## 7) UI / Pages
 
-### `/trivia` (Hub)
+### `/trivia-arena` (Hub)
 - Start Solo: category, difficulty, #questions, timer length, powerâ€‘ups toggle.  
 - Daily Challenge card: time left, yesterdayâ€™s top 10.  
 - Headâ€‘toâ€‘Head invite: generate link.  
 - Recent stats miniâ€‘cards.
 
-### `/trivia/play`
+### `/trivia-arena/play`
 - Header: progress `Q 3/10`, timer, score, streak.  
 - Question card + options; powerâ€‘ups row; **Submit** / **Next**.  
 - Feedback panel: correct answer + explanation; â€œShare scoreâ€ (copy text).
 
-### `/trivia/daily`
+### `/trivia-arena/daily`
 - Start button; after finish: leaderboard table (Top, My Rank).
 
-### `/trivia/arena/[matchId]`
+### `/trivia-arena/arena/[matchId]`
 - Preâ€‘game: join prompt for opponent.  
 - During game: same UI as Solo.  
 - Postâ€‘game: sideâ€‘byâ€‘side results, rematch button.
 
-### `/trivia/bank`
+### `/trivia-arena/bank`
 - Builtâ€‘in packs; user packs with size; import wizard (CSV/JSON).
 
-### `/trivia/stats`
+### `/trivia-arena/stats`
 - Charts: accuracy by category, avg time per difficulty, streak calendar, best scores.
 
-### `/trivia/settings`
+### `/trivia-arena/settings`
 - Sounds on/off, timer default, language, accessibility (high contrast, larger text).
 
 ---
 
 ## 8) API Contracts (examples)
 
-### `POST /trivia/api/game/create`
+### `POST /trivia-arena/api/game/create`
 Req: `{ "mode":"solo", "category":"science", "difficulty":"medium", "count":10, "timer":20 }`  
 Res: `{ "sessionId":"<uuid>", "questionIds":[...], "timePerQuestion":20 }`
 
-### `POST /trivia/api/game/next`
+### `POST /trivia-arena/api/game/next`
 Req: `{ "sessionId":"<uuid>" }`  
 Res: `{ "q":{"id":"...","text":"...","type":"mcq","options":["A","B","C","D"]} }`
 
-### `POST /trivia/api/game/answer`
+### `POST /trivia-arena/api/game/answer`
 Req: `{ "sessionId":"<uuid>", "questionId":"...", "answer":"B" }`  
 Res: `{ "correct":true, "points":187, "streak":3, "nextAvailable":true, "explanation":"..." }`
 
-### `POST /trivia/api/game/powerup`
+### `POST /trivia-arena/api/game/powerup`
 Req: `{ "sessionId":"<uuid>", "type":"5050" }`  
 Res: `{ "remaining":["B","D"] }`
 
-### `POST /trivia/api/daily/today`
+### `POST /trivia-arena/api/daily/today`
 Req: `{}`  
 Res: `{ "sessionId":"<uuid>", "questionIds":[...], "seed":"2025-10-27" }`
 
-### `POST /trivia/api/daily/submit`
+### `POST /trivia-arena/api/daily/submit`
 Req: `{ "sessionId":"<uuid>" }`  
 Res: `{ "score":1234, "rank":57 }`
 
-### `POST /trivia/api/arena/create`
+### `POST /trivia-arena/api/arena/create`
 Req: `{ "category":"mixed", "difficulty":"mixed", "count":10 }`  
-Res: `{ "matchId":"<uuid>", "inviteUrl":"/trivia/arena/<uuid>" }`
+Res: `{ "matchId":"<uuid>", "inviteUrl":"/trivia-arena/arena/<uuid>" }`
 
-### `POST /trivia/api/arena/join`
+### `POST /trivia-arena/api/arena/join`
 Req: `{ "matchId":"<uuid>" }` â†’ Res: `{ "ok":true }`
 
-### `POST /trivia/api/arena/submit`
+### `POST /trivia-arena/api/arena/submit`
 Req: `{ "matchId":"<uuid>", "sessionId":"<uuid>" }`  
 Res: `{ "winner":"creator|opponent|draw", "scores":{"creator":1200,"opponent":1150} }`
 
-### `GET /trivia/api/leaderboard`
+### `GET /trivia-arena/api/leaderboard`
 Req: `?scope=daily&key=2025-10-27&limit=50&offset=0`  
 Res: `{ "rows":[{"user":"Karthik","score":1890,"timeMs":95000}], "me":{"rank":42} }`
 
-### `POST /trivia/api/bank/import`
+### `POST /trivia-arena/api/bank/import`
 Req: multipart CSV/JSON  
 Res: `{ "ok":true, "imported":340, "duplicates":12, "errors":0 }`
 
@@ -274,35 +274,35 @@ Rate limits: `userId`+day for plays; `userId`+month for imports.
 ## 13) Suggested File Layout
 
 ```
-src/pages/trivia/index.astro
-src/pages/trivia/play.astro
-src/pages/trivia/daily.astro
-src/pages/trivia/arena/[matchId].astro
-src/pages/trivia/bank.astro
-src/pages/trivia/stats.astro
-src/pages/trivia/settings.astro
+src/pages/trivia-arena/index.astro
+src/pages/trivia-arena/play.astro
+src/pages/trivia-arena/daily.astro
+src/pages/trivia-arena/arena/[matchId].astro
+src/pages/trivia-arena/bank.astro
+src/pages/trivia-arena/stats.astro
+src/pages/trivia-arena/settings.astro
 
-src/pages/trivia/api/game/create.ts
-src/pages/trivia/api/game/next.ts
-src/pages/trivia/api/game/answer.ts
-src/pages/trivia/api/game/powerup.ts
-src/pages/trivia/api/daily/today.ts
-src/pages/trivia/api/daily/submit.ts
-src/pages/trivia/api/arena/create.ts
-src/pages/trivia/api/arena/join.ts
-src/pages/trivia/api/arena/submit.ts
-src/pages/trivia/api/bank/import.ts
-src/pages/trivia/api/bank/list.ts
-src/pages/trivia/api/stats.ts
-src/pages/trivia/api/leaderboard.ts
-src/pages/trivia/api/delete.ts
-src/pages/trivia/api/duplicate.ts
+src/pages/trivia-arena/api/game/create.ts
+src/pages/trivia-arena/api/game/next.ts
+src/pages/trivia-arena/api/game/answer.ts
+src/pages/trivia-arena/api/game/powerup.ts
+src/pages/trivia-arena/api/daily/today.ts
+src/pages/trivia-arena/api/daily/submit.ts
+src/pages/trivia-arena/api/arena/create.ts
+src/pages/trivia-arena/api/arena/join.ts
+src/pages/trivia-arena/api/arena/submit.ts
+src/pages/trivia-arena/api/bank/import.ts
+src/pages/trivia-arena/api/bank/list.ts
+src/pages/trivia-arena/api/stats.ts
+src/pages/trivia-arena/api/leaderboard.ts
+src/pages/trivia-arena/api/delete.ts
+src/pages/trivia-arena/api/duplicate.ts
 
-src/components/trivia/Game/*.astro
-src/components/trivia/Question/*.astro
-src/components/trivia/Powerups/*.astro
-src/components/trivia/Bank/*.astro
-src/components/trivia/Stats/*.astro
+src/components/trivia-arena/Game/*.astro
+src/components/trivia-arena/Question/*.astro
+src/components/trivia-arena/Powerups/*.astro
+src/components/trivia-arena/Bank/*.astro
+src/components/trivia-arena/Stats/*.astro
 ```
 
 ---

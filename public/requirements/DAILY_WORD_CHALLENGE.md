@@ -19,12 +19,12 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 - **Notifications**: gentle daily reminder window.
 
 ### Key Pages
-- `/dwchallenge` â€” Todayâ€™s challenge start/resume  
-- `/dwchallenge/play` â€” Game UI  
-- `/dwchallenge/summary/[id]` â€” Results & learning links  
-- `/dwchallenge/archive` â€” Past challenges (Pro)  
-- `/dwchallenge/stats` â€” Streaks & accuracy trends  
-- `/dwchallenge/settings` â€” Language level, reminder time, hints
+- `/daily-word-challenge` â€” Todayâ€™s challenge start/resume  
+- `/daily-word-challenge/play` â€” Game UI  
+- `/daily-word-challenge/summary/[id]` â€” Results & learning links  
+- `/daily-word-challenge/archive` â€” Past challenges (Pro)  
+- `/daily-word-challenge/stats` â€” Streaks & accuracy trends  
+- `/daily-word-challenge/settings` â€” Language level, reminder time, hints
 
 ### Minimal Data Model
 `DailyPack`, `DailyItem`, `Attempt`, `Score`, `Streak`, `Settings`, `Leaderboard` (Pro), `Hint`, `Tag`
@@ -61,24 +61,24 @@ Integrations: **Dictionary+**, **Language Flashcards**, **Study Planner** (sched
 ### 2) Information Architecture & Routes
 
 **Pages**
-- `/dwchallenge` â€” â€œPlay Todayâ€™s Packâ€; shows level, theme, time estimate, streak badge.  
-- `/dwchallenge/play` â€” Task runner (progress 1/5; timer; hint; skip).  
-- `/dwchallenge/summary/[id]` â€” Score, accuracy, time, streak update, missed words â†’ â€œAdd to Flashcardsâ€.  
-- `/dwchallenge/archive` â€” Calendar list of previous days; replay doesnâ€™t change streak.  
-- `/dwchallenge/stats` â€” Streak chart, accuracy trend, top tags.  
-- `/dwchallenge/settings` â€” Language, level, reminder, hints, audio.
+- `/daily-word-challenge` â€” â€œPlay Todayâ€™s Packâ€; shows level, theme, time estimate, streak badge.  
+- `/daily-word-challenge/play` â€” Task runner (progress 1/5; timer; hint; skip).  
+- `/daily-word-challenge/summary/[id]` â€” Score, accuracy, time, streak update, missed words â†’ â€œAdd to Flashcardsâ€.  
+- `/daily-word-challenge/archive` â€” Calendar list of previous days; replay doesnâ€™t change streak.  
+- `/daily-word-challenge/stats` â€” Streak chart, accuracy trend, top tags.  
+- `/daily-word-challenge/settings` â€” Language, level, reminder, hints, audio.
 
 **API (SSR)**
-- Packs: `GET /dwchallenge/api/today?lang=&level=` Â· `GET /dwchallenge/api/pack?id=`  
-- Attempts: `POST /dwchallenge/api/attempt` (submit response)  
-- Finish: `POST /dwchallenge/api/finish` (compute score, update streak)  
-- Stats: `GET /dwchallenge/api/stats`  
-- Leaderboard (Pro): `GET /dwchallenge/api/leaderboard?range=daily|weekly`  
-- Export: `POST /dwchallenge/api/flashcards/send` Â· `POST /dwchallenge/api/dictionary/open`  
-- Settings: `POST /dwchallenge/api/settings/save`  
-- Notifications: `POST /dwchallenge/api/notify/register`
+- Packs: `GET /daily-word-challenge/api/today?lang=&level=` Â· `GET /daily-word-challenge/api/pack?id=`  
+- Attempts: `POST /daily-word-challenge/api/attempt` (submit response)  
+- Finish: `POST /daily-word-challenge/api/finish` (compute score, update streak)  
+- Stats: `GET /daily-word-challenge/api/stats`  
+- Leaderboard (Pro): `GET /daily-word-challenge/api/leaderboard?range=daily|weekly`  
+- Export: `POST /daily-word-challenge/api/flashcards/send` Â· `POST /daily-word-challenge/api/dictionary/open`  
+- Settings: `POST /daily-word-challenge/api/settings/save`  
+- Notifications: `POST /daily-word-challenge/api/notify/register`
 
-Optional WebSocket `/dwchallenge/ws` for timer ticks; HTTP is fine for v1.
+Optional WebSocket `/daily-word-challenge/ws` for timer ticks; HTTP is fine for v1.
 
 ---
 
@@ -167,28 +167,28 @@ Indexes: `DailyPack.date+langCode+level` unique; `Attempt.userId+packId`, `Score
 ### 7) API Contracts (Examples)
 
 **Get todayâ€™s pack**  
-`GET /dwchallenge/api/today?lang=en&level=B2`  
+`GET /daily-word-challenge/api/today?lang=en&level=B2`  
 Res: `{ "packId":"p2025-10-29-en-B2", "date":"2025-10-29", "items":[{"id":"i1","taskType":"mcq_def","prompt":{...}}], "size":3 }`
 
 **Submit attempt**  
-`POST /dwchallenge/api/attempt`  
+`POST /daily-word-challenge/api/attempt`  
 ```json
 { "packId":"p2025-10-29-en-B2", "itemId":"i1", "response":{"choice":2}, "seconds":9, "hintCount":1 }
 ```
 Res: `{ "correct":true, "score":154 }`
 
 **Finish pack**  
-`POST /dwchallenge/api/finish` â†’ `{ "total": 412, "accuracy": 0.86, "streak":{"current":14,"best":29} }`
+`POST /daily-word-challenge/api/finish` â†’ `{ "total": 412, "accuracy": 0.86, "streak":{"current":14,"best":29} }`
 
 **Export to Flashcards**  
-`POST /dwchallenge/api/flashcards/send`  
+`POST /daily-word-challenge/api/flashcards/send`  
 ```json
 { "packId":"p2025-10-29-en-B2", "onlyMissed":true, "deckName":"Daily B2 Recovery" }
 ```
 Res: `{ "created": 3 }`
 
 **Leaderboard (Pro)**  
-`GET /dwchallenge/api/leaderboard?range=daily&lang=en&level=B2`  
+`GET /daily-word-challenge/api/leaderboard?range=daily&lang=en&level=B2`  
 Res: `{ "items":[{"rank":1,"user":"Akash","score":487}], "you":{"rank":27,"score":312} }`
 
 ---
@@ -222,27 +222,27 @@ Rate limits: `/attempt` 60/min; `/finish` 10/day; `/flashcards/send` 50/day.
 ### 10) Suggested File Layout
 
 ```
-src/pages/dwchallenge/index.astro
-src/pages/dwchallenge/play.astro
-src/pages/dwchallenge/summary/[id].astro
-src/pages/dwchallenge/archive.astro
-src/pages/dwchallenge/stats.astro
-src/pages/dwchallenge/settings.astro
+src/pages/daily-word-challenge/index.astro
+src/pages/daily-word-challenge/play.astro
+src/pages/daily-word-challenge/summary/[id].astro
+src/pages/daily-word-challenge/archive.astro
+src/pages/daily-word-challenge/stats.astro
+src/pages/daily-word-challenge/settings.astro
 
-src/pages/dwchallenge/api/today.ts
-src/pages/dwchallenge/api/pack.ts
-src/pages/dwchallenge/api/attempt.ts
-src/pages/dwchallenge/api/finish.ts
-src/pages/dwchallenge/api/stats.ts
-src/pages/dwchallenge/api/leaderboard.ts
-src/pages/dwchallenge/api/flashcards/send.ts
-src/pages/dwchallenge/api/dictionary/open.ts
-src/pages/dwchallenge/api/settings/save.ts
-src/pages/dwchallenge/api/notify/register.ts
+src/pages/daily-word-challenge/api/today.ts
+src/pages/daily-word-challenge/api/pack.ts
+src/pages/daily-word-challenge/api/attempt.ts
+src/pages/daily-word-challenge/api/finish.ts
+src/pages/daily-word-challenge/api/stats.ts
+src/pages/daily-word-challenge/api/leaderboard.ts
+src/pages/daily-word-challenge/api/flashcards/send.ts
+src/pages/daily-word-challenge/api/dictionary/open.ts
+src/pages/daily-word-challenge/api/settings/save.ts
+src/pages/daily-word-challenge/api/notify/register.ts
 
-src/components/dwchallenge/Play/*.astro
-src/components/dwchallenge/Summary/*.astro
-src/components/dwchallenge/Stats/*.astro
+src/components/daily-word-challenge/Play/*.astro
+src/components/daily-word-challenge/Summary/*.astro
+src/components/daily-word-challenge/Stats/*.astro
 ```
 
 ---

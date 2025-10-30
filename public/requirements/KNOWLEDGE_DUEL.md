@@ -22,12 +22,12 @@ This document contains a **short summary** for Codex onboarding and the **full t
 - **Integrations:** Quiz Institute (questions), Trivia Arena (solo play), Profile/Resume badges.
 
 ### Key Pages
-- `/duel` â€” Lobby (find match, create room, join via code)  
-- `/duel/match/[id]` â€” Live match UI  
-- `/duel/results/[id]` â€” Recap & breakdown  
-- `/duel/leaderboards` â€” Ladders & seasons  
-- `/duel/history` â€” Past matches & replays  
-- `/duel/settings` â€” Preferences (topics, time, difficulty)
+- `/knowledge-duel` â€” Lobby (find match, create room, join via code)  
+- `/knowledge-duel/match/[id]` â€” Live match UI  
+- `/knowledge-duel/results/[id]` â€” Recap & breakdown  
+- `/knowledge-duel/leaderboards` â€” Ladders & seasons  
+- `/knowledge-duel/history` â€” Past matches & replays  
+- `/knowledge-duel/settings` â€” Preferences (topics, time, difficulty)
 
 ### Minimal Data Model
 `User`, `Match`, `Round`, `QuestionRef`, `Answer`, `Rating`, `LeaderboardEntry`, `Season`, `Report`
@@ -86,38 +86,38 @@ This document contains a **short summary** for Codex onboarding and the **full t
 ### 3) Information Architecture & Routes
 
 **Pages**
-- `/duel` â€” Lobby: Quick Match, Create Room, Join with Code, Practice.  
-- `/duel/match/[id]` â€” Live board: timer, question, choices, progress, reaction emojis.  
-- `/duel/results/[id]` â€” Score, perâ€‘question breakdown, accuracy, speed graph, share.  
-- `/duel/leaderboards` â€” Global/Season/Friends/Category tabs.  
-- `/duel/history` â€” Recent matches; replay viewer.  
-- `/duel/settings` â€” Topics, difficulty, time per question, privacy.
+- `/knowledge-duel` â€” Lobby: Quick Match, Create Room, Join with Code, Practice.  
+- `/knowledge-duel/match/[id]` â€” Live board: timer, question, choices, progress, reaction emojis.  
+- `/knowledge-duel/results/[id]` â€” Score, perâ€‘question breakdown, accuracy, speed graph, share.  
+- `/knowledge-duel/leaderboards` â€” Global/Season/Friends/Category tabs.  
+- `/knowledge-duel/history` â€” Recent matches; replay viewer.  
+- `/knowledge-duel/settings` â€” Topics, difficulty, time per question, privacy.
 
 **API (SSR)**
 - Match lifecycle:  
-  - `POST /duel/api/match/create`  
-  - `POST /duel/api/match/join`  
-  - `GET  /duel/api/match` (state by id)  
-  - `POST /duel/api/match/ready`  
-  - `POST /duel/api/match/finish`
+  - `POST /knowledge-duel/api/match/create`  
+  - `POST /knowledge-duel/api/match/join`  
+  - `GET  /knowledge-duel/api/match` (state by id)  
+  - `POST /knowledge-duel/api/match/ready`  
+  - `POST /knowledge-duel/api/match/finish`
 - Rounds & answers:  
-  - `GET  /duel/api/round/next`  
-  - `POST /duel/api/answer/submit`  
-  - `GET  /duel/api/results`
+  - `GET  /knowledge-duel/api/round/next`  
+  - `POST /knowledge-duel/api/answer/submit`  
+  - `GET  /knowledge-duel/api/results`
 - Matchmaking & ratings:  
-  - `POST /duel/api/matchmaking/queue`  
-  - `POST /duel/api/rating/update` (serverâ€‘side only)  
+  - `POST /knowledge-duel/api/matchmaking/queue`  
+  - `POST /knowledge-duel/api/rating/update` (serverâ€‘side only)  
 - Leaderboards & seasons:  
-  - `GET  /duel/api/leaderboard`  
-  - `GET  /duel/api/season/current`
+  - `GET  /knowledge-duel/api/leaderboard`  
+  - `GET  /knowledge-duel/api/season/current`
 - History & replays:  
-  - `GET  /duel/api/history`  
-  - `GET  /duel/api/replay`
+  - `GET  /knowledge-duel/api/history`  
+  - `GET  /knowledge-duel/api/replay`
 - Reports & abuse:  
-  - `POST /duel/api/report`
+  - `POST /knowledge-duel/api/report`
 
 **WebSocket (optional for realâ€‘time)**
-- `/duel/ws` â€” events: `match:start`, `round:show`, `timer:tick`, `answer:ack`, `match:end`.
+- `/knowledge-duel/ws` â€” events: `match:start`, `round:show`, `timer:tick`, `answer:ack`, `match:end`.
 
 ---
 
@@ -199,7 +199,7 @@ Accessibility: high contrast, screenâ€‘reader labels, keyboard shortcuts (1
 ### 8) API Contracts (Examples)
 
 **Create Match**  
-`POST /duel/api/match/create`  
+`POST /knowledge-duel/api/match/create`  
 ```json
 {
   "mode":"realtime",
@@ -212,29 +212,29 @@ Accessibility: high contrast, screenâ€‘reader labels, keyboard shortcuts (1
 Res: `{ "matchId":"<uuid>", "joinCode":"ABCD" }`
 
 **Join Match**  
-`POST /duel/api/match/join`  
+`POST /knowledge-duel/api/match/join`  
 ```json
 { "matchId":"<uuid>" }
 ```
 Res: `{ "ok":true }`
 
 **Next Round (server reveals)**  
-`GET /duel/api/round/next?matchId=<uuid>`  
+`GET /knowledge-duel/api/round/next?matchId=<uuid>`  
 Res: `{ "roundId":123, "question":{"id":"q_981","type":"mcq","text":"...","choices":["A","B","C","D"]}, "startAt":1692000000,"endAt":1692000015 }`
 
 **Submit Answer**  
-`POST /duel/api/answer/submit`  
+`POST /knowledge-duel/api/answer/submit`  
 ```json
 { "matchId":"<uuid>", "roundId":123, "choice":"B" }
 ```
 Res: `{ "ack":true, "isCorrect":true, "scoreDelta":14 }`
 
 **Results**  
-`GET /duel/api/results?matchId=<uuid>`  
+`GET /knowledge-duel/api/results?matchId=<uuid>`  
 Res: `{ "winnerId":"u_1", "p1":{"score":81,"accuracy":86}, "p2":{"score":77,"accuracy":80}, "breakdown":[...], "ratingDelta":{"u_1":+14,"u_2":-14} }`
 
 **Leaderboard**  
-`GET /duel/api/leaderboard?season=current&type=global&limit=100`
+`GET /knowledge-duel/api/leaderboard?season=current&type=global&limit=100`
 
 ---
 
@@ -268,31 +268,31 @@ Rate limits: `/match/create` 10/day (Free) 50/day (Pro); `/answer/submit` 2 req/
 ### 11) Suggested File Layout
 
 ```
-src/pages/duel/index.astro
-src/pages/duel/match/[id].astro
-src/pages/duel/results/[id].astro
-src/pages/duel/leaderboards.astro
-src/pages/duel/history.astro
-src/pages/duel/settings.astro
+src/pages/knowledge-duel/index.astro
+src/pages/knowledge-duel/match/[id].astro
+src/pages/knowledge-duel/results/[id].astro
+src/pages/knowledge-duel/leaderboards.astro
+src/pages/knowledge-duel/history.astro
+src/pages/knowledge-duel/settings.astro
 
-src/pages/duel/api/match/create.ts
-src/pages/duel/api/match/join.ts
-src/pages/duel/api/match/index.ts
-src/pages/duel/api/match/ready.ts
-src/pages/duel/api/match/finish.ts
-src/pages/duel/api/round/next.ts
-src/pages/duel/api/answer/submit.ts
-src/pages/duel/api/results.ts
-src/pages/duel/api/leaderboard.ts
-src/pages/duel/api/season/current.ts
-src/pages/duel/api/history.ts
-src/pages/duel/api/replay.ts
-src/pages/duel/api/report.ts
+src/pages/knowledge-duel/api/match/create.ts
+src/pages/knowledge-duel/api/match/join.ts
+src/pages/knowledge-duel/api/match/index.ts
+src/pages/knowledge-duel/api/match/ready.ts
+src/pages/knowledge-duel/api/match/finish.ts
+src/pages/knowledge-duel/api/round/next.ts
+src/pages/knowledge-duel/api/answer/submit.ts
+src/pages/knowledge-duel/api/results.ts
+src/pages/knowledge-duel/api/leaderboard.ts
+src/pages/knowledge-duel/api/season/current.ts
+src/pages/knowledge-duel/api/history.ts
+src/pages/knowledge-duel/api/replay.ts
+src/pages/knowledge-duel/api/report.ts
 
-src/components/duel/Lobby/*.astro
-src/components/duel/Live/*.astro
-src/components/duel/Results/*.astro
-src/components/duel/Leaderboards/*.astro
+src/components/knowledge-duel/Lobby/*.astro
+src/components/knowledge-duel/Live/*.astro
+src/components/knowledge-duel/Results/*.astro
+src/components/knowledge-duel/Leaderboards/*.astro
 ```
 
 ---

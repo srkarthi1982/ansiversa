@@ -1,7 +1,7 @@
 # ðŸ¥— Meal Planner â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/meals`  
+**Module Path:** `/meal-planner`  
 **Category:** Lifestyle & Wellâ€‘Being  
 **Stack:** Astro + Tailwind (islands for planners/forms), Astro SSR API routes, Astro DB / Supabase, optional workers for weekly jobs  
 **Goal:** Help users plan nutritious, budgetâ€‘aware meals for the week. Generate meal plans by calories/macros, diet type, allergies, cuisine, and budget; produce grocery lists; track pantry; and export/share.
@@ -35,23 +35,23 @@
 
 1. **Generate Weekly Plan**
    - *As a user*, I set calories (e.g., 2,000/day), protein min (100g), diet=Vegetarian, and budget=moderate.  
-   - **AC:** `/meals/api/plan/generate` returns a 7â€‘day plan with recipes per meal, nutrition totals, and grocery list draft.
+   - **AC:** `/meal-planner/api/plan/generate` returns a 7â€‘day plan with recipes per meal, nutrition totals, and grocery list draft.
 
 2. **Customize & Swap**
    - *As a user*, I replace a dinner with a different recipe respecting allergies.  
-   - **AC:** `/meals/api/plan/swap` suggests compatible alternatives; totals update.
+   - **AC:** `/meal-planner/api/plan/swap` suggests compatible alternatives; totals update.
 
 3. **Grocery List**
    - *As a user*, I view a consolidated list grouped by aisle.  
-   - **AC:** `/meals/api/grocery/list` aggregates ingredients across the week, dedupes, and converts units.
+   - **AC:** `/meal-planner/api/grocery/list` aggregates ingredients across the week, dedupes, and converts units.
 
 4. **Pantry & Leftovers**
    - *As a user*, I mark items I already have.  
-   - **AC:** `/meals/api/pantry/apply` subtracts pantry items; leftover recipes are suggested for unused ingredients.
+   - **AC:** `/meal-planner/api/pantry/apply` subtracts pantry items; leftover recipes are suggested for unused ingredients.
 
 5. **Batch Cooking / Prep**
    - *As a user*, I mark â€œmeal prep Sundayâ€ for lunches.  
-   - **AC:** `/meals/api/prep/plan` merges steps and generates a prep checklist.
+   - **AC:** `/meal-planner/api/prep/plan` merges steps and generates a prep checklist.
 
 6. **Allergies & Dislikes**
    - *As a user*, I set allergens and disliked ingredients/cuisines.  
@@ -69,23 +69,23 @@
 
 ## 3) Routes & Information Architecture
 
-- `/meals` â€” Hub: New plan wizard, recent plans, quick add recipes.  
-- `/meals/new` â€” Wizard: profiles (user/family), calories/macros, diet, allergies, budget, time, cuisines, days, meal slots.  
-- `/meals/plan/[id]` â€” Plan board (calendar/week grid).  
-- `/meals/grocery/[id]` â€” Grocery list (aisle groups, pantry toggle).  
-- `/meals/recipes` â€” Browse/search recipes.  
-- `/meals/recipes/new` â€” Add recipe form (ingredients, steps, tags, nutrition).  
-- `/meals/pantry` â€” Pantry inventory & expiries.  
-- `/meals/settings` â€” Units, language, default targets.
+- `/meal-planner` â€” Hub: New plan wizard, recent plans, quick add recipes.  
+- `/meal-planner/new` â€” Wizard: profiles (user/family), calories/macros, diet, allergies, budget, time, cuisines, days, meal slots.  
+- `/meal-planner/plan/[id]` â€” Plan board (calendar/week grid).  
+- `/meal-planner/grocery/[id]` â€” Grocery list (aisle groups, pantry toggle).  
+- `/meal-planner/recipes` â€” Browse/search recipes.  
+- `/meal-planner/recipes/new` â€” Add recipe form (ingredients, steps, tags, nutrition).  
+- `/meal-planner/pantry` â€” Pantry inventory & expiries.  
+- `/meal-planner/settings` â€” Units, language, default targets.
 
 **API (SSR):**  
-- `POST /meals/api/plan/generate` Â· `POST /meals/api/plan/update` Â· `POST /meals/api/plan/swap` Â· `POST /meals/api/plan/delete`  
-- `GET  /meals/api/plan` (fetch by id) Â· `GET /meals/api/plan/list`  
-- `POST /meals/api/grocery/list` Â· `POST /meals/api/grocery/export` (csv|md|pdf)  
-- `POST /meals/api/pantry/apply` Â· `POST /meals/api/pantry/update` Â· `GET /meals/api/pantry`  
-- `POST /meals/api/recipe/create` Â· `POST /meals/api/recipe/update` Â· `POST /meals/api/recipe/delete` Â· `GET /meals/api/recipe/search`  
-- `POST /meals/api/prep/plan`  
-- `POST /meals/api/profile/save`
+- `POST /meal-planner/api/plan/generate` Â· `POST /meal-planner/api/plan/update` Â· `POST /meal-planner/api/plan/swap` Â· `POST /meal-planner/api/plan/delete`  
+- `GET  /meal-planner/api/plan` (fetch by id) Â· `GET /meal-planner/api/plan/list`  
+- `POST /meal-planner/api/grocery/list` Â· `POST /meal-planner/api/grocery/export` (csv|md|pdf)  
+- `POST /meal-planner/api/pantry/apply` Â· `POST /meal-planner/api/pantry/update` Â· `GET /meal-planner/api/pantry`  
+- `POST /meal-planner/api/recipe/create` Â· `POST /meal-planner/api/recipe/update` Â· `POST /meal-planner/api/recipe/delete` Â· `GET /meal-planner/api/recipe/search`  
+- `POST /meal-planner/api/prep/plan`  
+- `POST /meal-planner/api/profile/save`
 
 ---
 
@@ -136,27 +136,27 @@
 
 ## 6) UI / Pages
 
-### `/meals` (Hub)
+### `/meal-planner` (Hub)
 - New Plan wizard; last plan KPIs (avg kcal, protein, budget).
 
-### `/meals/plan/[id]` (Week Grid)
+### `/meal-planner/plan/[id]` (Week Grid)
 - 7â€‘day grid with slots; click to view recipe card; swap, adjust servings, mark done.  
 - Side panel: daily totals vs targets; warnings for macro deviations; prep suggestions.
 
-### `/meals/grocery/[id]`
+### `/meal-planner/grocery/[id]`
 - Aisle groups, pantry toggle, checkboxes, print & export; â€œconvert to CSV for retailerâ€.
 
-### `/meals/recipes`
+### `/meal-planner/recipes`
 - Search + filters (diet, time, kcal/serving, tags); import from URL (parse basic fields).
 
-### `/meals/pantry`
+### `/meal-planner/pantry`
 - Inventory with categories and expiry badges; quick add; â€œuse soonâ€ suggestions.
 
 ---
 
 ## 7) API Contracts (examples)
 
-### `POST /meals/api/plan/generate`
+### `POST /meal-planner/api/plan/generate`
 Req:  
 ```json
 {
@@ -168,23 +168,23 @@ Req:
 ```
 Res: `{ "planId":"<uuid>", "groceryId":"<uuid>" }`
 
-### `POST /meals/api/plan/swap`
+### `POST /meal-planner/api/plan/swap`
 Req: `{ "planId":"<uuid>", "date":"2025-11-05", "slot":"dinner", "constraints":{"maxTime":30} }`  
 Res: `{ "recipe":{"id":"<uuid>","title":"Paneer Stirâ€‘Fry"}, "totalsUpdated":true }`
 
-### `POST /meals/api/grocery/list`
+### `POST /meal-planner/api/grocery/list`
 Req: `{ "planId":"<uuid>", "pantryApply":true }`  
 Res: `{ "items":[{"name":"Tomato","qty":6,"unit":"pcs","aisle":"Produce","pantry":false}] }`
 
-### `POST /meals/api/recipe/create`
+### `POST /meal-planner/api/recipe/create`
 Req: `{ "title":"Oats Upma", "ingredients":[{"name":"oats","qty":1,"unit":"cup"}], "nutrition":{"kcal":320,"protein":12,"carbs":45,"fat":9} }`  
 Res: `{ "recipeId":"<uuid>" }`
 
-### `POST /meals/api/prep/plan`
+### `POST /meal-planner/api/prep/plan`
 Req: `{ "planId":"<uuid>" }`  
 Res: `{ "steps":[{"when":"Sunday","task":"Cook 1kg rice; cool; portion"}] }`
 
-### `POST /meals/api/grocery/export`
+### `POST /meal-planner/api/grocery/export`
 Req: `{ "groceryId":"<uuid>", "format":"csv" }`  
 Res: `{ "url":"/exports/grocery_2025-11-02.csv" }`
 
@@ -228,37 +228,37 @@ Rate limits: `userId`+day for generations/exports; `planId`+hour for swaps.
 ## 11) Suggested File Layout
 
 ```
-src/pages/meals/index.astro
-src/pages/meals/new.astro
-src/pages/meals/plan/[id].astro
-src/pages/meals/grocery/[id].astro
-src/pages/meals/recipes/index.astro
-src/pages/meals/recipes/new.astro
-src/pages/meals/pantry/index.astro
-src/pages/meals/settings.astro
+src/pages/meal-planner/index.astro
+src/pages/meal-planner/new.astro
+src/pages/meal-planner/plan/[id].astro
+src/pages/meal-planner/grocery/[id].astro
+src/pages/meal-planner/recipes/index.astro
+src/pages/meal-planner/recipes/new.astro
+src/pages/meal-planner/pantry/index.astro
+src/pages/meal-planner/settings.astro
 
-src/pages/meals/api/plan/generate.ts
-src/pages/meals/api/plan/update.ts
-src/pages/meals/api/plan/swap.ts
-src/pages/meals/api/plan/delete.ts
-src/pages/meals/api/plan/index.ts
-src/pages/meals/api/plan/list.ts
-src/pages/meals/api/grocery/list.ts
-src/pages/meals/api/grocery/export.ts
-src/pages/meals/api/pantry/apply.ts
-src/pages/meals/api/pantry/update.ts
-src/pages/meals/api/pantry/index.ts
-src/pages/meals/api/recipe/create.ts
-src/pages/meals/api/recipe/update.ts
-src/pages/meals/api/recipe/delete.ts
-src/pages/meals/api/recipe/search.ts
-src/pages/meals/api/prep/plan.ts
-src/pages/meals/api/profile/save.ts
+src/pages/meal-planner/api/plan/generate.ts
+src/pages/meal-planner/api/plan/update.ts
+src/pages/meal-planner/api/plan/swap.ts
+src/pages/meal-planner/api/plan/delete.ts
+src/pages/meal-planner/api/plan/index.ts
+src/pages/meal-planner/api/plan/list.ts
+src/pages/meal-planner/api/grocery/list.ts
+src/pages/meal-planner/api/grocery/export.ts
+src/pages/meal-planner/api/pantry/apply.ts
+src/pages/meal-planner/api/pantry/update.ts
+src/pages/meal-planner/api/pantry/index.ts
+src/pages/meal-planner/api/recipe/create.ts
+src/pages/meal-planner/api/recipe/update.ts
+src/pages/meal-planner/api/recipe/delete.ts
+src/pages/meal-planner/api/recipe/search.ts
+src/pages/meal-planner/api/prep/plan.ts
+src/pages/meal-planner/api/profile/save.ts
 
-src/components/meals/Planner/*.astro
-src/components/meals/Recipes/*.astro
-src/components/meals/Grocery/*.astro
-src/components/meals/Pantry/*.astro
+src/components/meal-planner/Planner/*.astro
+src/components/meal-planner/Recipes/*.astro
+src/components/meal-planner/Grocery/*.astro
+src/components/meal-planner/Pantry/*.astro
 ```
 
 ---

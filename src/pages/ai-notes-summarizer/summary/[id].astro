@@ -1,0 +1,205 @@
+---
+import Layout from "../../../layouts/Layout.astro";
+import Button from "../../../components/Button.astro";
+
+const { id } = Astro.params;
+---
+<Layout title="Summary viewer">
+  <main
+    class="min-h-screen bg-slate-100"
+    x-data="() => ({ summarizer: $store.notesSummarizer })"
+    x-init={`summarizer.initSummaryView('${id ?? ''}')`}
+  >
+    <header class="border-b border-slate-200 bg-white/80 backdrop-blur">
+      <div class="mx-auto flex flex-col gap-4 px-4 py-8 sm:px-6 lg:max-w-5xl lg:flex-row lg:items-center lg:justify-between">
+        <div class="space-y-2">
+          <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Summary viewer</p>
+          <h1 class="text-3xl font-bold tracking-tight text-slate-900" x-text="summarizer.state.summaryView.record?.title ?? 'Summary not found'"></h1>
+          <p class="text-sm text-slate-600">
+            Review condensed insights, highlights, and action items. Export or hand off to other Ansiversa workspaces.
+          </p>
+          <div class="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+            <span x-text="summarizer.state.summaryView.record ? new Date(summarizer.state.summaryView.record.createdAt).toLocaleString() : ''"></span>
+            <span class="h-1 w-1 rounded-full bg-slate-300" x-show="summarizer.state.summaryView.record"></span>
+            <span x-text="summarizer.state.summaryView.record ? summarizer.state.summaryView.record.mode.toUpperCase() : ''"></span>
+            <span class="h-1 w-1 rounded-full bg-slate-300" x-show="summarizer.state.summaryView.record"></span>
+            <span x-text="summarizer.state.summaryView.record ? summarizer.state.summaryView.record.sentiment : ''"></span>
+          </div>
+        </div>
+        <div class="flex flex-wrap items-center gap-3">
+          <Button href="/ai-notes-summarizer/history" variant="ghost" size="sm">
+            <i class="fas fa-clock text-[10px]"></i>
+            Back to history
+          </Button>
+          <Button
+            :href="
+              summarizer.state.summaryView.record
+                ? `/ai-notes-summarizer/builder?id=${summarizer.state.summaryView.record.id}`
+                : '/ai-notes-summarizer/builder'
+            "
+            size="sm"
+          >
+            <i class="fas fa-pen text-[10px]"></i>
+            Edit in builder
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            @click.prevent="summarizer.state.summaryView.record && summarizer.shareSummary(summarizer.state.summaryView.record.id)"
+          >
+            <i class="fas fa-share-nodes text-[10px]"></i>
+            Share link
+          </Button>
+        </div>
+      </div>
+    </header>
+
+    <section class="mx-auto max-w-5xl px-4 py-10 sm:px-6 lg:px-8">
+      <template x-if="!summarizer.state.summaryView.record">
+        <p class="rounded-3xl border border-rose-200 bg-rose-50 px-6 py-8 text-center text-sm font-semibold text-rose-700">
+          Summary not found. Return to history to choose another record.
+        </p>
+      </template>
+      <template x-if="summarizer.state.summaryView.record">
+        <div class="space-y-6">
+          <nav class="flex flex-wrap items-center gap-2 rounded-3xl border border-slate-200 bg-white p-2 shadow-sm">
+            <template x-for="tab in ['overview','highlights','actions','metadata']" :key="tab">
+              <button
+                type="button"
+                class="flex-1 rounded-2xl px-3 py-2 text-sm font-semibold capitalize"
+                :class="summarizer.state.summaryView.tab === tab ? 'bg-indigo-600 text-white shadow-sm' : 'text-slate-600 hover:bg-slate-100'"
+                @click="summarizer.setSummaryTab(tab)"
+                x-text="tab"
+              ></button>
+            </template>
+          </nav>
+
+          <article class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" x-show="summarizer.state.summaryView.tab === 'overview'" x-cloak>
+            <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+              <div class="space-y-4 text-sm text-slate-600">
+                <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3" x-text="summarizer.state.summaryView.record.summaryText"></p>
+                <div>
+                  <h2 class="text-sm font-semibold text-slate-900">Key points</h2>
+                  <ul class="mt-2 space-y-2 text-xs">
+                    <template x-for="point in summarizer.state.summaryView.record.keyPoints" :key="point">
+                      <li class="flex items-start gap-2">
+                        <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                        <span x-text="point"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </div>
+              <aside class="space-y-3 text-xs text-slate-600">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <p><span class="font-semibold text-slate-900">Sentiment:</span> <span x-text="summarizer.state.summaryView.record.sentiment"></span></p>
+                  <p><span class="font-semibold text-slate-900">Compression:</span> <span x-text="`${(summarizer.state.summaryView.record.summaryRatio * 100).toFixed(1)}%`"></span></p>
+                  <p><span class="font-semibold text-slate-900">Confidence:</span> <span x-text="(summarizer.state.summaryView.record.confidence * 100).toFixed(0) + '%' "></span></p>
+                  <p><span class="font-semibold text-slate-900">Word count:</span> <span x-text="summarizer.state.summaryView.record.wordCount.toLocaleString()"></span></p>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <p class="font-semibold text-slate-900">Integrations</p>
+                  <p class="mt-1">
+                    <span x-text="[summarizer.state.summaryView.record.integration.flashnote ? 'FlashNote' : null, summarizer.state.summaryView.record.integration.research ? 'Research Assistant' : null, summarizer.state.summaryView.record.integration.meeting ? 'Meeting Minutes AI' : null].filter(Boolean).join(', ') || 'None'"></span>
+                  </p>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                  <p class="font-semibold text-slate-900">Tags</p>
+                  <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-indigo-700">
+                    <template x-for="tag in summarizer.state.summaryView.record.tags" :key="tag">
+                      <span class="rounded-full bg-indigo-50 px-3 py-1" x-text="tag"></span>
+                    </template>
+                  </div>
+                </div>
+              </aside>
+            </div>
+          </article>
+
+          <article class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" x-show="summarizer.state.summaryView.tab === 'highlights'" x-cloak>
+            <header class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-slate-900">Highlights & quotes</h2>
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500" x-text="`${summarizer.state.summaryView.record.highlights.length} captured`"></span>
+            </header>
+            <ul class="space-y-3 text-sm text-slate-600">
+              <template x-for="highlight in summarizer.state.summaryView.record.highlights" :key="highlight.id">
+                <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <p class="font-semibold text-slate-900" x-text="highlight.quote"></p>
+                  <p class="mt-1 text-xs" x-text="highlight.context"></p>
+                  <p class="mt-1 text-[11px] font-semibold uppercase tracking-wide text-indigo-600">
+                    <span x-text="highlight.tag"></span>
+                    <span x-show="highlight.page" class="ml-2 text-slate-500">· Page <span x-text="highlight.page"></span></span>
+                  </p>
+                </li>
+              </template>
+            </ul>
+          </article>
+
+          <article class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" x-show="summarizer.state.summaryView.tab === 'actions'" x-cloak>
+            <header class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold text-slate-900">Action items</h2>
+              <span class="text-xs font-semibold uppercase tracking-wide text-slate-500" x-text="`${summarizer.state.summaryView.record.actionItems.length} tasks`"></span>
+            </header>
+            <template x-if="summarizer.state.summaryView.record.actionItems.length === 0">
+              <p class="text-sm text-slate-600">No action items captured. Regenerate in action mode to extract tasks.</p>
+            </template>
+            <div class="space-y-3" x-show="summarizer.state.summaryView.record.actionItems.length > 0">
+              <template x-for="item in summarizer.state.summaryView.record.actionItems" :key="item.id">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm text-slate-700">
+                  <p class="font-semibold text-slate-900" x-text="item.text"></p>
+                  <div class="mt-2 flex flex-wrap items-center gap-3 text-xs text-slate-500">
+                    <span><i class="fas fa-user mr-1 text-[10px]"></i><span x-text="item.owner"></span></span>
+                    <span><i class="fas fa-calendar mr-1 text-[10px]"></i><span x-text="item.due"></span></span>
+                    <span><i class="fas fa-circle-dot mr-1 text-[10px]"></i><span x-text="item.status"></span></span>
+                  </div>
+                </div>
+              </template>
+            </div>
+          </article>
+
+          <article class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm" x-show="summarizer.state.summaryView.tab === 'metadata'" x-cloak>
+            <h2 class="text-lg font-semibold text-slate-900">Metadata & references</h2>
+            <div class="grid gap-4 lg:grid-cols-2">
+              <dl class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+                <div class="flex items-center justify-between">
+                  <dt class="font-semibold text-slate-900">Note ID</dt>
+                  <dd x-text="summarizer.state.summaryView.record.noteId"></dd>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <dt class="font-semibold text-slate-900">Created</dt>
+                  <dd x-text="new Date(summarizer.state.summaryView.record.createdAt).toLocaleString()"></dd>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <dt class="font-semibold text-slate-900">Updated</dt>
+                  <dd x-text="new Date(summarizer.state.summaryView.record.updatedAt).toLocaleString()"></dd>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <dt class="font-semibold text-slate-900">Original length</dt>
+                  <dd x-text="`${summarizer.state.summaryView.record.originalCharacters.toLocaleString()} chars`"></dd>
+                </div>
+                <div class="mt-2 flex items-center justify-between">
+                  <dt class="font-semibold text-slate-900">Owner</dt>
+                  <dd x-text="summarizer.state.summaryView.record.owner"></dd>
+                </div>
+              </dl>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+                <p class="font-semibold text-slate-900">References</p>
+                <ul class="mt-2 space-y-2">
+                  <template x-for="reference in summarizer.state.summaryView.record.references" :key="reference.id">
+                    <li>
+                      <i class="fas fa-link mr-1 text-[10px] text-indigo-500"></i>
+                      <a :href="reference.href" class="text-indigo-600" x-text="reference.label"></a>
+                    </li>
+                  </template>
+                </ul>
+                <div class="mt-4 rounded-2xl border border-white/60 bg-white/60 px-3 py-2 text-[11px] text-slate-500" x-show="summarizer.state.summaryView.record.shareLink">
+                  <p class="font-semibold text-slate-700">Share link</p>
+                  <p class="truncate" x-text="summarizer.state.summaryView.record.shareLink"></p>
+                </div>
+              </div>
+            </div>
+          </article>
+        </div>
+      </template>
+    </section>
+  </main>
+</Layout>
