@@ -1,0 +1,260 @@
+---
+import SectionHeading from "../SectionHeading.astro";
+import Button from "../Button.astro";
+---
+<section
+  id="poem-library"
+  class="border-t border-white/10 bg-slate-950/95 py-20 text-white"
+  x-data="{ poem: $store['poem-studio'] }"
+>
+  <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+    <header class="flex flex-wrap items-center justify-between gap-6">
+      <div>
+        <SectionHeading
+          eyebrow="Poetry library"
+          title="Catalogue drafts, finals, and analysis history"
+          description="Filter by form, tone, or status and jump directly into revision sessions with live analytics."
+        />
+      </div>
+      <div class="flex flex-col items-end gap-3 text-right">
+        <Button
+          type="button"
+          variant="outline"
+          class="border-white/40 text-white hover:border-white/70 hover:text-white"
+          @click="poem.togglePlan()"
+        >
+          <i class="fa-solid fa-rotate text-xs"></i>
+          Switch to <span x-text="poem.state.plan === 'free' ? 'Pro preview' : 'Free preview'"></span>
+        </Button>
+        <p class="text-xs text-white/60">
+          <span class="font-semibold" x-text="poem.state.plan === 'free' ? 'Free plan' : 'Pro plan'"></span>
+          ·
+          <span x-text="poem.state.plan === 'free' ? '5 saved poems, Markdown exports' : 'Unlimited poems, full exports'"></span>
+        </p>
+      </div>
+    </header>
+
+    <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+      <div class="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Total poems</p>
+            <p class="mt-2 text-2xl font-semibold" x-text="poem.state.metrics.totalPoems"></p>
+            <p class="text-xs text-white/60">Across drafts, finals, and chapbook-ready pieces.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Active drafts</p>
+            <p class="mt-2 text-2xl font-semibold" x-text="poem.state.metrics.activeDrafts"></p>
+            <p class="text-xs text-white/60">Revision-ready with meter, rhyme, and imagery notes.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Average lines</p>
+            <p class="mt-2 text-2xl font-semibold" x-text="poem.state.metrics.averageLines"></p>
+            <p class="text-xs text-white/60">Line count per poem to balance chapbook pacing.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">AI assists this week</p>
+            <p class="mt-2 text-2xl font-semibold" x-text="poem.state.metrics.aiCallsThisWeek"></p>
+            <p class="text-xs text-white/60">Passes, validations, and generation calls logged.</p>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-white/10 bg-slate-950/40 p-5">
+          <div class="flex flex-wrap items-center gap-3">
+            <div class="flex flex-1 flex-wrap gap-3">
+              <label class="flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/70">
+                <i class="fa-solid fa-magnifying-glass text-[10px]"></i>
+                <input
+                  type="search"
+                  placeholder="Search titles, themes, tags"
+                  class="bg-transparent text-sm text-white/90 placeholder:text-white/40 focus:outline-none"
+                  @input.debounce.250ms="poem.setFilter('search', $event.target.value)"
+                />
+              </label>
+              <select
+                class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/80 focus:border-white/40 focus:outline-none"
+                @change="poem.setFilter('status', $event.target.value)"
+              >
+                <template x-for="status in poem.availableStatuses" :key="status">
+                  <option
+                    :value="status"
+                    class="bg-slate-900 text-white"
+                    x-text="status === 'all' ? 'All statuses' : status === 'draft' ? 'Drafts' : 'Finals'"
+                    :selected="poem.state.filters.status === status"
+                  ></option>
+                </template>
+              </select>
+              <select
+                class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/80 focus:border-white/40 focus:outline-none"
+                @change="poem.setFilter('form', $event.target.value)"
+              >
+                <template x-for="form in poem.availableForms" :key="form">
+                  <option
+                    :value="form"
+                    class="bg-slate-900 text-white"
+                    x-text="form === 'all' ? 'All forms' : form"
+                    :selected="poem.state.filters.form === form"
+                  ></option>
+                </template>
+              </select>
+              <select
+                class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/80 focus:border-white/40 focus:outline-none"
+                @change="poem.setFilter('tone', $event.target.value)"
+              >
+                <template x-for="tone in poem.availableTones" :key="tone">
+                  <option
+                    :value="tone"
+                    class="bg-slate-900 text-white"
+                    x-text="tone === 'all' ? 'All tones' : tone"
+                    :selected="poem.state.filters.tone === tone"
+                  ></option>
+                </template>
+              </select>
+              <select
+                class="rounded-full border border-white/15 bg-white/5 px-3 py-1.5 text-xs text-white/80 focus:border-white/40 focus:outline-none"
+                @change="poem.setFilter('tag', $event.target.value)"
+              >
+                <template x-for="tag in poem.availableTags" :key="tag">
+                  <option
+                    :value="tag"
+                    class="bg-slate-900 text-white"
+                    x-text="tag === 'all' ? 'All tags' : tag"
+                    :selected="poem.state.filters.tag === tag"
+                  ></option>
+                </template>
+              </select>
+            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              class="text-xs text-white/70 hover:text-white"
+              @click="poem.resetFilters()"
+            >
+              Clear filters
+            </Button>
+          </div>
+          <p class="mt-3 text-xs text-white/50">
+            Showing <span x-text="poem.filteredPoems.length"></span> of <span x-text="poem.state.poems.length"></span> poems.
+            <template x-if="poem.state.plan === 'free'">
+              <span>
+                Free plan slots remaining: <span x-text="poem.remainingFreeSlots === Infinity ? '—' : poem.remainingFreeSlots"></span>.
+              </span>
+            </template>
+          </p>
+        </div>
+
+        <ul class="space-y-3">
+          <template x-for="poemItem in poem.filteredPoems" :key="poemItem.id">
+            <li>
+              <button
+                type="button"
+                class="w-full rounded-3xl border px-5 py-4 text-left transition"
+                :class="[
+                  poem.view.selectedPoemId === poemItem.id
+                    ? 'border-violet-400/60 bg-violet-500/20 text-white'
+                    : 'border-white/10 bg-white/5 text-white/80 hover:border-white/30 hover:text-white',
+                ]"
+                @click="poem.selectPoem(poemItem.id)"
+              >
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <h3 class="text-lg font-semibold text-white" x-text="poemItem.title"></h3>
+                      <template x-if="poemItem.pinned">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-amber-400/20 px-2 py-0.5 text-[10px] font-semibold text-amber-200">
+                          <i class="fa-solid fa-thumbtack text-[9px]"></i>
+                          Pinned
+                        </span>
+                      </template>
+                      <template x-if="poem.isPoemLocked(poemItem)">
+                        <span class="inline-flex items-center gap-1 rounded-full bg-purple-500/20 px-2 py-0.5 text-[10px] font-semibold text-purple-200">
+                          <i class="fa-solid fa-lock"></i>
+                          Pro form
+                        </span>
+                      </template>
+                    </div>
+                    <p class="mt-1 text-xs uppercase tracking-[0.3em] text-white/50">
+                      <span x-text="poemItem.form"></span>
+                      · <span x-text="poemItem.tone"></span>
+                      · <span x-text="poemItem.status"></span>
+                    </p>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-4 text-xs text-white/60">
+                    <span><i class="fa-regular fa-clock"></i> Updated <span x-text="poem.formatRelative(poemItem.updatedAt)"></span></span>
+                    <span><i class="fa-solid fa-lines-leaning"></i> <span x-text="poemItem.lines"></span> lines</span>
+                    <span><i class="fa-solid fa-file-lines"></i> <span x-text="poemItem.words"></span> words</span>
+                  </div>
+                </div>
+                <div class="mt-3 flex flex-wrap items-center gap-3 text-xs text-white/60">
+                  <div class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80">
+                    <i class="fa-solid fa-wave-square text-[9px]"></i>
+                    <span x-text="`${poemItem.analysisSummary.meterScore}% meter`"></span>
+                  </div>
+                  <div class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80">
+                    <i class="fa-solid fa-camera-retro text-[9px]"></i>
+                    <span x-text="`${poemItem.analysisSummary.imageryScore}% imagery`"></span>
+                  </div>
+                  <div class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1 text-[11px] text-white/80">
+                    <i class="fa-solid fa-quote-right text-[9px]"></i>
+                    <span x-text="poemItem.analysisSummary.rhymeScheme"></span>
+                  </div>
+                  <template x-for="tag in poemItem.tags" :key="tag">
+                    <span class="inline-flex items-center gap-1 rounded-full bg-white/5 px-2.5 py-1 text-[11px] text-white/70">
+                      <i class="fa-solid fa-hashtag text-[9px]"></i>
+                      <span x-text="tag"></span>
+                    </span>
+                  </template>
+                </div>
+              </button>
+            </li>
+          </template>
+        </ul>
+      </div>
+
+      <aside class="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6">
+        <div>
+          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">AI usage</h3>
+          <dl class="mt-4 grid gap-4 text-sm">
+            <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+              <dt class="text-xs uppercase tracking-[0.3em] text-white/50">Drafts generated</dt>
+              <dd class="mt-1 text-xl font-semibold text-white" x-text="poem.state.aiUsage.drafts"></dd>
+              <p class="text-xs text-white/60">Prompt seeds expanded into line-level drafts.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+              <dt class="text-xs uppercase tracking-[0.3em] text-white/50">Revision passes</dt>
+              <dd class="mt-1 text-xl font-semibold text-white" x-text="poem.state.aiUsage.passes"></dd>
+              <p class="text-xs text-white/60">Imagery, verb, compression, and enjambment passes completed.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+              <dt class="text-xs uppercase tracking-[0.3em] text-white/50">Analyses refreshed</dt>
+              <dd class="mt-1 text-xl font-semibold text-white" x-text="poem.state.aiUsage.validations"></dd>
+              <p class="text-xs text-white/60">Meter, rhyme, and imagery diagnostics rerun.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+              <dt class="text-xs uppercase tracking-[0.3em] text-white/50">Exports queued</dt>
+              <dd class="mt-1 text-xl font-semibold text-white" x-text="poem.state.aiUsage.exports"></dd>
+              <p class="text-xs text-white/60">Markdown, PDF, and DOCX packages prepared.</p>
+            </div>
+          </dl>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-slate-950/40 p-5">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Recent activity</h3>
+          <ul class="mt-4 space-y-3 text-sm">
+            <template x-for="entry in poem.activity" :key="entry.id">
+              <li class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+                <div class="flex items-center justify-between text-xs uppercase tracking-[0.25em] text-white/50">
+                  <span class="inline-flex items-center gap-2">
+                    <i class="fa-solid" :class="entry.icon"></i>
+                    <span x-text="entry.label"></span>
+                  </span>
+                  <span x-text="poem.formatRelative(entry.timestamp)"></span>
+                </div>
+                <p class="mt-2 text-white/70" x-text="entry.detail"></p>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
