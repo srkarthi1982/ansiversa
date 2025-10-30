@@ -109,6 +109,7 @@ const MINI_APP_ROUTE_ALIASES: Partial<Record<MiniAppSlug, readonly string[]>> = 
   contract: ['contract-generator'],
   invoice: ['invoice-and-receipt-maker'],
   'trivia-arena': ['trivia'],
+  storycrafter: ['story'],
 };
 
 export const MINI_APP_ROUTE_PREFIXES: readonly string[] = MINI_APP_DEFINITIONS.flatMap((app) => {
