@@ -1,0 +1,109 @@
+---
+import Button from "../../../components/Button.astro";
+import { heroHighlights } from "../data/scriptFormatterData";
+---
+<section
+  class="relative overflow-hidden bg-slate-950 py-20 text-white"
+  aria-labelledby="script-formatter-hero"
+>
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(99,102,241,0.35),_transparent_60%)]"></div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-16 px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <div class="space-y-8">
+        <span class="inline-flex items-center gap-2 rounded-full bg-indigo-500/20 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">
+          <i class="fas fa-clapperboard text-xs"></i>
+          Production format engine
+        </span>
+        <div class="space-y-4">
+          <h1 id="script-formatter-hero" class="text-4xl font-bold tracking-tight sm:text-5xl">
+            Script Formatter
+          </h1>
+          <p class="text-base text-slate-200 sm:text-lg">
+            Deliver screenplays, stage plays, sitcom multi-cam episodes, audio dramas, ad spots, and creator scripts with
+            element-aware editing, live pagination, validation, and exports that match studio specs on day one.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <Button href="#script-formatter-formats" class="shadow-lg shadow-indigo-500/30">
+            <i class="fas fa-table-columns text-xs"></i>
+            Review format presets
+          </Button>
+          <Button
+            href="#script-formatter-workflow"
+            variant="outline"
+            class="border-indigo-300 text-indigo-200 hover:bg-indigo-500/10"
+          >
+            <i class="fas fa-diagram-project text-xs"></i>
+            Explore workflow
+          </Button>
+          <Button href="#script-formatter-exports" variant="ghost" class="text-slate-200 hover:bg-white/10">
+            <i class="fas fa-file-export text-xs"></i>
+            See exports & reports
+          </Button>
+        </div>
+        <dl class="grid gap-4 sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Formats covered</dt>
+            <dd class="mt-2 text-3xl font-semibold">6 presets</dd>
+            <dd class="text-[11px] text-slate-300">Screenplay · Stage · Sitcom · Audio · Ad · YouTube</dd>
+          </div>
+          <div class="rounded-2xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-200">AI passes</dt>
+            <dd class="mt-2 text-3xl font-semibold">4 rewrite types</dd>
+            <dd class="text-[11px] text-slate-300">Dialogue · Action · Cut-to-time · Profanity clean</dd>
+          </div>
+          <div class="rounded-2xl border border-white/20 bg-white/5 p-4 shadow-lg backdrop-blur">
+            <dt class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Reports</dt>
+            <dd class="mt-2 text-3xl font-semibold">5 breakdowns</dd>
+            <dd class="text-[11px] text-slate-300">Scenes · Characters · Locations · Props · Shots</dd>
+          </div>
+        </dl>
+      </div>
+      <div class="relative">
+        <div class="absolute inset-0 -translate-y-6 translate-x-6 rounded-3xl bg-indigo-500/40 blur-3xl"></div>
+        <div class="relative space-y-5 rounded-3xl border border-white/10 bg-slate-900/60 p-6 shadow-2xl backdrop-blur">
+          <h2 class="text-lg font-semibold text-white">Formatting highlights</h2>
+          <ol class="space-y-4 text-sm text-slate-200">
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500 text-xs font-semibold text-white">1</span>
+              <div>
+                <p class="font-semibold">Choose preset</p>
+                <p class="text-xs text-slate-300">Pick a template and import Fountain, FDX, TXT, or Markdown in seconds.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500 text-xs font-semibold text-white">2</span>
+              <div>
+                <p class="font-semibold">Draft in dual panes</p>
+                <p class="text-xs text-slate-300">Markdown-style syntax drives live preview with exact margins and page numbers.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="mt-1 flex h-7 w-7 items-center justify-center rounded-full bg-indigo-500 text-xs font-semibold text-white">3</span>
+              <div>
+                <p class="font-semibold">Validate & export</p>
+                <p class="text-xs text-slate-300">Run lint, timing, and rewrite passes before delivering studio-ready exports.</p>
+              </div>
+            </li>
+          </ol>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-slate-100">
+            <p class="font-semibold uppercase tracking-wide text-indigo-200">Element snapshots</p>
+            <div class="mt-3 grid gap-3">
+              {heroHighlights.map((item) => (
+                <div class="flex items-start gap-3" key={item.label}>
+                  <span class="mt-0.5 rounded-full bg-indigo-500/20 p-2 text-indigo-200">
+                    <i class={`${item.icon} text-[11px]`}></i>
+                  </span>
+                  <div>
+                    <p class="text-sm font-semibold text-white">{item.label}</p>
+                    <p class="text-[11px] text-slate-300">{item.blurb}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

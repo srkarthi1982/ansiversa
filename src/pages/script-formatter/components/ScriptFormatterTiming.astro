@@ -1,0 +1,38 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { timingReports } from "../data/scriptFormatterData";
+---
+<section id="script-formatter-exports" class="bg-slate-950 py-16 text-white" aria-labelledby="script-formatter-exports-title">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="TIMING & REPORTS"
+      title="Know runtime, coverage, and deliverables at a glance"
+      description="Every validation run updates timing heuristics, breakdown reports, and export-ready packages so production can act immediately."
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-300"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-3">
+      {timingReports.map((group) => (
+        <article
+          class="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg backdrop-blur"
+          key={group.title}
+        >
+          <div class="flex items-center gap-3">
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/30 text-indigo-200">
+              <i class="fas fa-stopwatch text-lg"></i>
+            </span>
+            <h3 class="text-xl font-semibold text-white">{group.title}</h3>
+          </div>
+          <ul class="space-y-2 text-sm text-slate-200">
+            {group.bullets.map((bullet) => (
+              <li class="flex items-start gap-2" key={bullet}>
+                <i class="fas fa-check text-xs text-indigo-200"></i>
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,41 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { integrations } from "../data/scriptFormatterData";
+---
+<section id="script-formatter-integrations" class="bg-slate-950 py-16 text-white" aria-labelledby="script-formatter-integrations-title">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="INTEGRATIONS"
+      title="Connected with the Ansiversa creative stack"
+      description="Stay in sync with beats, decks, lyrical sections, and ad copy so departments share one source of truth."
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-300"
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      {integrations.map((integration) => (
+        <article
+          class="flex flex-col gap-4 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg backdrop-blur"
+          key={integration.name}
+        >
+          <div class="flex items-start gap-3">
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/30 text-indigo-200">
+              <i class={`${integration.icon} text-lg`}></i>
+            </span>
+            <div>
+              <h3 class="text-xl font-semibold text-white">{integration.name}</h3>
+              <p class="text-sm text-slate-200">{integration.description}</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-slate-200">
+            {integration.actions.map((action) => (
+              <li class="flex items-start gap-2" key={action}>
+                <i class="fas fa-link text-xs text-indigo-200"></i>
+                <span>{action}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
