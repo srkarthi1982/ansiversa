@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Loader from '../../components/Loader.astro';
+import CreativeTitleHero from './components/CreativeTitleHero.astro';
+import CreativeTitleControls from './components/CreativeTitleControls.astro';
+import CreativeTitleWorkspace from './components/CreativeTitleWorkspace.astro';
+import CreativeTitleScoring from './components/CreativeTitleScoring.astro';
+import CreativeTitleLocalization from './components/CreativeTitleLocalization.astro';
+import CreativeTitleExports from './components/CreativeTitleExports.astro';
+import CreativeTitleIntegrations from './components/CreativeTitleIntegrations.astro';
+import CreativeTitlePlans from './components/CreativeTitlePlans.astro';
+import CreativeTitleApi from './components/CreativeTitleApi.astro';
+---
+<Layout title="Creative Title Maker">
+  <Loader />
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#creative-title-workspace"
+  >
+    Skip to Creative Title Maker workspace
+  </a>
+  <main x-data="() => ({ maker: $store.creativeTitleMaker })" x-init="maker.initLanding()">
+    <CreativeTitleHero />
+    <CreativeTitleControls />
+    <CreativeTitleWorkspace />
+    <CreativeTitleScoring />
+    <CreativeTitleLocalization />
+    <CreativeTitleExports />
+    <CreativeTitleIntegrations />
+    <CreativeTitlePlans />
+    <CreativeTitleApi />
+  </main>
+</Layout>

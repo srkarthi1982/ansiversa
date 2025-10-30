@@ -1,0 +1,85 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+
+const integrationFlows = [
+  {
+    id: 'launch-arc',
+    title: 'Launch narrative arc',
+    icon: 'fas fa-rocket',
+    summary: 'Name the launch, draft the blog, then turn it into a pitch deck.',
+    steps: [
+      { label: 'Creative Title Maker', description: 'Lock the winning launch headline with proof-backed rationale.' },
+      { label: 'Blog Writer', description: 'Generate outline and intro paragraphs seeded by your chosen title.' },
+      { label: 'Presentation Designer', description: 'Auto-populate slide headlines and speaker notes.' },
+    ],
+    cta: { label: 'Open blog workspace', href: '/blog-writer' },
+  },
+  {
+    id: 'paid-campaigns',
+    title: 'Paid campaign headstarts',
+    icon: 'fas fa-bullseye',
+    summary: 'Map title variants into ad headlines, captions, and CTA tests.',
+    steps: [
+      { label: 'Creative Title Maker', description: 'Group variants into benefit, curiosity, and proof packs.' },
+      { label: 'Ad Copy Assistant', description: 'Sync A/B/C titles into headline slots and supporting copy.' },
+      { label: 'Social Caption Generator', description: 'Launch organic teaser captions with matching tone.' },
+    ],
+    cta: { label: 'Push to Ad Copy Assistant', href: '/ad-copy-assistant' },
+  },
+  {
+    id: 'story-universe',
+    title: 'Storytelling universe',
+    icon: 'fas fa-book-open',
+    summary: 'Carry your brand voice into stories, lyrics, and episodic content.',
+    steps: [
+      { label: 'Creative Title Maker', description: 'Deliver localized episode titles and theme buckets.' },
+      { label: 'StoryCrafter', description: 'Expand titles into chapters, hooks, and beat sheets.' },
+      { label: 'Song Lyric Maker', description: 'Spin playful variations into jingles or sonic idents.' },
+    ],
+    cta: { label: 'Open StoryCrafter', href: '/story' },
+  },
+];
+---
+<section class="border-t border-slate-200 bg-slate-50 py-16" x-data="() => ({ maker: $store.creativeTitleMaker })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Integrations"
+      title="Move from headline ideas to full creative campaigns without leaving Ansiversa"
+      description="Send your chosen titles into other mini apps to generate outlines, slides, ad copy, stories, or even launch jingles. Everything stays linked to the original rationale and scoring."
+    />
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      {integrationFlows.map((flow) => (
+        <article key={flow.id} class="flex flex-col justify-between rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <div class="space-y-4">
+            <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+              <i class={`${flow.icon} text-lg`}></i>
+            </div>
+            <div>
+              <h3 class="text-lg font-semibold text-slate-900">{flow.title}</h3>
+              <p class="mt-1 text-sm text-slate-600">{flow.summary}</p>
+            </div>
+            <ol class="space-y-3 text-sm text-slate-600">
+              {flow.steps.map((step, index) => (
+                <li key={`${flow.id}-${step.label}`} class="flex items-start gap-3 rounded-2xl border border-slate-200 bg-slate-50/80 p-3">
+                  <span class="mt-0.5 flex h-6 w-6 items-center justify-center rounded-full bg-indigo-600 text-xs font-semibold text-white">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <p class="font-semibold text-slate-900">{step.label}</p>
+                    <p class="text-xs text-slate-500">{step.description}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+          <Button href={flow.cta.href} variant="outline" class="mt-6 w-full justify-center rounded-full !px-4">
+            <i class="fas fa-arrow-turn-down-right text-xs"></i>
+            {flow.cta.label}
+          </Button>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

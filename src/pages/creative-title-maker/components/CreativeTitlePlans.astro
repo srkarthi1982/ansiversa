@@ -1,0 +1,57 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="border-t border-slate-200 bg-white py-16" x-data="() => ({ maker: $store.creativeTitleMaker })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plans"
+      title="Choose the right Creative Title Maker capacity for your team"
+      description="Free covers starter launches with three projects and CSV exports. Pro unlocks unlimited projects, multi-locale localization, JSON/PDF exports, and one-click integrations."
+    />
+
+    <div class="mt-10 overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 shadow-inner">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-white">
+          <tr>
+            <th scope="col" class="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Feature
+            </th>
+            <th scope="col" class="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Free
+            </th>
+            <th scope="col" class="px-4 py-4 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              Pro
+            </th>
+          </tr>
+        </thead>
+        <tbody class="bg-white/80">
+          <template x-for="feature in [
+            'projects',
+            'variantsPerBrief',
+            'seoMode',
+            'localization',
+            'exports',
+            'integrations',
+            'history',
+          ]" :key="feature">
+            <tr class="divide-x divide-slate-200">
+              <td class="px-4 py-4 font-semibold capitalize text-slate-800" x-text="feature.replace(/([A-Z])/g, ' $1')"></td>
+              <td class="px-4 py-4 text-slate-600" x-text="Array.isArray(maker.state.planLimits.free[feature]) ? maker.state.planLimits.free[feature].join(', ') : maker.state.planLimits.free[feature]"></td>
+              <td class="px-4 py-4 text-slate-900" x-text="Array.isArray(maker.state.planLimits.pro[feature]) ? maker.state.planLimits.pro[feature].join(', ') : maker.state.planLimits.pro[feature]"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 rounded-3xl border border-indigo-100 bg-indigo-50 p-6 text-sm text-indigo-800">
+      <p class="font-semibold text-indigo-900">Rate limits</p>
+      <p class="mt-1">
+        Free: `/titles/api/generate` 60/day · `/titles/api/localize` 40/day. Pro: `/titles/api/generate` 400/day · `/titles/api/localize` 300/day.
+      </p>
+      <p class="mt-3 text-xs">
+        Upgrade anytime in the Ansiversa app to unlock workspace history retention, integration pushes, and PDF exports.
+      </p>
+    </div>
+  </div>
+</section>
