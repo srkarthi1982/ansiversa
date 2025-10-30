@@ -115,6 +115,11 @@ export const MINI_APP_ROUTE_PREFIXES: readonly string[] = MINI_APP_DEFINITIONS.f
   return [app.slug, ...aliases];
 });
 
+const PUBLIC_MINI_APP_SLUGS = new Set<MiniAppSlug>(['poem-studio']);
+
 export const MINI_APP_PROTECTED_PATHS: readonly string[] = Array.from(
-  new Set([...MINI_APP_ROUTE_PREFIXES, 'quiz'])
+  new Set([
+    ...MINI_APP_ROUTE_PREFIXES.filter((route) => !PUBLIC_MINI_APP_SLUGS.has(route as MiniAppSlug)),
+    'quiz',
+  ])
 );
