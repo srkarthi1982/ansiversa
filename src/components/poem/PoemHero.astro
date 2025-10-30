@@ -1,0 +1,142 @@
+---
+import Button from "../Button.astro";
+import { poemForms, poemRevisionPasses, poemExportPresets } from "../../lib/poem-studio/schema";
+
+const headlineHighlights = [
+  {
+    icon: "fa-pen-nib",
+    title: "Form-savvy drafting",
+    description:
+      "Swap between free verse, haiku, sonnet, and villanelle presets without losing cadence or constraint tracking.",
+  },
+  {
+    icon: "fa-wave-square",
+    title: "Meter & rhyme intelligence",
+    description:
+      "Live stress heuristics, slant-rhyme spotting, and IPA hints keep every line singable.",
+  },
+  {
+    icon: "fa-sparkles",
+    title: "Revision passes that teach",
+    description:
+      "Sharpen imagery, tune enjambment, and align tone with AI that explains each suggestion.",
+  },
+];
+
+const featuredForms = poemForms
+  .filter((form) => ["free-verse", "haiku", "sonnet", "villanelle", "spoken-word"].includes(form.key))
+  .map((form) => ({
+    key: form.key,
+    name: form.name,
+    summary: form.summary,
+    gated: form.gatedFor === "pro",
+    signatureMoves: form.signatureMoves.slice(0, 2),
+  }));
+
+const passShowcase = poemRevisionPasses.slice(0, 3);
+const exportShowcase = poemExportPresets;
+---
+<section class="relative overflow-hidden bg-slate-950 text-white">
+  <div class="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top,_rgba(76,29,149,0.35),_rgba(15,23,42,1))]"></div>
+  <div class="absolute inset-0 -z-10 bg-gradient-to-br from-fuchsia-500/20 via-violet-500/10 to-indigo-500/10"></div>
+  <div class="mx-auto flex max-w-6xl flex-col gap-16 px-4 pb-24 pt-20 sm:px-6 lg:flex-row lg:items-end lg:px-8">
+    <div class="flex-1">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.35em] text-white/70">
+        <i class="fa-solid fa-feather-pointed text-[11px]"></i>
+        Ansiversa Poem Studio
+      </span>
+      <h1 class="mt-6 text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
+        Craft poems with a studio that knows your form, cadence, and chapbook goals
+      </h1>
+      <p class="mt-5 max-w-2xl text-lg text-white/80">
+        Poem Studio is an AI-assisted workshop for poets, educators, and spoken-word performers. Generate drafts tailored to
+        form constraints, validate meter and rhyme in real time, and run targeted revision passes that explain every move.
+      </p>
+      <div class="mt-8 flex flex-wrap gap-3">
+        <Button href="#poem-library" class="bg-white text-slate-950 hover:bg-slate-100">
+          <i class="fa-solid fa-book-open-cover text-xs"></i>
+          Explore the poetry library
+        </Button>
+        <Button href="#poem-workspace" variant="outline" class="border-white/40 text-white hover:border-white/70 hover:text-white">
+          <i class="fa-solid fa-magic-wand-sparkles text-xs"></i>
+          Jump to the craft workspace
+        </Button>
+      </div>
+      <dl class="mt-12 grid gap-6 sm:grid-cols-3">
+        {headlineHighlights.map((highlight) => (
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-5 backdrop-blur">
+            <dt class="flex items-center gap-3 text-sm font-semibold text-white">
+              <span class="flex size-9 items-center justify-center rounded-full bg-white/10">
+                <i class={`fa-solid ${highlight.icon}`}></i>
+              </span>
+              <span>{highlight.title}</span>
+            </dt>
+            <dd class="mt-3 text-sm text-white/70">{highlight.description}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+    <aside class="w-full max-w-sm space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-violet-900/40 backdrop-blur">
+      <h2 class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Form presets</h2>
+      <ul class="space-y-3 text-sm">
+        {featuredForms.map((form) => (
+          <li class="rounded-2xl border border-white/10 bg-slate-950/40 p-4">
+            <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.3em] text-white/50">
+              <span>{form.name}</span>
+              {form.gated ? (
+                <span class="inline-flex items-center gap-1 rounded-full bg-amber-500/20 px-2.5 py-0.5 text-[10px] font-semibold text-amber-200">
+                  <i class="fa-solid fa-gem text-[9px]"></i>
+                  Pro
+                </span>
+              ) : (
+                <span class="text-emerald-200">Free</span>
+              )}
+            </div>
+            <p class="mt-2 text-white/75">{form.summary}</p>
+            <p class="mt-3 text-[11px] uppercase tracking-[0.25em] text-white/50">Signature moves</p>
+            <ul class="mt-1 space-y-1 text-xs text-white/70">
+              {form.signatureMoves.map((move) => (
+                <li class="flex items-center gap-2">
+                  <span class="size-1.5 rounded-full bg-white/50"></span>
+                  <span>{move}</span>
+                </li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
+        <p class="font-semibold uppercase tracking-[0.3em] text-white/60">Revision arsenal</p>
+        <ul class="mt-3 space-y-2">
+          {passShowcase.map((pass) => (
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex size-6 items-center justify-center rounded-full bg-white/10 text-xs text-white">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-white">{pass.label}</p>
+                <p class="text-xs text-white/60">{pass.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white/80">
+        <p class="font-semibold uppercase tracking-[0.3em] text-white/60">Export ready</p>
+        <ul class="mt-3 space-y-2">
+          {exportShowcase.map((preset) => (
+            <li class="flex items-start gap-3">
+              <span class="mt-1 inline-flex size-6 items-center justify-center rounded-full bg-white/10 text-xs text-white">
+                <i class="fa-solid fa-file-export"></i>
+              </span>
+              <div>
+                <p class="text-sm font-semibold text-white">{preset.label}</p>
+                <p class="text-xs text-white/60">{preset.description}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
