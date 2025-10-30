@@ -1,0 +1,33 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Loader from "../../components/Loader.astro";
+import ScriptFormatterHero from "./components/ScriptFormatterHero.astro";
+import ScriptFormatterFormats from "./components/ScriptFormatterFormats.astro";
+import ScriptFormatterWorkflow from "./components/ScriptFormatterWorkflow.astro";
+import ScriptFormatterValidation from "./components/ScriptFormatterValidation.astro";
+import ScriptFormatterTiming from "./components/ScriptFormatterTiming.astro";
+import ScriptFormatterPlans from "./components/ScriptFormatterPlans.astro";
+import ScriptFormatterIntegrations from "./components/ScriptFormatterIntegrations.astro";
+import ScriptFormatterApi from "./components/ScriptFormatterApi.astro";
+import ScriptFormatterDataModel from "./components/ScriptFormatterDataModel.astro";
+---
+<Layout title="Script Formatter">
+  <Loader />
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#script-formatter-formats"
+  >
+    Skip to format presets overview
+  </a>
+  <main class="bg-white">
+    <ScriptFormatterHero />
+    <ScriptFormatterFormats />
+    <ScriptFormatterWorkflow />
+    <ScriptFormatterValidation />
+    <ScriptFormatterTiming />
+    <ScriptFormatterPlans />
+    <ScriptFormatterIntegrations />
+    <ScriptFormatterApi />
+    <ScriptFormatterDataModel />
+  </main>
+</Layout>

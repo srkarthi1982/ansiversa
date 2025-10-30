@@ -1,0 +1,61 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { planMatrix } from "../data/scriptFormatterData";
+---
+<section id="script-formatter-plans" class="bg-white py-16" aria-labelledby="script-formatter-plans-title">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="PLAN GATING"
+      title="Free vs. Pro access"
+      description="Starter writers and full production teams both get clarity on limits, exports, and AI allowances."
+    />
+    <div class="mt-10 grid gap-6 sm:grid-cols-2">
+      {planMatrix.tiers.map((tier) => (
+        <article
+          class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/40"
+          key={tier.name}
+        >
+          <div class="flex items-start gap-3">
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+              <i class={`${tier.icon} text-lg`}></i>
+            </span>
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">{tier.name}</h3>
+              <p class="text-sm text-slate-600">{tier.description}</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-slate-600">
+            {tier.features.map((feature) => (
+              <li class="flex items-start gap-2" key={feature}>
+                <i class="fas fa-check text-xs text-indigo-500"></i>
+                <span>{feature}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+    <div class="mt-12 overflow-hidden rounded-3xl border border-slate-200 shadow-sm shadow-slate-200/40">
+      <table class="min-w-full divide-y divide-slate-200 text-sm">
+        <thead class="bg-slate-50">
+          <tr class="text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+            <th scope="col" class="px-6 py-3">Feature</th>
+            <th scope="col" class="px-6 py-3">Free</th>
+            <th scope="col" class="px-6 py-3">Pro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-200 bg-white text-slate-700">
+          {planMatrix.comparisons.map((row) => (
+            <tr key={row.feature}>
+              <th scope="row" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
+                {row.feature}
+              </th>
+              <td class="px-6 py-4">{row.free}</td>
+              <td class="px-6 py-4 font-semibold text-slate-900">{row.pro}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

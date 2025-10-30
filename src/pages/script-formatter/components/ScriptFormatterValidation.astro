@@ -1,0 +1,39 @@
+---
+import SectionHeading from "../../../components/SectionHeading.astro";
+import { validationSuite } from "../data/scriptFormatterData";
+---
+<section id="script-formatter-validation" class="bg-white py-16" aria-labelledby="script-formatter-validation-title">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="VALIDATION & PASSES"
+      title="Keep formatting pristine with guardrails and smart passes"
+      description="Linting, auto-reformatting, rewrite passes, and revision controls work together so every script stays camera-ready."
+    />
+    <div class="mt-12 grid gap-6 lg:grid-cols-2">
+      {validationSuite.map((item) => (
+        <article
+          class="flex flex-col gap-4 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm shadow-slate-200/40"
+          key={item.title}
+        >
+          <div class="flex items-start gap-3">
+            <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-100 text-indigo-600">
+              <i class="fas fa-shield-check text-lg"></i>
+            </span>
+            <div>
+              <h3 class="text-xl font-semibold text-slate-900">{item.title}</h3>
+              <p class="text-sm text-slate-600">Production-safe automation designed for writers and coordinators.</p>
+            </div>
+          </div>
+          <ul class="space-y-2 text-sm text-slate-600">
+            {item.bullets.map((bullet) => (
+              <li class="flex items-start gap-2" key={bullet}>
+                <i class="fas fa-check text-xs text-indigo-500"></i>
+                <span>{bullet}</span>
+              </li>
+            ))}
+          </ul>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
