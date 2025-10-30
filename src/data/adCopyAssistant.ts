@@ -931,7 +931,7 @@ const integrations: AdIntegrationShortcut[] = [
   {
     id: 'presentation-designer',
     name: 'Presentation Designer',
-    href: '/presentation',
+    href: '/presentation-designer',
     description: 'Convert ad hypotheses into launch decks and creative storyboards.',
     icon: 'fas fa-display',
   },

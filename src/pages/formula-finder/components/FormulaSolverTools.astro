@@ -1,0 +1,218 @@
+---
+import Button from "../../../components/Button.astro";
+import SectionHeading from "../../../components/SectionHeading.astro";
+
+const solverHighlights = [
+  {
+    title: "Solve for any variable",
+    description:
+      "Rearrange algebraically using safe operations (add, multiply, power, log) to isolate the target symbol, then substitute values instantly.",
+    icon: "fas fa-equals",
+  },
+  {
+    title: "Unit-aware inputs",
+    description:
+      "Convert to and from SI behind the scenes. Handle offsets (°C ↔ K) and show step-by-step unit cancellation for clarity.",
+    icon: "fas fa-ruler-combined",
+  },
+  {
+    title: "Dimensional guardrails",
+    description:
+      "Validate base dimensions L, M, T, I, Θ, N, J on every solve request so inconsistent inputs are caught immediately.",
+    icon: "fas fa-shield-check",
+  },
+];
+
+const stepRows = [
+  { label: "Rearrange", detail: "a = 2(s - ut) / t²" },
+  { label: "Normalize units", detail: "u 5 m/s, t 3 s, s 24 m" },
+  { label: "Substitute", detail: "a = 2(24 - 15) / 9" },
+  { label: "Evaluate", detail: "a = 2 m/s²" },
+  { label: "Report", detail: "Convert to ft/s² if requested" },
+];
+
+const toolkitItems = [
+  {
+    name: "Rearrangement API",
+    route: "/formula-finder/api/rearrange",
+    detail: "Receives LaTeX or AST, returns isolated LaTeX plus Markdown steps for UI rendering.",
+  },
+  {
+    name: "Solve API",
+    route: "/formula-finder/api/solve",
+    detail: "Validates dimensions, performs conversions, and returns numeric result with step log.",
+  },
+  {
+    name: "Convert API",
+    route: "/formula-finder/api/convert",
+    detail: "Handles unit conversions and temperature offsets for calculators outside the main solver.",
+  },
+];
+---
+<section id="solver" class="bg-slate-950 py-20 text-white sm:py-24">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Unit-aware problem solving"
+      title="Solve, convert, and validate with confidence"
+      description="Formula Finder embeds a calculator that respects units, surfaces algebra steps, and keeps learners honest with dimensional checks."
+      align="center"
+      containerClass="max-w-3xl"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-white/80"
+    />
+    <div class="mt-10 grid gap-6 sm:grid-cols-3">
+      {solverHighlights.map((highlight) => (
+        <article class="rounded-3xl border border-white/10 bg-white/10 p-6 text-sm text-white/80 backdrop-blur">
+          <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-400/30 text-indigo-100">
+            <i class={`${highlight.icon} text-lg`} aria-hidden="true"></i>
+          </span>
+          <h3 class="mt-4 text-base font-semibold text-white">{highlight.title}</h3>
+          <p class="mt-2 leading-6">{highlight.description}</p>
+        </article>
+      ))}
+    </div>
+    <div class="mt-12 grid gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+      <div class="space-y-6 rounded-3xl border border-white/10 bg-white/10 p-8 backdrop-blur">
+        <header class="flex items-start justify-between gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">Solve for acceleration</p>
+            <p class="mt-2 font-mono text-xl text-white">a = 2(s - ut) / t²</p>
+            <p class="mt-3 text-sm text-white/70">
+              Users choose any target variable. The solver rearranges, validates, and substitutes numbers while keeping full steps visible.
+            </p>
+          </div>
+          <span class="inline-flex items-center gap-2 rounded-full border border-emerald-300/40 bg-emerald-300/20 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.35em] text-emerald-200">
+            Steps ready
+          </span>
+        </header>
+        <div class="mt-6 grid gap-4 sm:grid-cols-2">
+          <div class="space-y-3 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Inputs</h3>
+            <ul class="space-y-2 text-sm text-white/70">
+              <li class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                <span>u</span>
+                <span>5 m/s</span>
+              </li>
+              <li class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                <span>s</span>
+                <span>24 m</span>
+              </li>
+              <li class="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                <span>t</span>
+                <span>3 s</span>
+              </li>
+            </ul>
+            <p class="text-xs text-white/50">
+              Unit picker supports SI + classroom favorites (km/h, ft/s, °C, etc.).
+            </p>
+          </div>
+          <div class="space-y-3 rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+            <h3 class="text-sm font-semibold uppercase tracking-[0.3em] text-white/60">Steps</h3>
+            <ol class="space-y-2 text-sm text-white/70">
+              {stepRows.map((row, index) => (
+                <li class="flex gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                  <span class="mt-0.5 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full bg-indigo-400/30 font-semibold text-indigo-100">
+                    {index + 1}
+                  </span>
+                  <div>
+                    <p class="text-xs font-semibold uppercase tracking-[0.35em] text-white/60">{row.label}</p>
+                    <p class="text-sm">{row.detail}</p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/10 p-4 text-sm text-white/70">
+          <p>
+            Dimensional check confirms LHS and RHS share L T⁻². Temperature conversions use offsets before scaling to avoid mixing base and derived units.
+          </p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <Button variant="light" size="sm" class="bg-white/20 text-white hover:bg-white/30">
+            <i class="fas fa-terminal text-[11px]" aria-hidden="true"></i>
+            View API response
+          </Button>
+          <Button variant="ghost" size="sm" class="text-white/70 hover:text-white">
+            <i class="fas fa-download text-[11px]" aria-hidden="true"></i>
+            Export steps (PDF)
+          </Button>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-white/60">Toolkit APIs</h3>
+          <ul class="mt-4 space-y-4 text-sm text-white/70">
+            {toolkitItems.map((item) => (
+              <li class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] font-semibold uppercase tracking-[0.35em] text-indigo-200">
+                  <span>{item.name}</span>
+                  <span>{item.route}</span>
+                </div>
+                <p class="mt-2 text-sm">{item.detail}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-white/60">Rate limits</h3>
+          <dl class="mt-4 grid gap-3 text-sm text-white/70 sm:grid-cols-2">
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.35em] text-indigo-200">Search</dt>
+              <dd class="mt-1 text-lg font-semibold text-white">30 requests / minute</dd>
+              <p class="mt-1 text-xs text-white/50">Throttled per account.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.35em] text-indigo-200">Solve</dt>
+              <dd class="mt-1 text-lg font-semibold text-white">10 requests / minute</dd>
+              <p class="mt-1 text-xs text-white/50">Unit and dimension heavy.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.35em] text-indigo-200">Rearrange</dt>
+              <dd class="mt-1 text-lg font-semibold text-white">5 requests / minute</dd>
+              <p class="mt-1 text-xs text-white/50">Caches popular isolates.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <dt class="text-[11px] font-semibold uppercase tracking-[0.35em] text-indigo-200">Exports</dt>
+              <dd class="mt-1 text-lg font-semibold text-white">MD / PDF / LaTeX</dd>
+              <p class="mt-1 text-xs text-white/50">Pro unlocks all formats.</p>
+            </div>
+          </dl>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 backdrop-blur">
+          <h3 class="text-sm font-semibold uppercase tracking-[0.35em] text-white/60">Integrations</h3>
+          <ul class="mt-3 space-y-3 text-sm text-white/70">
+            <li class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <span class="mt-1 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full bg-indigo-400/30 text-indigo-100">
+                <i class="fas fa-sparkles text-xs" aria-hidden="true"></i>
+              </span>
+              <div>
+                <p class="font-semibold text-white">FlashNote</p>
+                <p class="text-xs text-white/60">Export curated formula decks for spaced repetition.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <span class="mt-1 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full bg-indigo-400/30 text-indigo-100">
+                <i class="fas fa-lightbulb text-xs" aria-hidden="true"></i>
+              </span>
+              <div>
+                <p class="font-semibold text-white">Homework Helper</p>
+                <p class="text-xs text-white/60">Send solved examples straight into guided homework plans.</p>
+              </div>
+            </li>
+            <li class="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <span class="mt-1 inline-flex h-6 w-6 flex-none items-center justify-center rounded-full bg-indigo-400/30 text-indigo-100">
+                <i class="fas fa-chess-knight text-xs" aria-hidden="true"></i>
+              </span>
+              <div>
+                <p class="font-semibold text-white">Knowledge Duel</p>
+                <p class="text-xs text-white/60">Auto-generate challenge questions referencing saved formulas.</p>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

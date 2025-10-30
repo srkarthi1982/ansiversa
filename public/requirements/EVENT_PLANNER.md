@@ -1,7 +1,7 @@
 # ðŸ“… Event Planner â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/events`  
+**Module Path:** `/event-planner`  
 **Category:** Lifestyle & Wellâ€‘Being / Productivity  
 **Stack:** Astro + Tailwind (islands for forms/dragâ€‘drop), Astro SSR API routes, Astro DB / Supabase, optional background workers for reminders  
 **Goal:** Plan single or multiâ€‘day events (meetup, class, workshop, wedding, birthday, webinar) with smart timelines, task checklists, budgets, guest lists (RSVP), venue & vendor tracking, reminders, and exports. Integrates with Presentation Designer (runâ€‘ofâ€‘show deck), Email Polisher (invites/thanks), and Price Checker (vendors).
@@ -43,31 +43,31 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 1. **Create an Event**
    - *As an organizer*, I select a template and enter title, dates, time zone, and location.  
-   - **AC:** `/events/api/create` returns `eventId` with seeded tasks/budget and RSVP form.
+   - **AC:** `/event-planner/api/create` returns `eventId` with seeded tasks/budget and RSVP form.
 
 2. **Plan Timeline**
    - *As an organizer*, I drag items in a timeline and set durations.  
-   - **AC:** `/events/api/agenda/save` stores items with start/end and dependencies.
+   - **AC:** `/event-planner/api/agenda/save` stores items with start/end and dependencies.
 
 3. **Invite & Track RSVPs**
    - *As an organizer*, I import guests (CSV) and send invites.  
-   - **AC:** `/events/api/guests/import` accepts CSV; `/events/api/invite/send` queues invites; `/events/rsvp/[slug]` shows branded RSVP page; `/events/api/rsvp` records response.
+   - **AC:** `/event-planner/api/guests/import` accepts CSV; `/event-planner/api/invite/send` queues invites; `/event-planner/rsvp/[slug]` shows branded RSVP page; `/event-planner/api/rsvp` records response.
 
 4. **Budget & Vendors**
    - *As a finance lead*, I add line items and assign vendors.  
-   - **AC:** `/events/api/budget/save` stores items; totals show **planned vs actual** and **variance**.
+   - **AC:** `/event-planner/api/budget/save` stores items; totals show **planned vs actual** and **variance**.
 
 5. **Tasks & Assignees**
    - *As a coordinator*, I create tasks with assignee & due date; I get reminders.  
-   - **AC:** `/events/api/tasks/save` persists tasks; reminder jobs scheduled for dueâ€‘1d/hour.
+   - **AC:** `/event-planner/api/tasks/save` persists tasks; reminder jobs scheduled for dueâ€‘1d/hour.
 
 6. **Dayâ€‘Of Run Sheet**
    - *As a host*, I export a runâ€‘ofâ€‘show (PDF) with contacts and contingencies.  
-   - **AC:** `/events/api/export` returns PDF/MD; phoneâ€‘friendly view available at `/events/run/[eventId]`.
+   - **AC:** `/event-planner/api/export` returns PDF/MD; phoneâ€‘friendly view available at `/event-planner/run/[eventId]`.
 
 7. **Postâ€‘Event Recap**
    - *As an organizer*, I send a survey and generate a recap.  
-   - **AC:** `/events/api/survey/send` queues messages; `/events/api/recap` compiles attendance, cost, feedback, and highlights.
+   - **AC:** `/event-planner/api/survey/send` queues messages; `/event-planner/api/recap` compiles attendance, cost, feedback, and highlights.
 
 8. **Plan Gating**
    - Free: 1 active event, 100 guests, basic export.  
@@ -77,24 +77,24 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ## 4) Routes & Information Architecture
 
-- `/events` â€” Hub: Create event (template picker), recent events, quick stats.  
-- `/events/new` â€” Wizard (details, dates, template, branding).  
-- `/events/[eventId]` â€” Event dashboard (tabs).  
+- `/event-planner` â€” Hub: Create event (template picker), recent events, quick stats.  
+- `/event-planner/new` â€” Wizard (details, dates, template, branding).  
+- `/event-planner/[eventId]` â€” Event dashboard (tabs).  
 - Tabs under event: **Overview Â· Agenda Â· Tasks Â· Budget Â· Guests Â· Vendors Â· Assets Â· Settings**.  
-- Public pages: `/events/rsvp/[slug]`, `/events/info/[slug]`, `/events/run/[eventId]` (shareable run sheet).
+- Public pages: `/event-planner/rsvp/[slug]`, `/event-planner/info/[slug]`, `/event-planner/run/[eventId]` (shareable run sheet).
 
 **API (SSR):**  
-- `POST /events/api/create` Â· `GET /events/api/list` Â· `POST /events/api/delete`  
-- `POST /events/api/agenda/save` Â· `GET /events/api/agenda`  
-- `POST /events/api/tasks/save` Â· `POST /events/api/tasks/update` Â· `POST /events/api/tasks/status`  
-- `POST /events/api/budget/save` Â· `GET /events/api/budget`  
-- `POST /events/api/guests/import` Â· `POST /events/api/guests/add` Â· `POST /events/api/guests/update`  
-- `POST /events/api/invite/send` Â· `POST /events/api/reminders/send`  
-- `POST /events/api/rsvp` Â· `GET /events/api/guestlist`  
-- `POST /events/api/vendors/save` Â· `GET /events/api/vendors`  
-- `POST /events/api/assets/upload` Â· `GET /events/api/assets`  
-- `POST /events/api/export` (pdf|md|ics|csv)  
-- `POST /events/api/recap`
+- `POST /event-planner/api/create` Â· `GET /event-planner/api/list` Â· `POST /event-planner/api/delete`  
+- `POST /event-planner/api/agenda/save` Â· `GET /event-planner/api/agenda`  
+- `POST /event-planner/api/tasks/save` Â· `POST /event-planner/api/tasks/update` Â· `POST /event-planner/api/tasks/status`  
+- `POST /event-planner/api/budget/save` Â· `GET /event-planner/api/budget`  
+- `POST /event-planner/api/guests/import` Â· `POST /event-planner/api/guests/add` Â· `POST /event-planner/api/guests/update`  
+- `POST /event-planner/api/invite/send` Â· `POST /event-planner/api/reminders/send`  
+- `POST /event-planner/api/rsvp` Â· `GET /event-planner/api/guestlist`  
+- `POST /event-planner/api/vendors/save` Â· `GET /event-planner/api/vendors`  
+- `POST /event-planner/api/assets/upload` Â· `GET /event-planner/api/assets`  
+- `POST /event-planner/api/export` (pdf|md|ics|csv)  
+- `POST /event-planner/api/recap`
 
 ---
 
@@ -139,10 +139,10 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ## 6) RSVP & Public Pages
 
-### `/events/info/[slug]`
+### `/event-planner/info/[slug]`
 - Cover image, title, date/time (local + event TZ), location map or virtual link, schedule snippet, CTA: RSVP.
 
-### `/events/rsvp/[slug]`
+### `/event-planner/rsvp/[slug]`
 - Form: name, email, phone (optional), RSVP (Yes/No/Maybe), plusâ€‘ones, dietary restrictions, comments.  
 - Success view with ICS download and â€œAdd to Calendarâ€ buttons.
 
@@ -205,51 +205,51 @@ Rate limits: `userId`+day for invites/reminders/export; `eventId`+hour for RSVP 
 ## 12) Suggested File Layout
 
 ```
-src/pages/events/index.astro
-src/pages/events/new.astro
-src/pages/events/[eventId]/index.astro
-src/pages/events/[eventId]/agenda.astro
-src/pages/events/[eventId]/tasks.astro
-src/pages/events/[eventId]/budget.astro
-src/pages/events/[eventId]/guests.astro
-src/pages/events/[eventId]/vendors.astro
-src/pages/events/[eventId]/assets.astro
-src/pages/events/[eventId]/settings.astro
-src/pages/events/info/[slug].astro
-src/pages/events/rsvp/[slug].astro
-src/pages/events/run/[eventId].astro
+src/pages/event-planner/index.astro
+src/pages/event-planner/new.astro
+src/pages/event-planner/[eventId]/index.astro
+src/pages/event-planner/[eventId]/agenda.astro
+src/pages/event-planner/[eventId]/tasks.astro
+src/pages/event-planner/[eventId]/budget.astro
+src/pages/event-planner/[eventId]/guests.astro
+src/pages/event-planner/[eventId]/vendors.astro
+src/pages/event-planner/[eventId]/assets.astro
+src/pages/event-planner/[eventId]/settings.astro
+src/pages/event-planner/info/[slug].astro
+src/pages/event-planner/rsvp/[slug].astro
+src/pages/event-planner/run/[eventId].astro
 
-src/pages/events/api/create.ts
-src/pages/events/api/list.ts
-src/pages/events/api/delete.ts
-src/pages/events/api/agenda/save.ts
-src/pages/events/api/agenda/index.ts
-src/pages/events/api/tasks/save.ts
-src/pages/events/api/tasks/update.ts
-src/pages/events/api/tasks/status.ts
-src/pages/events/api/budget/save.ts
-src/pages/events/api/budget/index.ts
-src/pages/events/api/guests/import.ts
-src/pages/events/api/guests/add.ts
-src/pages/events/api/guests/update.ts
-src/pages/events/api/invite/send.ts
-src/pages/events/api/reminders/send.ts
-src/pages/events/api/rsvp.ts
-src/pages/events/api/guestlist.ts
-src/pages/events/api/vendors/save.ts
-src/pages/events/api/vendors/index.ts
-src/pages/events/api/assets/upload.ts
-src/pages/events/api/assets/index.ts
-src/pages/events/api/export.ts
-src/pages/events/api/recap.ts
+src/pages/event-planner/api/create.ts
+src/pages/event-planner/api/list.ts
+src/pages/event-planner/api/delete.ts
+src/pages/event-planner/api/agenda/save.ts
+src/pages/event-planner/api/agenda/index.ts
+src/pages/event-planner/api/tasks/save.ts
+src/pages/event-planner/api/tasks/update.ts
+src/pages/event-planner/api/tasks/status.ts
+src/pages/event-planner/api/budget/save.ts
+src/pages/event-planner/api/budget/index.ts
+src/pages/event-planner/api/guests/import.ts
+src/pages/event-planner/api/guests/add.ts
+src/pages/event-planner/api/guests/update.ts
+src/pages/event-planner/api/invite/send.ts
+src/pages/event-planner/api/reminders/send.ts
+src/pages/event-planner/api/rsvp.ts
+src/pages/event-planner/api/guestlist.ts
+src/pages/event-planner/api/vendors/save.ts
+src/pages/event-planner/api/vendors/index.ts
+src/pages/event-planner/api/assets/upload.ts
+src/pages/event-planner/api/assets/index.ts
+src/pages/event-planner/api/export.ts
+src/pages/event-planner/api/recap.ts
 
-src/components/events/Dashboard/*.astro
-src/components/events/Agenda/*.astro
-src/components/events/Tasks/*.astro
-src/components/events/Budget/*.astro
-src/components/events/Guests/*.astro
-src/components/events/Vendors/*.astro
-src/components/events/Assets/*.astro
+src/components/event-planner/Dashboard/*.astro
+src/components/event-planner/Agenda/*.astro
+src/components/event-planner/Tasks/*.astro
+src/components/event-planner/Budget/*.astro
+src/components/event-planner/Guests/*.astro
+src/components/event-planner/Vendors/*.astro
+src/components/event-planner/Assets/*.astro
 ```
 
 ---

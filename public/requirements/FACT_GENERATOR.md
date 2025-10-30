@@ -1,7 +1,7 @@
 # ðŸ§¾ Fact Generator â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/facts`  
+**Module Path:** `/fact-generator`  
 **Category:** Learning & Knowledge  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Deliver short, trustworthy **facts** with citations and optional kidâ€‘friendly language. Offer **random facts**, **topic facts**, **daily fact**, and **quizify/explain more** actions. Support multiâ€‘language, reading levels, and export/sharing.
@@ -31,11 +31,11 @@
 
 1. **Random Fact**
    - *As a user*, I press **Surprise me**.  
-   - **AC:** `/facts/api/random` returns a `FactCard` with text, citations, tags, and actions; no repeats within the last 20 items per user.
+   - **AC:** `/fact-generator/api/random` returns a `FactCard` with text, citations, tags, and actions; no repeats within the last 20 items per user.
 
 2. **Topic Fact**
    - *As a user*, I choose a topic (e.g., Space, Biology, History, Tech, Geography).  
-   - **AC:** `/facts/api/topic` takes `topic` + optional `subtopic` and returns a fact relevant to that area with citations.
+   - **AC:** `/fact-generator/api/topic` takes `topic` + optional `subtopic` and returns a fact relevant to that area with citations.
 
 3. **Reading Level & Language**
    - *As a user*, I set level=Kids and language=Tamil.  
@@ -43,15 +43,15 @@
 
 4. **Explain More & Quizify**
    - *As a user*, I click **Explain More** or **Quizify**.  
-   - **AC:** `/facts/api/explain` returns a short explainer; `/facts/api/quiz` returns 3â€“5 MCQs/TF based on the fact.
+   - **AC:** `/fact-generator/api/explain` returns a short explainer; `/fact-generator/api/quiz` returns 3â€“5 MCQs/TF based on the fact.
 
 5. **Save & Packs**
    - *As a user*, I save facts to **Collections** (e.g., â€œSpace wow!â€).  
-   - **AC:** `/facts/api/save` stores the fact and associates it with a user collection; `/facts/api/packs/list` lists builtâ€‘in packs.
+   - **AC:** `/fact-generator/api/save` stores the fact and associates it with a user collection; `/fact-generator/api/packs/list` lists builtâ€‘in packs.
 
 6. **Daily Fact & Streaks**
    - *As a user*, I subscribe to a **Daily Fact**.  
-   - **AC:** `/facts/api/daily/today` returns the dayâ€™s fact; streak count increments on view.
+   - **AC:** `/fact-generator/api/daily/today` returns the dayâ€™s fact; streak count increments on view.
 
 7. **Plan Gating**
    - Free: Random + Topic + Daily (limited exports).  
@@ -61,23 +61,23 @@
 
 ## 3) Routes & Information Architecture
 
-- `/facts` â€” Hub: Random, Topic chooser, Daily card, recent saves.  
-- `/facts/topic/[topic]` â€” Topic stream (filters: subtopic, difficulty, level, language).  
-- `/facts/daily` â€” Todayâ€™s fact + streak; archive (Pro).  
-- `/facts/packs` â€” Builtâ€‘in packs & user collections.  
-- `/facts/collection/[id]` â€” A saved collection.  
-- `/facts/settings` â€” Preferences: language, level, kidâ€‘safe, export defaults.
+- `/fact-generator` â€” Hub: Random, Topic chooser, Daily card, recent saves.  
+- `/fact-generator/topic/[topic]` â€” Topic stream (filters: subtopic, difficulty, level, language).  
+- `/fact-generator/daily` â€” Todayâ€™s fact + streak; archive (Pro).  
+- `/fact-generator/packs` â€” Builtâ€‘in packs & user collections.  
+- `/fact-generator/collection/[id]` â€” A saved collection.  
+- `/fact-generator/settings` â€” Preferences: language, level, kidâ€‘safe, export defaults.
 
 **API (SSR):**  
-- `POST /facts/api/random`  
-- `POST /facts/api/topic`  
-- `POST /facts/api/explain`  
-- `POST /facts/api/quiz`  
-- `POST /facts/api/save` Â· `POST /facts/api/delete` Â· `POST /facts/api/duplicate`  
-- `GET  /facts/api/packs/list` Â· `POST /facts/api/packs/start`  
-- `POST /facts/api/daily/today`  
-- `POST /facts/api/export` (png|md|json)  
-- `GET  /facts/api/history`
+- `POST /fact-generator/api/random`  
+- `POST /fact-generator/api/topic`  
+- `POST /fact-generator/api/explain`  
+- `POST /fact-generator/api/quiz`  
+- `POST /fact-generator/api/save` Â· `POST /fact-generator/api/delete` Â· `POST /fact-generator/api/duplicate`  
+- `GET  /fact-generator/api/packs/list` Â· `POST /fact-generator/api/packs/start`  
+- `POST /fact-generator/api/daily/today`  
+- `POST /fact-generator/api/export` (png|md|json)  
+- `GET  /fact-generator/api/history`
 
 ---
 
@@ -163,7 +163,7 @@
 
 ## 7) UI / Pages
 
-### `/facts` (Hub)
+### `/fact-generator` (Hub)
 - Search bar with topic chips; **Surprise me** button; Daily Fact card; recent saves.  
 - Settings chip: language, level, kidâ€‘safe.
 
@@ -172,13 +172,13 @@
 - Buttons: **Explain More**, **Quizify**, **Save**, **Share**, **Export** (PNG/MD/JSON).  
 - Toggle: **Kids mode wording**.
 
-### `/facts/topic/[topic]`
+### `/fact-generator/topic/[topic]`
 - Infinite scroll; filters (subtopic, tier, level); copy link.
 
-### `/facts/daily`
+### `/fact-generator/daily`
 - Todayâ€™s featured fact; streak counter; archive (Pro).
 
-### `/facts/packs`
+### `/fact-generator/packs`
 - Builtâ€‘in packs (Space 100, Biology Basics, World Flags, Computing Milestones).  
 - User collections with progress.
 
@@ -186,27 +186,27 @@
 
 ## 8) API Contracts (examples)
 
-### `POST /facts/api/random`
+### `POST /fact-generator/api/random`
 Req: `{ "level":"teen", "language":"en", "topic":"any", "kidSafe":true }`  
 Res: `{ "fact": { ...FactCard... }, "next": "cursor-abc" }`
 
-### `POST /facts/api/topic`
+### `POST /fact-generator/api/topic`
 Req: `{ "topic":"space", "subtopic":"planets", "level":"kids", "language":"en" }`  
 Res: `{ "fact": { ... }, "related":[ "...ids..." ] }`
 
-### `POST /facts/api/explain`
+### `POST /fact-generator/api/explain`
 Req: `{ "factId":"<uuid>", "depth":"short|medium|long", "language":"en" }`  
 Res: `{ "explainer": { ... } }`
 
-### `POST /facts/api/quiz`
+### `POST /fact-generator/api/quiz`
 Req: `{ "factId":"<uuid>", "count":5 }`  
 Res: `{ "quizId":"QUIZ-123", "items":[ ... ] }`
 
-### `POST /facts/api/export`
+### `POST /fact-generator/api/export`
 Req: `{ "factId":"<uuid>", "format":"png|md|json" }`  
 Res: `{ "url":"/exports/Fact_Space_2025-10-28.png" }`
 
-### `GET /facts/api/packs/list`
+### `GET /fact-generator/api/packs/list`
 Res: `{ "builtin":[...], "user":[...] }`
 
 ---
@@ -248,30 +248,30 @@ Rate limits: `userId`+day for random/topic; `userId`+day for exports; `userId`+h
 ## 12) Suggested File Layout
 
 ```
-src/pages/facts/index.astro
-src/pages/facts/topic/[topic].astro
-src/pages/facts/daily.astro
-src/pages/facts/packs.astro
-src/pages/facts/collection/[id].astro
-src/pages/facts/settings.astro
+src/pages/fact-generator/index.astro
+src/pages/fact-generator/topic/[topic].astro
+src/pages/fact-generator/daily.astro
+src/pages/fact-generator/packs.astro
+src/pages/fact-generator/collection/[id].astro
+src/pages/fact-generator/settings.astro
 
-src/pages/facts/api/random.ts
-src/pages/facts/api/topic.ts
-src/pages/facts/api/explain.ts
-src/pages/facts/api/quiz.ts
-src/pages/facts/api/save.ts
-src/pages/facts/api/delete.ts
-src/pages/facts/api/duplicate.ts
-src/pages/facts/api/packs/list.ts
-src/pages/facts/api/packs/start.ts
-src/pages/facts/api/daily/today.ts
-src/pages/facts/api/export.ts
-src/pages/facts/api/history.ts
+src/pages/fact-generator/api/random.ts
+src/pages/fact-generator/api/topic.ts
+src/pages/fact-generator/api/explain.ts
+src/pages/fact-generator/api/quiz.ts
+src/pages/fact-generator/api/save.ts
+src/pages/fact-generator/api/delete.ts
+src/pages/fact-generator/api/duplicate.ts
+src/pages/fact-generator/api/packs/list.ts
+src/pages/fact-generator/api/packs/start.ts
+src/pages/fact-generator/api/daily/today.ts
+src/pages/fact-generator/api/export.ts
+src/pages/fact-generator/api/history.ts
 
-src/components/facts/Card/*.astro
-src/components/facts/Explain/*.astro
-src/components/facts/Quiz/*.astro
-src/components/facts/Packs/*.astro
+src/components/fact-generator/Card/*.astro
+src/components/fact-generator/Explain/*.astro
+src/components/fact-generator/Quiz/*.astro
+src/components/fact-generator/Packs/*.astro
 ```
 
 ---

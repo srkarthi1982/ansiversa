@@ -20,12 +20,12 @@ This document includes a **short summary** for Codex onboarding and the **full t
 - Export/Import: CSV/JSON; shareable deck links (readâ€‘only v1).
 
 ### Core Pages
-- `/langcards` â€” Dashboard (todayâ€™s reviews, due count, quick add)  
-- `/langcards/deck/[id]` â€” Deck home (browse, add, train)  
-- `/langcards/review` â€” SRS session player  
-- `/langcards/create` â€” Generator (paste text â†’ suggest cards)  
-- `/langcards/analytics` â€” Progress & retention  
-- `/langcards/settings` â€” Language pair, scripts, audio, review target
+- `/language-flashcards` â€” Dashboard (todayâ€™s reviews, due count, quick add)  
+- `/language-flashcards/deck/[id]` â€” Deck home (browse, add, train)  
+- `/language-flashcards/review` â€” SRS session player  
+- `/language-flashcards/create` â€” Generator (paste text â†’ suggest cards)  
+- `/language-flashcards/analytics` â€” Progress & retention  
+- `/language-flashcards/settings` â€” Language pair, scripts, audio, review target
 
 ### Minimal Data Model
 `Language`, `Deck`, `Card`, `Note` (shared fields), `Review`, `Media`, `Tag`, `Goal`, `ImportJob`
@@ -62,22 +62,22 @@ Integrations: **Study Planner** (schedule reviews), **Course Tracker** (syllabus
 ### 2) Information Architecture & Routes
 
 **Pages**
-- `/langcards` â€” Todayâ€™s queue, streaks, quick add, recent decks.  
-- `/langcards/deck/[id]` â€” Deck details, filters (tags, POS), add/edit cards.  
-- `/langcards/review` â€” SRS player (keyboard: 1â€“5 grading).  
-- `/langcards/create` â€” Paste text â†’ detect language â†’ extract candidates â†’ approve cards.  
-- `/langcards/analytics` â€” Retention (forgetting curve), accuracy by tag/POS, due forecast.  
-- `/langcards/settings` â€” Daily target, audio settings, default language pair, answer mode.
+- `/language-flashcards` â€” Todayâ€™s queue, streaks, quick add, recent decks.  
+- `/language-flashcards/deck/[id]` â€” Deck details, filters (tags, POS), add/edit cards.  
+- `/language-flashcards/review` â€” SRS player (keyboard: 1â€“5 grading).  
+- `/language-flashcards/create` â€” Paste text â†’ detect language â†’ extract candidates â†’ approve cards.  
+- `/language-flashcards/analytics` â€” Retention (forgetting curve), accuracy by tag/POS, due forecast.  
+- `/language-flashcards/settings` â€” Daily target, audio settings, default language pair, answer mode.
 
 **API (SSR)**
-- Decks: `POST /langcards/api/deck/create` Â· `GET /langcards/api/deck/list` Â· `POST /langcards/api/deck/update` Â· `POST /langcards/api/deck/delete`  
-- Cards: `POST /langcards/api/card/create` Â· `POST /langcards/api/card/update` Â· `POST /langcards/api/card/delete` Â· `GET /langcards/api/card/list`  
-- Reviews: `GET /langcards/api/review/due` Â· `POST /langcards/api/review/submit`  
-- Generator: `POST /langcards/api/generate` (from text)  
-- Media: `POST /langcards/api/media/upload` (image/audio) Â· `GET /langcards/api/media`  
-- Import/Export: `POST /langcards/api/import` (csv|json) Â· `POST /langcards/api/export` (csv|json)  
-- Settings/Goals: `POST /langcards/api/settings/save` Â· `POST /langcards/api/goal/upsert`  
-- Share: `POST /langcards/api/share/create` (Pro, readâ€‘only link)
+- Decks: `POST /language-flashcards/api/deck/create` Â· `GET /language-flashcards/api/deck/list` Â· `POST /language-flashcards/api/deck/update` Â· `POST /language-flashcards/api/deck/delete`  
+- Cards: `POST /language-flashcards/api/card/create` Â· `POST /language-flashcards/api/card/update` Â· `POST /language-flashcards/api/card/delete` Â· `GET /language-flashcards/api/card/list`  
+- Reviews: `GET /language-flashcards/api/review/due` Â· `POST /language-flashcards/api/review/submit`  
+- Generator: `POST /language-flashcards/api/generate` (from text)  
+- Media: `POST /language-flashcards/api/media/upload` (image/audio) Â· `GET /language-flashcards/api/media`  
+- Import/Export: `POST /language-flashcards/api/import` (csv|json) Â· `POST /language-flashcards/api/export` (csv|json)  
+- Settings/Goals: `POST /language-flashcards/api/settings/save` Â· `POST /language-flashcards/api/goal/upsert`  
+- Share: `POST /language-flashcards/api/share/create` (Pro, readâ€‘only link)
 
 Web workers recommended for audio processing & session timing to keep UI responsive.
 
@@ -191,25 +191,25 @@ Validation: required fields per type; length limits; profanity filter (basic).
 ### 9) API Contracts (Examples)
 
 **Due list**  
-`GET /langcards/api/review/due?limit=50` â†’  
+`GET /language-flashcards/api/review/due?limit=50` â†’  
 `{ "cards":[{"id":"c1","front":"house","hint":null,"audioTtsUrl":"/m/tts/c1.mp3"}], "due": 47 }`
 
 **Submit review**  
-`POST /langcards/api/review/submit`  
+`POST /language-flashcards/api/review/submit`  
 ```json
 { "cardId":"c1", "grade":4, "durationSec":9 }
 ```
 Res: `{ "nextDueAt":"2025-11-10T00:00:00Z", "interval":6, "ease":2.56 }`
 
 **Generate from text**  
-`POST /langcards/api/generate`  
+`POST /language-flashcards/api/generate`  
 ```json
 { "baseLang":"en", "targetLang":"es", "text":"I read books in the library on Sundays." }
 ```
 Res: `{ "candidates":[{"type":"word","base":"book","target":"libro","example":{...}}], "detected":"en" }`
 
 **Create card**  
-`POST /langcards/api/card/create`  
+`POST /language-flashcards/api/card/create`  
 ```json
 {
   "deckId":"d1",
@@ -223,10 +223,10 @@ Res: `{ "candidates":[{"type":"word","base":"book","target":"libro","example":{.
 Res: `{ "cardId": "c_123" }`
 
 **Export deck**  
-`POST /langcards/api/export` â†’ `{ "url":"/exports/deck_spanish_basic.csv" }`
+`POST /language-flashcards/api/export` â†’ `{ "url":"/exports/deck_spanish_basic.csv" }`
 
 **Share deck (Pro)**  
-`POST /langcards/api/share/create` â†’ `{ "url":"/langcards/shared/abcd1234" }`
+`POST /language-flashcards/api/share/create` â†’ `{ "url":"/language-flashcards/shared/abcd1234" }`
 
 ---
 
@@ -261,36 +261,36 @@ Rate limits: `/review/submit` 60/min, `/generate` 10/hour, `/import` 3/hour.
 ### 12) Suggested File Layout
 
 ```
-src/pages/langcards/index.astro
-src/pages/langcards/deck/[id].astro
-src/pages/langcards/review.astro
-src/pages/langcards/create.astro
-src/pages/langcards/analytics.astro
-src/pages/langcards/settings.astro
+src/pages/language-flashcards/index.astro
+src/pages/language-flashcards/deck/[id].astro
+src/pages/language-flashcards/review.astro
+src/pages/language-flashcards/create.astro
+src/pages/language-flashcards/analytics.astro
+src/pages/language-flashcards/settings.astro
 
-src/pages/langcards/api/deck/create.ts
-src/pages/langcards/api/deck/list.ts
-src/pages/langcards/api/deck/update.ts
-src/pages/langcards/api/deck/delete.ts
-src/pages/langcards/api/card/create.ts
-src/pages/langcards/api/card/update.ts
-src/pages/langcards/api/card/delete.ts
-src/pages/langcards/api/card/list.ts
-src/pages/langcards/api/review/due.ts
-src/pages/langcards/api/review/submit.ts
-src/pages/langcards/api/generate.ts
-src/pages/langcards/api/media/upload.ts
-src/pages/langcards/api/media/index.ts
-src/pages/langcards/api/import.ts
-src/pages/langcards/api/export.ts
-src/pages/langcards/api/settings/save.ts
-src/pages/langcards/api/goal/upsert.ts
-src/pages/langcards/api/share/create.ts
+src/pages/language-flashcards/api/deck/create.ts
+src/pages/language-flashcards/api/deck/list.ts
+src/pages/language-flashcards/api/deck/update.ts
+src/pages/language-flashcards/api/deck/delete.ts
+src/pages/language-flashcards/api/card/create.ts
+src/pages/language-flashcards/api/card/update.ts
+src/pages/language-flashcards/api/card/delete.ts
+src/pages/language-flashcards/api/card/list.ts
+src/pages/language-flashcards/api/review/due.ts
+src/pages/language-flashcards/api/review/submit.ts
+src/pages/language-flashcards/api/generate.ts
+src/pages/language-flashcards/api/media/upload.ts
+src/pages/language-flashcards/api/media/index.ts
+src/pages/language-flashcards/api/import.ts
+src/pages/language-flashcards/api/export.ts
+src/pages/language-flashcards/api/settings/save.ts
+src/pages/language-flashcards/api/goal/upsert.ts
+src/pages/language-flashcards/api/share/create.ts
 
-src/components/langcards/Deck/*.astro
-src/components/langcards/Review/*.astro
-src/components/langcards/Create/*.astro
-src/components/langcards/Analytics/*.astro
+src/components/language-flashcards/Deck/*.astro
+src/components/language-flashcards/Review/*.astro
+src/components/language-flashcards/Create/*.astro
+src/components/language-flashcards/Analytics/*.astro
 ```
 
 ---

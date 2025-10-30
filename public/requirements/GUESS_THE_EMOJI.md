@@ -1,7 +1,7 @@
 # ðŸ˜„ Guess the Emoji â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/emoji`  
+**Module Path:** `/guess-the-emoji`  
 **Category:** Fun & Engagement  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Fast, familyâ€‘friendly word game where users decode a phrase/title/object from a **sequence of emojis**. Includes Solo, Daily Puzzle, and Async Versus. Supports localization, hints, packs, and creator tools.
@@ -33,31 +33,31 @@
 
 1. **Solve a Puzzle**
    - *As a user*, Iâ€™m shown emojis like `ðŸ”ðŸ ` and a text input.  
-   - **AC:** `/emoji/api/check` accepts `burger house`, `burgerhouse`, or `burger home` if listed as aliases; returns correct/incorrect and an explanation string.
+   - **AC:** `/guess-the-emoji/api/check` accepts `burger house`, `burgerhouse`, or `burger home` if listed as aliases; returns correct/incorrect and an explanation string.
 
 2. **Daily Emoji**
    - *As a user*, I get one seedâ€‘based puzzle per day.  
-   - **AC:** `/emoji/api/daily/today` returns todayâ€™s puzzle; `/daily/submit` posts my score/time to the leaderboard.
+   - **AC:** `/guess-the-emoji/api/daily/today` returns todayâ€™s puzzle; `/daily/submit` posts my score/time to the leaderboard.
 
 3. **Hints**
    - *As a user*, I can reveal a letter, remove 2 wrong letters from a keyboard bank, or get a textual clue.  
-   - **AC:** `/emoji/api/hint` returns a specific hint; score penalty applies.
+   - **AC:** `/guess-the-emoji/api/hint` returns a specific hint; score penalty applies.
 
 4. **Time Attack**
    - *As a user*, I choose 90/120/180s and try to solve a stream.  
-   - **AC:** `/emoji/api/timeattack/start` returns a stream/session id; `/timeattack/next` serves the next puzzle; `/timeattack/submit` tallies score.
+   - **AC:** `/guess-the-emoji/api/timeattack/start` returns a stream/session id; `/timeattack/next` serves the next puzzle; `/timeattack/submit` tallies score.
 
 5. **Versus (Async)**
    - *As a user*, I generate an invite link; both players solve the same set; server compares final scores.  
-   - **AC:** `/emoji/api/versus/create` â†’ `inviteUrl`; `/versus/submit` computes winner; antiâ€‘replay enforced.
+   - **AC:** `/guess-the-emoji/api/versus/create` â†’ `inviteUrl`; `/versus/submit` computes winner; antiâ€‘replay enforced.
 
 6. **Packs & Import**
    - *As a user*, I import a CSV/JSON of puzzles (with emojis and accepted answers).  
-   - **AC:** `/emoji/api/packs/import` dedupes by puzzle hash; `/packs/list` lists packs; `/packs/start` creates a session from a pack.
+   - **AC:** `/guess-the-emoji/api/packs/import` dedupes by puzzle hash; `/packs/list` lists packs; `/packs/start` creates a session from a pack.
 
 7. **Stats & Streaks**
    - *As a user*, I see accuracy, avg time per puzzle, streak days, and top categories.  
-   - **AC:** `/emoji/api/stats` aggregates metrics; `/emoji/api/leaderboard` paginates standings.
+   - **AC:** `/guess-the-emoji/api/stats` aggregates metrics; `/guess-the-emoji/api/leaderboard` paginates standings.
 
 8. **Plan Gating**
    - Free: Classic + Daily + basic hints + builtâ€‘in packs.  
@@ -67,24 +67,24 @@
 
 ## 3) Routes & Information Architecture
 
-- `/emoji` â€” Hub: Start Classic, Daily card, Time Attack, Versus invite, recent stats.  
-- `/emoji/play` â€” Classic Solo UI (progress, keyboard, hints).  
-- `/emoji/daily` â€” Daily Emoji + leaderboard panel.  
-- `/emoji/versus/[matchId]` â€” Async Versus room (join/play/results).  
-- `/emoji/packs` â€” Pack browser (builtâ€‘in + user imports).  
-- `/emoji/stats` â€” Personal analytics.  
-- `/emoji/settings` â€” Language, input rules, hints behavior, accessibility.
+- `/guess-the-emoji` â€” Hub: Start Classic, Daily card, Time Attack, Versus invite, recent stats.  
+- `/guess-the-emoji/play` â€” Classic Solo UI (progress, keyboard, hints).  
+- `/guess-the-emoji/daily` â€” Daily Emoji + leaderboard panel.  
+- `/guess-the-emoji/versus/[matchId]` â€” Async Versus room (join/play/results).  
+- `/guess-the-emoji/packs` â€” Pack browser (builtâ€‘in + user imports).  
+- `/guess-the-emoji/stats` â€” Personal analytics.  
+- `/guess-the-emoji/settings` â€” Language, input rules, hints behavior, accessibility.
 
 **API (SSR):**  
-- `POST /emoji/api/session/create` (classic)  
-- `POST /emoji/api/next` (next puzzle within a session)  
-- `POST /emoji/api/check` (validate answer; apply scoring/penalties)  
-- `POST /emoji/api/hint` (reveal/remove/clue)  
-- `POST /emoji/api/daily/today` Â· `POST /emoji/api/daily/submit`  
-- `POST /emoji/api/versus/create` Â· `POST /emoji/api/versus/join` Â· `POST /emoji/api/versus/submit`  
-- `GET  /emoji/api/packs/list` Â· `POST /emoji/api/packs/start` Â· `POST /emoji/api/packs/import`  
-- `GET  /emoji/api/stats` Â· `GET /emoji/api/leaderboard`  
-- `POST /emoji/api/delete` Â· `POST /emoji/api/duplicate`
+- `POST /guess-the-emoji/api/session/create` (classic)  
+- `POST /guess-the-emoji/api/next` (next puzzle within a session)  
+- `POST /guess-the-emoji/api/check` (validate answer; apply scoring/penalties)  
+- `POST /guess-the-emoji/api/hint` (reveal/remove/clue)  
+- `POST /guess-the-emoji/api/daily/today` Â· `POST /guess-the-emoji/api/daily/submit`  
+- `POST /guess-the-emoji/api/versus/create` Â· `POST /guess-the-emoji/api/versus/join` Â· `POST /guess-the-emoji/api/versus/submit`  
+- `GET  /guess-the-emoji/api/packs/list` Â· `POST /guess-the-emoji/api/packs/start` Â· `POST /guess-the-emoji/api/packs/import`  
+- `GET  /guess-the-emoji/api/stats` Â· `GET /guess-the-emoji/api/leaderboard`  
+- `POST /guess-the-emoji/api/delete` Â· `POST /guess-the-emoji/api/duplicate`
 
 ---
 
@@ -203,67 +203,67 @@
 
 ## 9) UI / Pages
 
-### `/emoji` (Hub)
+### `/guess-the-emoji` (Hub)
 - Start Classic (category, difficulty, pack); Daily card; Time Attack; Versus invite; recent stats.
 
-### `/emoji/play`
+### `/guess-the-emoji/play`
 - Header: `Q 3/10`, score, streak, timer (if any).  
 - Center: big emoji string; below: input field with onâ€‘screen keyboard (optional).  
 - Hints row: Reveal, Remove, Clue; submit button; feedback chip.  
 - Next / Skip (limited skips; âˆ’20 pts).
 
-### `/emoji/daily`
+### `/guess-the-emoji/daily`
 - Hero card; after finish: leaderboard + share score.
 
-### `/emoji/versus/[matchId]`
+### `/guess-the-emoji/versus/[matchId]`
 - Join screen â†’ play set â†’ results with sideâ€‘byâ€‘side scores.
 
-### `/emoji/packs`
+### `/guess-the-emoji/packs`
 - Builtâ€‘in packs; user packs with size and language; import wizard; validation report.
 
-### `/emoji/stats`
+### `/guess-the-emoji/stats`
 - Charts: accuracy, avg time, streak calendar, category strengths.
 
-### `/emoji/settings`
+### `/guess-the-emoji/settings`
 - Language, keyboard/IME options, hint toggles, high contrast, large text, motionâ€‘reduced.
 
 ---
 
 ## 10) API Contracts (examples)
 
-### `POST /emoji/api/session/create`
+### `POST /guess-the-emoji/api/session/create`
 Req: `{ "mode":"classic", "category":"movies", "difficulty":"medium", "count":10, "timePerPuzzle":20 }`  
 Res: `{ "sessionId":"<uuid>", "puzzleIds":[...], "timePerPuzzle":20 }`
 
-### `POST /emoji/api/next`
+### `POST /guess-the-emoji/api/next`
 Req: `{ "sessionId":"<uuid>" }`  
 Res: `{ "puzzle":{"id":"emj-0001","emojis":"ðŸ”ðŸ ","difficulty":"easy"} }`
 
-### `POST /emoji/api/check`
+### `POST /guess-the-emoji/api/check`
 Req: `{ "sessionId":"<uuid>", "puzzleId":"emj-0001", "guess":"Burger House" }`  
 Res: `{ "correct":true, "points":172, "streak":4, "explanation":"ðŸ” = burger, ðŸ  = house" }`
 
-### `POST /emoji/api/hint`
+### `POST /guess-the-emoji/api/hint`
 Req: `{ "sessionId":"<uuid>", "type":"reveal_letter" }`  
 Res: `{ "hint":{"pos":3,"char":"g"}, "penalty":10 }`
 
-### `POST /emoji/api/daily/today`
+### `POST /guess-the-emoji/api/daily/today`
 Req: `{}`  
 Res: `{ "sessionId":"<uuid>", "puzzleId":"<uuid>", "seed":"2025-10-28" }`
 
-### `POST /emoji/api/versus/create`
+### `POST /guess-the-emoji/api/versus/create`
 Req: `{ "category":"mixed", "difficulty":"mixed", "count":10 }`  
-Res: `{ "matchId":"<uuid>", "inviteUrl":"/emoji/versus/<uuid>" }`
+Res: `{ "matchId":"<uuid>", "inviteUrl":"/guess-the-emoji/versus/<uuid>" }`
 
-### `POST /emoji/api/versus/submit`
+### `POST /guess-the-emoji/api/versus/submit`
 Req: `{ "matchId":"<uuid>", "sessionId":"<uuid>" }`  
 Res: `{ "winner":"me|opponent|draw", "scores":{"me":1280,"opponent":1210} }`
 
-### `GET /emoji/api/leaderboard`
+### `GET /guess-the-emoji/api/leaderboard`
 Req: `?scope=daily&key=2025-10-28&limit=50&offset=0`  
 Res: `{ "rows":[{"user":"Karthik","score":1890,"timeMs":91000}], "me":{"rank":42} }`
 
-### `POST /emoji/api/packs/import`
+### `POST /guess-the-emoji/api/packs/import`
 Req: multipart CSV/JSON  
 Res: `{ "ok":true, "imported":340, "duplicates":12, "errors":0 }`
 
@@ -306,35 +306,35 @@ Rate limits: `userId`+day for sessions; `userId`+minute for versus creates; `use
 ## 14) Suggested File Layout
 
 ```
-src/pages/emoji/index.astro
-src/pages/emoji/play.astro
-src/pages/emoji/daily.astro
-src/pages/emoji/versus/[matchId].astro
-src/pages/emoji/packs.astro
-src/pages/emoji/stats.astro
-src/pages/emoji/settings.astro
+src/pages/guess-the-emoji/index.astro
+src/pages/guess-the-emoji/play.astro
+src/pages/guess-the-emoji/daily.astro
+src/pages/guess-the-emoji/versus/[matchId].astro
+src/pages/guess-the-emoji/packs.astro
+src/pages/guess-the-emoji/stats.astro
+src/pages/guess-the-emoji/settings.astro
 
-src/pages/emoji/api/session/create.ts
-src/pages/emoji/api/next.ts
-src/pages/emoji/api/check.ts
-src/pages/emoji/api/hint.ts
-src/pages/emoji/api/daily/today.ts
-src/pages/emoji/api/daily/submit.ts
-src/pages/emoji/api/versus/create.ts
-src/pages/emoji/api/versus/join.ts
-src/pages/emoji/api/versus/submit.ts
-src/pages/emoji/api/packs/list.ts
-src/pages/emoji/api/packs/start.ts
-src/pages/emoji/api/packs/import.ts
-src/pages/emoji/api/stats.ts
-src/pages/emoji/api/leaderboard.ts
-src/pages/emoji/api/delete.ts
-src/pages/emoji/api/duplicate.ts
+src/pages/guess-the-emoji/api/session/create.ts
+src/pages/guess-the-emoji/api/next.ts
+src/pages/guess-the-emoji/api/check.ts
+src/pages/guess-the-emoji/api/hint.ts
+src/pages/guess-the-emoji/api/daily/today.ts
+src/pages/guess-the-emoji/api/daily/submit.ts
+src/pages/guess-the-emoji/api/versus/create.ts
+src/pages/guess-the-emoji/api/versus/join.ts
+src/pages/guess-the-emoji/api/versus/submit.ts
+src/pages/guess-the-emoji/api/packs/list.ts
+src/pages/guess-the-emoji/api/packs/start.ts
+src/pages/guess-the-emoji/api/packs/import.ts
+src/pages/guess-the-emoji/api/stats.ts
+src/pages/guess-the-emoji/api/leaderboard.ts
+src/pages/guess-the-emoji/api/delete.ts
+src/pages/guess-the-emoji/api/duplicate.ts
 
-src/components/emoji/Board/*.astro
-src/components/emoji/Controls/*.astro
-src/components/emoji/Packs/*.astro
-src/components/emoji/Stats/*.astro
+src/components/guess-the-emoji/Board/*.astro
+src/components/guess-the-emoji/Controls/*.astro
+src/components/guess-the-emoji/Packs/*.astro
+src/components/guess-the-emoji/Stats/*.astro
 ```
 
 ---

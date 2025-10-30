@@ -22,12 +22,12 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 - **Integrations**: **FlashNote**, **Language Flashcards**, **Study Planner**, **Presentation Designer** (slide deck from key ideas).
 
 ### Key Pages
-- `/booksumm` â€” Library/dashboard  
-- `/booksumm/new` â€” Ingest wizard (upload/paste, metadata, goal/persona)  
-- `/booksumm/[id]` â€” Summary hub (tabs: Overview, Chapters, Quotes, Cards, Graph, Notes)  
-- `/booksumm/compare` â€” Sideâ€‘byâ€‘side comparison  
-- `/booksumm/export/[id]` â€” Export center  
-- `/booksumm/settings` â€” Defaults (reading level, tone, privacy)
+- `/book-summary-generator` â€” Library/dashboard  
+- `/book-summary-generator/new` â€” Ingest wizard (upload/paste, metadata, goal/persona)  
+- `/book-summary-generator/[id]` â€” Summary hub (tabs: Overview, Chapters, Quotes, Cards, Graph, Notes)  
+- `/book-summary-generator/compare` â€” Sideâ€‘byâ€‘side comparison  
+- `/book-summary-generator/export/[id]` â€” Export center  
+- `/book-summary-generator/settings` â€” Defaults (reading level, tone, privacy)
 
 ### Minimal Data Model
 `BookItem`, `Source`, `IngestJob`, `Chapter`, `Section`, `Quote`, `Entity`, `Relation`, `TimelineEvent`, `Summary`, `Card`, `QuizItem`, `Note`, `Highlight`, `ExportJob`, `Tag`
@@ -62,42 +62,42 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ### 2) Information Architecture & Routes
 
 **Pages**
-- `/booksumm` â€” Library with search & tags; recent books; â€œcontinue readingâ€.  
-- `/booksumm/new` â€” Upload or paste; enter metadata (title, author, year, edition), goal (exam/business/pleasure), persona/level, tone; consent for processing.  
-- `/booksumm/[id]` â€” Tabs:  
+- `/book-summary-generator` â€” Library with search & tags; recent books; â€œcontinue readingâ€.  
+- `/book-summary-generator/new` â€” Upload or paste; enter metadata (title, author, year, edition), goal (exam/business/pleasure), persona/level, tone; consent for processing.  
+- `/book-summary-generator/[id]` â€” Tabs:  
   - **Overview**: TL;DR, 5 bullets, 1â€‘page summary, key themes.  
   - **Chapters**: perâ€‘chapter summaries + key quotes.  
   - **Quotes**: filterable list with page refs; copy with citation.  
   - **Cards**: generated flashcards; export/push.  
   - **Graph**: concept/character map; timeline (fiction).  
   - **Notes**: user highlights & notes with page anchors.  
-- `/booksumm/compare` â€” Upload/select two books; diff their ideas/themes.  
-- `/booksumm/export/[id]` â€” Export presets (study sheet, executive brief, slide outline).  
-- `/booksumm/settings` â€” Defaults: level, tone, privacy, preferred citation style (APA/MLA/Chicago).
+- `/book-summary-generator/compare` â€” Upload/select two books; diff their ideas/themes.  
+- `/book-summary-generator/export/[id]` â€” Export presets (study sheet, executive brief, slide outline).  
+- `/book-summary-generator/settings` â€” Defaults: level, tone, privacy, preferred citation style (APA/MLA/Chicago).
 
 **API (SSR)**  
 - Ingestion:  
-  - `POST /booksumm/api/ingest` (upload file or text; returns `ingestJobId`).  
-  - `GET  /booksumm/api/ingest/status?id=` (pages detected, chapters, ETA).  
+  - `POST /book-summary-generator/api/ingest` (upload file or text; returns `ingestJobId`).  
+  - `GET  /book-summary-generator/api/ingest/status?id=` (pages detected, chapters, ETA).  
 - Summaries:  
-  - `POST /booksumm/api/summarize` (layer=`tldr|bullets|onepager|chapters`, audience, tone, purpose).  
-  - `GET  /booksumm/api/summary?id=&layer=`  
+  - `POST /book-summary-generator/api/summarize` (layer=`tldr|bullets|onepager|chapters`, audience, tone, purpose).  
+  - `GET  /book-summary-generator/api/summary?id=&layer=`  
 - Quotes & entities:  
-  - `POST /booksumm/api/quotes/extract`  
-  - `POST /booksumm/api/entities/extract`  
-  - `POST /booksumm/api/relations/derive`  
+  - `POST /book-summary-generator/api/quotes/extract`  
+  - `POST /book-summary-generator/api/entities/extract`  
+  - `POST /book-summary-generator/api/relations/derive`  
 - Cards & quiz:  
-  - `POST /booksumm/api/cards/generate` (types: cloze/definition/concept)  
-  - `POST /booksumm/api/quiz/generate` (formats: MCQ/TF/short)  
+  - `POST /book-summary-generator/api/cards/generate` (types: cloze/definition/concept)  
+  - `POST /book-summary-generator/api/quiz/generate` (formats: MCQ/TF/short)  
 - Compare:  
-  - `POST /booksumm/api/compare` (bookA, bookB, focus: themes/findings/arguments)  
+  - `POST /book-summary-generator/api/compare` (bookA, bookB, focus: themes/findings/arguments)  
 - Notes & highlights:  
-  - `POST /booksumm/api/highlight/add` Â· `POST /booksumm/api/note/add`  
+  - `POST /book-summary-generator/api/highlight/add` Â· `POST /book-summary-generator/api/note/add`  
 - Export:  
-  - `POST /booksumm/api/export` (md|pdf|docx|csv|png) Â· `GET /booksumm/api/export/status?id=`  
-- Settings: `POST /booksumm/api/settings/save`
+  - `POST /book-summary-generator/api/export` (md|pdf|docx|csv|png) Â· `GET /book-summary-generator/api/export/status?id=`  
+- Settings: `POST /book-summary-generator/api/settings/save`
 
-Optional WebSocket `/booksumm/ws` for ingest progress and longâ€‘running export notifications.
+Optional WebSocket `/book-summary-generator/ws` for ingest progress and longâ€‘running export notifications.
 
 ---
 
@@ -211,41 +211,41 @@ Shortcuts: `Ctrl/Cmd+Enter` regenerate layer, `Ctrl/Cmd+L` add highlight, `Ctrl/
 ### 7) API Contracts (Examples)
 
 **Ingest**  
-`POST /booksumm/api/ingest`  
+`POST /book-summary-generator/api/ingest`  
 ```json
 { "file":"(upload ref)", "meta":{"title":"Deep Work","author":"Cal Newport","year":2016}, "goal":"business_takeaways", "audience":"adult", "tone":"neutral" }
 ```
 Res: `{ "ingestJobId":"ing_77" }`
 
 **Status**  
-`GET /booksumm/api/ingest/status?id=ing_77` â†’ `{ "status":"running","pagesDetected":312,"chaptersDetected":10 }`
+`GET /book-summary-generator/api/ingest/status?id=ing_77` â†’ `{ "status":"running","pagesDetected":312,"chaptersDetected":10 }`
 
 **Summarize oneâ€‘pager**  
-`POST /booksumm/api/summarize`  
+`POST /book-summary-generator/api/summarize`  
 ```json
 { "bookId":"b_1", "layer":"onepager", "audience":"adult", "tone":"analytical", "purpose":"business_takeaways" }
 ```
 Res: `{ "summaryId":"s_19" }`
 
 **Extract quotes**  
-`POST /booksumm/api/quotes/extract` â†’ `{ "count": 74 }`
+`POST /book-summary-generator/api/quotes/extract` â†’ `{ "count": 74 }`
 
 **Generate cards**  
-`POST /booksumm/api/cards/generate`  
+`POST /book-summary-generator/api/cards/generate`  
 ```json
 { "bookId":"b_1", "types":["cloze","definition"], "deckTag":"DeepWork" }
 ```
 Res: `{ "created": 48 }`
 
 **Compare**  
-`POST /booksumm/api/compare`  
+`POST /book-summary-generator/api/compare`  
 ```json
 { "bookA":"b_1", "bookB":"b_2", "focus":"themes" }
 ```
 Res: `{ "overlap":["attention economy"], "differences":["calendaring discipline"], "contradictions":[] }`
 
 **Export**  
-`POST /booksumm/api/export`  
+`POST /book-summary-generator/api/export`  
 ```json
 { "bookId":"b_1", "format":"md", "options":{"include":"overview+chapters+quotes"} }
 ```
@@ -283,38 +283,38 @@ Rate limits: `/summarize` 40/day (Free) 300/day (Pro); `/cards/generate` 40/day 
 ### 10) Suggested File Layout
 
 ```
-src/pages/booksumm/index.astro
-src/pages/booksumm/new.astro
-src/pages/booksumm/[id]/index.astro
-src/pages/booksumm/[id]/quotes.astro
-src/pages/booksumm/[id]/cards.astro
-src/pages/booksumm/[id]/graph.astro
-src/pages/booksumm/compare.astro
-src/pages/booksumm/export/[id].astro
-src/pages/booksumm/settings.astro
+src/pages/book-summary-generator/index.astro
+src/pages/book-summary-generator/new.astro
+src/pages/book-summary-generator/[id]/index.astro
+src/pages/book-summary-generator/[id]/quotes.astro
+src/pages/book-summary-generator/[id]/cards.astro
+src/pages/book-summary-generator/[id]/graph.astro
+src/pages/book-summary-generator/compare.astro
+src/pages/book-summary-generator/export/[id].astro
+src/pages/book-summary-generator/settings.astro
 
-src/pages/booksumm/api/ingest.ts
-src/pages/booksumm/api/ingest/status.ts
-src/pages/booksumm/api/summarize.ts
-src/pages/booksumm/api/summary/index.ts
-src/pages/booksumm/api/quotes/extract.ts
-src/pages/booksumm/api/entities/extract.ts
-src/pages/booksumm/api/relations/derive.ts
-src/pages/booksumm/api/cards/generate.ts
-src/pages/booksumm/api/quiz/generate.ts
-src/pages/booksumm/api/compare.ts
-src/pages/booksumm/api/highlight/add.ts
-src/pages/booksumm/api/note/add.ts
-src/pages/booksumm/api/export.ts
-src/pages/booksumm/api/export/status.ts
-src/pages/booksumm/api/settings/save.ts
+src/pages/book-summary-generator/api/ingest.ts
+src/pages/book-summary-generator/api/ingest/status.ts
+src/pages/book-summary-generator/api/summarize.ts
+src/pages/book-summary-generator/api/summary/index.ts
+src/pages/book-summary-generator/api/quotes/extract.ts
+src/pages/book-summary-generator/api/entities/extract.ts
+src/pages/book-summary-generator/api/relations/derive.ts
+src/pages/book-summary-generator/api/cards/generate.ts
+src/pages/book-summary-generator/api/quiz/generate.ts
+src/pages/book-summary-generator/api/compare.ts
+src/pages/book-summary-generator/api/highlight/add.ts
+src/pages/book-summary-generator/api/note/add.ts
+src/pages/book-summary-generator/api/export.ts
+src/pages/book-summary-generator/api/export/status.ts
+src/pages/book-summary-generator/api/settings/save.ts
 
-src/components/booksumm/Overview/*.astro
-src/components/booksumm/Chapters/*.astro
-src/components/booksumm/Quotes/*.astro
-src/components/booksumm/Cards/*.astro
-src/components/booksumm/Graph/*.astro
-src/components/booksumm/Notes/*.astro
+src/components/book-summary-generator/Overview/*.astro
+src/components/book-summary-generator/Chapters/*.astro
+src/components/book-summary-generator/Quotes/*.astro
+src/components/book-summary-generator/Cards/*.astro
+src/components/book-summary-generator/Graph/*.astro
+src/components/book-summary-generator/Notes/*.astro
 ```
 
 ---

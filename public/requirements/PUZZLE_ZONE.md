@@ -1,7 +1,7 @@
 # ðŸ§© Puzzle Zone â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/puzzle`  
+**Module Path:** `/puzzle-zone`  
 **Category:** Fun & Engagement  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, optional WebWorkers for generators/solvers  
 **Goal:** Deliver an everâ€‘fresh library of **logic and word puzzles** with daily challenges, generators, hints, scoring, and packs. Integrates with **Trivia Arena** for streaks and with **FlashNote** for vocabulary.
@@ -38,31 +38,31 @@
 
 1. **Play a Puzzle**
    - *As a user*, I pick a type (e.g., Sudoku 9Ã—9) and difficulty (Easy/Medium/Hard).  
-   - **AC:** `/puzzle/api/create` returns a `PuzzleInstance` with grid + metadata; `/play/[id]` loads it with timer.
+   - **AC:** `/puzzle-zone/api/create` returns a `PuzzleInstance` with grid + metadata; `/play/[id]` loads it with timer.
 
 2. **Request Hints & Checking**
    - *As a user*, I can **Check Cell/Row/Board**, **Reveal Cell/Word**, or **Get Logical Hint**.  
-   - **AC:** `/puzzle/api/hint` returns a hint atom and applies penalties.
+   - **AC:** `/puzzle-zone/api/hint` returns a hint atom and applies penalties.
 
 3. **Daily Puzzle**
    - *As a user*, I play a seeded daily puzzle once; my rank appears on the daily leaderboard.  
-   - **AC:** `/puzzle/api/daily/today` returns the instance; `/daily/submit` posts score; antiâ€‘replay enforced.
+   - **AC:** `/puzzle-zone/api/daily/today` returns the instance; `/daily/submit` posts score; antiâ€‘replay enforced.
 
 4. **Puzzle Packs**
    - *As a user*, I browse builtâ€‘in and imported packs, start any puzzle, and track completion % per pack.  
-   - **AC:** `/puzzle/api/packs/list` + `/packs/start` create/load instances.
+   - **AC:** `/puzzle-zone/api/packs/list` + `/packs/start` create/load instances.
 
 5. **Time Attack**
    - *As a user*, I solve as many microâ€‘puzzles as possible in 3 minutes (Word search snippets, mini Sudoku 4Ã—4).  
-   - **AC:** `/puzzle/api/timeattack/start` â†’ stream of microâ€‘boards; `/timeattack/submit` totals score.
+   - **AC:** `/puzzle-zone/api/timeattack/start` â†’ stream of microâ€‘boards; `/timeattack/submit` totals score.
 
 6. **Import/Export**
    - *As a user*, I import JSON/PUZ (crossword) or simple CSV word lists; I can export to PNG/PDF/JSON.  
-   - **AC:** `/puzzle/api/import` validates schema and dedupes by hash; `/export` generates files.
+   - **AC:** `/puzzle-zone/api/import` validates schema and dedupes by hash; `/export` generates files.
 
 7. **Stats & Streaks**
    - *As a user*, I see time to solve, hints used, accuracy, best streak, and perâ€‘type skill chart.  
-   - **AC:** `/puzzle/api/stats` aggregates per user and per type.
+   - **AC:** `/puzzle-zone/api/stats` aggregates per user and per type.
 
 8. **Plan Gating**
    - Free: Daily + Solo, limited hints, basic exports.  
@@ -72,25 +72,25 @@
 
 ## 3) Routes & Information Architecture
 
-- `/puzzle` â€” Hub: choose type/difficulty; Daily card; Packs; Time Attack; recent stats.  
-- `/puzzle/play/[id]` â€” Generic play UI container that mounts the correct component by puzzle type.  
-- `/puzzle/daily` â€” Daily entry and leaderboard.  
-- `/puzzle/packs` â€” Pack browser (builtâ€‘in + user imports).  
-- `/puzzle/timeattack` â€” Time Attack mode.  
-- `/puzzle/stats` â€” Personal analytics.  
-- `/puzzle/settings` â€” Preferences (grid size, checking strictness, highlight errors, color themes, keyboard).
+- `/puzzle-zone` â€” Hub: choose type/difficulty; Daily card; Packs; Time Attack; recent stats.  
+- `/puzzle-zone/play/[id]` â€” Generic play UI container that mounts the correct component by puzzle type.  
+- `/puzzle-zone/daily` â€” Daily entry and leaderboard.  
+- `/puzzle-zone/packs` â€” Pack browser (builtâ€‘in + user imports).  
+- `/puzzle-zone/timeattack` â€” Time Attack mode.  
+- `/puzzle-zone/stats` â€” Personal analytics.  
+- `/puzzle-zone/settings` â€” Preferences (grid size, checking strictness, highlight errors, color themes, keyboard).
 
 **API (SSR):**  
-- `POST /puzzle/api/create` (create instance from type/difficulty/seed)  
-- `POST /puzzle/api/hint` (contextual hints)  
-- `POST /puzzle/api/check` (validate full/partial board)  
-- `POST /puzzle/api/submit` (finish; compute score)  
-- `POST /puzzle/api/daily/today` Â· `POST /puzzle/api/daily/submit`  
-- `GET  /puzzle/api/packs/list` Â· `POST /puzzle/api/packs/start`  
-- `POST /puzzle/api/timeattack/start` Â· `POST /puzzle/api/timeattack/submit`  
-- `POST /puzzle/api/import` Â· `POST /puzzle/api/export`  
-- `GET  /puzzle/api/stats` Â· `GET /puzzle/api/leaderboard`  
-- `POST /puzzle/api/delete` Â· `POST /puzzle/api/duplicate`
+- `POST /puzzle-zone/api/create` (create instance from type/difficulty/seed)  
+- `POST /puzzle-zone/api/hint` (contextual hints)  
+- `POST /puzzle-zone/api/check` (validate full/partial board)  
+- `POST /puzzle-zone/api/submit` (finish; compute score)  
+- `POST /puzzle-zone/api/daily/today` Â· `POST /puzzle-zone/api/daily/submit`  
+- `GET  /puzzle-zone/api/packs/list` Â· `POST /puzzle-zone/api/packs/start`  
+- `POST /puzzle-zone/api/timeattack/start` Â· `POST /puzzle-zone/api/timeattack/submit`  
+- `POST /puzzle-zone/api/import` Â· `POST /puzzle-zone/api/export`  
+- `GET  /puzzle-zone/api/stats` Â· `GET /puzzle-zone/api/leaderboard`  
+- `POST /puzzle-zone/api/delete` Â· `POST /puzzle-zone/api/duplicate`
 
 ---
 
@@ -184,57 +184,57 @@
 
 ## 8) UI / Pages
 
-### `/puzzle` (Hub)
+### `/puzzle-zone` (Hub)
 - Type tiles; Daily card; Packs; Time Attack; â€œContinue last puzzleâ€.
 
-### `/puzzle/play/[id]`
+### `/puzzle-zone/play/[id]`
 - Header: timer, score, hints, mistakes; Pause/Submit.  
 - Grid canvas (per type component) with keyboard and touch controls; color themes; **error highlight** toggle.  
 - Sidebar: clues (crossword), sums (kakuro), runs (nonogram).  
 - Hint menu.
 
-### `/puzzle/daily`
+### `/puzzle-zone/daily`
 - Start button; after submit: leaderboard with rank and share button.
 
-### `/puzzle/packs`
+### `/puzzle-zone/packs`
 - Builtâ€‘in packs + user imports; completion progress; start/resume buttons.
 
-### `/puzzle/timeattack`
+### `/puzzle-zone/timeattack`
 - Countdown header; sequence of microâ€‘puzzles; quick feedback.
 
-### `/puzzle/stats`
+### `/puzzle-zone/stats`
 - Charts: solve time distribution, accuracy, hints usage, streak calendar, perâ€‘type rating.
 
-### `/puzzle/settings`
+### `/puzzle-zone/settings`
 - Preferences: checking strictness, color theme, keyboard, contrast, grid size.
 
 ---
 
 ## 9) API Contracts (examples)
 
-### `POST /puzzle/api/create`
+### `POST /puzzle-zone/api/create`
 Req: `{ "type":"sudoku","difficulty":"medium" }`  
 Res: `{ "instanceId":"<uuid>","board":[[0,0,...]],"meta":{"type":"sudoku","difficulty":"medium"}}`
 
-### `POST /puzzle/api/hint`
+### `POST /puzzle-zone/api/hint`
 Req: `{ "instanceId":"<uuid>","context":{"cell":[3,4]}}`  
 Res: `{ "hint":{"type":"reveal_cell","value":7},"penalty":15 }`
 
-### `POST /puzzle/api/check`
+### `POST /puzzle-zone/api/check`
 Req: `{ "instanceId":"<uuid>", "scope":"board|row|cell", "target":[r,c] }`  
 Res: `{ "ok":true,"errors":[[1,2],[4,7]] }`
 
-### `POST /puzzle/api/submit`
+### `POST /puzzle-zone/api/submit`
 Req: `{ "instanceId":"<uuid>" }`  
 Res: `{ "completed":true,"score":512,"timeMs":286000 }`
 
-### `POST /puzzle/api/daily/today`
+### `POST /puzzle-zone/api/daily/today`
 Req: `{}` â†’ Res: `{ "instanceId":"<uuid>","seed":"2025-10-28","type":"crossword" }`
 
-### `POST /puzzle/api/timeattack/start`
+### `POST /puzzle-zone/api/timeattack/start`
 Req: `{ "types":["sudoku4","wordsearch"],"minutes":3 }` â†’ Res: `{ "streamId":"<uuid>" }`
 
-### `POST /puzzle/api/import`
+### `POST /puzzle-zone/api/import`
 Req: multipart file or JSON body â†’ Res: `{ "ok":true, "imported":12, "duplicates":1 }`
 
 ---
@@ -276,39 +276,39 @@ Rate limits: `userId`+day for create/hint/check; `userId`+month for exports/impo
 ## 13) Suggested File Layout
 
 ```
-src/pages/puzzle/index.astro
-src/pages/puzzle/play/[id].astro
-src/pages/puzzle/daily.astro
-src/pages/puzzle/packs.astro
-src/pages/puzzle/timeattack.astro
-src/pages/puzzle/stats.astro
-src/pages/puzzle/settings.astro
+src/pages/puzzle-zone/index.astro
+src/pages/puzzle-zone/play/[id].astro
+src/pages/puzzle-zone/daily.astro
+src/pages/puzzle-zone/packs.astro
+src/pages/puzzle-zone/timeattack.astro
+src/pages/puzzle-zone/stats.astro
+src/pages/puzzle-zone/settings.astro
 
-src/pages/puzzle/api/create.ts
-src/pages/puzzle/api/hint.ts
-src/pages/puzzle/api/check.ts
-src/pages/puzzle/api/submit.ts
-src/pages/puzzle/api/daily/today.ts
-src/pages/puzzle/api/daily/submit.ts
-src/pages/puzzle/api/packs/list.ts
-src/pages/puzzle/api/packs/start.ts
-src/pages/puzzle/api/timeattack/start.ts
-src/pages/puzzle/api/timeattack/submit.ts
-src/pages/puzzle/api/import.ts
-src/pages/puzzle/api/export.ts
-src/pages/puzzle/api/stats.ts
-src/pages/puzzle/api/leaderboard.ts
-src/pages/puzzle/api/delete.ts
-src/pages/puzzle/api/duplicate.ts
+src/pages/puzzle-zone/api/create.ts
+src/pages/puzzle-zone/api/hint.ts
+src/pages/puzzle-zone/api/check.ts
+src/pages/puzzle-zone/api/submit.ts
+src/pages/puzzle-zone/api/daily/today.ts
+src/pages/puzzle-zone/api/daily/submit.ts
+src/pages/puzzle-zone/api/packs/list.ts
+src/pages/puzzle-zone/api/packs/start.ts
+src/pages/puzzle-zone/api/timeattack/start.ts
+src/pages/puzzle-zone/api/timeattack/submit.ts
+src/pages/puzzle-zone/api/import.ts
+src/pages/puzzle-zone/api/export.ts
+src/pages/puzzle-zone/api/stats.ts
+src/pages/puzzle-zone/api/leaderboard.ts
+src/pages/puzzle-zone/api/delete.ts
+src/pages/puzzle-zone/api/duplicate.ts
 
-src/components/puzzle/Sudoku/*.astro
-src/components/puzzle/Crossword/*.astro
-src/components/puzzle/WordSearch/*.astro
-src/components/puzzle/Kakuro/*.astro
-src/components/puzzle/Nonogram/*.astro
-src/components/puzzle/Sliding/*.astro
-src/components/puzzle/LogicGrid/*.astro
-src/components/puzzle/Shared/*.astro
+src/components/puzzle-zone/Sudoku/*.astro
+src/components/puzzle-zone/Crossword/*.astro
+src/components/puzzle-zone/WordSearch/*.astro
+src/components/puzzle-zone/Kakuro/*.astro
+src/components/puzzle-zone/Nonogram/*.astro
+src/components/puzzle-zone/Sliding/*.astro
+src/components/puzzle-zone/LogicGrid/*.astro
+src/components/puzzle-zone/Shared/*.astro
 ```
 
 ---

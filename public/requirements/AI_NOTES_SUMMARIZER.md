@@ -20,9 +20,9 @@ It intelligently extracts key points, action items, and insights â€” ideal 
 - Optional storage for summary history and source references.
 
 ### Core Pages
-- `/notes-summarizer` â†’ Dashboard + Input panel  
-- `/notes-summarizer/summary/[id]` â†’ Summary viewer/editor  
-- `/notes-summarizer/history` â†’ Saved summaries list  
+- `/ai-notes-summarizer` â†’ Dashboard + Input panel  
+- `/ai-notes-summarizer/summary/[id]` â†’ Summary viewer/editor  
+- `/ai-notes-summarizer/history` â†’ Saved summaries list  
 
 ### Database Summary
 Tables: `User`, `Note`, `Summary`, `Tag`, `History`
@@ -60,23 +60,23 @@ Tables: `User`, `Note`, `Summary`, `Tag`, `History`
 
 ### 2. User Stories (Acceptance Criteria)
 1. **Input Text or Upload File**
-   - `/notes-summarizer/api/ingest`
+   - `/ai-notes-summarizer/api/ingest`
    - Accepts pasted text, Markdown, or PDF file (â‰¤10MB).
 
 2. **Generate Summary**
-   - `/notes-summarizer/api/summarize`
+   - `/ai-notes-summarizer/api/summarize`
    - Modes: *Concise*, *Detailed*, *Bullet*, *Abstract*, *Action Plan*.
 
 3. **Edit & Save Summary**
-   - `/notes-summarizer/api/save`
+   - `/ai-notes-summarizer/api/save`
    - Users can tweak AI output before saving.
 
 4. **Tag & Export**
-   - `/notes-summarizer/api/export`
+   - `/ai-notes-summarizer/api/export`
    - Exports to MD or PDF; tags summaries by topic (Education, Business, etc.).
 
 5. **History & Search**
-   - `/notes-summarizer/api/history/list`
+   - `/ai-notes-summarizer/api/history/list`
    - Retrieve previous summaries with metadata and timestamps.
 
 6. **Integrations**
@@ -85,17 +85,17 @@ Tables: `User`, `Note`, `Summary`, `Tag`, `History`
 ---
 
 ### 3. Pages & Routes
-- `/notes-summarizer` â†’ Input box + Upload panel + Mode selector  
-- `/notes-summarizer/summary/[id]` â†’ Output editor & export  
-- `/notes-summarizer/history` â†’ History viewer  
-- `/notes-summarizer/settings` â†’ Preferences (tone, max length, language)
+- `/ai-notes-summarizer` â†’ Input box + Upload panel + Mode selector  
+- `/ai-notes-summarizer/summary/[id]` â†’ Output editor & export  
+- `/ai-notes-summarizer/history` â†’ History viewer  
+- `/ai-notes-summarizer/settings` â†’ Preferences (tone, max length, language)
 
 **API (SSR):**
-- `POST /notes-summarizer/api/ingest`
-- `POST /notes-summarizer/api/summarize`
-- `POST /notes-summarizer/api/save`
-- `POST /notes-summarizer/api/export`
-- `GET /notes-summarizer/api/history/list`
+- `POST /ai-notes-summarizer/api/ingest`
+- `POST /ai-notes-summarizer/api/summarize`
+- `POST /ai-notes-summarizer/api/save`
+- `POST /ai-notes-summarizer/api/export`
+- `GET /ai-notes-summarizer/api/history/list`
 
 ---
 
@@ -120,7 +120,7 @@ Tables: `User`, `Note`, `Summary`, `Tag`, `History`
 
 ### 5. API Contract Example
 
-#### `POST /notes-summarizer/api/summarize`
+#### `POST /ai-notes-summarizer/api/summarize`
 Request:
 ```json
 {
@@ -191,20 +191,20 @@ Response:
 ### 11. Suggested File Layout
 
 ```
-src/pages/notes-summarizer/index.astro
-src/pages/notes-summarizer/summary/[id].astro
-src/pages/notes-summarizer/history.astro
-src/pages/notes-summarizer/settings.astro
+src/pages/ai-notes-summarizer/index.astro
+src/pages/ai-notes-summarizer/summary/[id].astro
+src/pages/ai-notes-summarizer/history.astro
+src/pages/ai-notes-summarizer/settings.astro
 
-src/pages/notes-summarizer/api/ingest.ts
-src/pages/notes-summarizer/api/summarize.ts
-src/pages/notes-summarizer/api/save.ts
-src/pages/notes-summarizer/api/export.ts
-src/pages/notes-summarizer/api/history/list.ts
+src/pages/ai-notes-summarizer/api/ingest.ts
+src/pages/ai-notes-summarizer/api/summarize.ts
+src/pages/ai-notes-summarizer/api/save.ts
+src/pages/ai-notes-summarizer/api/export.ts
+src/pages/ai-notes-summarizer/api/history/list.ts
 
-src/components/notes-summarizer/InputBox.astro
-src/components/notes-summarizer/SummaryView.astro
-src/components/notes-summarizer/HistoryList.astro
+src/components/ai-notes-summarizer/InputBox.astro
+src/components/ai-notes-summarizer/SummaryView.astro
+src/components/ai-notes-summarizer/HistoryList.astro
 ```
 
 ---

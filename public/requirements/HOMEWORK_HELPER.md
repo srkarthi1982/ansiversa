@@ -1,7 +1,7 @@
 # ðŸ“š Homework Helper â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/homework`  
+**Module Path:** `/homework-helper`  
 **Category:** Learning & Knowledge  
 **Stack:** Astro + Tailwind (islands for editors/solvers), Astro SSR API routes, Astro DB / Supabase, optional worker for long jobs  
 **Goal:** Help students understand and solve homework problems **stepâ€‘byâ€‘step** across Math, Science, English, Social Science, and Programmingâ€”**without doing their work for them**. Emphasize learning: hints, explanation paths, similar practice, and citations when facts are used.
@@ -33,11 +33,11 @@
 
 1. **Ask a Question (Text)**
    - *As a student*, I paste a question and choose a subject.  
-   - **AC:** `/homework/api/solve` returns a scaffold with topic, estimated difficulty, and **Step 1** displayed + `Show next step` control.
+   - **AC:** `/homework-helper/api/solve` returns a scaffold with topic, estimated difficulty, and **Step 1** displayed + `Show next step` control.
 
 2. **Ask a Question (Image)**
    - *As a student*, I upload a clear photo of a problem.  
-   - **AC:** `/homework/api/ocr` extracts text; I can edit the detection before solving.
+   - **AC:** `/homework-helper/api/ocr` extracts text; I can edit the detection before solving.
 
 3. **Hints â†’ Full Solution**
    - *As a learner*, I try hints first.  
@@ -45,11 +45,11 @@
 
 4. **Check My Work**
    - *As a learner*, I enter my attempt.  
-   - **AC:** `/homework/api/check` compares reasoning & result, pointing out **exact mistake locations** and suggesting corrections.
+   - **AC:** `/homework-helper/api/check` compares reasoning & result, pointing out **exact mistake locations** and suggesting corrections.
 
 5. **Similar Practice**
    - *As a learner*, I click **Practice similar**.  
-   - **AC:** `/homework/api/practice/generate` returns 3â€“5 new problems with answers and short solutions.
+   - **AC:** `/homework-helper/api/practice/generate` returns 3â€“5 new problems with answers and short solutions.
 
 6. **Citations (Nonâ€‘Math)**
    - *As a learner*, I see sources for factual questions.  
@@ -75,24 +75,24 @@
 
 ## 4) Routes & Information Architecture
 
-- `/homework` â€” Hub: input (text/upload), recent problems, quick subject chips.  
-- `/homework/solve/[id]` â€” Solver page (steps, hints, practice).  
-- `/homework/history` â€” My questions, filters by subject & date.  
-- `/homework/practice` â€” Practice generator & sets.  
-- `/homework/teacher` â€” Teacher/parent snapshot (Pro).  
-- `/homework/settings` â€” Board (CBSE/Intl), grade band, units (SI/US), language.
+- `/homework-helper` â€” Hub: input (text/upload), recent problems, quick subject chips.  
+- `/homework-helper/solve/[id]` â€” Solver page (steps, hints, practice).  
+- `/homework-helper/history` â€” My questions, filters by subject & date.  
+- `/homework-helper/practice` â€” Practice generator & sets.  
+- `/homework-helper/teacher` â€” Teacher/parent snapshot (Pro).  
+- `/homework-helper/settings` â€” Board (CBSE/Intl), grade band, units (SI/US), language.
 
 **API (SSR):**  
-- `POST /homework/api/ocr` (image â†’ text)  
-- `POST /homework/api/solve` (returns stepwise plan)  
-- `POST /homework/api/step/next` (progressive reveal)  
-- `POST /homework/api/check` (compare attempt)  
-- `POST /homework/api/practice/generate`  
-- `POST /homework/api/explain/mistake`  
-- `POST /homework/api/export` (pdf|md)  
-- `GET  /homework/api/history`  
-- `POST /homework/api/flag` (report incorrect/unsafe)  
-- `POST /homework/api/settings/save`
+- `POST /homework-helper/api/ocr` (image â†’ text)  
+- `POST /homework-helper/api/solve` (returns stepwise plan)  
+- `POST /homework-helper/api/step/next` (progressive reveal)  
+- `POST /homework-helper/api/check` (compare attempt)  
+- `POST /homework-helper/api/practice/generate`  
+- `POST /homework-helper/api/explain/mistake`  
+- `POST /homework-helper/api/export` (pdf|md)  
+- `GET  /homework-helper/api/history`  
+- `POST /homework-helper/api/flag` (report incorrect/unsafe)  
+- `POST /homework-helper/api/settings/save`
 
 ---
 
@@ -155,7 +155,7 @@
 
 ## 8) UI / Pages (Key Interactions)
 
-### `/homework` (Hub)
+### `/homework-helper` (Hub)
 - Input: text box, camera/upload. Subject chips, grade band, board.  
 - Recent problems list; quick links: **Practice**, **Concept Explainer**.
 
@@ -175,7 +175,7 @@
 
 ## 9) API Contracts (examples)
 
-### `POST /homework/api/solve`
+### `POST /homework-helper/api/solve`
 Req:  
 ```json
 {
@@ -188,17 +188,17 @@ Req:
 ```
 Res: `{ "problemId":"<uuid>", "planId":"<uuid>", "step":1 }`
 
-### `POST /homework/api/check`
+### `POST /homework-helper/api/check`
 Req: `{ "problemId":"<uuid>", "attempt":"d = sqrt(9^2 + 8^2) = 12" }`  
 Res: `{ "correct":false, "diff":["Used 9 and 8 instead of 5 and 8"], "nextHint":"Reâ€‘compute Î”x and Î”y." }`
 
-### `POST /homework/api/practice/generate`
+### `POST /homework-helper/api/practice/generate`
 Req: `{ "topic":"distance_formula", "count":5, "gradeBand":"9-10" }`  
 Res: `{ "setId":"<uuid>", "items":[{"q":"...","a":"..."}] }`
 
-### `POST /homework/api/export`
+### `POST /homework-helper/api/export`
 Req: `{ "planId":"<uuid>", "format":"pdf" }`  
-Res: `{ "url":"/exports/homework_set_Nov-2025.pdf" }`
+Res: `{ "url":"/exports/homework-helper_set_Nov-2025.pdf" }`
 
 ---
 
@@ -239,27 +239,27 @@ Rate limits: per `userId`/day for solve/check/generate; per `planId`/hour for st
 ## 13) Suggested File Layout
 
 ```
-src/pages/homework/index.astro
-src/pages/homework/solve/[id].astro
-src/pages/homework/history.astro
-src/pages/homework/practice.astro
-src/pages/homework/teacher.astro
-src/pages/homework/settings.astro
+src/pages/homework-helper/index.astro
+src/pages/homework-helper/solve/[id].astro
+src/pages/homework-helper/history.astro
+src/pages/homework-helper/practice.astro
+src/pages/homework-helper/teacher.astro
+src/pages/homework-helper/settings.astro
 
-src/pages/homework/api/ocr.ts
-src/pages/homework/api/solve.ts
-src/pages/homework/api/step/next.ts
-src/pages/homework/api/check.ts
-src/pages/homework/api/practice/generate.ts
-src/pages/homework/api/explain/mistake.ts
-src/pages/homework/api/export.ts
-src/pages/homework/api/history.ts
-src/pages/homework/api/flag.ts
-src/pages/homework/api/settings/save.ts
+src/pages/homework-helper/api/ocr.ts
+src/pages/homework-helper/api/solve.ts
+src/pages/homework-helper/api/step/next.ts
+src/pages/homework-helper/api/check.ts
+src/pages/homework-helper/api/practice/generate.ts
+src/pages/homework-helper/api/explain/mistake.ts
+src/pages/homework-helper/api/export.ts
+src/pages/homework-helper/api/history.ts
+src/pages/homework-helper/api/flag.ts
+src/pages/homework-helper/api/settings/save.ts
 
-src/components/homework/Solver/*.astro
-src/components/homework/Practice/*.astro
-src/components/homework/Teacher/*.astro
+src/components/homework-helper/Solver/*.astro
+src/components/homework-helper/Practice/*.astro
+src/components/homework-helper/Teacher/*.astro
 ```
 
 ---

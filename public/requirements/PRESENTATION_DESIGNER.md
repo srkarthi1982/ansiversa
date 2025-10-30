@@ -1,7 +1,7 @@
 # ðŸ–¼ï¸ Presentation Designer â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
-**Module Path:** `/presentation`  
+**Module Path:** `/presentation-designer`  
 **Category:** Career & Professional  
 **Stack:** Astro + Tailwind (islands for editors), Astro SSR API routes, Astro DB / Supabase, PPTX/PDF export via server runtime (e.g., pptxgen or node-pptx + headless PDF)  
 **Goal:** Let users turn ideas (outline, prompt, or imported doc) into polished slide decks fast, with themes, brand kits, smart layouts, media helpers, charts/tables, notes, and oneâ€‘click export (PPTX/PDF).
@@ -33,11 +33,11 @@
 
 1. **Generate from Prompt**
    - *As a user*, I enter a topic + target audience + length.  
-   - **AC:** `/presentation/api/generate` creates a deck skeleton with title, agenda, and N slides following an outline.
+   - **AC:** `/presentation-designer/api/generate` creates a deck skeleton with title, agenda, and N slides following an outline.
 
 2. **Import from Outline / Doc**
    - *As a user*, I paste bullets or upload .md/.txt.  
-   - **AC:** `/presentation/api/import` converts to slides with suitable layouts.
+   - **AC:** `/presentation-designer/api/import` converts to slides with suitable layouts.
 
 3. **Apply Theme / Brand Kit**
    - *As a user*, I select a theme or my brand kit.  
@@ -45,19 +45,19 @@
 
 4. **Add Chart from CSV**
    - *As a user*, I paste CSV â†’ select chart type.  
-   - **AC:** `/presentation/api/chart/preview` returns a render spec; slide shows chart.
+   - **AC:** `/presentation-designer/api/chart/preview` returns a render spec; slide shows chart.
 
 5. **Rewrite Content**
    - *As a user*, I click â€œMake conciseâ€ on a crowded slide.  
-   - **AC:** `/presentation/api/assist/rewrite` returns tightened bullets while keeping keywords.
+   - **AC:** `/presentation-designer/api/assist/rewrite` returns tightened bullets while keeping keywords.
 
 6. **Export PPTX/PDF**
    - *As a user*, I export the deck.  
-   - **AC:** `/presentation/api/export` returns a downloadable PPTX or PDF URL.
+   - **AC:** `/presentation-designer/api/export` returns a downloadable PPTX or PDF URL.
 
 7. **Versioning**
    - *As a user*, I duplicate a deck and see version history.  
-   - **AC:** `/presentation/api/duplicate` creates a new version linked to the original.
+   - **AC:** `/presentation-designer/api/duplicate` creates a new version linked to the original.
 
 8. **Plan Gating**
    - Free: up to 10 slides/export, watermarked PDF, basic themes.  
@@ -67,24 +67,24 @@
 
 ## 3) Routes & Information Architecture
 
-- `/presentation` â€” Hub: New from Prompt/Outline/Import; Recent decks; Templates.  
-- `/presentation/new` â€” Wizard: Topic, audience, length, style, theme, brand kit.  
-- `/presentation/editor/[deckId]` â€” Slide editor (canvas, left slide list, right inspector).  
-- `/presentation/templates` â€” Theme gallery & layout packs.  
-- `/presentation/brand` â€” Brand Kit manager.  
-- `/presentation/view/[deckId]` â€” Readâ€‘only viewer (for sharing).
+- `/presentation-designer` â€” Hub: New from Prompt/Outline/Import; Recent decks; Templates.  
+- `/presentation-designer/new` â€” Wizard: Topic, audience, length, style, theme, brand kit.  
+- `/presentation-designer/editor/[deckId]` â€” Slide editor (canvas, left slide list, right inspector).  
+- `/presentation-designer/templates` â€” Theme gallery & layout packs.  
+- `/presentation-designer/brand` â€” Brand Kit manager.  
+- `/presentation-designer/view/[deckId]` â€” Readâ€‘only viewer (for sharing).
 
 **API (SSR):**  
-- `POST /presentation/api/generate` (from prompt/outline)  
-- `POST /presentation/api/import` (txt/md)  
-- `POST /presentation/api/slide/add` Â· `POST /presentation/api/slide/update` Â· `POST /presentation/api/slide/delete` Â· `POST /presentation/api/reorder`  
-- `POST /presentation/api/theme/apply` Â· `POST /presentation/api/brand/apply`  
-- `POST /presentation/api/asset/upload` Â· `POST /presentation/api/asset/link`  
-- `POST /presentation/api/chart/preview` (returns chart spec) Â· `POST /presentation/api/chart/commit`  
-- `POST /presentation/api/assist/rewrite` Â· `POST /presentation/api/assist/summary` Â· `POST /presentation/api/assist/expand`  
-- `POST /presentation/api/export` (pptx|pdf)  
-- `POST /presentation/api/duplicate` Â· `POST /presentation/api/delete`  
-- `GET  /presentation/api/list` (recent decks) Â· `GET /presentation/api/view` (public view payload)
+- `POST /presentation-designer/api/generate` (from prompt/outline)  
+- `POST /presentation-designer/api/import` (txt/md)  
+- `POST /presentation-designer/api/slide/add` Â· `POST /presentation-designer/api/slide/update` Â· `POST /presentation-designer/api/slide/delete` Â· `POST /presentation-designer/api/reorder`  
+- `POST /presentation-designer/api/theme/apply` Â· `POST /presentation-designer/api/brand/apply`  
+- `POST /presentation-designer/api/asset/upload` Â· `POST /presentation-designer/api/asset/link`  
+- `POST /presentation-designer/api/chart/preview` (returns chart spec) Â· `POST /presentation-designer/api/chart/commit`  
+- `POST /presentation-designer/api/assist/rewrite` Â· `POST /presentation-designer/api/assist/summary` Â· `POST /presentation-designer/api/assist/expand`  
+- `POST /presentation-designer/api/export` (pptx|pdf)  
+- `POST /presentation-designer/api/duplicate` Â· `POST /presentation-designer/api/delete`  
+- `GET  /presentation-designer/api/list` (recent decks) Â· `GET /presentation-designer/api/view` (public view payload)
 
 ---
 
@@ -177,7 +177,7 @@ Keyboard: `N` new slide, `D` duplicate, `Del` delete, `Ctrl/Cmd+K` quick add, `C
 
 ## 7) API Contracts (examples)
 
-### `POST /presentation/api/generate`
+### `POST /presentation-designer/api/generate`
 Req:  
 ```json
 {
@@ -191,19 +191,19 @@ Req:
 ```  
 Res: `{ "deckId":"<uuid>", "slideCount":10 }`
 
-### `POST /presentation/api/slide/update`
+### `POST /presentation-designer/api/slide/update`
 Req: `{ "deckId":"<uuid>", "slideId":"<uuid>", "content":{ "heading":"Overview", "bullets":["â€¦"] } }`  
 Res: `{ "ok":true }`
 
-### `POST /presentation/api/chart/preview`
+### `POST /presentation-designer/api/chart/preview`
 Req: `{ "deckId":"<uuid>", "slideId":"<uuid>", "type":"bar", "csv":"month,users\nJan,1200\nFeb,1600" }`  
 Res: `{ "specId":"<uuid>", "previewUrl":"/previews/<id>.png" }`
 
-### `POST /presentation/api/export`
+### `POST /presentation-designer/api/export`
 Req: `{ "deckId":"<uuid>", "format":"pptx" }`  
 Res: `{ "url":"/exports/ansiversa_pitch.pptx" }`
 
-### `POST /presentation/api/assist/rewrite`
+### `POST /presentation-designer/api/assist/rewrite`
 Req: `{ "text":"Our platform is very very good and amazing..." , "mode":"concise" }`  
 Res: `{ "text":"Our platform unifies 100+ AI miniâ€‘apps for faster results." }`
 
@@ -247,40 +247,40 @@ Rate limits: `userId`+day for generate/export; `userId`+hour for assist calls.
 ## 11) Suggested File Layout
 
 ```
-src/pages/presentation/index.astro
-src/pages/presentation/new.astro
-src/pages/presentation/editor/[deckId].astro
-src/pages/presentation/templates.astro
-src/pages/presentation/brand.astro
-src/pages/presentation/view/[deckId].astro
+src/pages/presentation-designer/index.astro
+src/pages/presentation-designer/new.astro
+src/pages/presentation-designer/editor/[deckId].astro
+src/pages/presentation-designer/templates.astro
+src/pages/presentation-designer/brand.astro
+src/pages/presentation-designer/view/[deckId].astro
 
-src/pages/presentation/api/generate.ts
-src/pages/presentation/api/import.ts
-src/pages/presentation/api/slide/add.ts
-src/pages/presentation/api/slide/update.ts
-src/pages/presentation/api/slide/delete.ts
-src/pages/presentation/api/reorder.ts
-src/pages/presentation/api/theme/apply.ts
-src/pages/presentation/api/brand/apply.ts
-src/pages/presentation/api/asset/upload.ts
-src/pages/presentation/api/asset/link.ts
-src/pages/presentation/api/chart/preview.ts
-src/pages/presentation/api/chart/commit.ts
-src/pages/presentation/api/assist/rewrite.ts
-src/pages/presentation/api/assist/summary.ts
-src/pages/presentation/api/assist/expand.ts
-src/pages/presentation/api/export.ts
-src/pages/presentation/api/duplicate.ts
-src/pages/presentation/api/delete.ts
-src/pages/presentation/api/list.ts
-src/pages/presentation/api/view.ts
+src/pages/presentation-designer/api/generate.ts
+src/pages/presentation-designer/api/import.ts
+src/pages/presentation-designer/api/slide/add.ts
+src/pages/presentation-designer/api/slide/update.ts
+src/pages/presentation-designer/api/slide/delete.ts
+src/pages/presentation-designer/api/reorder.ts
+src/pages/presentation-designer/api/theme/apply.ts
+src/pages/presentation-designer/api/brand/apply.ts
+src/pages/presentation-designer/api/asset/upload.ts
+src/pages/presentation-designer/api/asset/link.ts
+src/pages/presentation-designer/api/chart/preview.ts
+src/pages/presentation-designer/api/chart/commit.ts
+src/pages/presentation-designer/api/assist/rewrite.ts
+src/pages/presentation-designer/api/assist/summary.ts
+src/pages/presentation-designer/api/assist/expand.ts
+src/pages/presentation-designer/api/export.ts
+src/pages/presentation-designer/api/duplicate.ts
+src/pages/presentation-designer/api/delete.ts
+src/pages/presentation-designer/api/list.ts
+src/pages/presentation-designer/api/view.ts
 
-src/components/presentation/Editor/*.astro
-src/components/presentation/Slides/*.astro
-src/components/presentation/Inspector/*.astro
-src/components/presentation/Chart/*.astro
-src/components/presentation/Templates/*.astro
-src/components/presentation/Brand/*.astro
+src/components/presentation-designer/Editor/*.astro
+src/components/presentation-designer/Slides/*.astro
+src/components/presentation-designer/Inspector/*.astro
+src/components/presentation-designer/Chart/*.astro
+src/components/presentation-designer/Templates/*.astro
+src/components/presentation-designer/Brand/*.astro
 ```
 
 ---
