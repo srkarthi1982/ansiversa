@@ -181,6 +181,16 @@ const builderSections = [
   },
 ];
 
+const builderPromptPreview = `[ROLE] You are a {{role}}.
+[TASK] {{task}}.
+[CONTEXT] {{context}}.
+[INPUT] {{input}}.
+[FORMAT] {{format_instructions}}.
+[CONSTRAINTS] {{constraints}}.
+[EXAMPLES] {{few_shot_pairs}}.
+[RUBRIC] {{criteria}}.
+[PARAMS] temp={{t}}, max_tokens={{k}}.`;
+
 const personaModes = [
   {
     title: "Teacher",
@@ -523,17 +533,7 @@ const dataModel = [
         >
           <div class="mt-6 overflow-hidden rounded-3xl border border-slate-200 bg-slate-900/95 p-6 text-left text-sm text-slate-100 shadow-xl">
             <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300">Preview schema</p>
-            <pre class="mt-4 whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200">
-[ROLE] You are a {{role}}.
-[TASK] {{task}}.
-[CONTEXT] {{context}}.
-[INPUT] {{input}}.
-[FORMAT] {{format_instructions}}.
-[CONSTRAINTS] {{constraints}}.
-[EXAMPLES] {{few_shot_pairs}}.
-[RUBRIC] {{criteria}}.
-[PARAMS] temp={{t}}, max_tokens={{k}}.
-            </pre>
+            <pre class="mt-4 whitespace-pre-wrap font-mono text-xs leading-relaxed text-slate-200">{builderPromptPreview}</pre>
             <p class="mt-4 text-xs text-slate-400">
               Live preview updates in real time as users edit builder fields. System ensures consistent ordering and optional omission of empty blocks.
             </p>

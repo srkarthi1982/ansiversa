@@ -1,5 +1,7 @@
 import Alpine from 'alpinejs';
 import type { LoaderStore } from './loader';
+import { clone } from '../utils/clone';
+export { clone } from '../utils/clone';
 
 type LoaderMethods = Pick<LoaderStore, 'show' | 'hide'>;
 
@@ -7,16 +9,6 @@ type StoreRecord = Record<string, unknown>;
 
 const hasLoaderMethods = (value: unknown): value is LoaderMethods =>
   Boolean(value) && typeof (value as LoaderMethods).show === 'function' && typeof (value as LoaderMethods).hide === 'function';
-
-export const clone = <TValue>(value: TValue): TValue => {
-  const structuredCloneFn = (globalThis as typeof globalThis & {
-    structuredClone?: <T>(input: T) => T;
-  }).structuredClone;
-  if (typeof structuredCloneFn === 'function') {
-    return structuredCloneFn(value);
-  }
-  return JSON.parse(JSON.stringify(value));
-};
 
 export abstract class BaseStore {
   protected readonly loader: LoaderMethods | null;

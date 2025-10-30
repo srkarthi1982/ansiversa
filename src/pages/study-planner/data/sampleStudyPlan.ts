@@ -1,4 +1,4 @@
-import { clone } from '../../../alpineStores/base';
+import { clone } from '../../../utils/clone';
 
 export interface StudyMetric {
   id: string;

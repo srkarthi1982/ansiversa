@@ -1,5 +1,5 @@
 
-import { clone } from '../../alpineStores/base';
+import { clone } from '../../utils/clone';
 
 export const POEM_FORM_KEYS = [
   'free-verse',
