@@ -30,17 +30,26 @@ const normalizeRoute = (href: string | undefined) => {
   return withLeadingSlash.replace(/\/+$/, "");
 };
 
+const miniAppRouteAliases = new Map<string, readonly string[]>([["/poem-studio", ["/poem"]]]);
+
 const resolveMiniAppHref = (href?: string | undefined) => {
   const normalized = normalizeRoute(href);
   if (!normalized) return undefined;
 
   const candidateRoutes: string[] = [];
+  const seenCandidates = new Set<string>();
 
   const addCandidate = (value: string | undefined) => {
     const candidate = normalizeRoute(value);
-    if (!candidate) return;
-    if (!candidateRoutes.includes(candidate)) {
-      candidateRoutes.push(candidate);
+    if (!candidate || seenCandidates.has(candidate)) return;
+    seenCandidates.add(candidate);
+    candidateRoutes.push(candidate);
+
+    const aliasValues = miniAppRouteAliases.get(candidate);
+    if (aliasValues) {
+      for (const alias of aliasValues) {
+        addCandidate(alias);
+      }
     }
   };
 
@@ -117,7 +126,7 @@ const miniAppCategories = [
     accent: "from-sky-500 via-purple-500 to-indigo-500",
     apps: [
       { name: "StoryCrafter", href: '/story' },
-      { name: "Poem Studio", href: '/poem' },
+      { name: "Poem Studio", href: 'poem-studio' },
       { name: "Song Lyric Maker", href: 'song-lyric-maker' },
       { name: "Ad Copy Assistant", href: '/ad-copy-assistant' },
       { name: "Book Summary Generator", href: '/booksumm' },
