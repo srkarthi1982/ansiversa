@@ -3,12 +3,13 @@ import Layout from "../../../layouts/Layout.astro";
 import Button from "../../../components/Button.astro";
 
 const { id } = Astro.params;
+const summaryId = id ?? '';
 ---
 <Layout title="Summary viewer">
   <main
     class="min-h-screen bg-slate-100"
     x-data="() => ({ summarizer: $store.notesSummarizer })"
-    x-init={`summarizer.initSummaryView('${id ?? ''}')`}
+    x-init={`summarizer.initSummaryView(${JSON.stringify(summaryId)})`}
   >
     <header class="border-b border-slate-200 bg-white/80 backdrop-blur">
       <div class="mx-auto flex flex-col gap-4 px-4 py-8 sm:px-6 lg:max-w-5xl lg:flex-row lg:items-center lg:justify-between">
@@ -32,11 +33,7 @@ const { id } = Astro.params;
             Back to history
           </Button>
           <Button
-            :href="
-              summarizer.state.summaryView.record
-                ? `/ai-notes-summarizer/builder?id=${summarizer.state.summaryView.record.id}`
-                : '/ai-notes-summarizer/builder'
-            "
+            :href="summarizer.state.summaryView.record ? `/ai-notes-summarizer/builder?id=${summarizer.state.summaryView.record.id}` : '/ai-notes-summarizer/builder'"
             size="sm"
           >
             <i class="fas fa-pen text-[10px]"></i>
