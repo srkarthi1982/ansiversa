@@ -110,6 +110,7 @@ const MINI_APP_ROUTE_ALIASES: Partial<Record<MiniAppSlug, readonly string[]>> = 
   invoice: ['invoice-and-receipt-maker'],
   'trivia-arena': ['trivia'],
   storycrafter: ['story'],
+  'poem-studio': ['poem'],
 };
 
 export const MINI_APP_ROUTE_PREFIXES: readonly string[] = MINI_APP_DEFINITIONS.flatMap((app) => {
