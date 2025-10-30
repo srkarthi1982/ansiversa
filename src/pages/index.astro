@@ -35,13 +35,14 @@ const resolveMiniAppHref = (href?: string | undefined) => {
   if (!normalized) return undefined;
 
   const candidateRoutes: string[] = [];
+  const seenCandidates = new Set<string>();
 
   const addCandidate = (value: string | undefined) => {
     const candidate = normalizeRoute(value);
-    if (!candidate) return;
-    if (!candidateRoutes.includes(candidate)) {
-      candidateRoutes.push(candidate);
-    }
+    if (!candidate || seenCandidates.has(candidate)) return;
+    seenCandidates.add(candidate);
+    candidateRoutes.push(candidate);
+
   };
 
   addCandidate(normalized);
