@@ -54,3 +54,4 @@ import '../pages/langcards/stores/languageFlashcards';
 import '../pages/study-timer/stores/studyTimer';
 import '../pages/story/stores';
 import '../pages/song-lyric-maker/stores';
+import '../pages/ad-copy-assistant/stores';
