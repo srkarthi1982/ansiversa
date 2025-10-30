@@ -1,0 +1,106 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import StoryHero from "../../components/story/StoryHero.astro";
+import StoryLibrary from "../../components/story/StoryLibrary.astro";
+import StoryWorkspace from "../../components/story/StoryWorkspace.astro";
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#story-workspace"
+  >
+    Skip to Story Crafter workspace
+  </a>
+  <main
+    id="story-crafter-app"
+    class="min-h-screen bg-slate-900 text-white"
+    x-data="{ story: $store['story-crafter'] }"
+    x-init="story.initDashboard()"
+  >
+    <StoryHero />
+    <StoryLibrary />
+    <StoryWorkspace />
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+            <h3 class="text-xl font-semibold">AI toolkit</h3>
+            <p class="mt-2 text-sm text-white/80">
+              Story Crafter hands you curated prompts so each assist stays on voice. Blend idea seeds, beat sheet generation,
+              world lore, and scene passes without leaving the workspace.
+            </p>
+            <dl class="mt-6 grid gap-4 sm:grid-cols-2 text-sm">
+              <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                <dt class="text-xs uppercase tracking-[0.25em] text-white/60">Idea seeds</dt>
+                <dd class="mt-1 font-semibold" x-text="story.state.aiUsage.outline + 3"></dd>
+                <p class="text-xs text-white/60">Generate loglines tuned to genre tropes.</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                <dt class="text-xs uppercase tracking-[0.25em] text-white/60">Scene expansions</dt>
+                <dd class="mt-1 font-semibold" x-text="story.state.aiUsage.scene"></dd>
+                <p class="text-xs text-white/60">Grow bullet beats into draft-ready scenes.</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                <dt class="text-xs uppercase tracking-[0.25em] text-white/60">Revision passes</dt>
+                <dd class="mt-1 font-semibold" x-text="story.state.aiUsage.passes"></dd>
+                <p class="text-xs text-white/60">Polish dialogue, tighten pacing, and spot canon gaps.</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                <dt class="text-xs uppercase tracking-[0.25em] text-white/60">Exports</dt>
+                <dd class="mt-1 font-semibold" x-text="story.state.aiUsage.exports"></dd>
+                <p class="text-xs text-white/60">Compile Markdown, DOCX, or EPUB packages.</p>
+              </div>
+            </dl>
+          </div>
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+            <h3 class="text-xl font-semibold">Recent activity</h3>
+            <p class="mt-2 text-sm text-white/80">Follow the pulse of AI assists, exports, and canon updates across projects.</p>
+            <ul class="mt-4 space-y-3 text-sm">
+              <template x-for="event in story.state.activity" :key="event.id">
+                <li class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+                  <div class="flex items-center justify-between text-xs uppercase tracking-[0.25em] text-white/60">
+                    <span class="inline-flex items-center gap-2">
+                      <i class="fa-solid" :class="[event.icon, event.color, 'text-sm']"></i>
+                      <span x-text="event.label"></span>
+                    </span>
+                    <span x-text="story.formatRelative(event.timestamp)"></span>
+                  </div>
+                  <p class="mt-2 text-white/80" x-text="event.detail"></p>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <h3 class="text-xl font-semibold">Integrations</h3>
+          <p class="mt-2 text-sm text-white/80">
+            Story Crafter connects with Prompt Builder, Research Assistant, Presentation Designer, Grammar Fixer, and Poem Studio.
+            Send scene briefs to comic storyboarder or pitch packs without copy-pasting.
+          </p>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <p class="text-sm font-semibold">Prompt Builder</p>
+              <p class="text-xs text-white/60">Design custom prompts and reuse them inside scene passes.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <p class="text-sm font-semibold">Research Assistant</p>
+              <p class="text-xs text-white/60">Clip facts into canon without breaking drafting flow.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <p class="text-sm font-semibold">Presentation Designer</p>
+              <p class="text-xs text-white/60">Spin up pitch decks when sharing with agents or collaborators.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <p class="text-sm font-semibold">Grammar Fixer</p>
+              <p class="text-xs text-white/60">Run final polish passes before exporting manuscripts.</p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 px-4 py-3">
+              <p class="text-sm font-semibold">Poem Studio</p>
+              <p class="text-xs text-white/60">Drop lyrical interludes into chapters with poetic control.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

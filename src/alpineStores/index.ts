@@ -52,3 +52,4 @@ import '../pages/notes-summarizer/stores';
 import '../pages/study-planner/stores/studyPlanner';
 import '../pages/langcards/stores/languageFlashcards';
 import '../pages/study-timer/stores/studyTimer';
+import '../pages/story/stores';
