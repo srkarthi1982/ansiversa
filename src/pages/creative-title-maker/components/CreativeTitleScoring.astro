@@ -1,0 +1,106 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="border-t border-slate-200 bg-white py-16" x-data="() => ({ maker: $store.creativeTitleMaker })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Scoring & rationale"
+      title="See why a title works before you hand it to stakeholders"
+      description="Scores blend clarity, novelty, SEO, CTR intent, and brand fit. Drill into each dimension, read rationale, and view actionable improvements."
+    />
+
+    <div class="mt-10 grid gap-8 lg:grid-cols-[1.1fr_0.9fr]">
+      <article class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-inner">
+        <h3 class="text-lg font-semibold text-slate-900">Score breakdown</h3>
+        <p class="mt-1 text-sm text-slate-600">
+          Hover or focus each row to reveal the highlights powering the score and the recommended follow-ups.
+        </p>
+        <div class="mt-5 space-y-3">
+          <template x-for="score in maker.state.scoreExplainers" :key="score.metric">
+            <div class="group rounded-2xl border border-slate-200 bg-white/90 p-4 shadow-sm transition hover:-translate-y-0.5 hover:border-indigo-200">
+              <div class="flex flex-wrap items-center justify-between gap-3 text-sm font-semibold text-slate-900">
+                <div class="flex items-center gap-2">
+                  <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                    <i class="fas fa-gauge-high text-xs"></i>
+                  </span>
+                  <span x-text="score.label"></span>
+                </div>
+                <span class="text-xl font-bold text-indigo-600" x-text="Math.round(score.score * 100)"></span>
+              </div>
+              <div class="mt-3 grid gap-3 md:grid-cols-2">
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Highlights</p>
+                  <ul class="mt-2 space-y-2 text-xs text-slate-600">
+                    <template x-for="highlight in score.highlights" :key="highlight">
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-check text-emerald-500 text-[10px] mt-0.5"></i>
+                        <span x-text="highlight"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Improvements</p>
+                  <ul class="mt-2 space-y-2 text-xs text-slate-600">
+                    <template x-for="improvement in score.improvements" :key="improvement">
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-lightbulb text-amber-500 text-[10px] mt-0.5"></i>
+                        <span x-text="improvement"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </article>
+
+      <aside class="space-y-6">
+        <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+          <h3 class="text-lg font-semibold text-slate-900">Rationale for active variant</h3>
+          <p class="mt-1 text-sm text-slate-600">
+            Explainers stay with each title so reviewers understand the intent and guardrails.
+          </p>
+          <div class="mt-4 space-y-3 text-sm text-slate-600">
+            <template x-for="line in maker.activeVariant?.rationale ?? []" :key="line">
+              <p class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3" x-text="line"></p>
+            </template>
+            <template x-if="!(maker.activeVariant?.rationale?.length)">
+              <p class="rounded-2xl border border-dashed border-slate-300 bg-slate-50 px-4 py-3 text-xs text-slate-500">
+                Select a variant to view its rationale, keyword reasoning, and improvement notes.
+              </p>
+            </template>
+          </div>
+        </article>
+
+        <article class="rounded-3xl border border-indigo-100 bg-indigo-50 p-6 shadow-sm">
+          <h3 class="text-lg font-semibold text-indigo-900">SERP preview & slug helper</h3>
+          <p class="mt-1 text-sm text-indigo-800">
+            Stay within Google’s 60 character sweet spot while keeping your keyword in play.
+          </p>
+          <div class="mt-4 space-y-3 text-xs text-indigo-900">
+            <div class="rounded-2xl border border-indigo-100 bg-white px-4 py-3">
+              <p class="text-sm font-semibold" x-text="maker.activeVariant?.text"></p>
+              <p class="mt-1 text-[11px] text-indigo-600" x-text="maker.activeVariant?.serpPreview"></p>
+              <p class="mt-2 text-[11px] font-semibold text-indigo-500" x-text="maker.activeVariant?.slug"></p>
+            </div>
+            <div class="rounded-2xl border border-indigo-100 bg-white px-4 py-3">
+              <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-500">Keyword placement</p>
+              <p class="mt-1 text-sm" x-text="maker.state.brief.includeKeywordFront ? 'Front-loaded primary keyword' : 'Flexible placement allowed'"></p>
+              <p class="mt-1 text-xs text-indigo-600">
+                {`Syllable target: `}
+                <span x-text="maker.state.brief.syllableTarget ?? 'Auto'" class="font-semibold"></span>
+                · Locale <span class="font-semibold" x-text="maker.state.brief.locale"></span>
+              </p>
+            </div>
+          </div>
+          <p class="mt-4 text-xs text-indigo-700">
+            <i class="fas fa-terminal text-[10px]"></i>
+            Use <code class="rounded bg-white/80 px-1">/titles/api/score</code> for automated scoring from your pipeline.
+          </p>
+        </article>
+      </aside>
+    </div>
+  </div>
+</section>
