@@ -1,0 +1,827 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Button from '../../components/Button.astro';
+import SectionHeading from '../../components/SectionHeading.astro';
+---
+
+<Layout>
+  <main
+    id="ad-copy-assistant"
+    class="min-h-screen bg-slate-50"
+    x-data="() => ({ store: $store.adCopyAssistant })"
+    x-init="store.onInit()"
+  >
+    <section class="relative overflow-hidden bg-gradient-to-br from-indigo-600 via-sky-500 to-purple-600 py-16 text-white">
+      <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.18),_rgba(79,70,229,0.1))]"></div>
+      <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+          <div class="space-y-7">
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/15 px-4 py-1 text-xs font-semibold uppercase tracking-[0.35em]">
+              <i class="fas fa-bullhorn text-[10px]"></i>
+              Ad Copy Assistant
+            </span>
+            <h1 class="text-4xl font-black tracking-tight sm:text-5xl lg:text-6xl">
+              Campaign-ready ads for every channel in one command center
+            </h1>
+            <p class="max-w-2xl text-base text-white/80 sm:text-lg">
+              Transform a single brief into compliant, high-performing ad variants for Google, Meta, LinkedIn, X, TikTok, and YouTube. Respect channel limits, localize instantly, track with UTM templates, and sync with the rest of the Ansiversa suite.
+            </p>
+            <div class="flex flex-wrap gap-3">
+              <Button type="button" class="shadow-sm" x-on:click.prevent="store.generateFromBrief()">
+                <i class="fas fa-bolt text-xs"></i>
+                Generate variants
+              </Button>
+              <Button href="#ad-workspace" variant="outline">
+                <i class="fas fa-diagram-project text-xs"></i>
+                Open workspace
+              </Button>
+              <Button href="/social-caption-generator" variant="ghost">
+                <i class="fas fa-hashtag text-xs"></i>
+                Reuse winning angles
+              </Button>
+            </div>
+            <dl class="grid gap-4 sm:grid-cols-3">
+              <div class="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-white/70">Experiments run</dt>
+                <dd class="mt-2 flex items-baseline gap-2 text-3xl font-bold">
+                  <span x-text="store.analytics.experimentsRun"></span>
+                  <span class="text-xs font-semibold text-white/70">multivariate</span>
+                </dd>
+              </div>
+              <div class="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-white/70">Average lift</dt>
+                <dd class="mt-2 flex items-baseline gap-2 text-3xl font-bold">
+                  <span x-text="`${Math.round(store.analytics.avgLift * 100)}%`"></span>
+                  <span class="text-xs font-semibold text-white/70">vs. control</span>
+                </dd>
+              </div>
+              <div class="rounded-2xl border border-white/20 bg-white/10 p-4 backdrop-blur">
+                <dt class="text-xs font-semibold uppercase tracking-wide text-white/70">Hours saved</dt>
+                <dd class="mt-2 flex items-baseline gap-2 text-3xl font-bold">
+                  <span x-text="store.analytics.savedHours"></span>
+                  <span class="text-xs font-semibold text-white/70">per launch</span>
+                </dd>
+              </div>
+            </dl>
+          </div>
+          <div class="space-y-5 rounded-3xl border border-white/20 bg-white/10 p-6 text-white shadow-xl backdrop-blur">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-semibold">Launch overview</h2>
+              <span class="inline-flex items-center gap-2 rounded-full bg-white/20 px-3 py-1 text-xs font-semibold">
+                <i class="fas fa-user-shield text-[10px]"></i>
+                <span x-text="store.plan.toUpperCase()"></span>
+              </span>
+            </div>
+            <div class="grid gap-4">
+              <div class="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-white/70">Plan usage</p>
+                <div class="mt-2 flex items-center justify-between text-sm text-white/80">
+                  <span>Campaigns</span>
+                  <span>
+                    <span x-text="store.planUsage?.campaignCount ?? 0"></span>
+                    <span class="text-white/60"> / </span>
+                    <span x-text="store.planUsage ? (store.planUsage.campaignLimit === Infinity ? '∞' : store.planUsage.campaignLimit) : '—'"></span>
+                  </span>
+                </div>
+                <div class="mt-1 flex items-center justify-between text-sm text-white/80">
+                  <span>Variants/channel</span>
+                  <span>
+                    <span x-text="store.planUsage?.variantCount ?? 0"></span>
+                    <span class="text-white/60"> / </span>
+                    <span x-text="store.planUsage?.variantLimit ?? '—'"></span>
+                  </span>
+                </div>
+                <div class="mt-1 flex items-center justify-between text-sm text-white/80">
+                  <span>Locales</span>
+                  <span>
+                    <span x-text="store.planUsage?.localeCount ?? 0"></span>
+                    <span class="text-white/60"> / </span>
+                    <span x-text="store.planUsage?.localeLimit ?? '—'"></span>
+                  </span>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-white/70">Compliance</p>
+                <p class="mt-2 text-3xl font-bold" x-text="store.openComplianceCount"></p>
+                <p class="text-xs text-white/70">flags awaiting review</p>
+              </div>
+              <div class="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-white/70">Channel mix</p>
+                <ul class="mt-3 space-y-2 text-sm text-white/80">
+                  <template x-for="channel in store.channels" :key="channel.id">
+                    <li class="flex items-center justify-between">
+                      <span class="flex items-center gap-2">
+                        <i :class="channel.icon" class="text-white/70"></i>
+                        <span x-text="channel.name"></span>
+                      </span>
+                      <span class="text-white/60" x-text="(store.variantsByChannel[channel.id] ?? []).length"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-white/15 bg-white/10 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-white/70">Latest activity</p>
+                <p class="mt-2 text-sm text-white/80">
+                  Last generation
+                  <span class="font-semibold" x-text="store.workspace.lastGeneratedAt ? new Date(store.workspace.lastGeneratedAt).toLocaleString() : 'not yet'"></span>
+                </p>
+                <p class="text-sm text-white/80">
+                  Active locale
+                  <span class="font-semibold" x-text="store.workspace.selectedLocale"></span>
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ad-brief" class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      <SectionHeading
+        eyebrow="Brief wizard"
+        title="Capture the essentials once, generate everywhere"
+        description="Outline the offer, audience, and strategy angles. The assistant remembers compliance guidelines, tone presets, and UTMs for every export."
+      />
+      <div class="mt-12 grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
+        <div class="space-y-8">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Campaign snapshot</h3>
+            <div class="mt-6 grid gap-6 md:grid-cols-2">
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Product</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Ansiversa LaunchPad"
+                  x-model="store.brief.product"
+                  x-on:input.debounce.300="store.updateBriefField('product', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Offer</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="14-day free trial"
+                  x-model="store.brief.offer"
+                  x-on:input.debounce.300="store.updateBriefField('offer', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Audience</label>
+                <textarea
+                  rows="3"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Growth marketers and RevOps teams at B2B SaaS companies"
+                  x-model="store.brief.audience"
+                  x-on:input.debounce.300="store.updateBriefField('audience', $event.target.value)"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Primary goal</label>
+                <textarea
+                  rows="3"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Book product demos for the LaunchPad workspace"
+                  x-model="store.brief.goal"
+                  x-on:input.debounce.300="store.updateBriefField('goal', $event.target.value)"
+                ></textarea>
+              </div>
+            </div>
+            <div class="mt-6">
+              <label class="text-sm font-semibold text-slate-700">Value proposition</label>
+              <textarea
+                rows="3"
+                class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="Unified campaign brief to multi-channel variants with compliance guardrails."
+                x-model="store.brief.valueProp"
+                x-on:input.debounce.300="store.updateBriefField('valueProp', $event.target.value)"
+              ></textarea>
+            </div>
+            <div class="mt-6">
+              <label class="text-sm font-semibold text-slate-700">Experiment hypothesis</label>
+              <textarea
+                rows="3"
+                class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                placeholder="If we stress the unified workspace and compliance safety, demo conversions will increase by 18%."
+                x-model="store.brief.hypothesis"
+                x-on:input.debounce.300="store.updateBriefField('hypothesis', $event.target.value)"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Voice, angles, and guardrails</h3>
+            <div class="mt-6 grid gap-6 lg:grid-cols-2">
+              <div class="space-y-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Tone preset</p>
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <template x-for="tone in store.tones" :key="tone.id">
+                    <label
+                      class="flex cursor-pointer flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm transition hover:border-indigo-500"
+                      :class="store.brief.tone === tone.id ? 'border-indigo-500 bg-indigo-50/60 shadow-md' : ''"
+                    >
+                      <div class="flex items-center justify-between">
+                        <span class="font-semibold text-slate-900" x-text="tone.label"></span>
+                        <input
+                          type="radio"
+                          class="sr-only"
+                          name="tone"
+                          :value="tone.id"
+                          x-model="store.brief.tone"
+                          x-on:change="store.setTone(tone.id)"
+                        />
+                      </div>
+                      <p class="text-xs text-slate-600" x-text="tone.description"></p>
+                      <div class="mt-2 flex items-center gap-2 text-[11px] text-slate-500">
+                        <span>
+                          <i class="fas fa-temperature-half mr-1 text-[9px]"></i>
+                          Warmth
+                          <span x-text="tone.sliders.warmth"></span>
+                        </span>
+                        <span>
+                          <i class="fas fa-bolt mr-1 text-[9px]"></i>
+                          Energy
+                          <span x-text="tone.sliders.energy"></span>
+                        </span>
+                        <span>
+                          <i class="fas fa-scale-balanced mr-1 text-[9px]"></i>
+                          Formality
+                          <span x-text="tone.sliders.formality"></span>
+                        </span>
+                      </div>
+                    </label>
+                  </template>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Angles to explore</p>
+                <div class="grid gap-3 sm:grid-cols-2">
+                  <template x-for="angle in store.angles" :key="angle.id">
+                    <button
+                      type="button"
+                      class="flex flex-col gap-1 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-left text-sm shadow-sm transition hover:border-indigo-500"
+                      :class="store.selectedAngles.has(angle.id) ? 'border-indigo-500 bg-indigo-50/80 shadow-md' : ''"
+                      x-on:click="store.toggleAngle(angle.id)"
+                    >
+                      <span class="font-semibold text-slate-900" x-text="angle.title"></span>
+                      <span class="text-xs text-slate-600" x-text="angle.description"></span>
+                      <span class="text-[11px] font-medium text-indigo-600" x-text="angle.hook"></span>
+                    </button>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 grid gap-6 md:grid-cols-2">
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Keywords & search themes</label>
+                <textarea
+                  rows="2"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="pipeline automation, revops workflow, ai ad copy"
+                  x-model="store.keywordBuffer"
+                  x-on:input.debounce.300="store.updateKeywordBuffer($event.target.value)"
+                ></textarea>
+                <p class="mt-2 text-xs text-slate-500">Comma or newline separated. We convert to DKI-ready paths for search.</p>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Differentiators</label>
+                <textarea
+                  rows="2"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Compliance-aware rewrites
+Cross-suite integrations
+Bulk export templates"
+                  x-model="store.differentiatorBuffer"
+                  x-on:input.debounce.300="store.updateDifferentiators($event.target.value)"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Required phrases</label>
+                <textarea
+                  rows="2"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Ansiversa LaunchPad, 14-day free trial"
+                  x-model="store.requiredPhraseBuffer"
+                  x-on:input.debounce.300="store.updateRequiredPhrases($event.target.value)"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Banned words</label>
+                <textarea
+                  rows="2"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="guaranteed results, best-in-class"
+                  x-model="store.bannedWordBuffer"
+                  x-on:input.debounce.300="store.updateBannedWords($event.target.value)"
+                ></textarea>
+              </div>
+              <div>
+                <label class="text-sm font-semibold text-slate-700">Disclaimers</label>
+                <textarea
+                  rows="3"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="Results vary based on campaign history.
+Free trial converts to paid plans per pricing page."
+                  x-model="store.disclaimerBuffer"
+                  x-on:input.debounce.300="store.updateDisclaimers($event.target.value)"
+                ></textarea>
+              </div>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">UTM builder & tracking</h3>
+            <div class="mt-6 grid gap-4 md:grid-cols-2">
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Base URL</label>
+                <input
+                  type="url"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="https://ansiversa.com/launchpad"
+                  x-model="store.brief.utm.baseUrl"
+                  x-on:input.debounce.300="store.updateUtmField('baseUrl', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Source</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="google"
+                  x-model="store.brief.utm.source"
+                  x-on:input.debounce.300="store.updateUtmField('source', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Medium</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="cpc"
+                  x-model="store.brief.utm.medium"
+                  x-on:input.debounce.300="store.updateUtmField('medium', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Campaign</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="launchpad-q2"
+                  x-model="store.brief.utm.campaign"
+                  x-on:input.debounce.300="store.updateUtmField('campaign', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Content</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="benefit-angle"
+                  x-model="store.brief.utm.content"
+                  x-on:input.debounce.300="store.updateUtmField('content', $event.target.value)"
+                />
+              </div>
+              <div>
+                <label class="text-xs font-semibold uppercase tracking-wide text-slate-500">Term</label>
+                <input
+                  type="text"
+                  class="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  placeholder="ai campaign builder"
+                  x-model="store.brief.utm.term"
+                  x-on:input.debounce.300="store.updateUtmField('term', $event.target.value)"
+                />
+              </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-3">
+              <template x-for="template in store.utmTemplates" :key="template.id">
+                <Button
+                  type="button"
+                  variant="light"
+                  class="bg-slate-100 text-slate-700 hover:bg-slate-200"
+                  x-on:click.prevent="store.applyUtmTemplate(template.id)"
+                >
+                  <i class="fas fa-robot text-[11px]"></i>
+                  <span x-text="template.name"></span>
+                </Button>
+              </template>
+            </div>
+            <div class="mt-6 rounded-2xl border border-indigo-100 bg-indigo-50/80 p-4 text-sm text-slate-700">
+              <p class="font-semibold text-indigo-700">Final tracking URL</p>
+              <p class="mt-1 break-all font-mono text-xs text-indigo-600" x-text="store.brief.utm.finalUrl || 'Add a base URL to compose UTMs.'"></p>
+            </div>
+          </div>
+        </div>
+
+        <div class="space-y-8">
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Channel selection</h3>
+            <p class="mt-2 text-sm text-slate-600">Choose where to generate variants. We honour character limits and surface channel-specific guidance.</p>
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              <template x-for="channel in store.channels" :key="channel.id">
+                <label
+                  class="flex cursor-pointer flex-col gap-2 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm shadow-sm transition hover:border-indigo-500"
+                  :class="store.brief.channels.includes(channel.id) ? 'border-indigo-500 bg-indigo-50/70 shadow-md' : ''"
+                >
+                  <div class="flex items-start justify-between gap-2">
+                    <span class="flex items-center gap-2 text-slate-900">
+                      <i :class="channel.icon"></i>
+                      <span x-text="channel.name"></span>
+                    </span>
+                    <input
+                      type="checkbox"
+                      class="sr-only"
+                      :checked="store.brief.channels.includes(channel.id)"
+                      x-on:change="store.toggleChannel(channel.id, $event.target.checked)"
+                    />
+                  </div>
+                  <p class="text-xs text-slate-600" x-text="channel.summary"></p>
+                  <p class="text-[11px] text-indigo-600">
+                    <span x-text="(store.variantsByChannel[channel.id] ?? []).length"></span>
+                    variants ready
+                  </p>
+                </label>
+              </template>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Locales & localization</h3>
+            <p class="mt-2 text-sm text-slate-600">Track where localization bundles stand and queue new markets.</p>
+            <div class="mt-4 space-y-3">
+              <template x-for="bundle in store.localization" :key="bundle.locale">
+                <div class="flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm">
+                  <div>
+                    <p class="font-semibold text-slate-900" x-text="bundle.label"></p>
+                    <p class="text-xs text-slate-600" x-text="bundle.toneNotes"></p>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <span
+                      class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold"
+                      :class="{
+                        'bg-emerald-100 text-emerald-700': bundle.status === 'ready',
+                        'bg-sky-100 text-sky-700': bundle.status === 'in-progress',
+                        'bg-amber-100 text-amber-700': bundle.status === 'queued',
+                        'bg-rose-100 text-rose-700': bundle.status === 'blocked',
+                      }"
+                      x-text="bundle.status.replace('-', ' ')"
+                    ></span>
+                    <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1 text-[11px] font-semibold text-slate-600">
+                      <input
+                        type="checkbox"
+                        class="rounded border-slate-300"
+                        :checked="store.brief.locales.includes(bundle.locale)"
+                        x-on:change="store.toggleLocale(bundle.locale, $event.target.checked)"
+                      />
+                      Targeted
+                    </label>
+                  </div>
+                </div>
+              </template>
+            </div>
+            <div class="mt-4 flex items-center gap-3">
+              <input
+                type="text"
+                placeholder="Add locale (e.g., it-IT)"
+                class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                x-ref="newLocale"
+                x-on:keydown.enter.prevent="store.requestLocalization($refs.newLocale.value); $refs.newLocale.value='';"
+              />
+              <Button type="button" variant="light" x-on:click="store.requestLocalization($refs.newLocale.value); $refs.newLocale.value='';">
+                <i class="fas fa-language text-[11px]"></i>
+                Queue locale
+              </Button>
+            </div>
+          </div>
+
+          <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h3 class="text-lg font-semibold text-slate-900">Plan & exports</h3>
+            <p class="mt-2 text-sm text-slate-600">Switch between Free and Pro to preview limits and export availability.</p>
+            <div class="mt-4 flex flex-wrap gap-3">
+              <Button
+                type="button"
+                variant="outline"
+                :class="store.plan === 'free' ? 'border-indigo-500 text-indigo-600' : ''"
+                x-on:click="store.setPlan('free')"
+              >
+                Free plan
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                :class="store.plan === 'pro' ? 'border-indigo-500 text-indigo-600' : ''"
+                x-on:click="store.setPlan('pro')"
+              >
+                Pro plan
+              </Button>
+              <Button type="button" variant="ghost" x-on:click="store.togglePlanDetails()">
+                <i class="fas fa-table-list text-[11px]"></i>
+                View plan table
+              </Button>
+            </div>
+            <div class="mt-4 grid gap-4" x-show="store.workspace.showPlanLimits">
+              <template x-for="plan in store.planOptions" :key="plan.plan">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
+                  <div class="flex items-center justify-between">
+                    <p class="font-semibold text-slate-900" x-text="plan.plan.toUpperCase()"></p>
+                    <span class="text-xs font-medium text-slate-500">
+                      Variants/channel:
+                      <span x-text="plan.variantsPerChannel === Infinity ? '∞' : plan.variantsPerChannel"></span>
+                    </span>
+                  </div>
+                  <ul class="mt-3 space-y-1 text-xs text-slate-600">
+                    <li>Campaigns: <span x-text="plan.campaigns === Infinity ? 'Unlimited' : plan.campaigns"></span></li>
+                    <li>Locales: <span x-text="plan.locales"></span></li>
+                    <li>Compliance: <span x-text="plan.compliance"></span></li>
+                    <li>Integrations: <span x-text="plan.integrations"></span></li>
+                    <li>Exports: <span x-text="plan.exports.join(', ')"></span></li>
+                  </ul>
+                </div>
+              </template>
+            </div>
+            <div class="mt-6 grid gap-3">
+              <template x-for="preset in store.exportPresets" :key="preset.id">
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm">
+                  <div class="flex items-center justify-between">
+                    <div>
+                      <p class="font-semibold text-slate-900" x-text="preset.label"></p>
+                      <p class="text-xs text-slate-600" x-text="preset.description"></p>
+                    </div>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-indigo-600" x-text="preset.format"></span>
+                  </div>
+                  <p class="mt-2 text-xs text-slate-500">
+                    Includes: <span x-text="preset.includes.join(', ')"></span>
+                  </p>
+                  <p class="mt-1 text-[11px] font-medium text-slate-500">
+                    Available on <span class="text-indigo-600" x-text="preset.plan.toUpperCase()"></span>
+                  </p>
+                </div>
+              </template>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section
+      id="ad-workspace"
+      class="border-t border-slate-200 bg-white/80 py-16"
+    >
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workspace"
+          title="Channel-specific editor with live counters"
+          description="Review and edit generated variants with hard limits, compliance cues, and quick duplication."
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-[260px_1fr_320px]">
+          <aside class="space-y-4 rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Channels</p>
+              <p class="text-sm text-slate-600">Switch the active workspace and compare variants.</p>
+            </div>
+            <div class="space-y-2">
+              <template x-for="channel in store.channels" :key="channel.id">
+                <button
+                  type="button"
+                  class="w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition hover:border-indigo-500"
+                  :class="store.workspace.activeChannelId === channel.id ? 'border-indigo-500 bg-indigo-50/70 text-indigo-700 shadow' : ''"
+                  x-on:click="store.setActiveChannel(channel.id)"
+                >
+                  <div class="flex items-center justify-between">
+                    <span class="flex items-center gap-2">
+                      <i :class="channel.icon"></i>
+                      <span x-text="channel.name"></span>
+                    </span>
+                    <span class="text-xs font-medium text-slate-500" x-text="(store.variantsByChannel[channel.id] ?? []).length + ' variants'"></span>
+                  </div>
+                </button>
+              </template>
+            </div>
+            <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs text-slate-600">
+              <p class="font-semibold text-slate-900">Guidance</p>
+              <ul class="mt-2 list-disc space-y-1 pl-4" x-show="store.activeChannelSpec">
+                <template x-for="note in (store.activeChannelSpec?.guidance ?? [])" :key="note">
+                  <li x-text="note"></li>
+                </template>
+              </ul>
+            </div>
+          </aside>
+
+          <div class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+              <div class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h3 class="text-xl font-semibold text-slate-900" x-text="store.activeChannelSpec?.name ?? 'Select a channel'"></h3>
+                  <p class="text-sm text-slate-600" x-text="store.activeChannelSpec?.summary"></p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <label class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-slate-600">
+                    <i class="fas fa-language text-[10px]"></i>
+                    <select
+                      class="bg-transparent text-slate-700 focus:outline-none"
+                      x-model="store.workspace.selectedLocale"
+                      x-on:change="store.setSelectedLocale($event.target.value)"
+                    >
+                      <template x-for="locale in store.brief.locales" :key="locale">
+                        <option :value="locale" x-text="locale"></option>
+                      </template>
+                    </select>
+                  </label>
+                  <Button type="button" variant="outline" x-on:click="store.generateFromBrief()">
+                    <i class="fas fa-wand-magic-sparkles text-[11px]"></i>
+                    Refresh variants
+                  </Button>
+                </div>
+              </div>
+              <div class="mt-6 grid gap-5">
+                <template x-for="field in store.activeVariantFields" :key="field.field.id">
+                  <div class="space-y-2 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                    <div class="flex items-start justify-between">
+                      <div>
+                        <label class="text-sm font-semibold text-slate-800" x-text="field.field.label"></label>
+                        <p class="text-xs text-slate-500" x-text="field.field.description"></p>
+                      </div>
+                      <div class="text-right text-xs font-semibold" :class="field.counter.exceeded ? 'text-rose-600' : field.counter.warn ? 'text-amber-600' : 'text-slate-500'">
+                        <span x-text="field.counter.length"></span>
+                        <template x-if="field.counter.hardLimit">
+                          <span>/ <span x-text="field.counter.hardLimit"></span></span>
+                        </template>
+                      </div>
+                    </div>
+                    <template x-if="field.field.type === 'textarea'">
+                      <textarea
+                        rows="3"
+                        class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        :placeholder="field.field.placeholder"
+                        :value="field.value"
+                        x-on:input.debounce.300="store.updateActiveVariantField(field.field.id, $event.target.value)"
+                      ></textarea>
+                    </template>
+                    <template x-if="['text', 'path', 'url'].includes(field.field.type)">
+                      <input
+                        :type="field.field.type === 'url' ? 'url' : 'text'"
+                        class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        :placeholder="field.field.placeholder"
+                        :value="field.value"
+                        x-on:input.debounce.300="store.updateActiveVariantField(field.field.id, $event.target.value)"
+                      />
+                    </template>
+                    <template x-if="field.field.type === 'enum'">
+                      <select
+                        class="w-full rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                        x-on:change="store.updateActiveVariantField(field.field.id, $event.target.value)"
+                      >
+                        <template x-for="option in field.field.options ?? []" :key="option">
+                          <option :value="option" :selected="field.value === option" x-text="option"></option>
+                        </template>
+                      </select>
+                    </template>
+                    <div class="flex flex-wrap items-center gap-3 text-[11px] text-slate-500">
+                      <span x-show="field.counter.exceeded" class="inline-flex items-center gap-1 rounded-full bg-rose-100 px-2 py-0.5 text-rose-700">
+                        <i class="fas fa-circle-exclamation text-[9px]"></i>
+                        Over hard limit
+                      </span>
+                      <span x-show="!field.counter.exceeded && field.counter.warn" class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2 py-0.5 text-amber-700">
+                        <i class="fas fa-triangle-exclamation text-[9px]"></i>
+                        Over recommended
+                      </span>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <aside class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Variants</h3>
+              <div class="mt-3 space-y-3">
+                <template x-for="variant in store.activeVariants" :key="variant.id">
+                  <div
+                    class="rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm transition"
+                    :class="store.activeVariant && store.activeVariant.id === variant.id ? 'border-indigo-500 bg-indigo-50/80 shadow' : ''"
+                  >
+                    <div class="flex items-center justify-between gap-2">
+                      <button type="button" class="text-left font-semibold text-slate-900" x-on:click="store.selectVariant(variant.channelId, variant.id)" x-text="variant.label"></button>
+                      <button type="button" class="text-xs text-indigo-600" x-on:click="store.duplicateVariant(variant.channelId, variant.id)">
+                        <i class="fas fa-copy"></i>
+                      </button>
+                    </div>
+                    <dl class="mt-2 grid grid-cols-3 gap-2 text-[11px] text-slate-500">
+                      <div>
+                        <dt>Ready</dt>
+                        <dd class="font-semibold text-slate-700" x-text="variant.metrics.readiness + '%' "></dd>
+                      </div>
+                      <div>
+                        <dt>Compliance</dt>
+                        <dd class="font-semibold text-slate-700" x-text="variant.metrics.compliance + '%' "></dd>
+                      </div>
+                      <div>
+                        <dt>Conversion</dt>
+                        <dd class="font-semibold text-slate-700" x-text="variant.metrics.conversion + '%' "></dd>
+                      </div>
+                    </dl>
+                    <p class="mt-2 text-[11px] text-slate-500" x-text="variant.hypothesis"></p>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Compliance flags</h3>
+              <div class="mt-3 space-y-3">
+                <template x-for="issue in store.activeComplianceIssues" :key="issue.id">
+                  <div class="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm">
+                    <p class="font-semibold text-amber-700" x-text="issue.rule"></p>
+                    <p class="mt-1 text-xs text-amber-700/80" x-text="issue.message"></p>
+                    <p class="mt-2 text-xs text-slate-600"><span class="font-semibold">Suggestion:</span> <span x-text="issue.suggestion"></span></p>
+                    <div class="mt-3 flex gap-2">
+                      <Button type="button" size="sm" variant="secondary" x-on:click="store.applyComplianceRewrite(issue.id)">
+                        <i class="fas fa-magic text-[10px]"></i>
+                        Apply safe rewrite
+                      </Button>
+                      <Button type="button" size="sm" variant="ghost" x-on:click="store.markComplianceResolved(issue.id)">
+                        Dismiss
+                      </Button>
+                    </div>
+                  </div>
+                </template>
+                <p x-show="store.activeComplianceIssues.length === 0" class="text-xs text-slate-500">No open issues for this variant.</p>
+              </div>
+            </div>
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Integrations</h3>
+              <div class="mt-3 space-y-3">
+                <template x-for="integration in store.integrations" :key="integration.id">
+                  <a
+                    class="flex items-center justify-between gap-2 rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 transition hover:border-indigo-500"
+                    :href="integration.href"
+                  >
+                    <span class="flex items-center gap-2">
+                      <i :class="integration.icon"></i>
+                      <span x-text="integration.name"></span>
+                    </span>
+                    <i class="fas fa-arrow-right text-xs text-slate-400"></i>
+                  </a>
+                  <p class="text-xs text-slate-500" x-text="integration.description"></p>
+                </template>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-slate-50">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Campaign insights"
+          title="Track performance across launches"
+          description="Log experiments and lift to inform future variants."
+          containerClass="text-slate-50"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl"
+          descriptionClass="mt-4 text-base text-slate-200"
+        />
+        <div class="mt-10 grid gap-4 md:grid-cols-3">
+          <template x-for="campaign in store.campaigns" :key="campaign.id">
+            <div class="rounded-3xl border border-white/10 bg-white/10 p-5 text-sm shadow-lg">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold text-slate-50" x-text="campaign.name"></p>
+                <span class="text-xs uppercase tracking-wide text-slate-300" x-text="campaign.status"></span>
+              </div>
+              <p class="mt-2 text-xs text-slate-200">Channels: <span x-text="campaign.channelMix.length"></span></p>
+              <p class="mt-1 text-xs text-slate-200">Last updated <span x-text="new Date(campaign.lastUpdated).toLocaleDateString()"></span></p>
+              <p class="mt-2 text-xs text-emerald-300 font-semibold">Lift <span x-text="Math.round(campaign.lift * 100) + '%' "></span></p>
+              <p class="mt-3 text-xs text-slate-100" x-text="campaign.note"></p>
+            </div>
+          </template>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl font-bold text-slate-900 sm:text-4xl">Continue the story with fellow mini-apps</h2>
+        <p class="mt-3 text-base text-slate-600">Push winning angles to Social Caption Generator, Presentation Designer, Email Polisher, and Prompt Builder to keep your go-to-market aligned.</p>
+        <div class="mt-8 flex flex-wrap justify-center gap-3">
+          <Button href="/social-caption-generator" variant="secondary">
+            <i class="fas fa-hashtag text-xs"></i>
+            Social captions
+          </Button>
+          <Button href="/presentation" variant="outline">
+            <i class="fas fa-display text-xs"></i>
+            Presentation decks
+          </Button>
+          <Button href="/email-polisher" variant="outline">
+            <i class="fas fa-envelope text-xs"></i>
+            Email follow-ups
+          </Button>
+          <Button href="/prompt-builder" variant="ghost">
+            <i class="fas fa-wand-magic-sparkles text-xs"></i>
+            Prompt Builder
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
