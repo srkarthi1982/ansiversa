@@ -1,0 +1,33 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Loader from '../../components/Loader.astro';
+import SmartTextbookScannerHero from './components/SmartTextbookScannerHero.astro';
+import SmartTextbookScannerCapture from './components/SmartTextbookScannerCapture.astro';
+import SmartTextbookScannerWorkspace from './components/SmartTextbookScannerWorkspace.astro';
+import SmartTextbookScannerQuality from './components/SmartTextbookScannerQuality.astro';
+import SmartTextbookScannerArtifacts from './components/SmartTextbookScannerArtifacts.astro';
+import SmartTextbookScannerPlans from './components/SmartTextbookScannerPlans.astro';
+import SmartTextbookScannerIntegrations from './components/SmartTextbookScannerIntegrations.astro';
+import SmartTextbookScannerDataModel from './components/SmartTextbookScannerDataModel.astro';
+import SmartTextbookScannerCTA from './components/SmartTextbookScannerCTA.astro';
+---
+<Layout title="Smart Textbook Scanner">
+  <Loader />
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#smart-textbook-scanner-app"
+  >
+    Skip to Smart Textbook Scanner content
+  </a>
+  <main id="smart-textbook-scanner-app" class="bg-slate-950 text-white">
+    <SmartTextbookScannerHero />
+    <SmartTextbookScannerCapture />
+    <SmartTextbookScannerWorkspace />
+    <SmartTextbookScannerQuality />
+    <SmartTextbookScannerArtifacts />
+    <SmartTextbookScannerPlans />
+    <SmartTextbookScannerIntegrations />
+    <SmartTextbookScannerDataModel />
+    <SmartTextbookScannerCTA />
+  </main>
+</Layout>

@@ -1,0 +1,57 @@
+<section class="bg-slate-950 py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" x-data="() => ({ scanner: Alpine.store('smartTextbookScanner') })">
+    <div class="lg:flex lg:items-end lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-indigo-300">Assurance</p>
+        <h2 class="mt-2 text-3xl font-bold text-white sm:text-4xl">Guardrails keep exports trustworthy</h2>
+        <p class="mt-3 max-w-2xl text-sm text-indigo-100 sm:text-base">
+          Confidence dashboards highlight where human input is needed. Cycle a check when you resolve it — Smart Textbook Scanner
+          keeps track of math compilation, exercise pairings, and diagram vectorisation requirements.
+        </p>
+      </div>
+      <p class="mt-4 max-w-sm rounded-2xl border border-indigo-400/40 bg-indigo-400/10 p-4 text-sm text-indigo-100 lg:mt-0">
+        <i class="fas fa-triangle-exclamation mr-2 text-amber-300"></i>
+        Quality checks must pass before publishing to FlashNote, Study Planner, or Exam Simulator.
+      </p>
+    </div>
+    <div class="mt-10 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <template x-for="check in scanner.qualityChecks" :key="check.id">
+        <article
+          class="rounded-3xl border p-6 transition"
+          :class="check.status === 'passed'
+            ? 'border-emerald-400/60 bg-emerald-400/10 text-emerald-100'
+            : check.status === 'warning'
+              ? 'border-amber-400/60 bg-amber-400/10 text-amber-100'
+              : 'border-rose-500/60 bg-rose-500/10 text-rose-100'"
+        >
+          <header class="flex items-start justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white" x-text="check.label"></p>
+              <p class="mt-1 text-xs" x-text="check.message"></p>
+            </div>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide"
+              :class="check.status === 'passed'
+                ? 'border-emerald-300/80 bg-emerald-300/20 text-emerald-100'
+                : check.status === 'warning'
+                  ? 'border-amber-300/80 bg-amber-300/20 text-amber-100'
+                  : 'border-rose-300/80 bg-rose-300/20 text-rose-100'"
+              @click="scanner.cycleQualityStatus(check.id)"
+            >
+              <i class="fas fa-rotate text-[10px]"></i>
+              Cycle status
+            </button>
+          </header>
+          <div class="mt-4 flex items-center gap-3 text-[11px] font-semibold uppercase tracking-wide">
+            <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-white">
+              <i class="fas fa-circle"></i>
+              <span x-text="check.status"></span>
+            </span>
+            <span class="text-indigo-200" x-text="check.severity === 'high' ? 'Requires approval' : check.severity === 'medium' ? 'Needs review' : 'Informational'"></span>
+          </div>
+        </article>
+      </template>
+    </div>
+  </div>
+</section>

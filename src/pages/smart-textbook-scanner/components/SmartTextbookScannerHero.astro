@@ -1,0 +1,163 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="relative overflow-hidden bg-slate-950">
+  <div class="absolute inset-0">
+    <div class="absolute inset-0 bg-gradient-to-br from-indigo-500/40 via-slate-900 to-slate-950"></div>
+    <div class="absolute -top-24 -left-24 h-64 w-64 rounded-full bg-emerald-500/20 blur-3xl"></div>
+    <div class="absolute -bottom-20 -right-16 h-72 w-72 rounded-full bg-indigo-400/20 blur-3xl"></div>
+  </div>
+  <div class="relative mx-auto max-w-6xl px-4 py-20 sm:px-6 lg:px-8 lg:py-24">
+    <div
+      class="grid gap-16 lg:grid-cols-[1.05fr_0.95fr] lg:items-center"
+      x-data="() => ({ scanner: Alpine.store('smartTextbookScanner') })"
+      x-init="scanner.init()"
+    >
+      <div class="space-y-8 text-center lg:text-left">
+        <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-1.5 text-sm font-semibold text-indigo-100">
+          <i class="fas fa-book-open-reader text-xs"></i>
+          Smart capture → semantic study packs
+        </span>
+        <h1 class="text-4xl font-bold tracking-tight text-white sm:text-5xl">
+          Smart Textbook Scanner turns dense pages into structured, searchable study systems
+        </h1>
+        <p class="mx-auto max-w-2xl text-base text-indigo-100 sm:text-lg lg:mx-0">
+          Import camera bursts, multi-page PDFs, or shared cloud folders. The pipeline cleans, OCRs, labels semantics, and
+          assembles flashcards, quizzes, and anchored exports ready for FlashNote, Study Planner, and Exam Simulator.
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-3 lg:justify-start">
+          <Button type="button" @click.prevent="scanner.startCapture()">
+            <i class="fas fa-bolt text-xs"></i>
+            Start capture flow
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            class="text-indigo-200 hover:bg-white/10"
+            @click.prevent="scanner.advancePipeline()"
+          >
+            <i class="fas fa-forward text-xs"></i>
+            Advance pipeline
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            class="text-indigo-200 hover:bg-white/10"
+            @click.prevent="scanner.resetPipeline()"
+          >
+            <i class="fas fa-rotate-left text-xs"></i>
+            Reset run
+          </Button>
+        </div>
+        <dl class="grid gap-4 text-left sm:grid-cols-3">
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <dt class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-200">
+              <i class="fas fa-gauge-high text-[10px]"></i>
+              Pipeline progress
+            </dt>
+            <dd class="mt-2 text-3xl font-bold text-white">
+              <span x-text="`${scanner.pipelineProgress}%`"></span>
+            </dd>
+            <dd class="mt-1 text-xs text-indigo-100">Stages auto-advance or step through manually.</dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <dt class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-200">
+              <i class="fas fa-layer-group text-[10px]"></i>
+              Active stage
+            </dt>
+            <dd class="mt-2 text-base font-semibold text-white" x-text="scanner.pipelineStages.find(stage => stage.status === 'active')?.label ?? 'Awaiting run'"></dd>
+            <dd class="mt-1 text-xs text-indigo-100" x-text="scanner.pipelineStages.find(stage => stage.status === 'active')?.summary ?? 'Kick off preprocessing to begin.'"></dd>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+            <dt class="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-indigo-200">
+              <i class="fas fa-circle-nodes text-[10px]"></i>
+              Capture mode
+            </dt>
+            <dd class="mt-2 text-base font-semibold text-white" x-text="scanner.captureModes.find(mode => mode.id === scanner.activeCaptureModeId)?.label ?? 'Select capture'"></dd>
+            <dd class="mt-1 text-xs text-indigo-100" x-text="scanner.captureModes.find(mode => mode.id === scanner.activeCaptureModeId)?.highlight ?? 'Choose a capture mode below.'"></dd>
+          </div>
+        </dl>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-indigo-200">Live status feed</p>
+          <ul class="mt-3 space-y-2 text-left text-xs text-indigo-100">
+            <template x-for="item in scanner.statusFeed" :key="item">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-circle-dot mt-0.5 text-[8px] text-emerald-300"></i>
+                <span x-text="item"></span>
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="absolute inset-0 translate-x-6 translate-y-6 rounded-3xl bg-indigo-500/30 blur-3xl"></div>
+        <div class="relative space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6 text-left shadow-[0_24px_80px_rgba(15,23,42,0.55)]">
+          <header class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white">Processing timeline</p>
+              <p class="text-xs text-indigo-100">Each stage outputs structured data ready for editing.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-emerald-400/20 px-3 py-1 text-xs font-semibold text-emerald-100">
+              <i class="fas fa-sparkles text-[10px]"></i>
+              STEM-optimised
+            </span>
+          </header>
+          <div class="space-y-4">
+            <template x-for="stage in scanner.pipelineStages" :key="stage.id">
+              <div
+                class="rounded-2xl border p-4 text-sm transition"
+                :class="stage.status === 'complete'
+                  ? 'border-emerald-400/60 bg-emerald-400/15 text-emerald-100'
+                  : stage.status === 'active'
+                    ? 'border-indigo-400/70 bg-indigo-400/15 text-indigo-100'
+                    : 'border-white/10 bg-white/5 text-indigo-100'"
+              >
+                <div class="flex items-center justify-between">
+                  <p class="font-semibold text-white" x-text="stage.label"></p>
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                    :class="stage.status === 'complete'
+                      ? 'bg-emerald-500/30 text-emerald-100'
+                      : stage.status === 'active'
+                        ? 'bg-indigo-500/30 text-indigo-100'
+                        : 'bg-white/10 text-indigo-100'"
+                  >
+                    <i
+                      :class="stage.status === 'complete'
+                        ? 'fas fa-check'
+                        : stage.status === 'active'
+                          ? 'fas fa-spinner fa-spin'
+                          : 'fas fa-clock'"
+                    ></i>
+                    <span class="uppercase" x-text="stage.status"></span>
+                  </span>
+                </div>
+                <p class="mt-2 text-xs" x-text="stage.summary"></p>
+                <p class="mt-2 text-[11px] text-indigo-200">
+                  <i class="fas fa-diagram-project mr-1"></i>
+                  <span x-text="stage.outputs.join(' · ')"></span>
+                </p>
+              </div>
+            </template>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 p-4 text-xs text-indigo-100">
+            <p class="font-semibold text-white">Recent actions</p>
+            <template x-if="!scanner.pipelineLog.length">
+              <p class="mt-2 text-indigo-200">No job events logged yet. Trigger capture to begin.</p>
+            </template>
+            <template x-if="scanner.pipelineLog.length">
+              <ul class="mt-2 space-y-2">
+                <template x-for="log in scanner.pipelineLog" :key="log.id">
+                  <li class="flex items-start justify-between gap-3 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
+                    <p class="font-semibold text-white" x-text="log.message"></p>
+                    <span class="text-[10px] font-semibold uppercase tracking-wide text-indigo-300" x-text="log.timestamp"></span>
+                  </li>
+                </template>
+              </ul>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
