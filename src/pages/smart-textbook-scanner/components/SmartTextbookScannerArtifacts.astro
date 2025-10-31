@@ -1,0 +1,114 @@
+---
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-slate-950 py-20 sm:py-24">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8" x-data="() => ({ scanner: Alpine.store('smartTextbookScanner') })">
+    <header class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+      <div>
+        <p class="text-sm font-semibold uppercase tracking-wide text-indigo-300">Study artifacts & exports</p>
+        <h2 class="mt-2 text-3xl font-bold text-white sm:text-4xl">Generate flashcards, quizzes, and export-ready bundles</h2>
+        <p class="mt-3 max-w-2xl text-sm text-indigo-100 sm:text-base">
+          Artifacts track their source blocks for hallucination guard. Refresh them anytime after editing blocks — exports bundle
+          anchors, LaTeX, tables, and diagrams in the format you need.
+        </p>
+      </div>
+      <Button type="button" variant="outline" class="border-emerald-400/60 text-emerald-100" @click.prevent="scanner.generateArtifact(scanner.activeArtifactId ?? 'flashcards')">
+        <i class="fas fa-arrows-rotate text-xs"></i>
+        Regenerate selected artifact
+      </Button>
+    </header>
+    <div class="mt-10 grid gap-8 lg:grid-cols-[0.65fr_0.35fr]">
+      <div class="space-y-4">
+        <template x-for="artifact in scanner.artifacts" :key="artifact.id">
+          <article
+            class="rounded-3xl border p-6 transition"
+            :class="artifact.id === scanner.activeArtifactId
+              ? 'border-emerald-400/70 bg-emerald-400/15 text-emerald-100'
+              : 'border-white/10 bg-white/5 text-indigo-100 hover:border-indigo-400/60'"
+          >
+            <div class="flex items-start justify-between gap-3">
+              <div>
+                <p class="text-lg font-semibold text-white" x-text="artifact.label"></p>
+                <p class="mt-1 text-sm" x-text="artifact.description"></p>
+              </div>
+              <button
+                type="button"
+                class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold uppercase tracking-wide"
+                :class="artifact.id === scanner.activeArtifactId ? 'border-emerald-400/70 bg-emerald-400/20 text-emerald-100' : 'border-white/10 bg-white/5 text-indigo-100'"
+                @click="scanner.generateArtifact(artifact.id)"
+              >
+                <i class="fas fa-circle-dot text-[10px]"></i>
+                <span x-text="artifact.id === scanner.activeArtifactId ? 'Active' : 'Generate'"></span>
+              </button>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2 text-[11px] text-indigo-200">
+              <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1">
+                <i class="fas fa-layer-group text-[10px]"></i>
+                <span x-text="`${artifact.generated} ready`"></span>
+              </span>
+              <template x-for="include in artifact.includes" :key="include">
+                <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5">
+                  <i class="fas fa-check text-[9px]"></i>
+                  <span x-text="include"></span>
+                </span>
+              </template>
+            </div>
+            <div class="mt-3 rounded-2xl border border-white/10 bg-white/5 p-3 text-[11px] text-indigo-200">
+              <p class="font-semibold uppercase tracking-wide text-indigo-300">Source anchors</p>
+              <p class="mt-1" x-text="artifact.sourceBlocks.join(' · ')"></p>
+            </div>
+          </article>
+        </template>
+      </div>
+      <div class="space-y-4">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6 text-indigo-100">
+          <p class="text-xs font-semibold uppercase tracking-wide text-indigo-300">Export presets</p>
+          <ul class="mt-4 space-y-3 text-sm">
+            <template x-for="preset in scanner.exportPresets" :key="preset.id">
+              <li class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <div class="flex items-start justify-between gap-3">
+                  <div>
+                    <p class="font-semibold text-white" x-text="preset.label"></p>
+                    <p class="text-xs text-indigo-200" x-text="preset.description"></p>
+                  </div>
+                  <span
+                    class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold"
+                    :class="preset.proOnly ? 'bg-amber-400/20 text-amber-100' : 'bg-emerald-400/20 text-emerald-100'"
+                  >
+                    <i :class="preset.proOnly ? 'fas fa-lock' : 'fas fa-cloud-arrow-up'"></i>
+                    <span x-text="preset.proOnly ? 'Pro' : 'Ready'"></span>
+                  </span>
+                </div>
+                <p class="mt-3 text-[11px] text-indigo-200" x-text="preset.includes.join(' · ')"></p>
+                <div class="mt-4 flex items-center justify-between gap-3">
+                  <Button type="button" size="sm" variant="ghost" class="text-indigo-200 hover:bg-white/10" @click.prevent="scanner.queueExport(preset.id)">
+                    <i class="fas fa-cloud-arrow-up text-[10px]"></i>
+                    Queue export
+                  </Button>
+                  <p class="text-[11px] text-indigo-200" x-text="preset.lastRun ? `Last run: ${preset.lastRun}` : 'Not yet generated'"></p>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-3xl border border-indigo-400/40 bg-indigo-400/10 p-6 text-sm text-indigo-100">
+          <p class="text-xs font-semibold uppercase tracking-wide text-indigo-300">Export destinations</p>
+          <ul class="mt-3 space-y-2 text-[11px]">
+            <li class="flex items-center gap-3">
+              <i class="fas fa-file-export text-[10px]"></i>
+              Markdown, DOCX, PDF, LaTeX bundle, CSV tables, Anki APKG, Quiz JSON
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-diagram-project text-[10px]"></i>
+              Anchors preserved as Book:Page:Block metadata for citations.
+            </li>
+            <li class="flex items-center gap-3">
+              <i class="fas fa-lock text-[10px]"></i>
+              Exports remain private until you push them to connected apps.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

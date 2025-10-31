@@ -58,3 +58,4 @@ import '../pages/ad-copy-assistant/stores';
 import '../pages/creative-title-maker/stores';
 import '../pages/quote-forge/stores';
 import '../pages/ai-meme-creator/stores';
+import '../pages/smart-textbook-scanner/stores/smartTextbookScanner';
