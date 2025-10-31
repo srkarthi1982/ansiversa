@@ -1,0 +1,46 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section id="ai-meme-integrations" class="bg-white py-16" x-data="() => ({ meme: $store.aiMemeCreator })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Integrations"
+      title="Hand off memes to the rest of the Ansiversa creative stack"
+      description="Push memes to presentations, ad copy workflows, or caption generators without downloading files."
+    />
+
+    <div class="mt-10 grid gap-6 lg:grid-cols-3">
+      <template x-for="integration in meme.state.integrations" :key="integration.id">
+        <article class="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm">
+          <div class="flex items-center justify-between">
+            <span class="inline-flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+              <i :class="integration.icon"></i>
+            </span>
+            <span class="rounded-full bg-indigo-50 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-indigo-600">
+              Ansiversa
+            </span>
+          </div>
+          <h3 class="mt-5 text-lg font-semibold text-slate-900" x-text="integration.name"></h3>
+          <p class="mt-2 text-sm text-slate-600" x-text="integration.description"></p>
+          <Button
+            variant="light"
+            size="sm"
+            class="mt-4"
+            x-bind:href="integration.href"
+          >
+            <i class="fas fa-arrow-right text-xs"></i>
+            <span x-text="integration.actionLabel"></span>
+          </Button>
+        </article>
+      </template>
+    </div>
+
+    <div class="mt-8 rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-600">
+      <p class="font-semibold text-slate-800">Automation tips</p>
+      <p class="mt-1">
+        Use `/meme/api/export` webhooks to trigger Presentation Designer or Social Caption Generator syncs. Metadata includes caption sets, plan tier, and brand preset IDs.
+      </p>
+    </div>
+  </div>
+</section>

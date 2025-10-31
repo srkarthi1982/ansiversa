@@ -1,0 +1,151 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section id="ai-meme-flow" class="bg-slate-50 py-16" x-data="() => ({ meme: $store.aiMemeCreator })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Prompt → meme engine"
+      title="Capture the idea once, let AI suggest templates, captions, and tones"
+      description="Outline the scenario, select a tone, and let the assistant surface punchlines with safety scores and recommended layouts."
+    />
+
+    <div class="mt-12 grid gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold text-slate-900">Prompt stages</h3>
+          <ol class="mt-6 space-y-5">
+            <template x-for="stage in meme.state.promptStages" :key="stage.id">
+              <li class="flex gap-4">
+                <span class="mt-1 flex h-10 w-10 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i :class="stage.icon"></i>
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900" x-text="stage.title"></p>
+                  <p class="mt-1 text-sm text-slate-600" x-text="stage.description"></p>
+                  <ul class="mt-2 space-y-1 text-xs text-slate-500">
+                    <template x-for="action in stage.actions" :key="action">
+                      <li class="flex items-start gap-2">
+                        <i class="fas fa-check mt-0.5 text-[10px] text-indigo-500"></i>
+                        <span x-text="action"></span>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </li>
+            </template>
+          </ol>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <h3 class="text-sm font-semibold text-slate-900">Tone sliders</h3>
+          <p class="mt-2 text-xs text-slate-500">
+            Toggle tone to regenerate punchlines with matching language and emoji cadence. We guard the extremes with safety heuristics.
+          </p>
+          <div class="mt-4 space-y-3">
+            <template x-for="tone in meme.state.toneOptions" :key="tone.id">
+              <button
+                type="button"
+                class="flex w-full items-start gap-3 rounded-2xl border px-4 py-3 text-left text-sm transition"
+                :class="
+                  tone.id === meme.state.selectedToneId
+                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                "
+                x-on:click="meme.selectTone(tone.id)"
+              >
+                <span class="mt-1 inline-flex h-8 w-8 items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+                  <i :class="tone.icon"></i>
+                </span>
+                <div>
+                  <p class="font-semibold" x-text="tone.label"></p>
+                  <p class="text-xs" x-text="tone.description"></p>
+                </div>
+                <span class="ml-auto mt-1 text-xs font-semibold text-slate-500" x-text="`${tone.sliderPosition}/100`"></span>
+              </button>
+            </template>
+          </div>
+        </div>
+      </div>
+
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex items-start justify-between">
+            <div>
+              <h3 class="text-sm font-semibold text-slate-900">Prompt presets</h3>
+              <p class="mt-1 text-xs text-slate-500">Jump-start with curated scenarios or write your own in the workspace.</p>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="light"
+              x-on:click="meme.state.promptPresets[0] && meme.selectPrompt(meme.state.promptPresets[0].id)"
+            >
+              Reset
+            </Button>
+          </div>
+          <div class="mt-4 space-y-3">
+            <template x-for="preset in meme.state.promptPresets" :key="preset.id">
+              <article
+                class="rounded-2xl border px-4 py-3 text-sm transition"
+                :class="
+                  preset.id === meme.state.selectedPromptId
+                    ? 'border-indigo-500 bg-indigo-50 text-indigo-700'
+                    : 'border-slate-200 bg-white text-slate-600 hover:border-slate-300'
+                "
+                x-on:click="meme.selectPrompt(preset.id)"
+              >
+                <div class="flex items-start justify-between gap-4">
+                  <div>
+                    <p class="font-semibold" x-text="preset.label"></p>
+                    <p class="mt-1 text-xs" x-text="preset.scenario"></p>
+                    <p class="mt-2 text-[11px] text-slate-500" x-text="preset.context"></p>
+                  </div>
+                  <span class="inline-flex items-center gap-1 rounded-full bg-slate-100 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-slate-600">
+                    <i class="fas fa-swatchbook text-[9px]"></i>
+                    <span x-text="preset.tone"></span>
+                  </span>
+                </div>
+              </article>
+            </template>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div class="flex items-start justify-between">
+            <h3 class="text-sm font-semibold text-slate-900">Caption ideas</h3>
+            <Button type="button" size="sm" variant="outline" x-on:click="meme.selectTone('absurd')">
+              Shake it up
+            </Button>
+          </div>
+          <p class="mt-2 text-xs text-slate-500">
+            The assistant scores every caption for clarity, tone fit, and safety confidence. Hover to mark favorites.
+          </p>
+          <ul class="mt-4 space-y-3 text-sm text-slate-700">
+            <template x-if="meme.selectedPrompt">
+              <template x-for="(caption, index) in meme.selectedPrompt?.captionIdeas ?? []" :key="caption">
+                <li class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                  <div class="flex items-center justify-between gap-2">
+                    <span class="inline-flex items-center gap-2">
+                      <span class="flex h-6 w-6 items-center justify-center rounded-full bg-indigo-100 text-xs font-semibold text-indigo-600" x-text="index + 1"></span>
+                      <span x-text="caption"></span>
+                    </span>
+                    <span class="inline-flex items-center gap-1 text-xs text-slate-500">
+                      <i class="fas fa-shield-check text-[10px]"></i>
+                      Safety 95%
+                    </span>
+                  </div>
+                </li>
+              </template>
+            </template>
+            <template x-if="!meme.selectedPrompt">
+              <li class="rounded-2xl border border-dashed border-slate-300 bg-white/60 p-4 text-xs text-slate-500">
+                Select or write a prompt to generate caption ideas.
+              </li>
+            </template>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
