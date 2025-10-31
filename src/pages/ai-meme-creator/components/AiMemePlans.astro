@@ -1,0 +1,53 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section id="ai-meme-plans" class="bg-slate-900 py-16 text-white" x-data="() => ({ meme: $store.aiMemeCreator })">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plans"
+      title="Scale meme production with the right limits and guardrails"
+      description="Free covers starter packs with PNG/WebP exports. Pro unlocks batch automation, animated renders, and full compliance logging."
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-white/70"
+      eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+    />
+
+    <div class="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl">
+      <table class="min-w-full divide-y divide-white/10 text-sm">
+        <thead class="bg-white/10 text-xs font-semibold uppercase tracking-wide text-white/70">
+          <tr>
+            <th scope="col" class="px-4 py-4 text-left">Feature</th>
+            <th scope="col" class="px-4 py-4 text-left">Free</th>
+            <th scope="col" class="px-4 py-4 text-left">Pro</th>
+          </tr>
+        </thead>
+        <tbody>
+          <template x-for="row in meme.state.planComparison" :key="row.id">
+            <tr class="divide-x divide-white/10 bg-white/5">
+              <td class="px-4 py-4">
+                <div class="flex items-center gap-3">
+                  <span class="inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
+                    <i :class="row.icon"></i>
+                  </span>
+                  <span class="font-semibold text-white" x-text="row.feature"></span>
+                </div>
+              </td>
+              <td class="px-4 py-4 text-sm text-white/70" x-text="row.free"></td>
+              <td class="px-4 py-4 text-sm text-white" x-text="row.pro"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-6 rounded-3xl border border-dashed border-white/20 bg-white/10 p-6 text-sm text-white/70">
+      <p class="font-semibold text-white">API rate limits</p>
+      <p class="mt-1">
+        Free: `/meme/api/suggest` 60/day · `/meme/api/render` 80/day. Pro: `/meme/api/suggest` 400/day · `/meme/api/render` 320/day with WebSocket progress updates.
+      </p>
+      <p class="mt-3 text-xs text-white/60">
+        Upgrade anytime from the Ansiversa console to unlock watermark locking, animation exports, and integration pushes.
+      </p>
+    </div>
+  </div>
+</section>
