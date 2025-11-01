@@ -1,0 +1,50 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-950 py-20 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8" x-data="() => ({ speech: Alpine.store('speechWriter') })">
+    <SectionHeading
+      eyebrow="Data model"
+      title="Entities designed for clarity, rehearsal insights, and export fidelity"
+      description="Speech projects keep briefs, outlines, drafts, cues, practice logs, and exports synchronised for audit-ready collaboration."
+    />
+    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <template x-for="entity in speech.dataModel" :key="entity.name">
+        <article class="rounded-3xl border border-white/10 bg-white/5 p-5 text-left text-xs text-indigo-100">
+          <header class="flex items-center justify-between gap-3">
+            <p class="text-sm font-semibold text-white" x-text="entity.name"></p>
+            <span class="rounded-full bg-indigo-500/20 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-indigo-100">
+              <span x-text="`${entity.fields.length} fields`"></span>
+            </span>
+          </header>
+          <ul class="mt-3 space-y-1">
+            <template x-for="field in entity.fields" :key="field">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-circle text-[7px] text-current"></i>
+                <span x-text="field"></span>
+              </li>
+            </template>
+          </ul>
+          <p class="mt-3 text-[11px] text-indigo-200" x-text="entity.notes ?? '—'"></p>
+        </article>
+      </template>
+    </div>
+    <div class="rounded-3xl border border-indigo-400/40 bg-indigo-500/10 p-6 text-left text-xs text-indigo-100">
+      <p class="text-sm font-semibold text-white">Indexing & retention</p>
+      <ul class="mt-3 space-y-2">
+        <li class="flex items-start gap-2">
+          <i class="fas fa-database text-[9px] text-emerald-300"></i>
+          SpeechProject.userId, Draft.projectId, Cue.projectId, and PracticeLog.projectId keep reads fast across dashboards.
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-lock text-[9px] text-emerald-300"></i>
+          Practice history retention: Free keeps 60 days, Pro stores unlimited runs with analytics snapshots.
+        </li>
+        <li class="flex items-start gap-2">
+          <i class="fas fa-shield-heart text-[9px] text-emerald-300"></i>
+          Flags and compliance notes live alongside drafts for inclusive language, sensitivity, and claim strength guidance.
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>

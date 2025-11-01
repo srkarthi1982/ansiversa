@@ -1,0 +1,71 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-slate-950 py-20 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8" x-data="() => ({ speech: Alpine.store('speechWriter') })">
+    <SectionHeading
+      eyebrow="Pipeline intelligence"
+      title="Brief → outline → draft → practice → teleprompter"
+      description="Each stage carries context forward — audience notes, pacing targets, rhetorical toggles, and quote metadata are always in sync."
+    />
+    <div class="flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap gap-3">
+        <Button type="button" size="sm" @click.prevent="speech.advanceStage()">
+          <i class="fas fa-forward text-[10px]"></i>
+          Advance stage
+        </Button>
+        <Button type="button" size="sm" variant="outline" @click.prevent="speech.resetWorkflow(true)">
+          <i class="fas fa-rotate-left text-[10px]"></i>
+          Reset workflow
+        </Button>
+        <Button type="button" size="sm" variant="ghost" class="text-indigo-200 hover:bg-white/10" @click.prevent="speech.prepareTeleprompter()">
+          <i class="fas fa-scroll text-[10px]"></i>
+          Prepare teleprompter
+        </Button>
+      </div>
+      <div class="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-semibold text-indigo-100">
+        <i class="fas fa-plug text-[10px]"></i>
+        <span>Active stage API: <span x-text="speech.activeStage?.apiEndpoint ?? '—'"></span></span>
+      </div>
+    </div>
+    <div class="grid gap-5 lg:grid-cols-5">
+      <template x-for="stage in speech.workflowStages" :key="stage.id">
+        <article
+          class="flex h-full flex-col gap-4 rounded-3xl border p-5 transition"
+          :class="stage.status === 'complete'
+            ? 'border-emerald-400/60 bg-emerald-400/15 text-emerald-100'
+            : stage.status === 'active'
+              ? 'border-indigo-400/70 bg-indigo-500/20 text-indigo-100'
+              : 'border-white/10 bg-white/5 text-indigo-100'"
+        >
+          <header class="space-y-1">
+            <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-wide">
+              <span x-text="stage.label" class="text-white"></span>
+              <span
+                class="inline-flex items-center gap-2 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                :class="stage.status === 'complete' ? 'bg-emerald-500/30 text-emerald-100' : stage.status === 'active' ? 'bg-indigo-500/30 text-indigo-100' : 'bg-white/10 text-indigo-100'"
+              >
+                <i :class="stage.status === 'complete' ? 'fas fa-check' : stage.status === 'active' ? 'fas fa-sparkles' : 'fas fa-clock'"></i>
+                <span x-text="stage.status"></span>
+              </span>
+            </div>
+            <p class="text-sm" x-text="stage.summary"></p>
+          </header>
+          <ul class="space-y-2 text-xs">
+            <template x-for="action in stage.actions" :key="action">
+              <li class="flex items-start gap-2">
+                <i class="fas fa-circle-dot mt-0.5 text-[9px] text-current"></i>
+                <span x-text="action"></span>
+              </li>
+            </template>
+          </ul>
+          <footer class="mt-auto text-xs">
+            <p>Endpoint</p>
+            <p class="font-mono text-[11px] text-white/80" x-text="stage.apiEndpoint"></p>
+          </footer>
+        </article>
+      </template>
+    </div>
+  </div>
+</section>

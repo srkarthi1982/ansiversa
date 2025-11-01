@@ -1,0 +1,169 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+import Button from '../../../components/Button.astro';
+---
+<section class="bg-slate-950 py-20 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8" x-data="() => ({ speech: Alpine.store('speechWriter') })">
+    <SectionHeading
+      eyebrow="Practice & teleprompter"
+      title="Rehearse with timing meters, filler tracking, and stage-ready teleprompter presets"
+      description="Capture every run, tune scroll speed to your pace, and keep mirror mode aligned across venues."
+    />
+    <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white">Teleprompter presets</p>
+              <p class="text-xs text-indigo-100">Choose the stage profile that matches your venue.</p>
+            </div>
+            <Button type="button" size="sm" variant="ghost" class="text-indigo-200 hover:bg-white/10" @click.prevent="speech.prepareTeleprompter()">
+              <i class="fas fa-play text-[9px]"></i>
+              Preview scroll
+            </Button>
+          </div>
+          <div class="mt-4 grid gap-3 md:grid-cols-3">
+            <template x-for="preset in speech.teleprompterPresets" :key="preset.id">
+              <button
+                type="button"
+                class="flex h-full flex-col gap-3 rounded-2xl border p-4 text-left transition"
+                :class="speech.selectedTeleprompterPresetId === preset.id ? 'border-indigo-300 bg-indigo-500/20 text-indigo-100 shadow-lg shadow-indigo-900/20' : 'border-white/10 bg-white/5 text-indigo-100 hover:border-indigo-300/60 hover:bg-indigo-500/10'"
+                @click="speech.selectTeleprompterPreset(preset.id)"
+              >
+                <div>
+                  <p class="text-sm font-semibold text-white" x-text="preset.label"></p>
+                  <p class="mt-1 text-xs" x-text="preset.description"></p>
+                </div>
+                <dl class="space-y-1 text-[11px] text-indigo-200">
+                  <div class="flex items-center justify-between">
+                    <dt>Font size</dt>
+                    <dd x-text="preset.fontSize"></dd>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <dt>Line height</dt>
+                    <dd x-text="preset.lineHeight"></dd>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <dt>Scroll speed</dt>
+                    <dd x-text="preset.scrollSpeed"></dd>
+                  </div>
+                </dl>
+                <p class="mt-auto text-[11px] text-indigo-200" x-text="preset.highlight"></p>
+              </button>
+            </template>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white">Practice intelligence</p>
+              <p class="text-xs text-indigo-100">Tools to keep timing, pacing, and delivery confidence on track.</p>
+            </div>
+            <Button type="button" size="sm" @click.prevent="speech.logPracticeRun()">
+              <i class="fas fa-stopwatch text-[9px]"></i>
+              Log practice run
+            </Button>
+          </div>
+          <div class="mt-4 grid gap-3 md:grid-cols-3">
+            <template x-for="tool in speech.practiceTools" :key="tool.id">
+              <div class="rounded-2xl border border-white/10 bg-slate-900/40 p-4 text-left">
+                <p class="text-sm font-semibold text-white" x-text="tool.label"></p>
+                <p class="mt-1 text-xs text-indigo-100" x-text="tool.description"></p>
+                <ul class="mt-3 space-y-1 text-[11px] text-indigo-200">
+                  <template x-for="metric in tool.metrics" :key="metric">
+                    <li class="flex items-start gap-2">
+                      <i class="fas fa-circle text-[7px] text-current"></i>
+                      <span x-text="metric"></span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="space-y-6">
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <header class="flex items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white">Practice log</p>
+              <p class="text-xs text-indigo-100">Compare each run against your target pace.</p>
+            </div>
+            <span class="inline-flex items-center gap-2 rounded-full bg-indigo-400/20 px-3 py-1 text-[11px] font-semibold text-indigo-100">
+              <i class="fas fa-chart-line text-[9px]"></i>
+              Trend view
+            </span>
+          </header>
+          <div class="mt-4 space-y-3">
+            <template x-if="!speech.practiceLog.length">
+              <p class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-xs text-indigo-100">
+                No rehearsal runs logged yet. Start with a timed read-through to unlock feedback.
+              </p>
+            </template>
+            <template x-for="run in speech.practiceLog" :key="run.id">
+              <div class="rounded-2xl border border-white/10 bg-slate-900/40 px-4 py-3 text-xs text-indigo-100">
+                <div class="flex flex-wrap items-center justify-between gap-2 text-white">
+                  <p class="text-sm font-semibold" x-text="run.label"></p>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide">
+                    <i class="fas fa-clock text-[8px]"></i>
+                    <span x-text="`${run.durationMinutes} min · ${run.pace} WPM`"></span>
+                  </span>
+                </div>
+                <div class="mt-2 grid gap-2 text-[11px] text-indigo-200 sm:grid-cols-3">
+                  <div class="flex items-center gap-2">
+                    <i class="fas fa-wave-square text-[9px]"></i>
+                    <span x-text="`Filler markers: ${run.filler}`"></span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i class="fas fa-comment-dots text-[9px]"></i>
+                    <span x-text="run.note"></span>
+                  </div>
+                  <div class="flex items-center gap-2">
+                    <i class="fas fa-calendar-day text-[9px]"></i>
+                    <span x-text="run.timestamp"></span>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+          <div class="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p class="text-sm font-semibold text-white">Exports</p>
+              <p class="text-xs text-indigo-100">Package the speech into the format your audience needs.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="preset in speech.exportPresets" :key="preset.id">
+                <button
+                  type="button"
+                  class="inline-flex items-center gap-2 rounded-full border px-3 py-1 text-[11px] font-semibold transition"
+                  :class="speech.selectedExportPresetId === preset.id ? 'border-indigo-300 bg-indigo-500/20 text-indigo-100' : 'border-white/10 bg-white/5 text-indigo-200 hover:border-indigo-300/60 hover:text-white'"
+                  @click="speech.selectExportPreset(preset.id)"
+                >
+                  <i class="fas fa-file-export text-[9px]"></i>
+                  <span x-text="preset.label"></span>
+                </button>
+              </template>
+            </div>
+          </div>
+          <template x-if="speech.selectedExportPreset">
+            <div class="mt-4 rounded-2xl border border-white/10 bg-slate-900/40 p-4 text-xs text-indigo-100">
+              <p class="text-sm font-semibold text-white" x-text="speech.selectedExportPreset?.label"></p>
+              <p class="mt-1" x-text="speech.selectedExportPreset?.description"></p>
+              <h4 class="mt-3 text-[11px] font-semibold uppercase tracking-wide text-indigo-200">Includes</h4>
+              <ul class="mt-2 space-y-1">
+                <template x-for="item in speech.selectedExportPreset?.includes ?? []" :key="item">
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-check text-[9px] text-emerald-400"></i>
+                    <span x-text="item"></span>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
