@@ -1,0 +1,64 @@
+---
+import SectionHeading from '../../../components/SectionHeading.astro';
+---
+<section class="bg-slate-950 py-20 text-white">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8" x-data="() => ({ speech: Alpine.store('speechWriter') })">
+    <SectionHeading
+      eyebrow="Plans"
+      title="Built for launch-day speakers and professional communicators"
+      description="Free tier helps you prep core talks. Pro unlocks advanced rehearsal analytics, extended languages, and slide integrations."
+    />
+    <div class="overflow-hidden rounded-3xl border border-white/10 bg-white/5">
+      <div class="grid grid-cols-3 bg-white/10 text-xs font-semibold uppercase tracking-wide text-indigo-200">
+        <div class="px-4 py-3 text-left">Feature</div>
+        <div class="px-4 py-3 text-center">Free</div>
+        <div class="px-4 py-3 text-center">Pro</div>
+      </div>
+      <dl class="divide-y divide-white/10 text-sm text-indigo-100">
+        <template x-for="row in speech.planComparison" :key="row.feature">
+          <div class="grid grid-cols-3 items-center">
+            <dt class="px-4 py-4 font-semibold text-white" x-text="row.feature"></dt>
+            <dd class="px-4 py-4 text-center text-xs" x-text="row.free"></dd>
+            <dd class="px-4 py-4 text-center text-xs text-emerald-200" x-text="row.pro"></dd>
+          </div>
+        </template>
+      </dl>
+    </div>
+    <div class="grid gap-6 text-left sm:grid-cols-2">
+      <div class="rounded-3xl border border-white/10 bg-white/5 p-6">
+        <h3 class="text-sm font-semibold text-white">Free essentials</h3>
+        <ul class="mt-3 space-y-2 text-xs text-indigo-100">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-check text-[9px] text-emerald-400"></i>
+            Brief → outline → draft pipeline with manual teleprompter scroll.
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-check text-[9px] text-emerald-400"></i>
+            Markdown and teleprompter TXT exports for sharing.
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-check text-[9px] text-emerald-400"></i>
+            Core quote library and inclusive language nudges.
+          </li>
+        </ul>
+      </div>
+      <div class="rounded-3xl border border-indigo-400/50 bg-indigo-500/10 p-6">
+        <h3 class="text-sm font-semibold text-white">Pro upgrade</h3>
+        <ul class="mt-3 space-y-2 text-xs text-indigo-100">
+          <li class="flex items-start gap-2">
+            <i class="fas fa-star text-[9px] text-amber-300"></i>
+            Auto-scroll teleprompter with rehearsal analytics and mirror mode presets.
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-star text-[9px] text-amber-300"></i>
+            DOCX/PDF exports plus Presentation Designer slide sync.
+          </li>
+          <li class="flex items-start gap-2">
+            <i class="fas fa-star text-[9px] text-amber-300"></i>
+            Extended quotes, bilingual output, and unlimited practice history.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
