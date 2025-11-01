@@ -10,7 +10,7 @@ import type {
 
 const toIso = (value: string): string => new Date(value).toISOString();
 
-const createLesson = (data: Partial<LessonRecord> and Pick<LessonRecord, 'id' | 'title'>): LessonRecord => ({
+const createLesson = (data: Partial<LessonRecord> & Pick<LessonRecord, 'id' | 'title'>): LessonRecord => ({
   courseId: data.courseId ?? 'course-deeplearning',
   moduleId: data.moduleId ?? 'module-1',
   moduleTitle: data.moduleTitle ?? 'Module',
@@ -26,14 +26,14 @@ const createLesson = (data: Partial<LessonRecord> and Pick<LessonRecord, 'id' | 
   ...data,
 });
 
-const createModule = (data: Partial<ModuleRecord> and Pick<ModuleRecord, 'id' | 'title'>): ModuleRecord => ({
+const createModule = (data: Partial<ModuleRecord> & Pick<ModuleRecord, 'id' | 'title'>): ModuleRecord => ({
   description: data.description ?? '',
   position: data.position ?? 1,
   lessons: data.lessons ?? [],
   ...data,
 });
 
-const createPlanSession = (data: Partial<PlanSession> and Pick<PlanSession, 'id' | 'day'>): PlanSession => ({
+const createPlanSession = (data: Partial<PlanSession> & Pick<PlanSession, 'id' | 'day'>): PlanSession => ({
   focus: data.focus ?? 'Deep work',
   start: data.start ?? '07:30',
   end: data.end ?? '09:00',
@@ -44,7 +44,7 @@ const createPlanSession = (data: Partial<PlanSession> and Pick<PlanSession, 'id'
 });
 
 const createSessionRecord = (
-  data: Partial<StudySessionRecord> and Pick<StudySessionRecord, 'id' | 'courseId' | 'lessonId'>,
+  data: Partial<StudySessionRecord> & Pick<StudySessionRecord, 'id' | 'courseId' | 'lessonId'>,
 ): StudySessionRecord => ({
   startedAt: data.startedAt ?? toIso('2024-07-17T07:30:00Z'),
   endedAt: data.endedAt ?? toIso('2024-07-17T08:30:00Z'),
@@ -53,7 +53,7 @@ const createSessionRecord = (
   ...data,
 });
 
-const createNote = (data: Partial<NoteRecord> and Pick<NoteRecord, 'id' | 'courseId' | 'lessonId'>): NoteRecord => ({
+const createNote = (data: Partial<NoteRecord> & Pick<NoteRecord, 'id' | 'courseId' | 'lessonId'>): NoteRecord => ({
   title: data.title ?? 'Study note',
   body: data.body ?? '',
   updatedAt: data.updatedAt ?? toIso('2024-07-16T19:45:00Z'),

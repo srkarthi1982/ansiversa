@@ -162,7 +162,7 @@ export const createEmptyPortfolioData = (): PortfolioData => ({
 });
 
 export const createPortfolioDocument = (
-  overrides: Partial<PortfolioDocument and { status?: PortfolioStatus; plan?: PortfolioPlan }> = {},
+  overrides: Partial<PortfolioDocument & { status?: PortfolioStatus; plan?: PortfolioPlan }> = {},
 ): PortfolioDocument => {
   const now = new Date().toISOString();
   return {

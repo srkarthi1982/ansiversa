@@ -19,7 +19,7 @@ const {
   placeholder = "",
   type: _ignoredType,
   ...rest
-} = Astro.props as Props and Record<string, unknown>;
+} = Astro.props as Props & Record<string, unknown>;
 
 const randomId = Math.random().toString(36).slice(2);
 const inputId = id ?? name ?? `textbox-${randomId}`;

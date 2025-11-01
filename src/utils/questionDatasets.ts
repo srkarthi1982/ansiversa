@@ -1,4 +1,4 @@
-type QuestionDatasetDefinition = {
+type QuestionDatasetConfig = {
   id: string;
   label: string;
   description: string;
@@ -7,36 +7,52 @@ type QuestionDatasetDefinition = {
   load: () => Promise<unknown[]>;
 };
 
-const datasetDefinitions = {
-  medical: {
-    id: 'medical',
-    label: 'Medical Platform',
-    description: 'AIIMS entrance and medical readiness question bank.',
-    fileName: 'questions/medical.json',
-    defaultChunkSize: 1000,
-    load: async (): Promise<unknown[]> => {
-      const module = await import('../../db/quiz/questions/medical.json');
-      const data = module.default ?? module;
-      return Array.isArray(data) ? data : [];
-    },
-  },
-  engineering: {
-    id: 'engineering',
-    label: 'Engineering Platform',
-    description: 'Engineering entrance and technical aptitude question bank.',
-    fileName: 'questions/engineering.json',
-    defaultChunkSize: 1000,
-    load: async (): Promise<unknown[]> => {
-      const module = await import('../../db/quiz/questions/engineering.json');
-      const data = module.default ?? module;
-      return Array.isArray(data) ? data : [];
-    },
-  },
-} as const satisfies Record<string, QuestionDatasetDefinition>;
+const questionFileModules = import.meta.glob('../../db/quiz/questions/*.json');
+
+const toDatasetId = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/\.json$/i, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+const toDatasetLabel = (value: string) =>
+  value
+    .replace(/\.json$/i, '')
+    .replace(/_/g, ' ')
+    .replace(/-/g, ' ')
+    .replace(/\s*&\s*/g, ' & ')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+const datasetEntries = Object.entries(questionFileModules).map(([path, loader]) => {
+  const fileName = path.split('/').pop() ?? path;
+  const baseLabel = toDatasetLabel(fileName) || fileName.replace(/\.json$/i, '');
+  const id = toDatasetId(fileName) || toDatasetId(baseLabel) || baseLabel.toLowerCase();
+  return [
+    id,
+    {
+      id,
+      label: baseLabel,
+      description: `${baseLabel} question dataset`,
+      fileName: `questions/${fileName}`,
+      defaultChunkSize: 1000,
+      load: async (): Promise<unknown[]> => {
+        const module = await loader();
+        const data = module.default ?? module;
+        return Array.isArray(data) ? data : [];
+      },
+    } satisfies QuestionDatasetConfig,
+  ] as const;
+});
+
+datasetEntries.sort((a, b) => a[1].label.localeCompare(b[1].label));
+
+const datasetDefinitions = Object.fromEntries(datasetEntries) as Record<string, QuestionDatasetConfig>;
 
 export type QuestionDatasetKey = keyof typeof datasetDefinitions;
-export type QuestionDatasetDefinition = (typeof datasetDefinitions)[QuestionDatasetKey];
-export type QuestionDatasetMeta = Omit<QuestionDatasetDefinition, 'load'>;
+export type QuestionDatasetDefinition = QuestionDatasetConfig;
+export type QuestionDatasetMeta = Omit<QuestionDatasetConfig, 'load'>;
 
 export const questionDatasetDefinitions = datasetDefinitions;
 

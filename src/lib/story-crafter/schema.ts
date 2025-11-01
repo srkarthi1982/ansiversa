@@ -270,7 +270,7 @@ const now = () => new Date().toISOString();
 
 const toBeat = (
   key: StoryFrameworkKey,
-  overrides: Partial<StoryBeat> and { id: string; title: string },
+  overrides: Partial<StoryBeat> & { id: string; title: string },
 ): StoryBeat => ({
   id: overrides.id,
   title: overrides.title,
@@ -280,7 +280,7 @@ const toBeat = (
   relatedSceneIds: overrides.relatedSceneIds ?? [],
 });
 
-const toScene = (overrides: Partial<StoryScene> and { id: string; title: string }): StoryScene => ({
+const toScene = (overrides: Partial<StoryScene> & { id: string; title: string }): StoryScene => ({
   id: overrides.id,
   title: overrides.title,
   chapterId: overrides.chapterId ?? null,
@@ -304,7 +304,7 @@ const toScene = (overrides: Partial<StoryScene> and { id: string; title: string 
     ],
 });
 
-const toCharacter = (overrides: Partial<StoryCharacter> and { id: string; name: string }): StoryCharacter => ({
+const toCharacter = (overrides: Partial<StoryCharacter> & { id: string; name: string }): StoryCharacter => ({
   id: overrides.id,
   name: overrides.name,
   role: overrides.role ?? 'ally',
@@ -326,7 +326,7 @@ const toCharacter = (overrides: Partial<StoryCharacter> and { id: string; name: 
 });
 
 const toWorldEntry = (
-  overrides: Partial<StoryWorldEntry> and { id: string; name: string; type: StoryWorldEntry['type'] },
+  overrides: Partial<StoryWorldEntry> & { id: string; name: string; type: StoryWorldEntry['type'] },
 ): StoryWorldEntry => ({
   id: overrides.id,
   type: overrides.type,
@@ -339,7 +339,7 @@ const toWorldEntry = (
 });
 
 const toTimelineEvent = (
-  overrides: Partial<StoryTimelineEvent> and { id: string; label: string },
+  overrides: Partial<StoryTimelineEvent> & { id: string; label: string },
 ): StoryTimelineEvent => ({
   id: overrides.id,
   label: overrides.label,
@@ -349,7 +349,7 @@ const toTimelineEvent = (
 });
 
 const toCanonFact = (
-  overrides: Partial<StoryCanonFact> and { id: string; key: string; value: string },
+  overrides: Partial<StoryCanonFact> & { id: string; key: string; value: string },
 ): StoryCanonFact => ({
   id: overrides.id,
   entityType: overrides.entityType ?? 'misc',
@@ -359,7 +359,7 @@ const toCanonFact = (
   confidence: overrides.confidence ?? 0.82,
 });
 
-const toNote = (overrides: Partial<StoryNote> and { id: string; label: string }): StoryNote => ({
+const toNote = (overrides: Partial<StoryNote> & { id: string; label: string }): StoryNote => ({
   id: overrides.id,
   label: overrides.label,
   createdAt: overrides.createdAt ?? now(),
@@ -369,7 +369,7 @@ const toNote = (overrides: Partial<StoryNote> and { id: string; label: string })
 });
 
 const baseProject = (
-  overrides: Partial<StoryProject> and { id: string; title: string },
+  overrides: Partial<StoryProject> & { id: string; title: string },
 ): StoryProject => ({
   id: overrides.id,
   title: overrides.title,

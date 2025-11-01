@@ -44,7 +44,7 @@ class CaptionStore extends BaseStore {
   private campaigns = captionCampaigns();
   private drafts: CaptionDraft[] = captionSeedDrafts();
 
-  generatorState: CaptionGeneratorPayload and {
+  generatorState: CaptionGeneratorPayload & {
     loading: boolean;
     ephemeral: boolean;
     resultId: string | null;

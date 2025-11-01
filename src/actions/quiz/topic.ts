@@ -8,7 +8,7 @@ type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 type TopicRow = typeof Topic.$inferSelect;
 
 const normalizeTopic = (
-  row: TopicRow and { subjectName?: string | null; platformName?: string | null }
+  row: TopicRow & { subjectName?: string | null; platformName?: string | null }
 ) => ({
   id: row.id,
   platformId: row.platformId,

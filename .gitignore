@@ -1,6 +1,6 @@
 # build output
 dist/
-
+db/quiz/questions
 # generated types
 .astro/
 .vercel/

@@ -1,5 +1,5 @@
 export const clone = <TValue>(value: TValue): TValue => {
-  const structuredCloneFn = (globalThis as typeof globalThis and {
+  const structuredCloneFn = (globalThis as typeof globalThis & {
     structuredClone?: <T>(input: T) => T;
   }).structuredClone;
 
@@ -9,4 +9,3 @@ export const clone = <TValue>(value: TValue): TValue => {
 
   return JSON.parse(JSON.stringify(value));
 };
-

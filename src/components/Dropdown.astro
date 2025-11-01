@@ -18,7 +18,7 @@ const {
   panelWidthClass,
   triggerAriaLabel,
   ...rest
-} = Astro.props as Props and Record<string, unknown>;
+} = Astro.props as Props & Record<string, unknown>;
 
 const dropdownId = id ?? `dropdown-${Math.random().toString(36).slice(2)}`;
 const dropdownMenuId = `${dropdownId}-menu`;

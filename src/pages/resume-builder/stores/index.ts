@@ -15,7 +15,7 @@ import type {
 type TemplateKey = (typeof resumeTemplateKeys)[number];
 type SkillLevel = (typeof skillLevels)[number];
 
-type ResumeListItem = ResumeDocument and {
+type ResumeListItem = ResumeDocument & {
   lastSavedAt: string;
   isDefault?: boolean;
 };

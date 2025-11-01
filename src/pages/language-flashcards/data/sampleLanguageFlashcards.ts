@@ -177,7 +177,7 @@ export const getDailySummary = (): DailySummary => ({
   lastReviewAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
 });
 
-const createReviewCard = (partial: Omit<ReviewCard, 'stability'> and { stability?: number }): ReviewCard => ({
+const createReviewCard = (partial: Omit<ReviewCard, 'stability'> & { stability?: number }): ReviewCard => ({
   stability: partial.stability ?? 2.1,
   ...partial,
 });

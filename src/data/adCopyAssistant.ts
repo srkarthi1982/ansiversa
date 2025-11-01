@@ -674,7 +674,7 @@ const computeCounters = (channelId: AdChannelId, fields: Record<string, string>)
 
 const createVariant = (
   channelId: AdChannelId,
-  config: Omit<AdVariant, 'channelId' | 'counters'> and { fields: Record<string, string> },
+  config: Omit<AdVariant, 'channelId' | 'counters'> & { fields: Record<string, string> },
 ): AdVariant => ({
   ...config,
   channelId,

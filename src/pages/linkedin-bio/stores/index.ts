@@ -139,7 +139,7 @@ type ScoreSummary = {
   authenticity: string;
 };
 
-type HistoryTableRecord = HistoryEntry and {
+type HistoryTableRecord = HistoryEntry & {
   profileId: string;
   profileTitle: string;
   persona: 'first' | 'third';

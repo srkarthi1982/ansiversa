@@ -3,7 +3,7 @@ import type { PortfolioDocument } from '../../types/portfolio';
 
 type SampleMetrics = { views: number; leads: number; exports: number };
 
-export type SamplePortfolio = PortfolioDocument and SampleMetrics;
+export type SamplePortfolio = PortfolioDocument & SampleMetrics;
 
 const buildSamplePrimary = (): SamplePortfolio => {
   const document = createPortfolioDocument({
