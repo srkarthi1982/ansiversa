@@ -244,7 +244,7 @@ export const getPuzzleZoneSampleData = (): PuzzleZoneSampleData => ({
       puzzlesTotal: 15,
       puzzlesCompleted: 6,
       difficultyMix: ['Easy', 'Medium', 'Hard'],
-      reward: 'Unlock new deduction templates & case notes.',
+      reward: 'Unlock new deduction templates and case notes.',
       featuredTypeIds: ['sudoku'],
     },
   ],

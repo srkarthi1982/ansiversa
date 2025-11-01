@@ -81,7 +81,7 @@ const deriveAnswerFromKey = (options: string[], answerKey?: string | null): stri
 };
 
 const normalizeQuestion = (
-  row: QuestionRow & {
+  row: QuestionRow and {
     platformName?: string | null;
     subjectName?: string | null;
     topicName?: string | null;

@@ -59,7 +59,7 @@
     "id": 8,
     "platform_id": 12,
     "subject_id": 3,
-    "name": "Sorting & Searching",
+    "name": "Sorting and Searching",
     "is_active": true,
     "q_count": 3284
   },
@@ -67,7 +67,7 @@
     "id": 9,
     "platform_id": 12,
     "subject_id": 3,
-    "name": "Recursion & Backtracking",
+    "name": "Recursion and Backtracking",
     "is_active": true,
     "q_count": 2436
   },
@@ -163,7 +163,7 @@
     "id": 21,
     "platform_id": 12,
     "subject_id": 7,
-    "name": "Docker & Kubernetes",
+    "name": "Docker and Kubernetes",
     "is_active": true,
     "q_count": 2660
   },
@@ -227,7 +227,7 @@
     "id": 29,
     "platform_id": 12,
     "subject_id": 9,
-    "name": "Game Physics & AI",
+    "name": "Game Physics and AI",
     "is_active": true,
     "q_count": 2914
   },
@@ -235,7 +235,7 @@
     "id": 30,
     "platform_id": 12,
     "subject_id": 10,
-    "name": "Supervised & Unsupervised Learning",
+    "name": "Supervised and Unsupervised Learning",
     "is_active": true,
     "q_count": 2189
   },
@@ -243,7 +243,7 @@
     "id": 31,
     "platform_id": 12,
     "subject_id": 10,
-    "name": "Deep Learning & Neural Networks",
+    "name": "Deep Learning and Neural Networks",
     "is_active": true,
     "q_count": 2474
   },
@@ -267,7 +267,7 @@
     "id": 34,
     "platform_id": 7,
     "subject_id": 11,
-    "name": "Statement & Assumptions",
+    "name": "Statement and Assumptions",
     "is_active": true,
     "q_count": 1372
   },
@@ -307,7 +307,7 @@
     "id": 39,
     "platform_id": 7,
     "subject_id": 12,
-    "name": "Mirror & Water Images",
+    "name": "Mirror and Water Images",
     "is_active": true,
     "q_count": 800
   },
@@ -315,7 +315,7 @@
     "id": 40,
     "platform_id": 7,
     "subject_id": 12,
-    "name": "Paper Folding & Cutting",
+    "name": "Paper Folding and Cutting",
     "is_active": true,
     "q_count": 1666
   },
@@ -331,7 +331,7 @@
     "id": 42,
     "platform_id": 7,
     "subject_id": 13,
-    "name": "Statement & Conclusion",
+    "name": "Statement and Conclusion",
     "is_active": true,
     "q_count": 1171
   },
@@ -339,7 +339,7 @@
     "id": 43,
     "platform_id": 7,
     "subject_id": 13,
-    "name": "Coding & Decoding",
+    "name": "Coding and Decoding",
     "is_active": true,
     "q_count": 1173
   },
@@ -363,7 +363,7 @@
     "id": 46,
     "platform_id": 7,
     "subject_id": 14,
-    "name": "Analogies & Relationships",
+    "name": "Analogies and Relationships",
     "is_active": true,
     "q_count": 1003
   },
@@ -379,7 +379,7 @@
     "id": 48,
     "platform_id": 7,
     "subject_id": 14,
-    "name": "Inference & Judgement",
+    "name": "Inference and Judgement",
     "is_active": true,
     "q_count": 1348
   },
@@ -411,7 +411,7 @@
     "id": 52,
     "platform_id": 7,
     "subject_id": 15,
-    "name": "Riddles & Lateral Thinking",
+    "name": "Riddles and Lateral Thinking",
     "is_active": true,
     "q_count": 193
   },
@@ -443,7 +443,7 @@
     "id": 56,
     "platform_id": 16,
     "subject_id": 16,
-    "name": "Cloud Security & Compliance",
+    "name": "Cloud Security and Compliance",
     "is_active": true,
     "q_count": 805
   },
@@ -475,7 +475,7 @@
     "id": 60,
     "platform_id": 16,
     "subject_id": 17,
-    "name": "Penetration Testing & Vulnerability Assessment",
+    "name": "Penetration Testing and Vulnerability Assessment",
     "is_active": true,
     "q_count": 653
   },
@@ -499,7 +499,7 @@
     "id": 63,
     "platform_id": 16,
     "subject_id": 18,
-    "name": "Wireless Networking & Security",
+    "name": "Wireless Networking and Security",
     "is_active": true,
     "q_count": 769
   },
@@ -571,7 +571,7 @@
     "id": 72,
     "platform_id": 16,
     "subject_id": 20,
-    "name": "PostgreSQL Administration & Optimization",
+    "name": "PostgreSQL Administration and Optimization",
     "is_active": true,
     "q_count": 1204
   },
@@ -771,7 +771,7 @@
     "id": 97,
     "platform_id": 6,
     "subject_id": 27,
-    "name": "NDA & NA Exam",
+    "name": "NDA and NA Exam",
     "is_active": true,
     "q_count": 1271
   },
@@ -859,7 +859,7 @@
     "id": 108,
     "platform_id": 6,
     "subject_id": 29,
-    "name": "KVS & NVS Recruitment",
+    "name": "KVS and NVS Recruitment",
     "is_active": true,
     "q_count": 1383
   },
@@ -4091,7 +4091,7 @@
     "id": 651,
     "platform_id": 30,
     "subject_id": 167,
-    "name": "Music Awards & Charts",
+    "name": "Music Awards and Charts",
     "is_active": true,
     "q_count": 752
   },
@@ -4651,7 +4651,7 @@
     "id": 739,
     "platform_id": 32,
     "subject_id": 186,
-    "name": "Famous Artists & Artworks",
+    "name": "Famous Artists and Artworks",
     "is_active": true,
     "q_count": 1326
   },
@@ -6243,7 +6243,7 @@
     "id": 1787,
     "platform_id": 12,
     "subject_id": 142,
-    "name": "Generative AI & Large Language Models",
+    "name": "Generative AI and Large Language Models",
     "is_active": true,
     "q_count": 2247
   },
@@ -6411,7 +6411,7 @@
     "id": 1843,
     "platform_id": 45,
     "subject_id": 548,
-    "name": "Constitutional Commissions & Bodies",
+    "name": "Constitutional Commissions and Bodies",
     "is_active": true,
     "q_count": 631
   },
@@ -6731,7 +6731,7 @@
     "id": 1883,
     "platform_id": 45,
     "subject_id": 552,
-    "name": "Community Service & Volunteering",
+    "name": "Community Service and Volunteering",
     "is_active": true,
     "q_count": 777
   },
@@ -7203,7 +7203,7 @@
     "id": 1943,
     "platform_id": 53,
     "subject_id": 646,
-    "name": "Book Keeping & Accountancy (Class 11/12)",
+    "name": "Book Keeping and Accountancy (Class 11/12)",
     "is_active": true,
     "q_count": 710
   },
@@ -7475,7 +7475,7 @@
     "id": 1977,
     "platform_id": 48,
     "subject_id": 649,
-    "name": "Food Safety & Hygiene",
+    "name": "Food Safety and Hygiene",
     "is_active": true,
     "q_count": 992
   },
@@ -7483,7 +7483,7 @@
     "id": 1978,
     "platform_id": 48,
     "subject_id": 649,
-    "name": "Kitchen Tools & Equipment",
+    "name": "Kitchen Tools and Equipment",
     "is_active": true,
     "q_count": 1193
   },
@@ -7555,7 +7555,7 @@
     "id": 1987,
     "platform_id": 48,
     "subject_id": 651,
-    "name": "Food Labels & Portion Control",
+    "name": "Food Labels and Portion Control",
     "is_active": true,
     "q_count": 952
   },
@@ -7571,7 +7571,7 @@
     "id": 1989,
     "platform_id": 48,
     "subject_id": 652,
-    "name": "Cakes & Frosting",
+    "name": "Cakes and Frosting",
     "is_active": true,
     "q_count": 1437
   },
@@ -7579,7 +7579,7 @@
     "id": 1990,
     "platform_id": 48,
     "subject_id": 652,
-    "name": "Pastries & Pies",
+    "name": "Pastries and Pies",
     "is_active": true,
     "q_count": 1638
   },
@@ -7587,7 +7587,7 @@
     "id": 1991,
     "platform_id": 48,
     "subject_id": 652,
-    "name": "Cookies & Confections",
+    "name": "Cookies and Confections",
     "is_active": true,
     "q_count": 1494
   },
@@ -7603,7 +7603,7 @@
     "id": 1993,
     "platform_id": 48,
     "subject_id": 653,
-    "name": "Garnishes & Color Theory",
+    "name": "Garnishes and Color Theory",
     "is_active": true,
     "q_count": 949
   },
@@ -7619,7 +7619,7 @@
     "id": 1995,
     "platform_id": 48,
     "subject_id": 653,
-    "name": "Menu Planning & Costing",
+    "name": "Menu Planning and Costing",
     "is_active": true,
     "q_count": 1051
   },
@@ -7643,7 +7643,7 @@
     "id": 1998,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Developer Basics (Apex & Visualforce)",
+    "name": "Salesforce Developer Basics (Apex and Visualforce)",
     "is_active": true,
     "q_count": 899
   },
@@ -7699,7 +7699,7 @@
     "id": 2005,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Einstein (AI & Analytics)",
+    "name": "Salesforce Einstein (AI and Analytics)",
     "is_active": true,
     "q_count": 783
   },
@@ -7707,7 +7707,7 @@
     "id": 2006,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Security & Access Management",
+    "name": "Salesforce Security and Access Management",
     "is_active": true,
     "q_count": 603
   },
@@ -7715,7 +7715,7 @@
     "id": 2007,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Data Management & Integration",
+    "name": "Salesforce Data Management and Integration",
     "is_active": true,
     "q_count": 954
   },
@@ -7723,7 +7723,7 @@
     "id": 2008,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Reporting & Dashboards",
+    "name": "Salesforce Reporting and Dashboards",
     "is_active": true,
     "q_count": 843
   },
@@ -7731,7 +7731,7 @@
     "id": 2009,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce AppExchange & Custom Apps",
+    "name": "Salesforce AppExchange and Custom Apps",
     "is_active": true,
     "q_count": 828
   },
@@ -7739,7 +7739,7 @@
     "id": 2010,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Flow & Automation (Process Builder, Flows, Workflows)",
+    "name": "Salesforce Flow and Automation (Process Builder, Flows, Workflows)",
     "is_active": true,
     "q_count": 906
   },
@@ -7747,7 +7747,7 @@
     "id": 2011,
     "platform_id": 15,
     "subject_id": 654,
-    "name": "Salesforce Mobile App & Mobile Administration",
+    "name": "Salesforce Mobile App and Mobile Administration",
     "is_active": true,
     "q_count": 680
   },
@@ -7843,7 +7843,7 @@
     "id": 2023,
     "platform_id": 47,
     "subject_id": 655,
-    "name": "Simplification & Approximation",
+    "name": "Simplification and Approximation",
     "is_active": true,
     "q_count": 753
   },
@@ -7859,7 +7859,7 @@
     "id": 2025,
     "platform_id": 47,
     "subject_id": 655,
-    "name": "HCF & LCM",
+    "name": "HCF and LCM",
     "is_active": true,
     "q_count": 754
   },
@@ -7875,7 +7875,7 @@
     "id": 2027,
     "platform_id": 47,
     "subject_id": 655,
-    "name": "Profit & Loss",
+    "name": "Profit and Loss",
     "is_active": true,
     "q_count": 823
   },
@@ -7907,7 +7907,7 @@
     "id": 2031,
     "platform_id": 47,
     "subject_id": 655,
-    "name": "Ratio & Proportion",
+    "name": "Ratio and Proportion",
     "is_active": true,
     "q_count": 1019
   },
@@ -7923,7 +7923,7 @@
     "id": 2033,
     "platform_id": 47,
     "subject_id": 655,
-    "name": "Mixtures & Alligation",
+    "name": "Mixtures and Alligation",
     "is_active": true,
     "q_count": 840
   },
@@ -7979,7 +7979,7 @@
     "id": 2040,
     "platform_id": 47,
     "subject_id": 657,
-    "name": "Lines & Angles",
+    "name": "Lines and Angles",
     "is_active": true,
     "q_count": 885
   },
@@ -8067,7 +8067,7 @@
     "id": 2051,
     "platform_id": 47,
     "subject_id": 659,
-    "name": "Heights & Distances",
+    "name": "Heights and Distances",
     "is_active": true,
     "q_count": 726
   },
@@ -8123,7 +8123,7 @@
     "id": 2058,
     "platform_id": 47,
     "subject_id": 661,
-    "name": "Standard Deviation & Variance",
+    "name": "Standard Deviation and Variance",
     "is_active": true,
     "q_count": 952
   },
@@ -8179,7 +8179,7 @@
     "id": 2065,
     "platform_id": 47,
     "subject_id": 662,
-    "name": "Factors & Multiples",
+    "name": "Factors and Multiples",
     "is_active": true,
     "q_count": 741
   },
@@ -8203,7 +8203,7 @@
     "id": 2068,
     "platform_id": 47,
     "subject_id": 662,
-    "name": "Surds & Indices",
+    "name": "Surds and Indices",
     "is_active": true,
     "q_count": 914
   },
@@ -8275,7 +8275,7 @@
     "id": 2077,
     "platform_id": 47,
     "subject_id": 664,
-    "name": "Boats & Streams",
+    "name": "Boats and Streams",
     "is_active": true,
     "q_count": 792
   },
@@ -8307,7 +8307,7 @@
     "id": 2081,
     "platform_id": 47,
     "subject_id": 665,
-    "name": "Pipes & Cisterns",
+    "name": "Pipes and Cisterns",
     "is_active": true,
     "q_count": 813
   },
@@ -8315,7 +8315,7 @@
     "id": 2082,
     "platform_id": 47,
     "subject_id": 665,
-    "name": "Wages & Work",
+    "name": "Wages and Work",
     "is_active": true,
     "q_count": 754
   },
@@ -8323,7 +8323,7 @@
     "id": 2083,
     "platform_id": 47,
     "subject_id": 666,
-    "name": "Direct & Inverse Proportion",
+    "name": "Direct and Inverse Proportion",
     "is_active": true,
     "q_count": 797
   },
@@ -8363,7 +8363,7 @@
     "id": 2088,
     "platform_id": 47,
     "subject_id": 667,
-    "name": "Profit & Loss",
+    "name": "Profit and Loss",
     "is_active": true,
     "q_count": 1121
   },
@@ -8451,7 +8451,7 @@
     "id": 2099,
     "platform_id": 39,
     "subject_id": 670,
-    "name": "Identity & Change",
+    "name": "Identity and Change",
     "is_active": true,
     "q_count": 1113
   },
@@ -8467,7 +8467,7 @@
     "id": 2101,
     "platform_id": 39,
     "subject_id": 670,
-    "name": "Time & Space",
+    "name": "Time and Space",
     "is_active": true,
     "q_count": 1339
   },
@@ -8499,7 +8499,7 @@
     "id": 2105,
     "platform_id": 39,
     "subject_id": 671,
-    "name": "Faith & Reason",
+    "name": "Faith and Reason",
     "is_active": true,
     "q_count": 1377
   },
@@ -8539,7 +8539,7 @@
     "id": 2110,
     "platform_id": 39,
     "subject_id": 672,
-    "name": "Criticism & Interpretation",
+    "name": "Criticism and Interpretation",
     "is_active": true,
     "q_count": 1062
   },
@@ -8675,7 +8675,7 @@
     "id": 2127,
     "platform_id": 46,
     "subject_id": 675,
-    "name": "Stress Journaling & Tracking",
+    "name": "Stress Journaling and Tracking",
     "is_active": true,
     "q_count": 881
   },
@@ -8691,7 +8691,7 @@
     "id": 2129,
     "platform_id": 46,
     "subject_id": 676,
-    "name": "Sleep Stages & Cycles",
+    "name": "Sleep Stages and Cycles",
     "is_active": true,
     "q_count": 858
   },
@@ -8731,7 +8731,7 @@
     "id": 2134,
     "platform_id": 46,
     "subject_id": 676,
-    "name": "Tech & Blue Light",
+    "name": "Tech and Blue Light",
     "is_active": true,
     "q_count": 914
   },
@@ -8803,7 +8803,7 @@
     "id": 2143,
     "platform_id": 46,
     "subject_id": 678,
-    "name": "Flexibility & Mobility",
+    "name": "Flexibility and Mobility",
     "is_active": true,
     "q_count": 867
   },
@@ -8827,7 +8827,7 @@
     "id": 2146,
     "platform_id": 46,
     "subject_id": 678,
-    "name": "Warm-up & Cooldown",
+    "name": "Warm-up and Cooldown",
     "is_active": true,
     "q_count": 911
   },
@@ -9067,7 +9067,7 @@
     "id": 2176,
     "platform_id": 46,
     "subject_id": 683,
-    "name": "Nature & Wellbeing",
+    "name": "Nature and Wellbeing",
     "is_active": true,
     "q_count": 1105
   },
@@ -9115,7 +9115,7 @@
     "id": 2182,
     "platform_id": 46,
     "subject_id": 684,
-    "name": "Ergonomics & Posture",
+    "name": "Ergonomics and Posture",
     "is_active": true,
     "q_count": 845
   },
@@ -9131,7 +9131,7 @@
     "id": 2184,
     "platform_id": 46,
     "subject_id": 685,
-    "name": "Microbreaks & Recovery",
+    "name": "Microbreaks and Recovery",
     "is_active": true,
     "q_count": 580
   },
@@ -9155,7 +9155,7 @@
     "id": 2187,
     "platform_id": 46,
     "subject_id": 685,
-    "name": "Rest & Vacation Planning",
+    "name": "Rest and Vacation Planning",
     "is_active": true,
     "q_count": 863
   },
@@ -9187,7 +9187,7 @@
     "id": 2191,
     "platform_id": 46,
     "subject_id": 686,
-    "name": "Optimism & Gratitude",
+    "name": "Optimism and Gratitude",
     "is_active": true,
     "q_count": 954
   },
@@ -9195,7 +9195,7 @@
     "id": 2192,
     "platform_id": 46,
     "subject_id": 686,
-    "name": "Meaning & Purpose",
+    "name": "Meaning and Purpose",
     "is_active": true,
     "q_count": 961
   },
@@ -9259,7 +9259,7 @@
     "id": 2200,
     "platform_id": 46,
     "subject_id": 687,
-    "name": "Safety & Alignment",
+    "name": "Safety and Alignment",
     "is_active": true,
     "q_count": 943
   },
@@ -9339,7 +9339,7 @@
     "id": 2210,
     "platform_id": 46,
     "subject_id": 689,
-    "name": "Perimenopause & Menopause",
+    "name": "Perimenopause and Menopause",
     "is_active": true,
     "q_count": 1218
   },
@@ -9355,7 +9355,7 @@
     "id": 2212,
     "platform_id": 46,
     "subject_id": 689,
-    "name": "Iron & Calcium Needs",
+    "name": "Iron and Calcium Needs",
     "is_active": true,
     "q_count": 1175
   },
@@ -9379,7 +9379,7 @@
     "id": 2215,
     "platform_id": 46,
     "subject_id": 690,
-    "name": "Testosterone: Facts & Myths",
+    "name": "Testosterone: Facts and Myths",
     "is_active": true,
     "q_count": 1235
   },

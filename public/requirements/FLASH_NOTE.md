@@ -1,4 +1,4 @@
-# Ansiversa FlashNote - Product & Technical Requirements
+# Ansiversa FlashNote - Product and Technical Requirements
 
 **Document owner:** Ansiversa Core Apps Team  \
 **Last updated:** 17 October 2025  \
@@ -7,7 +7,7 @@
 
 ---
 
-## 1. Vision & Success Metrics
+## 1. Vision and Success Metrics
 - **Purpose:** Deliver a lightning-fast workspace for short-form learning notes that can be reorganised, summarised, and rehearsed in minutes.
 - **Primary persona:** Students and professionals preparing for certifications who already use Ansiversa for career assets.
 - **Success signals:**
@@ -35,7 +35,7 @@
 | Review | "Study" toggle | Snapshot filtered notes -> shuffle -> card navigation | Ensure at least one note selected |
 | Export | Export menu | Choose format -> server action generates artifact -> download/share | Format whitelist, download tokens expire |
 
-### 3.3 Empty & edge states
+### 3.3 Empty and edge states
 - Empty dashboard displays illustrated prompt, "Import sample deck" CTA populates mock data.
 - If AI fails, show inline warning with retry + "Copy note content" fallback.
 - When user has >200 notes, default filter to latest updated and surface "Refine by tag" helper.
@@ -82,9 +82,9 @@
 
 ---
 
-## 6. Server Actions & API Contracts (`src/actions/flashnote/`)
+## 6. Server Actions and API Contracts (`src/actions/flashnote/`)
 - Namespace exported as `server.flashnote` in `src/actions/flashnote/index.ts` for tree-shakable imports.
-- **Actions & payloads:**
+- **Actions and payloads:**
   - `list` (`GET` equivalent): `{ sessionId }` -> `{ notes: FlashNote[] }`.
   - `create`: `{ sessionId, title, content, tags }` -> `{ note }`.
   - `update`: `{ sessionId, id, title?, content?, tags?, summary? }` -> `{ note }`.
@@ -137,17 +137,17 @@ export const FlashNote = defineTable({
 
 ---
 
-## 9. Export & Sharing
+## 9. Export and Sharing
 - Server generates assets via `server.flashnote.export` using unified `renderDocument` helper in `src/utils/exporter.ts`.
 - Supported formats:
   - `pdf`: uses headless Chromium; enforce max 50 notes per export.
-  - `md` & `txt`: plain text streams.
+  - `md` and `txt`: plain text streams.
 - Download URLs signed with `createSignedUrl` (valid 10 minutes). Stored in S3-compatible bucket `ansiversa-shares`.
 - Share links expose read-only view at `/flashnote/share/[token]`; require `ShareToken` table (reuse from Resume Builder) for expiration and revoke.
 
 ---
 
-## 10. Security & Compliance
+## 10. Security and Compliance
 - All actions behind `server.auth` session; anonymous sessions redirected to `/auth/login?redirect=/flashnote`.
 - Validate ownership on every DB query (`where userId = session.userId`).
 - Store audit log entries for create/update/delete in `AuditTrail` table with action, noteId, diff summary.
@@ -156,21 +156,21 @@ export const FlashNote = defineTable({
 
 ---
 
-## 11. Accessibility & Internationalisation
+## 11. Accessibility and Internationalisation
 - WCAG 2.2 AA targets: keyboard access for all controls, high-contrast theme toggle, ARIA labels on toolbar buttons, screen-reader friendly flashcard flipping.
 - Support locale switching via existing `i18n` plugin; copy resides in `src/i18n/flashnote/en.json` with fallback to `en` if missing.
 - Provide text-alternatives for icons, and ensure announcements through `aria-live` region when AI completes.
 
 ---
 
-## 12. Analytics & Observability
+## 12. Analytics and Observability
 - Instrument events via `src/utils/analytics.ts`: `flashnote_note_created`, `flashnote_ai_triggered`, `flashnote_review_started`, `flashnote_export_completed`.
 - Capture performance metrics (load, interaction ready) through Web Vitals integration already used by Resume Builder.
 - Server logs route to Logtail; include correlation IDs (`x-ans-request-id`) in both client and server logs.
 
 ---
 
-## 13. Testing & QA Strategy
+## 13. Testing and QA Strategy
 - **Unit tests:** store reducers (`src/alpineStores/__tests__/flashnote.test.ts`), utility functions, exporter helpers.
 - **Integration tests:** astro:actions executed via Vitest using test DB.
 - **E2E smoke:** Playwright script covering create -> AI -> review -> export happy path.

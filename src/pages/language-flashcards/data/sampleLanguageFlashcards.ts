@@ -177,7 +177,7 @@ export const getDailySummary = (): DailySummary => ({
   lastReviewAt: new Date(Date.now() - 1000 * 60 * 18).toISOString(),
 });
 
-const createReviewCard = (partial: Omit<ReviewCard, 'stability'> & { stability?: number }): ReviewCard => ({
+const createReviewCard = (partial: Omit<ReviewCard, 'stability'> and { stability?: number }): ReviewCard => ({
   stability: partial.stability ?? 2.1,
   ...partial,
 });
@@ -346,7 +346,7 @@ export const getDeckSummaries = (): DeckSummary[] => [
   },
   {
     id: 'tamil-family',
-    name: 'Tamil Family & Culture',
+    name: 'Tamil Family and Culture',
     description:
       'Family conversations, festivals, and cultural expressions with transliteration and audio hints for pronunciation.',
     baseLang: 'English',
@@ -428,7 +428,7 @@ export const getReviewModes = (): ReviewMode[] => [
   },
   {
     id: 'listen',
-    label: 'Listen & Type',
+    label: 'Listen and Type',
     description: 'Play TTS audio and type the answer, with diacritics helper and transliteration hints.',
     icon: 'fa-headphones',
     accent: 'from-emerald-500 via-teal-500 to-indigo-500',
@@ -437,7 +437,7 @@ export const getReviewModes = (): ReviewMode[] => [
   },
   {
     id: 'speak',
-    label: 'Speak & Compare',
+    label: 'Speak and Compare',
     description: 'Record your pronunciation and get a similarity score against the model audio.',
     icon: 'fa-microphone-lines',
     accent: 'from-rose-500 via-fuchsia-500 to-indigo-500',
@@ -633,7 +633,7 @@ export const getAnalyticsSnapshot = (): AnalyticsSnapshot => ({
   deckBreakdown: [
     { deckId: 'spanish-foundation', deckName: 'Spanish Core A1', accuracy: 88, due: 52 },
     { deckId: 'arabic-travel', deckName: 'Arabic Travel Survival', accuracy: 82, due: 39 },
-    { deckId: 'tamil-family', deckName: 'Tamil Family & Culture', accuracy: 86, due: 37 },
+    { deckId: 'tamil-family', deckName: 'Tamil Family and Culture', accuracy: 86, due: 37 },
   ],
 });
 
@@ -641,7 +641,7 @@ export const getPlanComparisonRows = (): PlanComparisonRow[] => [
   { feature: 'Decks', free: '3 personal decks', pro: 'Unlimited decks', highlight: 'pro' },
   { feature: 'Daily reviews', free: 'Up to 100', pro: 'Up to 1000', highlight: 'pro' },
   { feature: 'Auto-generator', free: 'Basic (words only)', pro: 'Full (phrases, POS, frequency)', highlight: 'pro' },
-  { feature: 'Audio toolkit', free: 'TTS playback', pro: 'TTS + record & compare', highlight: 'pro' },
+  { feature: 'Audio toolkit', free: 'TTS playback', pro: 'TTS + record and compare', highlight: 'pro' },
   { feature: 'Import/Export', free: 'CSV import/export', pro: 'CSV + JSON + shared links', highlight: 'pro' },
   { feature: 'Share deck', free: '—', pro: 'Read-only links', highlight: 'pro' },
   { feature: 'Integrations', free: 'Study Planner sync', pro: 'All integrations unlocked', highlight: 'pro' },

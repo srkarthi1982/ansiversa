@@ -19,7 +19,7 @@ and document export.
 
 ## ðŸ§© Architecture Layers
 
-### 1. **UI & Pages (Astro)**
+### 1. **UI and Pages (Astro)**
 
 -   **Primary Page:** `src/pages/cover-letter-writer.astro`
 -   **Layout:** Inherits from `src/layouts/Layout.astro`
@@ -130,7 +130,7 @@ Seed not required (user-generated).
 
 ------------------------------------------------------------------------
 
-### 6. **Export & File Handling**
+### 6. **Export and File Handling**
 
 Supported formats: - `.pdf` via `reportlab` (server-side) - `.docx` via
 `python-docx` or Astro action calling node module - Saved drafts stored
@@ -141,7 +141,7 @@ signed download link to the user.
 
 ------------------------------------------------------------------------
 
-### 7. **Security & Session Handling**
+### 7. **Security and Session Handling**
 
 -   Requires login via `server.auth.session` before writing or saving
 -   Session validated in middleware (`src/middleware.ts`)
@@ -150,7 +150,7 @@ signed download link to the user.
 
 ------------------------------------------------------------------------
 
-### 8. **Extensibility & Future Plans**
+### 8. **Extensibility and Future Plans**
 
 -   Add "Import from Resume" integration to auto-pull job titles and
     achievements

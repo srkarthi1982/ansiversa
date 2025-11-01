@@ -12,7 +12,7 @@ This document includes a **short summary** for Codex onboarding and the **full t
 ### Core Features
 - **Exam builder**: sections, question counts, marks, negative marking, perâ€‘section timers.  
 - **Test modes**: Full mock, Sectional, Custom mix, Practice (untimed), Adaptive (v2).  
-- **Delivery**: randomized but seedâ€‘replayable paper, perâ€‘question or perâ€‘section navigation, flag & review, time warnings.  
+- **Delivery**: randomized but seedâ€‘replayable paper, perâ€‘question or perâ€‘section navigation, flag and review, time warnings.  
 - **Question types**: MCQ (single/multi), True/False, Numeric, Matching/Matrix (grid), Short text (autoâ€‘pattern).  
 - **Result analytics**: score, accuracy, time per question/section, weak topics, difficulty curve, percentile estimate, normalized score.  
 - **Review**: explanations, solution steps, compare to topper median, add to FlashNote, schedule fixes to Study Planner.  
@@ -24,8 +24,8 @@ This document includes a **short summary** for Codex onboarding and the **full t
 - `/exam/builder` â€” Create paper (sections/rules)  
 - `/exam/start/[id]` â€” Instruction + config (shuffle, timer)  
 - `/exam/test/[attemptId]` â€” Live exam player  
-- `/exam/result/[attemptId]` â€” Score & analytics  
-- `/exam/history` â€” Attempts & replays  
+- `/exam/result/[attemptId]` â€” Score and analytics  
+- `/exam/history` â€” Attempts and replays  
 - `/exam/admin` â€” (internal) seed/curate papers
 
 ### Minimal Data Model
@@ -47,7 +47,7 @@ Integrations: **Quiz Institute**, **FlashNote**, **Study Planner**, **Course Tra
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide realistic exam experience with faithful timing, navigation, and scoring.  
 - Offer strong postâ€‘exam diagnostics to guide study plans.  
@@ -60,7 +60,7 @@ Integrations: **Quiz Institute**, **FlashNote**, **Study Planner**, **Course Tra
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/exam` â€” Dashboard: start recent/presets, resume saved, see stats.  
@@ -68,32 +68,32 @@ Integrations: **Quiz Institute**, **FlashNote**, **Study Planner**, **Course Tra
 - `/exam/start/[paperId]` â€” Instructions, config (shuffle, perâ€‘section timer), start button.  
 - `/exam/test/[attemptId]` â€” Player: question panel, section tabs, flag, palette, timer, submit.  
 - `/exam/result/[attemptId]` â€” Summary + analysis + recommended actions.  
-- `/exam/history` â€” Attempts table & filters.  
+- `/exam/history` â€” Attempts table and filters.  
 - `/exam/admin` â€” (internal) upload/curate questions, map topics/difficulty.
 
 **API (SSR)**
-- Papers & presets:  
+- Papers and presets:  
   - `GET  /exam/api/paper?id=`  
   - `POST /exam/api/paper/create` Â· `POST /exam/api/paper/update`  
   - `GET  /exam/api/preset/list`  
-- Delivery & attempts:  
+- Delivery and attempts:  
   - `POST /exam/api/attempt/start`  
   - `GET  /exam/api/attempt?id=` (state sync)  
   - `POST /exam/api/answer/save` (autosave)  
   - `POST /exam/api/attempt/submit`  
   - `GET  /exam/api/result?id=`  
   - `GET  /exam/api/history`  
-- Analytics & actions:  
+- Analytics and actions:  
   - `GET  /exam/api/analysis?attemptId=`  
   - `POST /exam/api/flashnote/add`  
   - `POST /exam/api/planner/schedule`  
   - `POST /exam/api/export` (pdf|csv)
 
-WebSocket (optional): `/exam/ws` for timer ticks & lowâ€‘latency palette updates.
+WebSocket (optional): `/exam/ws` for timer ticks and lowâ€‘latency palette updates.
 
 ---
 
-### 3) Paper Model & Scoring Rules
+### 3) Paper Model and Scoring Rules
 
 **Paper** attributes: title, board/class, subjects, total time, total marks, shuffle rules, seed, perâ€‘section settings (timer, negative marking, attempt switching rule).
 
@@ -146,7 +146,7 @@ Index common fields for fast filters: `board`, `class`, `subject`, `createdAt`.
 
 ---
 
-### 5) Delivery & Player UX
+### 5) Delivery and Player UX
 
 **Instruction page**: total time, sections, marking scheme, allowed navigation, calculator policy; honor code checkbox.  
 **Player UI**:
@@ -163,7 +163,7 @@ Accessibility: high contrast, screenâ€‘reader labels for options, large tex
 
 ---
 
-### 6) Analytics & Review
+### 6) Analytics and Review
 
 - **Perâ€‘section**: score, accuracy, time spent vs target, difficulty breakdown.  
 - **Topic mastery**: map to Course Tracker topics; chart weak areas.  
@@ -174,7 +174,7 @@ Accessibility: high contrast, screenâ€‘reader labels for options, large tex
 
 ---
 
-### 7) Antiâ€‘Cheat & Integrity
+### 7) Antiâ€‘Cheat and Integrity
 
 - **Server clock** for timers; client manipulations ignored.  
 - **Focusâ€‘loss counter**: +1 when tab loses focus (for information only in v1).  
@@ -232,7 +232,7 @@ Res: `{ "url":"/exports/Exam_Report_<uuid>.pdf" }`
 
 ---
 
-### 10) Plans & Limits
+### 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -284,9 +284,9 @@ src/components/exam/Builder/*.astro
 ### 12) Future Enhancements (v2+)
 
 - **Adaptive testing** (IRTâ€‘style difficulty adjustment).  
-- **Subjective items** with rubric & AI assisted scoring.  
+- **Subjective items** with rubric and AI assisted scoring.  
 - **Proctoring** (photo ID, webcam, behavior analytics).  
-- **Classroom mode** for teachers to schedule & monitor.  
+- **Classroom mode** for teachers to schedule and monitor.  
 - **Item statistics** (discrimination index, facility value).  
 - **Question feedback** pipeline for item improvement.
 

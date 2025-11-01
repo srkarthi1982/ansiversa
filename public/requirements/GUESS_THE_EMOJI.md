@@ -2,13 +2,13 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/guess-the-emoji`  
-**Category:** Fun & Engagement  
+**Category:** Fun and Engagement  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Fast, familyâ€‘friendly word game where users decode a phrase/title/object from a **sequence of emojis**. Includes Solo, Daily Puzzle, and Async Versus. Supports localization, hints, packs, and creator tools.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Deliver multiple play modes with smooth UX:
@@ -19,7 +19,7 @@
 - Rich **content model**: title/answer, emoji string, category, difficulty, accepted aliases/synonyms, and explanations.
 - **Hint system** (reveal letter, remove wrong letters, clue) and **scoring** with streak/time multipliers.
 - **Packs**: builtâ€‘in, imported (CSV/JSON), and communityâ€‘made (private/public, moderated).
-- **Accessibility & i18n**: RTL and languageâ€‘specific accepted answers.
+- **Accessibility and i18n**: RTL and languageâ€‘specific accepted answers.
 - Antiâ€‘cheat timers and serverâ€‘side validation.
 
 ### Nonâ€‘Goals (v1)
@@ -51,11 +51,11 @@
    - *As a user*, I generate an invite link; both players solve the same set; server compares final scores.  
    - **AC:** `/guess-the-emoji/api/versus/create` â†’ `inviteUrl`; `/versus/submit` computes winner; antiâ€‘replay enforced.
 
-6. **Packs & Import**
+6. **Packs and Import**
    - *As a user*, I import a CSV/JSON of puzzles (with emojis and accepted answers).  
    - **AC:** `/guess-the-emoji/api/packs/import` dedupes by puzzle hash; `/packs/list` lists packs; `/packs/start` creates a session from a pack.
 
-7. **Stats & Streaks**
+7. **Stats and Streaks**
    - *As a user*, I see accuracy, avg time per puzzle, streak days, and top categories.  
    - **AC:** `/guess-the-emoji/api/stats` aggregates metrics; `/guess-the-emoji/api/leaderboard` paginates standings.
 
@@ -65,7 +65,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/guess-the-emoji` â€” Hub: Start Classic, Daily card, Time Attack, Versus invite, recent stats.  
 - `/guess-the-emoji/play` â€” Classic Solo UI (progress, keyboard, hints).  
@@ -97,7 +97,7 @@
   "emojis": "ðŸ”ðŸ ",
   "answer": "burger house",
   "aliases": ["burgerhouse", "burger home"],
-  "category": "food & places",
+  "category": "food and places",
   "difficulty": "easy",
   "explanation": "ðŸ” = burger, ðŸ  = house",
   "language": "en",
@@ -158,7 +158,7 @@
 
 ---
 
-## 6) Normalization, Matching & Hints
+## 6) Normalization, Matching and Hints
 
 ### Answer Normalization
 - Lowercase, trim, collapse spaces, remove punctuation, remove diacritics.  
@@ -178,7 +178,7 @@
 
 ---
 
-## 7) Scoring & Game Rules
+## 7) Scoring and Game Rules
 
 - **Base Points:** Easy=100, Medium=150, Hard=200.  
 - **Time Bonus (timed modes):** `ceil((remaining_ms / total_ms) * 100)`.  
@@ -279,11 +279,11 @@ Res: `{ "ok":true, "imported":340, "duplicates":12, "errors":0 }`
 
 ---
 
-## 12) Plans & Limits
+## 12) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
-| Classic & Daily | Yes | Yes |
+| Classic and Daily | Yes | Yes |
 | Time Attack | â€” | Yes |
 | Versus | â€” | Yes |
 | Hints per puzzle | 1 | 3 |
@@ -295,7 +295,7 @@ Rate limits: `userId`+day for sessions; `userId`+minute for versus creates; `use
 
 ---
 
-## 13) Accessibility & UX
+## 13) Accessibility and UX
 
 - Big emoji font; high contrast; large text mode; screenâ€‘reader labels describe emojis (names via CLDR annotations).  
 - Reduced motion; haptic ticks on keypress (mobile).  

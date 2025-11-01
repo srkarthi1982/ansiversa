@@ -23,9 +23,9 @@ The **Research Assistant** mini app helps users collect, read, highlight, summar
 ### Core Pages
 - `/research-assistant` â†’ Project list
 - `/research-assistant/project/[id]` â†’ Dashboard
-- `/research-assistant/project/[id]/reader/[sourceId]` â†’ Reader & Notes
-- `/research-assistant/project/[id]/synthesis` â†’ Comparison & Matrix
-- `/research-assistant/project/[id]/writer` â†’ Outline & Draft Editor
+- `/research-assistant/project/[id]/reader/[sourceId]` â†’ Reader and Notes
+- `/research-assistant/project/[id]/synthesis` â†’ Comparison and Matrix
+- `/research-assistant/project/[id]/writer` â†’ Outline and Draft Editor
 
 ### Database Summary
 Tables: `User`, `Project`, `Source`, `Excerpt`, `Highlight`, `Note`, `Claim`, `EvidenceLink`, `Outline`, `Draft`, `BibliographyItem`, `PlagiarismReport`.
@@ -50,7 +50,7 @@ Tables: `User`, `Project`, `Source`, `Excerpt`, `Highlight`, `Note`, `Claim`, `E
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1. Objectives & Non-Goals
+### 1. Objectives and Non-Goals
 **Objectives:**
 - Projects manage sources, notes, claims, and drafts.
 - Reader supports highlights, notes, and citation extraction.
@@ -65,7 +65,7 @@ Tables: `User`, `Project`, `Source`, `Excerpt`, `Highlight`, `Note`, `Claim`, `E
 3. Highlight and quote â†’ `/research-assistant/api/highlight/add`
 4. Summarize â†’ `/research-assistant/api/summary`
 5. Compare â†’ `/research-assistant/api/compare`
-6. Outline & draft â†’ `/research-assistant/api/outline`, `/research-assistant/api/draft`
+6. Outline and draft â†’ `/research-assistant/api/outline`, `/research-assistant/api/draft`
 7. Generate bibliography â†’ `/research-assistant/api/bib/render`
 8. Export â†’ `/research-assistant/api/export`
 9. Plagiarism check â†’ `/research-assistant/api/plagiarism/check`
@@ -129,12 +129,12 @@ Response:
 - High-contrast and dyslexia fonts.
 - RTL and multi-language support.
 
-### 8. Integration & Export
+### 8. Integration and Export
 Exports: MD, DOCX, PDF, JSON, CSV  
 Deck export: Outline + key claims â†’ `/presentation-designer`
 
 ### 9. Future Enhancements
-- Collaboration & comments.
+- Collaboration and comments.
 - Semantic search across notes/sources.
 - Import from Zotero, Notion, or Drive.
 - Argument graphs and contradiction detection.

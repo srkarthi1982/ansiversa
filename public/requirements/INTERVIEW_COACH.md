@@ -13,15 +13,15 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 - **JDâ€‘aware** question generator: parse a pasted JD or URL â†’ extract skills/competencies â†’ build interview plan.  
 - **Mock modes**:  
   - **Behavioral** (STAR coach with followâ€‘ups)  
-  - **Technical Q&A** (concept, coding, system design â€” text only in v1)  
+  - **Technical Q and A** (concept, coding, system design â€” text only in v1)  
   - **Case/Scenario** (business/product cases with prompts)  
   - **Lightning Round** (quick 10â€‘question drill)  
   - **Voice interview** (Pro: TTS questions, record answers, auto transcript)
-- **Feedback & scoring**: perâ€‘question rubric + overall summary; strengths, gaps, concrete rewrites, and **next practice plan**.  
-- **Answer drafting**: generate draft **STAR** answers using resume highlights; user can rehearse & improve.  
+- **Feedback and scoring**: perâ€‘question rubric + overall summary; strengths, gaps, concrete rewrites, and **next practice plan**.  
+- **Answer drafting**: generate draft **STAR** answers using resume highlights; user can rehearse and improve.  
 - **Question banks**: curated banks by role/domain + companyâ€‘style packs.  
-- **Reports & exports**: PDF summary; shareable link; CSV of Q/A with rubric scores.  
-- **Calendar & reminders**: add prep plan to **Study Planner**; schedule sessions.  
+- **Reports and exports**: PDF summary; shareable link; CSV of Q/A with rubric scores.  
+- **Calendar and reminders**: add prep plan to **Study Planner**; schedule sessions.  
 - **Company research snapshot** (v2 web-powered; v1 manual notes field).
 
 ### Key Pages
@@ -29,7 +29,7 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 - `/interview/setup` â€” Role/JD input, mode, difficulty, duration  
 - `/interview/session/[id]` â€” Live mock interview UI  
 - `/interview/review/[id]` â€” Feedback, scores, suggested rewrites, action items  
-- `/interview/banks` â€” Question banks & packs  
+- `/interview/banks` â€” Question banks and packs  
 - `/interview/settings` â€” Mic/audio, rubric presets, privacy
 
 ### Minimal Data Model
@@ -52,7 +52,7 @@ Integrations: **Resume Builder** (pull achievements), **Job Description Analyzer
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide realistic, roleâ€‘aware interview practice with **constructive, rubricâ€‘based feedback**.  
 - Support both **behavioral (STAR)** and **technical** drills, with shareable summaries and next steps.  
@@ -65,7 +65,7 @@ Integrations: **Resume Builder** (pull achievements), **Job Description Analyzer
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/interview` â€” Dashboard: new session, resume-linked highlights, last feedback, upcoming events.  
@@ -76,7 +76,7 @@ Integrations: **Resume Builder** (pull achievements), **Job Description Analyzer
 - `/interview/settings` â€” Mic test, storage/privacy, default rubrics, consent, locales.
 
 **API (SSR)**
-- Setup & analysis:  
+- Setup and analysis:  
   - `POST /interview/api/jd/analyze` (extract skills, responsibilities, keywords)  
   - `POST /interview/api/setup` (create session from options)  
 - Session I/O:  
@@ -86,11 +86,11 @@ Integrations: **Resume Builder** (pull achievements), **Job Description Analyzer
   - `POST /interview/api/answer/audio` (upload audio; Pro)  
   - `POST /interview/api/answer/transcribe` (Pro; server STT)  
   - `POST /interview/api/session/finish`
-- Feedback & exports:  
+- Feedback and exports:  
   - `POST /interview/api/score` (apply rubric; return perâ€‘criterion scores)  
   - `GET  /interview/api/review?id=`  
   - `POST /interview/api/export` (pdf|csv)  
-- Banks & packs:  
+- Banks and packs:  
   - `GET  /interview/api/packs` Â· `GET /interview/api/pack?id=`  
   - `POST /interview/api/pack/create` (admin/curator)  
 - Integrations:  
@@ -99,18 +99,18 @@ Integrations: **Resume Builder** (pull achievements), **Job Description Analyzer
   - `POST /interview/api/email/thanks` (template â†’ Email Polisher)  
 - Settings: `POST /interview/api/settings/save`
 
-Optional WebSocket: `/interview/ws` for timer ticks & lowâ€‘latency prompts.
+Optional WebSocket: `/interview/ws` for timer ticks and lowâ€‘latency prompts.
 
 ---
 
-### 3) Rubrics & Scoring
+### 3) Rubrics and Scoring
 
 **Behavioral (STAR) rubric criteria (0â€“5 each)**  
 - **Situation/Context** (clear, relevant)  
 - **Task/Goal** (specific, measurable)  
 - **Action** (your actions, depth, leadership)  
 - **Result/Impact** (quantified, outcomes, learning)  
-- **Conciseness & Structure**  
+- **Conciseness and Structure**  
 - **Communication** (tone, clarity)  
 Weighted overall score; configurable weights by preset.
 
@@ -121,7 +121,7 @@ Weighted overall score; configurable weights by preset.
 
 **Feedback output**  
 - Per criterion: score, 1â€“2 lines feedback, **concrete rewrite** snippet.  
-- Overall summary: strengths, top 3 gaps, **next practice plan** (topics & question types).
+- Overall summary: strengths, top 3 gaps, **next practice plan** (topics and question types).
 
 ---
 
@@ -179,7 +179,7 @@ Indexes on `userId`, `sessionId`, `jobTargetId`, `createdAt`.
    - **Voice** (Pro): TTS asks question; user records; autoâ€‘transcribe; filler/pace metrics.  
    - **Insert resume bullet**: pulls from Profile â†’ encourage metricâ€‘rich stories.  
 4) **Followâ€‘ups**: ask targeted probes if missing STAR elements or competency signals.  
-5) **Finish & Score**: apply rubric; produce perâ€‘question + overall scores.  
+5) **Finish and Score**: apply rubric; produce perâ€‘question + overall scores.  
 6) **Review**: show transcript with highlights; **rewritten model answers** tailored to user story; next steps.  
 7) **Export/Integrate**: PDF; CSV; create Planner tasks; â€œSend thankâ€‘you email draftâ€ to Email Polisher.
 
@@ -230,7 +230,7 @@ Res: `{ "sessionId":"sess_123" }`
 ```
 Res: `{ "ok":true }`
 
-**Score & feedback**  
+**Score and feedback**  
 `POST /interview/api/score` â†’  
 `{ "total":3.8, "perCriterion":{"STAR.Result":3,"Conciseness":4}, "feedback":{"gaps":["no metrics"],"rewrite":"I increased latency SLO adherence from 92%â†’99% by..."}}`
 
@@ -250,7 +250,7 @@ Res: `{ "ok":true }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|
@@ -304,7 +304,7 @@ src/components/interview/Banks/*.astro
 
 - **Behavioral Core (STAR)**: teamwork, conflict, leadership, failure, ownership, ambiguity, stakeholder mgmt.  
 - **Companyâ€‘style**: Amazon Leadership Principles, Google GCA, Microsoft growth mindset (curated paraphrases).  
-- **Technical Core**: data structures & algorithms concepts (conceptual Q&A), REST/HTTP, SQL reasoning, system design prompts (highâ€‘level).  
+- **Technical Core**: data structures and algorithms concepts (conceptual Q and A), REST/HTTP, SQL reasoning, system design prompts (highâ€‘level).  
 - **Product/Case**: product sense, metrics, prioritization, estimation, goâ€‘toâ€‘market.
 
 ---

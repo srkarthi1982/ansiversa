@@ -133,7 +133,7 @@ export const getCaptureModes = (): CaptureMode[] => [
 export const getPipelineStages = (): PipelineStage[] => [
   {
     id: 'preprocess',
-    label: 'Preprocess & Clean',
+    label: 'Preprocess and Clean',
     summary:
       'Detects page edges, deskews scans, balances lighting, and prepares a clean canvas for OCR.',
     outputs: ['Deskewed pages', 'Denoised layers', 'Confidence map'],
@@ -142,7 +142,7 @@ export const getPipelineStages = (): PipelineStage[] => [
   },
   {
     id: 'layout',
-    label: 'Layout & Regions',
+    label: 'Layout and Regions',
     summary: 'Segments multi-column layouts, sidebars, captions, headers, and reading order.',
     outputs: ['Region graph', 'Reading order map'],
     duration: '18s for 12 pages',
@@ -158,7 +158,7 @@ export const getPipelineStages = (): PipelineStage[] => [
   },
   {
     id: 'structure',
-    label: 'Structure & Semantics',
+    label: 'Structure and Semantics',
     summary: 'Builds heading hierarchy, detects exercises, theorems, proofs, and glossary terms.',
     outputs: ['TOC tree', 'Semantic labels', 'Exercise ↔ answer links'],
     duration: '25s for 12 pages',
@@ -166,9 +166,9 @@ export const getPipelineStages = (): PipelineStage[] => [
   },
   {
     id: 'artifacts',
-    label: 'Artifacts & Exports',
+    label: 'Artifacts and Exports',
     summary: 'Generates flashcards, quizzes, summaries, and prepares export bundles.',
-    outputs: ['Flashcards', 'Quiz JSON', 'Markdown & DOCX bundles'],
+    outputs: ['Flashcards', 'Quiz JSON', 'Markdown and DOCX bundles'],
     duration: '8s for 12 pages',
     status: 'pending',
   },
@@ -331,7 +331,7 @@ export const getArtifacts = (): ArtifactType[] => [
     label: 'Flashcards',
     description: 'Spaced repetition decks grouped by chapter with confidence tagging.',
     generated: 56,
-    includes: ['Definitions & glossary', 'Worked example highlights', 'Formula drills'],
+    includes: ['Definitions and glossary', 'Worked example highlights', 'Formula drills'],
     sourceBlocks: ['Chemistry:12:01:a', 'Chemistry:14:00:a'],
   },
   {
@@ -355,7 +355,7 @@ export const getArtifacts = (): ArtifactType[] => [
     label: 'Formula Index',
     description: 'Extracted formulas with LaTeX, plain text, and description for quick lookup.',
     generated: 12,
-    includes: ['Inline and block formulas', 'Units & context', 'Usage frequency'],
+    includes: ['Inline and block formulas', 'Units and context', 'Usage frequency'],
     sourceBlocks: ['Chemistry:12:01:b'],
   },
 ];
@@ -396,7 +396,7 @@ export const getExportPresets = (): ExportPreset[] => [
     label: 'Quiz JSON for Exam Simulator',
     format: 'json',
     description: 'Question banks ready for import into Ansiversa Exam Simulator.',
-    includes: ['MCQ & TF schema', 'Answer rationales', 'Source anchors'],
+    includes: ['MCQ and TF schema', 'Answer rationales', 'Source anchors'],
     proOnly: true,
   },
 ];
@@ -415,7 +415,7 @@ export const getPlanComparison = (): PlanComparisonRow[] => [
   {
     feature: 'Math OCR',
     free: 'Basic inline LaTeX',
-    pro: 'Advanced LaTeX with align & matrices',
+    pro: 'Advanced LaTeX with align and matrices',
   },
   {
     feature: 'Diagram vectorization',
@@ -424,7 +424,7 @@ export const getPlanComparison = (): PlanComparisonRow[] => [
   },
   {
     feature: 'Exports',
-    free: 'Markdown & PDF',
+    free: 'Markdown and PDF',
     pro: 'Markdown, PDF, DOCX, CSV, LaTeX, APKG, Quiz JSON',
   },
   {
@@ -505,7 +505,7 @@ export const getQualityChecks = (): QualityCheck[] => [
   },
   {
     id: 'privacy',
-    label: 'Privacy & Access',
+    label: 'Privacy and Access',
     status: 'passed',
     message: 'Private by default. Sharing disabled until explicit export.',
     severity: 'info',
@@ -540,7 +540,7 @@ export const getDataModel = (): DataModelEntity[] => [
       { name: 'pageIndex', type: 'integer|null', notes: 'For PDFs after splitting' },
       { name: 'checksum', type: 'text', notes: 'Used to dedupe uploads' },
       { name: 'dpi', type: 'integer|null', notes: 'Estimated resolution' },
-      { name: 'meta', type: 'json', notes: 'Capture metadata & warnings' },
+      { name: 'meta', type: 'json', notes: 'Capture metadata and warnings' },
     ],
   },
   {

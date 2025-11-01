@@ -21,7 +21,7 @@ external design software.
 
 ## ðŸ§© Architecture Layers
 
-### 1. **UI & Pages (Astro)**
+### 1. **UI and Pages (Astro)**
 
 -   **Primary Page:** `src/pages/visiting-card.astro`
 -   **Layout:** Extends `src/layouts/Layout.astro`
@@ -29,7 +29,7 @@ external design software.
     -   Template Gallery (grid of default card templates)
     -   Customization Form (fields and theme settings)
     -   Live Card Preview (instant update on edit)
-    -   Export & Share panel
+    -   Export and Share panel
 
 #### Components
 
@@ -143,7 +143,7 @@ No seed data required; all cards are user-generated.
 
 ------------------------------------------------------------------------
 
-### 6. **Export & File Handling**
+### 6. **Export and File Handling**
 
 -   Supported formats: `.pdf`, `.png`, `.svg`
 -   Server action `server.card.export()` converts preview to
@@ -154,7 +154,7 @@ No seed data required; all cards are user-generated.
 
 ------------------------------------------------------------------------
 
-### 7. **Security & Session Handling**
+### 7. **Security and Session Handling**
 
 -   Authentication enforced for save/export operations.
 -   Session validated through `server.auth.session`.
@@ -163,7 +163,7 @@ No seed data required; all cards are user-generated.
 
 ------------------------------------------------------------------------
 
-### 8. **Extensibility & Future Roadmap**
+### 8. **Extensibility and Future Roadmap**
 
 -   Add support for **logo uploads** and drag-to-position controls.
 -   Add double-sided card templates (front/back view).

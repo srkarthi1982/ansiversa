@@ -7,7 +7,7 @@ Codexâ€‘ready specification for building the **Smart Textbook Scanner** min
 ## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
 ### What it does
-Turns **photos or PDFs of textbooks/handouts** into **clean, searchable, and structured study material**: selectable text, **math LaTeX**, **diagrams â†’ SVG**, **tables â†’ CSV**, **headings/chapters**, **exercise extraction**, **glossary & formula index**, and **autoâ€‘made flashcards/quizzes**. It also supports **problemâ€‘answer pairing**, **page anchors** for citations, and **export to Quiz Institute, FlashNote, Formula Finder, Concept Explainer, Study Planner, and Homework Helper**.
+Turns **photos or PDFs of textbooks/handouts** into **clean, searchable, and structured study material**: selectable text, **math LaTeX**, **diagrams â†’ SVG**, **tables â†’ CSV**, **headings/chapters**, **exercise extraction**, **glossary and formula index**, and **autoâ€‘made flashcards/quizzes**. It also supports **problemâ€‘answer pairing**, **page anchors** for citations, and **export to Quiz Institute, FlashNote, Formula Finder, Concept Explainer, Study Planner, and Homework Helper**.
 
 ### Core
 - **Capture/Upload**: photos (mobile), multiâ€‘page PDF, or scanned images.  
@@ -24,14 +24,14 @@ Turns **photos or PDFs of textbooks/handouts** into **clean, searchable, and str
 - **Integrations**: push to **FlashNote**, **Language Flashcards**, **Study Planner**, **Exam Simulator**, **Concept Explainer**, **Formula Finder**.
 
 ### Key Pages
-- `/scan` (Library) Â· `/scan/new` (capture/import) Â· `/scan/[id]` (review & edit) Â· `/scan/export/[id]` Â· `/scan/settings`.
+- `/scan` (Library) Â· `/scan/new` (capture/import) Â· `/scan/[id]` (review and edit) Â· `/scan/export/[id]` Â· `/scan/settings`.
 
 ### Plan Gating
 | Feature | Free | Pro |
 |---|---|---|
 | Max pages per job | 30 | 300 |
 | OCR languages | 1 (EN) | Multiâ€‘lang (EN/TA/AR/ES/HIâ€¦) |
-| Math OCR | Basic | Full LaTeX w/ align & matrices |
+| Math OCR | Basic | Full LaTeX w/ align and matrices |
 | Vectorize diagrams | â€” | âœ… |
 | Exports | MD/PDF | + DOCX/CSV/LaTeX/Anki/Quiz JSON |
 | Integrations | View only | Push to apps |
@@ -41,7 +41,7 @@ Turns **photos or PDFs of textbooks/handouts** into **clean, searchable, and str
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Produce **accurate, citeâ€‘anchored** digital versions of textbook pages optimized for study.  
 - Extract **semantics** (exercises, examples, theorems, definitions) automatically.  
@@ -54,10 +54,10 @@ Turns **photos or PDFs of textbooks/handouts** into **clean, searchable, and str
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
-- `/scan` â€” Library/dashboard with search & tags; recent scans and processing status.  
+- `/scan` â€” Library/dashboard with search and tags; recent scans and processing status.  
 - `/scan/new` â€” Capture/import wizard: **Camera** (mobile), **Upload PDF/Images**, **Cloud import** (GDrive/Photos v1.1).  
 - `/scan/[id]` â€” Review workspace with tabs: **Overview**, **Pages**, **Blocks**, **Exercises**, **Formulas**, **Tables**, **Diagrams**, **Cards/Quiz**, **Corrections**.  
 - `/scan/export/[id]` â€” Export center with presets.  
@@ -90,7 +90,7 @@ Optional WebSocket `/scan/ws` for realâ€‘time progress, page OCR previews, 
 5) **Semantics**: classify **Definition / Theorem / Proof / Example / Exercise / Solution / Tip / Warning**; pair **Exercise â†” Answer** (same page or later pages).  
 6) **Tables**: grid detection, cell merge; export CSV/HTML with header detection.  
 7) **Diagrams**: stroke detection â†’ primitive shapes; **SVG** where possible; fallback PNG with caption.  
-8) **QA & repair**: lowâ€‘confidence spans flagged; suggest corrections; **humanâ€‘inâ€‘theâ€‘loop** edit; reflow after edits.  
+8) **QA and repair**: lowâ€‘confidence spans flagged; suggest corrections; **humanâ€‘inâ€‘theâ€‘loop** edit; reflow after edits.  
 9) **Artifacts**: create **flashcards**, **quiz items**, **summary notes**, **formula index** and **glossary**.  
 10) **Anchoring**: assign **page and block ids** and citation strings (`Book:Page:Block`).
 
@@ -160,7 +160,7 @@ Shortcuts: `A` add block, `M` merge, `S` split, `L` toggle layout, `E` export, `
 
 ---
 
-### 6) Exports & Integrations
+### 6) Exports and Integrations
 
 **Presets**  
 - **Study Markdown**: headings + text + LaTeX + figures + tables + exercise list with anchors.  
@@ -222,7 +222,7 @@ Res: `{ "jobId":"e_12" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|
@@ -286,7 +286,7 @@ src/components/scan/Corrections/*.astro
 
 ### 11) Future Enhancements (v2+)
 
-- **Handwriting OCR** for teacher notes & student solutions.  
+- **Handwriting OCR** for teacher notes and student solutions.  
 - **AR overlay** (mobile): point camera to a page â†’ popâ€‘up definitions/solutions.  
 - **Equation solver** linkâ€‘out; plot previews for functions.  
 - **Collaborative study packs** (classroom mode).  

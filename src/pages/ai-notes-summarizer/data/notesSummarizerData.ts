@@ -31,7 +31,7 @@ export const ingestionOptions = [
   },
   {
     icon: 'fas fa-microphone-lines',
-    title: 'Voice & transcript import',
+    title: 'Voice and transcript import',
     description:
       'Pull recordings or transcripts from Meeting Minutes AI and Research Assistant with speaker labels intact.',
   },
@@ -111,7 +111,7 @@ export const summaryOutputs = [
   },
   {
     icon: 'fas fa-highlighter',
-    title: 'Highlights & quotes',
+    title: 'Highlights and quotes',
     description: 'Surface memorable quotes, figures, and definitions with citations.',
   },
   {
@@ -127,7 +127,7 @@ export const planMatrix = [
   { feature: 'Exports', free: 'Markdown', pro: 'Markdown · PDF · FlashNote deck' },
   { feature: 'History retention', free: 'Latest 5 summaries', pro: 'Full timeline with filters' },
   { feature: 'Integrations', free: 'FlashNote (read-only)', pro: 'FlashNote · Research Assistant · Meeting Minutes AI' },
-  { feature: 'Collaboration', free: 'View-only links', pro: 'Shared workspaces & comments' },
+  { feature: 'Collaboration', free: 'View-only links', pro: 'Shared workspaces and comments' },
 ];
 
 export const integrations = [
@@ -150,7 +150,7 @@ export const integrations = [
 
 export const qualitySignals = [
   {
-    title: 'Guardrails & validation',
+    title: 'Guardrails and validation',
     points: [
       'Character limit enforcement with progress indicator and warnings at 90% capacity.',
       'Duplicate detection ensures repeated summaries reference the same Note ID.',
@@ -159,7 +159,7 @@ export const qualitySignals = [
     ],
   },
   {
-    title: 'Accessibility & UX',
+    title: 'Accessibility and UX',
     points: [
       'Keyboard shortcuts: Ctrl/Cmd + Enter to summarize, Ctrl/Cmd + S to save edits.',
       'Responsive layout with high-contrast mode and reduced motion preferences.',

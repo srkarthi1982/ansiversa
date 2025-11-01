@@ -591,7 +591,7 @@ projectSupportTriage.versions = [
 const projectSqlAuthor: PromptBuilderProject = {
   id: 'proj-sql-author',
   slug: 'sql-query-author',
-  title: 'SQL Query Author & Explainer',
+  title: 'SQL Query Author and Explainer',
   status: 'draft',
   plan: 'pro',
   description: 'Generate SQL queries, plain-language explanations, and safe guards for analysts.',
@@ -775,7 +775,7 @@ const sampleTemplates: PromptBuilderTemplate[] = [
   },
   {
     key: 'sql-author',
-    title: 'SQL Author & Explainer',
+    title: 'SQL Author and Explainer',
     category: 'Engineering',
     description: 'Generate safe SQL with natural language explanations and guardrails.',
     useCases: ['Analytics engineering', 'Self-serve BI'],

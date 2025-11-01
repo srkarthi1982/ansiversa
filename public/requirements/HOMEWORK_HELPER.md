@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/homework-helper`  
-**Category:** Learning & Knowledge  
+**Category:** Learning and Knowledge  
 **Stack:** Astro + Tailwind (islands for editors/solvers), Astro SSR API routes, Astro DB / Supabase, optional worker for long jobs  
 **Goal:** Help students understand and solve homework problems **stepâ€‘byâ€‘step** across Math, Science, English, Social Science, and Programmingâ€”**without doing their work for them**. Emphasize learning: hints, explanation paths, similar practice, and citations when facts are used.
 
@@ -10,13 +10,13 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Accept problems via **text**, **image upload (OCR)**, or **URL of a worksheet/page** (text only in v1).  
 - Provide **stepâ€‘byâ€‘step guidance** with controllable hint levels (Hint 1, Hint 2, Reveal Step, Full Solution).  
-- Support **Math** (arithmetic â†’ calculus), **Science** (physics/chem/biology factual & conceptual), **English** (grammar, comprehension), **Social** (history/geographyâ€”with citations), **Programming** (pseudoâ€‘code + explanation; *no ready-made graded solutions if academic integrity applies*).
-- Autoâ€‘detect topic & grade band (CBSE/International toggle) and suggest **Concept Explainer** links.  
+- Support **Math** (arithmetic â†’ calculus), **Science** (physics/chem/biology factual and conceptual), **English** (grammar, comprehension), **Social** (history/geographyâ€”with citations), **Programming** (pseudoâ€‘code + explanation; *no ready-made graded solutions if academic integrity applies*).
+- Autoâ€‘detect topic and grade band (CBSE/International toggle) and suggest **Concept Explainer** links.  
 - Generate **similar practice problems** with answers and **explain my mistake** flow.  
 - **Citations** for factual answers (Tier A/B preferred, see Fact Generator tiers).  
 - Export to **PDF/MD** study sheets or **FlashNote** cards.  
@@ -45,7 +45,7 @@
 
 4. **Check My Work**
    - *As a learner*, I enter my attempt.  
-   - **AC:** `/homework-helper/api/check` compares reasoning & result, pointing out **exact mistake locations** and suggesting corrections.
+   - **AC:** `/homework-helper/api/check` compares reasoning and result, pointing out **exact mistake locations** and suggesting corrections.
 
 5. **Similar Practice**
    - *As a learner*, I click **Practice similar**.  
@@ -61,11 +61,11 @@
 
 ---
 
-## 3) Subjects & Capabilities
+## 3) Subjects and Capabilities
 
-- **Math:** arithmetic, factors, fractions, decimals, ratio, percentages, algebra (linear/quadratic), coordinate geometry, sequences/series, probability & statistics, trigonometry basics, calculus (limits/derivatives/integrals) â€” with symbolic steps.  
-- **Physics:** kinematics, Newtonâ€™s laws, work/energy, electricity, waves â€” numeric & conceptual; unit handling & sig figs.  
-- **Chemistry:** stoichiometry, moles, reactions, periodic trends; equilibrium & pH basics.  
+- **Math:** arithmetic, factors, fractions, decimals, ratio, percentages, algebra (linear/quadratic), coordinate geometry, sequences/series, probability and statistics, trigonometry basics, calculus (limits/derivatives/integrals) â€” with symbolic steps.  
+- **Physics:** kinematics, Newtonâ€™s laws, work/energy, electricity, waves â€” numeric and conceptual; unit handling and sig figs.  
+- **Chemistry:** stoichiometry, moles, reactions, periodic trends; equilibrium and pH basics.  
 - **Biology:** definitions, processes, diagrams (explain textually), genetics basics; **requires citations**.  
 - **English:** grammar fixes, paraphrase with explanation, summarization, reading comprehension (evidence from text).  
 - **Social:** history/geography/civics factual answers â€” **always cite** and timeâ€‘scope the answer.  
@@ -73,12 +73,12 @@
 
 ---
 
-## 4) Routes & Information Architecture
+## 4) Routes and Information Architecture
 
 - `/homework-helper` â€” Hub: input (text/upload), recent problems, quick subject chips.  
 - `/homework-helper/solve/[id]` â€” Solver page (steps, hints, practice).  
-- `/homework-helper/history` â€” My questions, filters by subject & date.  
-- `/homework-helper/practice` â€” Practice generator & sets.  
+- `/homework-helper/history` â€” My questions, filters by subject and date.  
+- `/homework-helper/practice` â€” Practice generator and sets.  
 - `/homework-helper/teacher` â€” Teacher/parent snapshot (Pro).  
 - `/homework-helper/settings` â€” Board (CBSE/Intl), grade band, units (SI/US), language.
 
@@ -145,7 +145,7 @@
 ## 7) Safety, Integrity, and Guidance
 
 - Show **learning disclaimer** (â€œUse this to learn, not to cheat.â€).  
-- For essays/assignments, provide **outline & evidence** rather than final copy; encourage own words.  
+- For essays/assignments, provide **outline and evidence** rather than final copy; encourage own words.  
 - Cite sources for non-math/derivation content; avoid misinformation with date scoping.  
 - **Ageâ€‘appropriate** filters (Kid mode hides sensitive examples).  
 - Offensive content autoâ€‘flags; show safer alternatives.  
@@ -160,7 +160,7 @@
 - Recent problems list; quick links: **Practice**, **Concept Explainer**.
 
 ### Solver
-- Left: problem & images.  
+- Left: problem and images.  
 - Center: steps with progressive reveal; math renderer; attempt input.  
 - Right: references (citations), related concepts, similar problems, export.
 
@@ -211,7 +211,7 @@ Res: `{ "url":"/exports/homework-helper_set_Nov-2025.pdf" }`
 
 ---
 
-## 11) Plans & Limits
+## 11) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -219,7 +219,7 @@ Res: `{ "url":"/exports/homework-helper_set_Nov-2025.pdf" }`
 | Step reveal | Up to 3 | Unlimited |
 | Practice sets | 1 active | Unlimited |
 | Exports | â€” | PDF/MD |
-| Teacher/parent | â€” | Snapshot & report |
+| Teacher/parent | â€” | Snapshot and report |
 | OCR | Basic | Enhanced + batch |
 | Integrations | Concept Explainer | + Quiz Institute, FlashNote |
 
@@ -227,10 +227,10 @@ Rate limits: per `userId`/day for solve/check/generate; per `planId`/hour for st
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Keyboard operable step navigation and hint buttons.  
-- Highâ€‘contrast & large font modes; screenâ€‘reader labels.  
+- Highâ€‘contrast and large font modes; screenâ€‘reader labels.  
 - RTL support (Arabic); language toggle (English/Tamil/Arabic).  
 - Reduced motion; dyslexiaâ€‘friendly font option.
 

@@ -8,10 +8,10 @@ This document includes a concise **summary** for Codex onboarding and a **full t
 
 ### Overview
 **Formula Finder** is a searchable, structured library of **Math, Physics, Chemistry** (and later Engineering, Finance) formulas with:
-- topic & variable filters,
+- topic and variable filters,
 - **symbol explanations and units**,
 - **rearrangement/solve-for-any-variable**,
-- **dimensional analysis & unit conversion**, and
+- **dimensional analysis and unit conversion**, and
 - worked **examples** + export to Markdown/LaTeX/PDF.
 
 ### Core Features
@@ -25,11 +25,11 @@ This document includes a concise **summary** for Codex onboarding and a **full t
 - Exports: MD/LaTeX/PDF; **FlashNote** cards for revision.
 
 ### Key Pages
-- `/formula-finder` â€” Search & browse (topics, filters, recent).  
+- `/formula-finder` â€” Search and browse (topics, filters, recent).  
 - `/formula-finder/[id]` â€” Formula detail (variables, steps, examples).  
 - `/formula-finder/collections` â€” Boards/exams packs.  
 - `/formula-finder/tools/solver` â€” Unit-aware solver.  
-- `/formula-finder/history` â€” Recently viewed & custom saves.
+- `/formula-finder/history` â€” Recently viewed and custom saves.
 
 ### Minimal Data Model
 `Topic`, `Formula`, `Variable`, `Unit`, `Dimension`, `Identity`, `Derivation`, `Example`, `Collection`, `Tag`
@@ -40,7 +40,7 @@ This document includes a concise **summary** for Codex onboarding and a **full t
 | Library access | Core sets | Full library + collections |
 | Solver | Basic numeric | Step-by-step + unit/DA checks |
 | Exports | MD | MD/PDF/LaTeX |
-| Custom saves | â€” | Save favorites & notes |
+| Custom saves | â€” | Save favorites and notes |
 | Integrations | â€” | FlashNote, Homework Helper, Exam Simulator |
 
 Integrations: **Homework Helper**, **Concept Explainer**, **Exam Simulator**, **FlashNote**.
@@ -49,7 +49,7 @@ Integrations: **Homework Helper**, **Concept Explainer**, **Exam Simulator**, **
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide reliable, unitâ€‘aware formula lookup with rearrangement and examples.
 - Support education boards (CBSE 9â€‘12) + general college topics.
@@ -61,7 +61,7 @@ Integrations: **Homework Helper**, **Concept Explainer**, **Exam Simulator**, **
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/formula-finder` â€” Explore/search, filters: Subject (Math/Physics/Chem), Topic, Board, Class, Difficulty.  
@@ -125,7 +125,7 @@ Web workers (optional) for unit math and rearrangement to keep UI snappy.
 
 ---
 
-### 4) Search & Ranking
+### 4) Search and Ranking
 
 - Tokenize on symbols (`v`, `Î”x`), aliases (â€œspeedâ€, â€œvelocityâ€), and topic tags.  
 - Rank by: exact symbol hit > topic match > text match; boost by board/class chosen.  
@@ -133,7 +133,7 @@ Web workers (optional) for unit math and rearrangement to keep UI snappy.
 
 ---
 
-### 5) Solver & Rearrangement
+### 5) Solver and Rearrangement
 
 **`/formula-finder/api/rearrange`**
 - Input: LaTeX string or internal AST + target symbol.  
@@ -148,7 +148,7 @@ Web workers (optional) for unit math and rearrangement to keep UI snappy.
 
 ---
 
-### 6) Unit & Dimension System
+### 6) Unit and Dimension System
 
 - Base dimensions: **L, M, T, I, Î˜, N, J**.  
 - Unit table maintains factor/offset; temperature conversions handle affine offsets.  
@@ -163,7 +163,7 @@ Web workers (optional) for unit math and rearrangement to keep UI snappy.
 - **Solve for X**: dropdown for target variable, autoâ€‘rearrange, numeric inputs with unit pickers, live result.  
 - **Examples**: collapsible worked example; optional simple graph (e.g., `s = ut + 1/2 at^2` vs t).  
 - **Collections**: board/exam packs; â€œAdd all to FlashNoteâ€.  
-- **History & Favorites**: quick access.  
+- **History and Favorites**: quick access.  
 - Accessibility: KaTeX with screenâ€‘reader alt text, keyboard nav, high contrast.
 
 ---
@@ -215,7 +215,7 @@ Res: `{ "url":"/exports/formula-finder_kin_v1.tex" }`
 
 ---
 
-### 10) Plans & Limits
+### 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -260,7 +260,7 @@ src/components/formula-finder/Examples/*.astro
 
 **Physics**: Kinematics (SUVAT), Dynamics (F=ma), Workâ€‘Energy (W=Fd, KE, PE), Power, Momentum/Impulse, Circular motion, Gravitation, Electricity (Ohmâ€™s law, series/parallel), Magnetism (F=qvB), Waves (v=fÎ»), Optics (lens/mirror).  
 **Math**: Algebra (quadratic formula), Geometry (area/perimeter/volume), Trig identities, Coordinate geometry (distance/midpoint/slope), Calculus basics (derivative rules), Probability (nCr, nPr), Statistics (mean/variance).  
-**Chem**: Moles & stoichiometry, Gas laws (PV=nRT), Concentration (M, m), pH, Equilibrium (Kc), Rate law (intro).
+**Chem**: Moles and stoichiometry, Gas laws (PV=nRT), Concentration (M, m), pH, Equilibrium (Kc), Rate law (intro).
 
 ---
 

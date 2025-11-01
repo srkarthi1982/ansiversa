@@ -40,15 +40,15 @@ export const aiDraft = defineAction({
         'Design assets and implementation-ready documentation',
       ],
       timeline: [
-        { milestone: 'Discovery & alignment', start: '', end: '', description: 'Stakeholder interviews, analytics review, and success metrics.' },
-        { milestone: 'Design & solutioning', start: '', end: '', description: 'Iterative design reviews and approvals.' },
-        { milestone: 'Implementation & training', start: '', end: '', description: 'Build support, QA, and enablement sessions.' },
+        { milestone: 'Discovery and alignment', start: '', end: '', description: 'Stakeholder interviews, analytics review, and success metrics.' },
+        { milestone: 'Design and solutioning', start: '', end: '', description: 'Iterative design reviews and approvals.' },
+        { milestone: 'Implementation and training', start: '', end: '', description: 'Build support, QA, and enablement sessions.' },
       ],
       budget: {
         currency: 'USD',
         items: [
-          { label: 'Discovery & strategy', qty: 1, unitPrice: 3800, total: 3800, notes: '' },
-          { label: 'Design & prototyping', qty: 1, unitPrice: 6200, total: 6200, notes: '' },
+          { label: 'Discovery and strategy', qty: 1, unitPrice: 3800, total: 3800, notes: '' },
+          { label: 'Design and prototyping', qty: 1, unitPrice: 6200, total: 6200, notes: '' },
           { label: 'Implementation support', qty: 1, unitPrice: 4200, total: 4200, notes: '' },
         ],
         subtotal: 14200,

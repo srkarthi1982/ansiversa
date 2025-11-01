@@ -128,7 +128,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
           <div class="space-y-5">
             <SectionHeading
               eyebrow="Workspace library"
-              title="Courses &amp; filters"
+              title="Courses and filters"
               description="Search across all platforms, switch focus areas, and keep an eye on completion velocity."
             />
             <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
@@ -258,7 +258,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
           <div class="space-y-5">
             <SectionHeading
               eyebrow="Course overview"
-              title="Outline &amp; milestones"
+              title="Outline and milestones"
               description="Track progress, upcoming lessons, and integration hooks in one responsive workspace."
             />
             <template x-if="app.selectedCourse">
@@ -307,7 +307,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
                     </div>
                   </dl>
                   <div class="mt-6 space-y-4">
-                    <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Modules &amp; lessons</h3>
+                    <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Modules and lessons</h3>
                     <div class="space-y-4">
                       <template x-for="module in app.selectedCourse.modules" :key="module.id">
                         <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
@@ -408,7 +408,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
                 </article>
 
                 <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Milestones &amp; integrations</h3>
+                  <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Milestones and integrations</h3>
                   <div class="mt-4 grid gap-4 sm:grid-cols-2">
                     <div class="rounded-2xl border border-slate-100 bg-slate-50/80 p-4">
                       <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Upcoming milestones</p>
@@ -434,7 +434,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
                       <ul class="mt-3 space-y-2 text-xs text-slate-600">
                         <li class="flex items-start gap-2">
                           <i class="fas fa-layer-group text-[10px] text-indigo-500"></i>
-                          Lesson Builder — import outlines &amp; sync modules.
+                          Lesson Builder — import outlines and sync modules.
                         </li>
                         <li class="flex items-start gap-2">
                           <i class="fas fa-clipboard-question text-[10px] text-indigo-500"></i>
@@ -460,7 +460,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
           <div class="space-y-5">
             <SectionHeading
               eyebrow="Execution hub"
-              title="Sessions, notes &amp; reminders"
+              title="Sessions, notes and reminders"
               description="Log time, surface highlights, and keep streaks alive with fast toggles."
             />
             <div class="space-y-5">
@@ -496,18 +496,18 @@ import SectionHeading from "../../components/SectionHeading.astro";
                       </Button>
                       <Button type="button" size="sm" variant="ghost" @click.prevent="app.stopTimer?.()">
                         <i class="fas fa-stop text-xs"></i>
-                        Log &amp; reset
+                        Log and reset
                       </Button>
                     </div>
                   </div>
                   <p class="mt-3 text-xs text-indigo-700">
-                    Timer automatically logs sessions to streaks and study analytics when you tap &ldquo;Log &amp; reset&rdquo;.
+                    Timer automatically logs sessions to streaks and study analytics when you tap &ldquo;Log and reset&rdquo;.
                   </p>
                 </div>
               </article>
 
               <article class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Notes &amp; highlights</h3>
+                <h3 class="text-sm font-semibold uppercase tracking-wide text-slate-500">Notes and highlights</h3>
                 <template x-if="app.selectedCourseNotes.length">
                   <ul class="mt-4 space-y-3 text-sm text-slate-600">
                     <template x-for="note in app.selectedCourseNotes" :key="note.id">
@@ -615,7 +615,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
                       size="sm"
                       variant="outline"
                       :disabled="exportItem.status === 'pro'"
-                      @click.prevent="app.notify?.(exportItem.status === 'pro' ? 'Upgrade to Pro to unlock PDF & ICS exports' : `${exportItem.format} export prepared`)"
+                      @click.prevent="app.notify?.(exportItem.status === 'pro' ? 'Upgrade to Pro to unlock PDF and ICS exports' : `${exportItem.format} export prepared`)"
                     >
                       <i class="fas" :class="exportItem.status === 'pro' ? 'fa-lock' : 'fa-arrow-down'"></i>
                       <span x-text="exportItem.status === 'pro' ? 'Pro' : 'Download'"></span>
@@ -648,8 +648,8 @@ import SectionHeading from "../../components/SectionHeading.astro";
                     </tr>
                     <tr>
                       <td class="px-4 py-3 font-semibold text-slate-700">Exports</td>
-                      <td class="px-4 py-3">Markdown &amp; CSV (watermark)</td>
-                      <td class="px-4 py-3">PDF &amp; ICS (no watermark)</td>
+                      <td class="px-4 py-3">Markdown and CSV (watermark)</td>
+                      <td class="px-4 py-3">PDF and ICS (no watermark)</td>
                     </tr>
                     <tr>
                       <td class="px-4 py-3 font-semibold text-slate-700">AI assists</td>

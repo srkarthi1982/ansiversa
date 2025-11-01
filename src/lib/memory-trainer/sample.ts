@@ -90,7 +90,7 @@ export const getSampleMemoryTrainerData = (): MemoryTrainerSampleData => ({
     },
     {
       type: 'span',
-      title: 'Digit & Letter Span',
+      title: 'Digit and Letter Span',
       description: 'Forward and reverse span blocks tuned by SM-2 ease factors.',
       mode: 'Alternating',
       levelLabel: 'Max span',
@@ -199,7 +199,7 @@ export const getSampleMemoryTrainerData = (): MemoryTrainerSampleData => ({
     },
     {
       id: 'deck-names',
-      name: 'Names & Faces',
+      name: 'Names and Faces',
       tag: 'Recall',
       dueToday: 8,
       newCount: 4,

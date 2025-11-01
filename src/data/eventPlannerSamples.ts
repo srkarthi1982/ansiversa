@@ -48,7 +48,7 @@ const creatorSummit: EventPlannerEvent = {
       dayLabel: 'Day 1 · Foundations',
       start: '2025-06-12T08:00:00-07:00',
       end: '2025-06-12T09:00:00-07:00',
-      title: 'Team arrival & setup',
+      title: 'Team arrival and setup',
       owner: 'Operations',
       category: 'logistics',
       dependsOn: ['ag-venue-access'],
@@ -103,7 +103,7 @@ const creatorSummit: EventPlannerEvent = {
       dayLabel: 'Pre-event',
       start: '2025-06-11T17:00:00-07:00',
       end: '2025-06-11T19:00:00-07:00',
-      title: 'Venue access & AV check',
+      title: 'Venue access and AV check',
       owner: 'Production',
       category: 'logistics',
       status: 'confirmed',
@@ -171,7 +171,7 @@ const creatorSummit: EventPlannerEvent = {
     {
       id: 'budget-decor',
       category: 'decor',
-      vendor: 'Glow AV & Decor',
+      vendor: 'Glow AV and Decor',
       planned: 1800,
       actual: 1950,
       status: 'quoted',
@@ -194,7 +194,7 @@ const creatorSummit: EventPlannerEvent = {
     maybe: 12,
     checkIns: 0,
     segments: [
-      { label: 'Speakers & Staff', count: 35, status: 'team' },
+      { label: 'Speakers and Staff', count: 35, status: 'team' },
       { label: 'VIP Sponsors', count: 28, status: 'vip' },
       { label: 'Community Managers', count: 140, status: 'confirmed' },
       { label: 'Agency Partners', count: 77, status: 'invited' },
@@ -219,7 +219,7 @@ const creatorSummit: EventPlannerEvent = {
     },
     {
       id: 'vendor-av',
-      name: 'Glow AV & Decor',
+      name: 'Glow AV and Decor',
       type: 'sound',
       status: 'shortlisted',
       contact: { name: 'Riya Patel', email: 'riya@glowav.io' },
@@ -237,14 +237,14 @@ const creatorSummit: EventPlannerEvent = {
       format: 'pdf',
       label: 'Run-of-show PDF',
       description: 'Minute-by-minute plan with speaker contacts and contingency notes.',
-      recommendedFor: 'Stage team & MC',
+      recommendedFor: 'Stage team and MC',
     },
     {
       id: 'export-ics',
       format: 'ics',
       label: 'Calendar invites',
       description: 'Personalized .ics files for confirmed guests by segment.',
-      recommendedFor: 'Guests & VIP reminders',
+      recommendedFor: 'Guests and VIP reminders',
     },
     {
       id: 'export-budget',
@@ -296,7 +296,7 @@ const weddingWeekend: EventPlannerEvent = {
       dayLabel: 'Friday · Welcome',
       start: '2025-05-16T17:00:00-05:00',
       end: '2025-05-16T19:00:00-05:00',
-      title: 'Welcome dinner & icebreakers',
+      title: 'Welcome dinner and icebreakers',
       owner: 'Planner',
       category: 'program',
       status: 'confirmed',
@@ -318,7 +318,7 @@ const weddingWeekend: EventPlannerEvent = {
       dayLabel: 'Saturday · Reception',
       start: '2025-05-17T18:30:00-05:00',
       end: '2025-05-17T22:30:00-05:00',
-      title: 'Reception & dance floor',
+      title: 'Reception and dance floor',
       owner: 'MC',
       category: 'program',
       status: 'confirmed',
@@ -386,7 +386,7 @@ const weddingWeekend: EventPlannerEvent = {
     {
       id: 'wed-budget-decor',
       category: 'decor',
-      vendor: 'Flora & Fern',
+      vendor: 'Flora and Fern',
       planned: 2800,
       actual: 2700,
       status: 'paid',
@@ -450,14 +450,14 @@ const weddingWeekend: EventPlannerEvent = {
       format: 'pdf',
       label: 'Wedding weekend binder',
       description: 'Timeline, vendor contacts, floor plans, and contingency matrix.',
-      recommendedFor: 'Family coordinator & vendors',
+      recommendedFor: 'Family coordinator and vendors',
     },
     {
       id: 'wed-export-rsvp',
       format: 'csv',
       label: 'RSVP roster with meal selections',
       description: 'Dietary tags for catering + QR check-in codes.',
-      recommendedFor: 'Catering & check-in team',
+      recommendedFor: 'Catering and check-in team',
     },
     {
       id: 'wed-export-calendar',
@@ -600,7 +600,7 @@ const eventIntegrations: EventPlannerIntegration[] = [
   },
   {
     id: 'int-drive',
-    name: 'Drive & Dropbox',
+    name: 'Drive and Dropbox',
     description: 'Sync approved assets, floor plans, and contracts to shared folders.',
     status: 'available',
     category: 'files',
@@ -619,7 +619,7 @@ const eventPlanFeatures: EventPlannerPlanFeature[] = [
     pro: 'Up to 5,000 guests + segmented messaging',
   },
   {
-    feature: 'Templates & branding',
+    feature: 'Templates and branding',
     free: 'Core templates · default theme',
     pro: 'Advanced playbooks + custom branding',
   },
@@ -634,7 +634,7 @@ const eventPlanFeatures: EventPlannerPlanFeature[] = [
     pro: 'PDF, Markdown, ICS, CSV bundles + watermark-free',
   },
   {
-    feature: 'Reminders & alerts',
+    feature: 'Reminders and alerts',
     free: 'Task + RSVP reminders',
     pro: 'Advanced SLA alerts + countdown displays',
   },
@@ -643,7 +643,7 @@ const eventPlanFeatures: EventPlannerPlanFeature[] = [
 const eventRoadmap: EventPlannerRoadmapStage[] = [
   {
     id: 'stage-01',
-    title: 'Kickoff & discovery',
+    title: 'Kickoff and discovery',
     description: 'Align on goals, budget guardrails, and success signals.',
     items: [
       { label: 'Collect brief + guest targets', done: true },
@@ -657,13 +657,13 @@ const eventRoadmap: EventPlannerRoadmapStage[] = [
     description: 'Craft agenda, tasks, budgets, and vendor shortlists.',
     items: [
       { label: 'Seed agenda timeline', done: true },
-      { label: 'Import tasks & due dates', done: true },
-      { label: 'Budget guardrails & vendor outreach', done: false },
+      { label: 'Import tasks and due dates', done: true },
+      { label: 'Budget guardrails and vendor outreach', done: false },
     ],
   },
   {
     id: 'stage-03',
-    title: 'Launch & monitor',
+    title: 'Launch and monitor',
     description: 'Automate reminders, track RSVPs, and prep run-of-show.',
     items: [
       { label: 'Send invite campaign', done: true },
@@ -673,11 +673,11 @@ const eventRoadmap: EventPlannerRoadmapStage[] = [
   },
   {
     id: 'stage-04',
-    title: 'Day-of ops & recap',
+    title: 'Day-of ops and recap',
     description: 'Mobile run sheet, vendor comms, and post-event insights.',
     items: [
       { label: 'Launch check-in dashboard', done: false },
-      { label: 'Capture highlights & issues', done: false },
+      { label: 'Capture highlights and issues', done: false },
       { label: 'Send recap + surveys', done: false },
     ],
   },

@@ -3,7 +3,7 @@ import type { PortfolioDocument } from '../../types/portfolio';
 
 type SampleMetrics = { views: number; leads: number; exports: number };
 
-export type SamplePortfolio = PortfolioDocument & SampleMetrics;
+export type SamplePortfolio = PortfolioDocument and SampleMetrics;
 
 const buildSamplePrimary = (): SamplePortfolio => {
   const document = createPortfolioDocument({
@@ -19,7 +19,7 @@ const buildSamplePrimary = (): SamplePortfolio => {
   document.data.basics = {
     ...document.data.basics,
     name: 'Karthik Ramalingam',
-    title: 'Founder & CTO · Ansiversa',
+    title: 'Founder and CTO · Ansiversa',
     email: 'karthik@ansiversa.com',
     phone: '+971 55 123 4567',
     location: 'Dubai, UAE',
@@ -48,7 +48,7 @@ const buildSamplePrimary = (): SamplePortfolio => {
   };
   document.data.experience[0] = {
     ...document.data.experience[0],
-    role: 'Founder & CTO',
+    role: 'Founder and CTO',
     company: 'Ansiversa',
     summary:
       'Leading a cross-functional studio building AI copilots and multi-tenant SaaS apps. Own strategy, architecture, and go-to-market.',

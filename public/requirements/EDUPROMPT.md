@@ -13,8 +13,8 @@ This document includes a **short summary** for Codex onboarding and the **full t
 - **Template Gallery**: curriculumâ€‘aware prompts (CBSE 9â€“12, general STEM/Humanities).  
 - **Prompt Builder**: structured fields â†’ role, task, context, format, constraints, examples, rubric.  
 - **Multiâ€‘persona Runs**: teacher/tutor/examiner/coach variants for the same task.  
-- **Level & Tone Controls**: reading level (A1â€“C2), tone (formal, friendly), language.  
-- **Evaluation & Selfâ€‘check**: auto rubric to grade generated output and suggest fixes.  
+- **Level and Tone Controls**: reading level (A1â€“C2), tone (formal, friendly), language.  
+- **Evaluation and Selfâ€‘check**: auto rubric to grade generated output and suggest fixes.  
 - **Dataset Mode**: create N variants (e.g., 20 quiz questions) with **deduplication and topic coverage**.  
 - **Guardrails**: plagiarism check, sources requested, safe completion policy.  
 - **Exports**: MD, JSON (schema for Quiz/FlashNote), DOCX; send to other mini apps.
@@ -23,8 +23,8 @@ This document includes a **short summary** for Codex onboarding and the **full t
 - `/eduprompt` â€” Gallery + Recent  
 - `/eduprompt/builder` â€” Structured builder  
 - `/eduprompt/run/[id]` â€” Run console (inputs, outputs, eval)  
-- `/eduprompt/datasets` â€” Batch generation & QA  
-- `/eduprompt/history` â€” Saved prompts & outputs  
+- `/eduprompt/datasets` â€” Batch generation and QA  
+- `/eduprompt/history` â€” Saved prompts and outputs  
 - `/eduprompt/settings` â€” Model, safety, limits
 
 ### Minimal Data Model
@@ -46,7 +46,7 @@ Integrations: **Lesson Builder, Quiz Institute, FlashNote, Presentation Designer
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide highâ€‘quality educational prompt templates and a robust builder that make **repeatable, controllable** outputs.  
 - Support **curriculum alignment**, reading levels, multilingual outputs, and exports to other Ansiversa apps.  
@@ -59,19 +59,19 @@ Integrations: **Lesson Builder, Quiz Institute, FlashNote, Presentation Designer
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/eduprompt` â€” Gallery: search, subject filters, class/board, task types.  
 - `/eduprompt/builder` â€” Form with sections: Role, Task, Inputs, Context, Constraints, Format, Examples, Rubric, Tone/Level, Language.  
-- `/eduprompt/run/[id]` â€” Run console: prompt preview, model settings, output viewer, eval score, revise & reâ€‘run.  
-- `/eduprompt/datasets` â€” Batch generation UI with progress & dedupe.  
-- `/eduprompt/history` â€” Past prompts & outputs, tags, favorites.  
+- `/eduprompt/run/[id]` â€” Run console: prompt preview, model settings, output viewer, eval score, revise and reâ€‘run.  
+- `/eduprompt/datasets` â€” Batch generation UI with progress and dedupe.  
+- `/eduprompt/history` â€” Past prompts and outputs, tags, favorites.  
 - `/eduprompt/settings` â€” Defaults: model, max tokens, temperature, safety toggles, style presets.
 
 **API (SSR)**
 - Templates: `GET /eduprompt/api/template/list` Â· `GET /eduprompt/api/template?id=` Â· `POST /eduprompt/api/template/create` Â· `POST /eduprompt/api/template/update`  
-- Builder & Runs: `POST /eduprompt/api/prompt/preview` Â· `POST /eduprompt/api/run` Â· `GET /eduprompt/api/run?id=`  
+- Builder and Runs: `POST /eduprompt/api/prompt/preview` Â· `POST /eduprompt/api/run` Â· `GET /eduprompt/api/run?id=`  
 - Eval: `POST /eduprompt/api/eval` (selfâ€‘check rubric)  
 - Dataset: `POST /eduprompt/api/dataset/create` Â· `POST /eduprompt/api/dataset/run` Â· `GET /eduprompt/api/dataset/status`  
 - Quality: `POST /eduprompt/api/dedupe` Â· `POST /eduprompt/api/coverage`  
@@ -82,14 +82,14 @@ Web workers recommended for batch generation/dedupe to keep UI responsive.
 
 ---
 
-### 3) Prompt Model & Builder
+### 3) Prompt Model and Builder
 
 **Template Types (examples)**  
 - **Lesson Plan Generator** (topic â†’ objectives, materials, activities, assessments, differentiation).  
 - **Concept Explainer** (gradeâ€‘level rewrite, analogies, examples).  
 - **Quiz Writer** (MCQ, TF, numeric, short answer; difficulty mix; blueprint).  
 - **Flashcards Maker** (term â†’ definition, example; JSON schema for FlashNote).  
-- **Rubric Grader** (criteria & levels â†’ grade + feedback).  
+- **Rubric Grader** (criteria and levels â†’ grade + feedback).  
 - **Socratic Tutor** (stepâ€‘byâ€‘step questioning; reveal answer last).  
 - **Reading Comprehension Pack** (passage â†’ questions by Bloom level).  
 - **Worksheet Builder** (N variants, answer key).  
@@ -153,7 +153,7 @@ Indexes on `ownerId`, `templateId`, `createdAt`, `tags` for fast filtering.
 
 ---
 
-### 5) Quality, Coverage & Dedupe
+### 5) Quality, Coverage and Dedupe
 
 - **Coverage**: ensure generated set spans topics/difficulties or Bloom levels as requested.  
 - **Dedupe**: nâ€‘gram or embeddingâ€‘free similarity (v1 heuristic): lowerâ€‘cased text, remove numbers, Jaccard â‰¥ 0.85 â†’ consider duplicate.  
@@ -234,7 +234,7 @@ Res: `{ "url":"/exports/quiz_pack_2025_11.json" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|

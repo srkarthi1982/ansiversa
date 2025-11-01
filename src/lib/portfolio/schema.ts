@@ -93,7 +93,7 @@ export const createEmptyPortfolioData = (): PortfolioData => ({
   skills: [
     {
       id: crypto.randomUUID(),
-      name: 'Astro & SSR',
+      name: 'Astro and SSR',
       level: 'expert',
       description: 'Production-grade Astro builds with server integrations and edge optimizations.',
     },
@@ -107,7 +107,7 @@ export const createEmptyPortfolioData = (): PortfolioData => ({
   experience: [
     {
       id: crypto.randomUUID(),
-      role: 'Founder & Principal Engineer',
+      role: 'Founder and Principal Engineer',
       company: 'Ansiversa Labs',
       startDate: '2019',
       endDate: 'Present',
@@ -150,7 +150,7 @@ export const createEmptyPortfolioData = (): PortfolioData => ({
   contact: defaultContact(),
   highlights: [
     '10+ years building B2B/B2C products',
-    'Speaker at Dubai DevSummit & AstroConf',
+    'Speaker at Dubai DevSummit and AstroConf',
     'Mentor at Women Who Code Dubai',
   ],
   seo: {
@@ -162,7 +162,7 @@ export const createEmptyPortfolioData = (): PortfolioData => ({
 });
 
 export const createPortfolioDocument = (
-  overrides: Partial<PortfolioDocument & { status?: PortfolioStatus; plan?: PortfolioPlan }> = {},
+  overrides: Partial<PortfolioDocument and { status?: PortfolioStatus; plan?: PortfolioPlan }> = {},
 ): PortfolioDocument => {
   const now = new Date().toISOString();
   return {

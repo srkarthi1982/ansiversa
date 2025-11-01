@@ -81,7 +81,7 @@ export const workspaceModules = [
   },
   {
     id: "reader",
-    title: "Reader & capture",
+    title: "Reader and capture",
     description:
       "Split-pane PDF/HTML reader paired with notes, tags, and highlight timeline for every source.",
     highlights: [
@@ -94,7 +94,7 @@ export const workspaceModules = [
     id: "synthesis",
     title: "Synthesis studio",
     description:
-      "Topic maps, compare & contrast views, and claim matrices uncover alignment, gaps, and counter-arguments.",
+      "Topic maps, compare and contrast views, and claim matrices uncover alignment, gaps, and counter-arguments.",
     highlights: [
       "Evidence coverage meters visualize support, refute, and context links across claims.",
       "Bias checks flag publisher types, funding, and recency differences for balance.",
@@ -103,7 +103,7 @@ export const workspaceModules = [
   },
   {
     id: "writer",
-    title: "Writer & exports",
+    title: "Writer and exports",
     description:
       "Convert curated evidence into outlines, drafts, bibliographies, and exports with automatic citation formatting.",
     highlights: [
@@ -130,14 +130,14 @@ export const userStories = [
       "POST /research-assistant/api/source/add stores core metadata, fetches article text when possible, and fingerprints for duplicates.",
   },
   {
-    title: "Read & highlight",
+    title: "Read and highlight",
     description:
       "Review each source inside the split-pane reader while capturing highlights, quotes, and linked notes.",
     acceptanceCriteria:
       "Highlight actions create color-coded entries with optional tags, page numbers, and linked notes for context.",
   },
   {
-    title: "Summarize & extract",
+    title: "Summarize and extract",
     description:
       "Generate auto-summaries and key quote callouts with confidence scoring when the user requests it.",
     acceptanceCriteria:
@@ -362,7 +362,7 @@ export const planGating = [
   {
     plan: "Pro",
     limits: [
-      "Unlimited projects", "2k sources/project", "Long-form summarization", "DOCX/PDF exports", "Plagiarism check", "Outline & draft generator"
+      "Unlimited projects", "2k sources/project", "Long-form summarization", "DOCX/PDF exports", "Plagiarism check", "Outline and draft generator"
     ],
   },
 ];

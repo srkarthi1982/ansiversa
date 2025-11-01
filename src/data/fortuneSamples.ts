@@ -64,7 +64,7 @@ const fortuneIntents = (): FortuneIntentOption[] => [
   },
   {
     key: 'love',
-    label: 'Love & connections',
+    label: 'Love and connections',
     description: 'Check in on relationships, friendship, and belonging.',
     emoji: '💞',
   },
@@ -76,7 +76,7 @@ const fortuneIntents = (): FortuneIntentOption[] => [
   },
   {
     key: 'study',
-    label: 'Study & mastery',
+    label: 'Study and mastery',
     description: 'Momentum for exams, creative practice, or new skills.',
     emoji: '📚',
   },
@@ -88,7 +88,7 @@ const fortuneIntents = (): FortuneIntentOption[] => [
   },
   {
     key: 'money',
-    label: 'Money & resources',
+    label: 'Money and resources',
     description: 'Clarity on budgets, pricing, and sustainable flow.',
     emoji: '💎',
   },
@@ -312,7 +312,7 @@ const luckyFocuses = (): readonly string[] => [
   'Soundtrack: Lo-fi Flow State',
   'Mantra: “Playfully precise”',
   'Number: 3 · Pattern spotting',
-  'Ritual: Dawn stretch & check-in',
+  'Ritual: Dawn stretch and check-in',
 ];
 
 const journalPrompts = (): FortuneJournalPrompt[] => [
@@ -327,13 +327,13 @@ const fortunePlanMatrix = (): FortunePlanFeature[] => [
   { label: 'Daily fortune (seeded)', free: true, pro: true },
   { label: 'Yes/No oracle cooldown', free: '10s / 3 per min', pro: '3s / 10 per min' },
   { label: '3-card spread', free: true, pro: true },
-  { label: '5-card spread & custom domains', free: false, pro: true },
+  { label: '5-card spread and custom domains', free: false, pro: true },
   { label: 'Zodiac feed archive', free: 'Today only', pro: 'Full week + archive' },
   { label: 'Numerology-style profile', free: 'One-time', pro: 'Refresh anytime + notes' },
   { label: 'Deck themes', free: 'Classic', pro: 'All themes + custom palettes' },
-  { label: 'Save & export postcards', free: '5 PNG / month (watermark)', pro: 'Unlimited, no watermark' },
-  { label: 'Journal & streak tracker', free: '30 entries', pro: 'Unlimited + sentiment' },
-  { label: 'Reminders & notifications', free: false, pro: true },
+  { label: 'Save and export postcards', free: '5 PNG / month (watermark)', pro: 'Unlimited, no watermark' },
+  { label: 'Journal and streak tracker', free: '30 entries', pro: 'Unlimited + sentiment' },
+  { label: 'Reminders and notifications', free: false, pro: true },
 ];
 
 const fortuneSafetyProtocols = (): FortuneSafetyGuideline[] => [
@@ -366,19 +366,19 @@ const fortuneRoadmap = (): FortuneRoadmapMilestone[] => [
     timeframe: 'Now',
     title: 'Live in v1',
     status: 'available',
-    items: ['Daily Fortune hub', 'Yes/No oracle with cooldowns', 'Seeded spreads & journaling'],
+    items: ['Daily Fortune hub', 'Yes/No oracle with cooldowns', 'Seeded spreads and journaling'],
   },
   {
     timeframe: 'Next',
     title: 'Building for v1.5',
     status: 'in-progress',
-    items: ['Shareable PNG postcards', 'Deck marketplace beta', 'Reminder scheduler & timezone support'],
+    items: ['Shareable PNG postcards', 'Deck marketplace beta', 'Reminder scheduler and timezone support'],
   },
   {
     timeframe: 'Later',
     title: 'Vision for v2',
     status: 'planned',
-    items: ['Widget embed for landing page', 'Seasonal theme drops', 'Ambient soundscapes & rituals'],
+    items: ['Widget embed for landing page', 'Seasonal theme drops', 'Ambient soundscapes and rituals'],
   },
 ];
 
@@ -397,7 +397,7 @@ const zodiacProfiles = (): FortuneZodiacProfile[] => [
     element: 'fire',
     icon: '♈',
     daily: {
-      title: 'Spark & stride',
+      title: 'Spark and stride',
       text: 'Your initiative is loud today. Launch the prototype and let progress teach you.',
       highlights: ['Act on the idea that keeps nudging you', 'Keep feedback loops short'],
       mantra: 'I lead with curiosity.',

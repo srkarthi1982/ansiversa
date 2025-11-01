@@ -303,7 +303,7 @@ const sampleProjects: FeedbackProject[] = [
         },
         {
           id: 'ACT-92',
-          title: 'Ship dashboard quick-launch links & tutorial spotlight',
+          title: 'Ship dashboard quick-launch links and tutorial spotlight',
           impact: 4,
           effort: 2,
           priority: 'p1',
@@ -314,7 +314,7 @@ const sampleProjects: FeedbackProject[] = [
         },
         {
           id: 'ACT-94',
-          title: 'Add PO & tax fields to invoices + multi-contact reminder flow',
+          title: 'Add PO and tax fields to invoices + multi-contact reminder flow',
           impact: 4,
           effort: 3,
           priority: 'p1',

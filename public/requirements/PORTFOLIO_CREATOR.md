@@ -25,13 +25,13 @@
 3. **AI Improve:** Enhance text tone/professionalism.  
 4. **Switch Template:** Instantly preview other designs.  
 5. **Upload Media:** Upload profile/project images.  
-6. **Preview & Publish:** Live preview and publish to public URL.  
+6. **Preview and Publish:** Live preview and publish to public URL.  
 7. **Export PDF/HTML:** Offline copy download.  
 8. **Pro Features:** Unlimited portfolios, all templates, no watermark.
 
 ---
 
-## 3. Routing & APIs
+## 3. Routing and APIs
 
 - `/portfolio` â†’ Dashboard.  
 - `/portfolio/builder` â†’ Main editor (form + preview).  
@@ -98,7 +98,7 @@
 
 ---
 
-## 9. Security & SEO
+## 9. Security and SEO
 
 - Hide private data.  
 - Sanitize inputs.  

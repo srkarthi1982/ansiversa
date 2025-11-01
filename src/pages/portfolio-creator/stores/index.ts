@@ -15,7 +15,7 @@ import type {
   PortfolioTemplateKey,
 } from '../../../types/portfolio';
 
-type PortfolioListItem = PortfolioDocument & {
+type PortfolioListItem = PortfolioDocument and {
   views: number;
   leads: number;
   exports: number;

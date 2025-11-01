@@ -2,13 +2,13 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/job-analyzer`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Help users **analyze job descriptions (JDs)**, extract **skills/requirements**, and produce a **match report** against a resume/profile with **gap analysis**, **ATS-friendly keywords**, and **tailored suggestions** for Resume Builder, Cover Letter Writer, and Career Planner.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Upload/paste **Job Description** (text, PDF, URL) and normalize it.
@@ -29,7 +29,7 @@
 ## 2) User Stories (Acceptance Criteria)
 
 1. **Analyze JD**
-   - *As a user*, I paste/upload a JD and get extracted sections & skills.
+   - *As a user*, I paste/upload a JD and get extracted sections and skills.
    - **AC:** `/job-analyzer/api/analyze` returns normalized JD JSON and categorized skills.
 
 2. **Compare to Resume**
@@ -38,7 +38,7 @@
 
 3. **Keyword Suggestions**
    - *As a user*, I get a prioritized keyword list (ATS-friendly) with usage suggestions.
-   - **AC:** `/job-analyzer/api/keywords` returns required & optional keywords with frequency targets and context phrases.
+   - **AC:** `/job-analyzer/api/keywords` returns required and optional keywords with frequency targets and context phrases.
 
 4. **Tailored Resume Bullets**
    - *As a user*, I receive 3â€“6 suggested resume bullets aligned to the JD.
@@ -48,7 +48,7 @@
    - *As a user*, I see recommended resources for the top gaps.
    - **AC:** `/job-analyzer/api/gap-plan` returns modules/resources and estimated study time, ready to push to Career Planner.
 
-6. **Export & Share**
+6. **Export and Share**
    - *As a user*, I export a Match Report (PDF/MD/JSON) and optionally publish a readâ€‘only link.
    - **AC:** `/job-analyzer/api/export` and `/job-analyzer/api/publish` produce a permalink (watermark on Free).
 
@@ -58,18 +58,18 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/job-analyzer` â€” Landing + quick analyze form (paste JD, upload PDF, or URL).
 - `/job-analyzer/upload` â€” Full workflow (JD â†’ Resume/Profile â†’ Results).
 - `/job-analyzer/result/[id].astro` â€” Detailed match report view (saved).
-- `/job-analyzer/templates` â€” JD templates & role presets.
+- `/job-analyzer/templates` â€” JD templates and role presets.
 - `/job-analyzer/history` â€” Past analyses (Pro).
 
 **API (SSR):**
 - `POST /job-analyzer/api/analyze` (JD ingest + parse/extract)
 - `POST /job-analyzer/api/compare-resume` (JD vs Resume/Profile; compute score)
-- `POST /job-analyzer/api/keywords` (ATS keywords & phrasing suggestions)
+- `POST /job-analyzer/api/keywords` (ATS keywords and phrasing suggestions)
 - `POST /job-analyzer/api/resume-bullets` (tailored bullet generator)
 - `POST /job-analyzer/api/gap-plan` (learning plan for gaps)
 - `POST /job-analyzer/api/save` (persist report)
@@ -107,7 +107,7 @@
 
 ---
 
-## 5) Normalization & Extraction (NLP Pipeline)
+## 5) Normalization and Extraction (NLP Pipeline)
 
 1. **Ingestors:**
    - Text area, PDF upload (text extraction), URL fetch (readability extraction).
@@ -133,7 +133,7 @@
 - **Skills Coverage (60%)**: required (weighted 2Ã—), nice-to-have (1Ã—); partial matches allowed via synonyms.
 - **Seniority (15%)**: compare JD level vs resume experience; penalty for large gaps.
 - **Domain Fit (10%)**: match of industry keywords and project domains.
-- **Responsibilities (10%)**: verbs & scope overlap (own/lead/manage/architect).
+- **Responsibilities (10%)**: verbs and scope overlap (own/lead/manage/architect).
 - **Location/Legal (5%)**: remote eligibility, visa, clearance; hard-fail flag if impossible.
 
 Return full **breakdown** + color-coded gauges. Provide toggles to change weights (Pro).
@@ -224,7 +224,7 @@ Req: `{ "id":"<uuid>" }` â†’ Res: `{ "url": "/job-analyzer/result/<slug>" }
 
 ---
 
-## 12) Plans & Rate Limits
+## 12) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -238,7 +238,7 @@ Rate-limit keys: `userId` + day for analyze/compare; `userId` + month for export
 
 ---
 
-## 13) Security & Privacy
+## 13) Security and Privacy
 
 - All uploads private by default; share is optâ€‘in.
 - Strip PII from public share view (emails, phone, address) by default.
@@ -247,7 +247,7 @@ Rate-limit keys: `userId` + day for analyze/compare; `userId` + month for export
 
 ---
 
-## 14) Accessibility & UX
+## 14) Accessibility and UX
 
 - Clear focus states; keyboard shortcuts (Analyze = Cmd/Ctrl+Enter; Export = Cmd/Ctrl+E).
 - Colorâ€‘blind safe gauges; tables with proper headers; RTL support for Arabic.

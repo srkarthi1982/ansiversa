@@ -2,13 +2,13 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/memory`  
-**Category:** Learning & Knowledge  
+**Category:** Learning and Knowledge  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Help users **improve working and longâ€‘term memory** with scienceâ€‘based drills (Nâ€‘Back, chunking, spaced repetition), daily plans, streaks, and rich stats. Integrates with **FlashNote** (flashcards) and **Quiz Institute**.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Offer **multiple exercise types**:  
@@ -43,25 +43,25 @@
 
 3. **Digit/Letter Span**
    - *As a user*, the span length adapts; reverse mode available.  
-   - **AC:** `/memory/api/span/start` & `/span/submit` track span max and running average.
+   - **AC:** `/memory/api/span/start` and `/span/submit` track span max and running average.
 
-4. **Wordâ€‘Pair & Grid Recall**
+4. **Wordâ€‘Pair and Grid Recall**
    - *As a user*, I study briefly then recall; scoring penalizes order/position mistakes.  
-   - **AC:** `/memory/api/pairs/start` & `/pairs/submit`; `/grid/start` & `/grid/submit` return accuracy maps.
+   - **AC:** `/memory/api/pairs/start` and `/pairs/submit`; `/grid/start` and `/grid/submit` return accuracy maps.
 
 5. **Spaced Repetition (SRS)**
    - *As a user*, I review cards from my deck using 1â€“5 grading.  
    - **AC:** `/memory/api/srs/next` serves due cards; `/srs/grade` schedules using **SMâ€‘2â€‘like** algorithm.
 
-6. **Decks & Imports**
+6. **Decks and Imports**
    - *As a user*, I create decks and import from CSV or **FlashNote**.  
-   - **AC:** `/memory/api/deck/create` & `/deck/import` create/populate decks; report duplicate merges.
+   - **AC:** `/memory/api/deck/create` and `/deck/import` create/populate decks; report duplicate merges.
 
-7. **Reminders & Streaks**
+7. **Reminders and Streaks**
    - *As a user*, I set a daily reminder time; streak shows consecutive days trained.  
    - **AC:** `/memory/api/reminders` stores schedule; `/memory/api/streak` computes counts.
 
-8. **Stats & Exports**
+8. **Stats and Exports**
    - *As a user*, I view charts: accuracy, response time, nâ€‘back level trend, SRS due forecast.  
    - **AC:** `/memory/api/stats` aggregates; `/memory/api/export` returns CSV/MD/PDF.
 
@@ -71,7 +71,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/memory` â€” Dashboard (today plan, streak, quick start)  
 - `/memory/training` â€” Guided daily session (queue of exercises)  
@@ -147,7 +147,7 @@
 
 ---
 
-## 5) Algorithms & Adaptation
+## 5) Algorithms and Adaptation
 
 ### Nâ€‘Back Leveling
 - Start at **N=1** (Free) or last best (Pro).  
@@ -191,7 +191,7 @@
 
 ### `/memory/decks`
 - Table/cards: title, due today, size, last review; actions: import/export, edit, delete.  
-- Import CSV: `front,back,tags` with preview & duplicate detection.
+- Import CSV: `front,back,tags` with preview and duplicate detection.
 
 ### `/memory/stats`
 - Charts: accuracy %, RT ms, best N over time; SRS due forecast; streak calendar.  
@@ -249,7 +249,7 @@ Res: `{ "url": "/exports/Memory_Stats_2025-10-27.pdf" }`
 
 ---
 
-## 9) Plans & Limits
+## 9) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -263,7 +263,7 @@ Rate limits: `userId`+day for sessions/SRS; `userId`+month for exports.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - No storage of raw audio; only event logs.  
 - Sanitize all card content; escape Markdown/HTML.  
@@ -272,7 +272,7 @@ Rate limits: `userId`+day for sessions/SRS; `userId`+month for exports.
 
 ---
 
-## 11) Accessibility & UX
+## 11) Accessibility and UX
 
 - Keyboardâ€‘first controls; highâ€‘contrast themes; adjustable font sizes.  
 - Motionâ€‘reduced animations; audio cues with captions.  

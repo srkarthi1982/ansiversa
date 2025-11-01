@@ -7,7 +7,7 @@
 
 ---
 
-## 1) Objectives & Non‑Goals
+## 1) Objectives and Non‑Goals
 
 ### 1.1 Objectives
 - Users can **create a resume** quickly with guided forms and live preview.
@@ -46,7 +46,7 @@
    - *As a user*, I can export the current preview to PDF/DOCX.
    - **AC:** Exported file includes correct typography, section order, and page breaks; filename pattern `Resume_<name>_<template>_<date>.pdf`.
 
-6. **Save & Autosave**
+6. **Save and Autosave**
    - *As a user*, my data autosaves every 3s after change (debounced), and on navigation.
    - **AC:** Resume document version increments; lastSaved timestamp visible.
 
@@ -69,7 +69,7 @@
 
 ---
 
-## 3) Information Architecture & Routing
+## 3) Information Architecture and Routing
 
 - `/resume-builder` — App landing (list user resumes, “New Resume” button)
 - `/resume-builder/builder` — Builder (form + live preview); expects `id` query or creates one
@@ -213,7 +213,7 @@ export default defineDb({
 
 ## 5) Pages / UI Spec
 
-### 5.1 `/resume-builder` (List & CTA)
+### 5.1 `/resume-builder` (List and CTA)
 - Header: “Resume Builder” + “Create Resume” button.
 - Grid of existing resumes (title, template, updatedAt) with actions: **Open**, **Duplicate**, **Delete**.
 - Empty state illustration.
@@ -290,7 +290,7 @@ export default defineDb({
 
 ---
 
-## 9) Export & Rendering
+## 9) Export and Rendering
 
 - **PDF**: Server render (SSR) using headless Chromium or `@react-pdf/renderer` alternative; ensure consistent fonts.
 - **DOCX**: Use `docx` npm package; map sections to docx paragraphs, headings, lists.
@@ -299,7 +299,7 @@ export default defineDb({
 
 ---
 
-## 10) Rate Limits & Plans
+## 10) Rate Limits and Plans
 
 - **Free**: 1 resume, 1 template, 3 AI improves/day, PDF with watermark.
 - **Pro**: unlimited resumes, all templates, unlimited AI improves (fair-use), no watermark.
@@ -307,7 +307,7 @@ export default defineDb({
 
 ---
 
-## 11) Security & Privacy
+## 11) Security and Privacy
 
 - Store only necessary PII (name, email, phone) inside user-owned resume docs.
 - Allow **Delete Account** → cascade delete resumes/exports.
@@ -322,14 +322,14 @@ export default defineDb({
 
 ---
 
-## 13) i18n & RTL (Phase 2)
+## 13) i18n and RTL (Phase 2)
 
 - Localize section headings and date formats.
 - RTL CSS for Arabic templates (mirror layout; right-aligned headings).
 
 ---
 
-## 14) Accessibility & SEO
+## 14) Accessibility and SEO
 
 - WCAG: labels, aria-expanded for accordions, keyboard focus trap in dialogs.
 - Landings have canonical/meta descriptions; builder is app-like (noindex optional).

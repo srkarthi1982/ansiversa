@@ -139,7 +139,7 @@ type ScoreSummary = {
   authenticity: string;
 };
 
-type HistoryTableRecord = HistoryEntry & {
+type HistoryTableRecord = HistoryEntry and {
   profileId: string;
   profileTitle: string;
   persona: 'first' | 'third';
@@ -1090,7 +1090,7 @@ class LinkedInBioStore extends BaseStore {
       title: 'Product Operations Leader · Remote / Visa-friendly',
       user: {
         name: 'Priya',
-        headline: 'Product & revenue operations leader',
+        headline: 'Product and revenue operations leader',
         location: 'Remote · Global',
       },
       targets: {

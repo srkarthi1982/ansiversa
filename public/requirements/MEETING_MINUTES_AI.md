@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/minutes`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR routes, Astro DB / Supabase, optional Web Speech API (client)  
 **Goal:** Help users **capture, summarize, and share meeting minutes** with AI â€” from audio recordings or typed notes â€” including **action items**, **decisions**, **attendees**, and **followâ€‘ups**.
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Ingest **audio** (MP3/WAV/M4A) and/or **live notes** to produce structured minutes.  
@@ -32,7 +32,7 @@
 1. **Create Minutes** â†’ draft created; open builder.  
 2. **Transcribe Audio** â†’ returns text + timestamps + (optional) speakers.  
 3. **AI Summarize** â†’ returns structured sections; extracts assignees/due dates.  
-4. **Edit & Organize** â†’ autosave; reassign tasks; reorder items.  
+4. **Edit and Organize** â†’ autosave; reassign tasks; reorder items.  
 5. **Templates** â†’ apply without wiping current content.  
 6. **Export** â†’ PDF/DOCX/MD + CSV (action items).  
 7. **Share** â†’ public readâ€‘only link `/minutes/view/<slug>`.  
@@ -41,7 +41,7 @@
 
 ---
 
-## 3) Routes & APIs
+## 3) Routes and APIs
 
 - `/minutes` (dashboard)  
 - `/minutes/builder` (editor + preview + audio upload)  
@@ -139,7 +139,7 @@
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -151,7 +151,7 @@
 
 ---
 
-## 11) Security & Privacy
+## 11) Security and Privacy
 
 - Private by default; publish explicitly.  
 - Sanitize inputs; redact PII in public views if needed.  
@@ -159,7 +159,7 @@
 
 ---
 
-## 12) Analytics & Accessibility
+## 12) Analytics and Accessibility
 
 - Events: `minutes.create/transcribe/summarize/save/export/publish/delete`.  
 - Keyboard navigation; aria labels; focus rings; `noindex` drafts; OG tags for public.
@@ -195,7 +195,7 @@ src/components/minutes/Preview/*.astro
 - Calendar sync and email/Slack reminders.  
 - Live streaming transcription for short meetings.  
 - Voice â†’ name mapping.  
-- Section reordering & custom fields.
+- Section reordering and custom fields.
 
 ---
 

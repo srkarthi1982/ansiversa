@@ -39,7 +39,7 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 |---|---|---|
 | Projects | 2 | Unlimited |
 | Export | Fountain + PDF (watermark) | Fountain/FDX/PDF/DOCX/CSV (no watermark) |
-| Revision colors & Aâ€‘pages | Basic | Full set + watermark + locks |
+| Revision colors and Aâ€‘pages | Basic | Full set + watermark + locks |
 | Reports | Scenes/Characters | + Locations/Props/Shots CSV |
 | Beat sync | View only | Twoâ€‘way sync with Story Crafter |
 | AI passes/day | 20 | 300 |
@@ -51,7 +51,7 @@ Integrations: **Story Crafter** (beatsâ†”scenes), **Presentation Designer**
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Deliver **correct, industryâ€‘standard** formatting for multiple script types with **live preview** and **robust exports**.  
 - Provide **smart validators** and **autoâ€‘reformat** to clean messy text.  
@@ -64,7 +64,7 @@ Integrations: **Story Crafter** (beatsâ†”scenes), **Presentation Designer**
 
 ---
 
-### 2) Formats & Presets
+### 2) Formats and Presets
 
 **Screenplay (Feature/Short)**  
 - US Letter/A4, 12pt Courier Prime, 1.0â€“1.5" margins per element conventions.  
@@ -90,7 +90,7 @@ Integrations: **Story Crafter** (beatsâ†”scenes), **Presentation Designer**
 
 ---
 
-### 3) Information Architecture & Routes
+### 3) Information Architecture and Routes
 
 **Pages**
 - `/script` â€” Library with filters (format, status, tags).  
@@ -103,9 +103,9 @@ Integrations: **Story Crafter** (beatsâ†”scenes), **Presentation Designer**
 **API (SSR)**
 - Projects: `POST /script/api/project/create` Â· `GET /script/api/project?id=` Â· `POST /script/api/project/update` Â· `POST /script/api/project/archive`  
 - Import/Export: `POST /script/api/import` (fountain|fdx|txt|md) Â· `POST /script/api/export` (fountain|fdx|pdf|docx|csv) Â· `GET /script/api/export/status?id=`  
-- Parse & Analyze: `POST /script/api/parse` (detect elements) Â· `POST /script/api/analyze` (lint + timing + reports)  
-- Reformat & Passes: `POST /script/api/reformat` (auto clean) Â· `POST /script/api/pass/dialogue` `.../action_tighten` `.../cut_to_time` `.../profanity_clean`  
-- Beats & Sync: `POST /script/api/beat/link` Â· `POST /script/api/beat/sync`  
+- Parse and Analyze: `POST /script/api/parse` (detect elements) Â· `POST /script/api/analyze` (lint + timing + reports)  
+- Reformat and Passes: `POST /script/api/reformat` (auto clean) Â· `POST /script/api/pass/dialogue` `.../action_tighten` `.../cut_to_time` `.../profanity_clean`  
+- Beats and Sync: `POST /script/api/beat/link` Â· `POST /script/api/beat/sync`  
 - Reports: `GET /script/api/report?type=scenes|characters|locations|props|shots`  
 - Settings: `POST /script/api/settings/save`  
 - Revisions: `POST /script/api/revision/apply` (color, page locks, Aâ€‘pages)  
@@ -115,7 +115,7 @@ Optional WebSocket `/script/ws` for pagination/timing updates and long export no
 
 ---
 
-### 4) Editing Model & Shortcuts
+### 4) Editing Model and Shortcuts
 
 **Source syntax (Fountainâ€‘like)**  
 - `EXT. BEACH â€“ SUNSET` â†’ Slugline  
@@ -131,7 +131,7 @@ Optional WebSocket `/script/ws` for pagination/timing updates and long export no
 
 ---
 
-### 5) Timing & Reports
+### 5) Timing and Reports
 
 - **Timing**: page count Ã— 1 min baseline; dialogue duration = syllables / WPS (wordsâ€‘perâ€‘second) with actor pace presets (slow/normal/fast).  
 - **Reports**:  
@@ -193,7 +193,7 @@ Indexes: `ScriptElement.projectId+sceneId+index`, `Scene.projectId+index`, `Char
 
 ---
 
-### 7) Validators & Lint Rules
+### 7) Validators and Lint Rules
 
 - Slugline must start with `INT.`, `EXT.`, or `INT/EXT.`; location present; time of day present.  
 - Character cues: ALL CAPS; `(V.O.)` / `(O.S.)` allowed; `CONTâ€™D` auto when same speaker continues over page.  
@@ -220,7 +220,7 @@ All passes produce a **diff** preview with accept/reject chunks.
 
 ### 9) UX / UI
 
-- Dualâ€‘pane editor with sticky ruler; live pagination; character & scene pickers.  
+- Dualâ€‘pane editor with sticky ruler; live pagination; character and scene pickers.  
 - Side panel: element palette, lint list, timing meter, revision color selector.  
 - Reports table with CSV export (Pro).  
 - Teleprompter mode (YouTube) with adjustable WPM and highâ€‘contrast theme.  
@@ -237,7 +237,7 @@ All passes produce a **diff** preview with accept/reject chunks.
 ```
 Res: `{ "ok":true, "scenes": 28 }`
 
-**Analyze & lint**  
+**Analyze and lint**  
 `POST /script/api/analyze`  
 ```json
 { "projectId":"sp_1", "ruleset":"screenplay_default" }
@@ -277,7 +277,7 @@ Res: `{ "jobId":"e_91" }`
 
 ---
 
-### 12) Plans & Limits
+### 12) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

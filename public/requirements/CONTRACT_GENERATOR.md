@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/contract`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR routes, Astro DB or Supabase  
 **Goal:** Help users **generate, customize, and export** legally sound *contract documents* (e.g., Freelance Agreement, NDA, Service Agreement, Consulting, Employment Offer) with **AI assistance**, **clause libraries**, and **eâ€‘sign ready** exports.
 
@@ -10,13 +10,13 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Create contracts from **templates** or **questionnaire wizard**.  
 - **AI clause assistant** to draft/improve/translate clauses in plain language.  
 - **Clause library** (IP, Confidentiality, Payment, Termination, Dispute, Jurisdiction, Nonâ€‘compete, Warranty, Liability).  
-- **Variables & placeholders** (party names, dates, fees, scope) autoâ€‘filled.  
+- **Variables and placeholders** (party names, dates, fees, scope) autoâ€‘filled.  
 - **Export** to **PDF/DOCX/Markdown**; **shareable readâ€‘only link**.  
 - **Versioning** and ability to **duplicate** contracts.
 
@@ -27,12 +27,12 @@
 
 ---
 
-## 2) User Stories & Acceptance Criteria
+## 2) User Stories and Acceptance Criteria
 
 1. **Start from Template or Wizard**
    - Create draft with default clauses â†’ open `/contract/builder?id=<uuid>`.
 
-2. **Q&A Wizard**
+2. **Q and A Wizard**
    - Guided inputs (parties, scope, fees, dates, jurisdiction).  
    - Generate variables and toggle clause options.
 
@@ -50,7 +50,7 @@
 6. **Versioning**
    - Save checkpoints; restore previous version.
 
-7. **Export & Share**
+7. **Export and Share**
    - Export PDF/DOCX/MD; optional public readâ€‘only link.
 
 8. **Plan Gating**
@@ -59,7 +59,7 @@
 
 ---
 
-## 3) Routes & APIs
+## 3) Routes and APIs
 
 - `/contract` â€” dashboard  
 - `/contract/wizard` â€” guided intake  
@@ -152,7 +152,7 @@
 
 ---
 
-## 7) Validation & Rules
+## 7) Validation and Rules
 
 - Required: ClientName, ProviderName, StartDate, Jurisdiction.  
 - Dates ISO; EndDate >= StartDate.  
@@ -170,7 +170,7 @@
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|

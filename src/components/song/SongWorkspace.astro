@@ -83,7 +83,7 @@ import SectionHeading from "../SectionHeading.astro";
                 :class="song.view.activeTab === 'structure' ? 'bg-violet-500/40 text-white shadow-lg' : 'bg-white/5 hover:bg-white/10'"
                 @click="song.setActiveTab('structure')"
               >
-                Structure & tempo
+                Structure and tempo
               </button>
               <button
                 type="button"
@@ -149,7 +149,7 @@ import SectionHeading from "../SectionHeading.astro";
               <div x-show="song.view.activeTab === 'analysis'" x-transition>
                 <div class="grid gap-4 sm:grid-cols-2">
                   <div class="rounded-3xl border border-white/10 bg-slate-950/60 p-4">
-                    <h3 class="text-sm font-semibold text-white">Rhyme & meter</h3>
+                    <h3 class="text-sm font-semibold text-white">Rhyme and meter</h3>
                     <dl class="mt-3 space-y-2 text-sm text-white/70">
                       <div class="flex items-center justify-between">
                         <dt>Rhyme tightness</dt>
@@ -174,7 +174,7 @@ import SectionHeading from "../SectionHeading.astro";
                     </Button>
                   </div>
                   <div class="rounded-3xl border border-white/10 bg-slate-950/60 p-4">
-                    <h3 class="text-sm font-semibold text-white">Hook lift & vocabulary</h3>
+                    <h3 class="text-sm font-semibold text-white">Hook lift and vocabulary</h3>
                     <p class="mt-2 text-sm text-white/70">Hook lift: <span class="font-semibold text-white" x-text="project?.analysis.hookLift"></span></p>
                     <p class="text-sm text-white/70">Vocabulary heat: <span class="font-semibold text-white" x-text="project?.analysis.vocabularyHeat"></span></p>
                     <div class="mt-3 flex flex-wrap gap-2 text-[11px] text-white/70">

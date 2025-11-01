@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/fact-generator`  
-**Category:** Learning & Knowledge  
+**Category:** Learning and Knowledge  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Deliver short, trustworthy **facts** with citations and optional kidâ€‘friendly language. Offer **random facts**, **topic facts**, **daily fact**, and **quizify/explain more** actions. Support multiâ€‘language, reading levels, and export/sharing.
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Generate and serve **atomic fact cards**: 1â€“3 sentences + **citations** (1â€“3 refs) + tags.  
@@ -37,19 +37,19 @@
    - *As a user*, I choose a topic (e.g., Space, Biology, History, Tech, Geography).  
    - **AC:** `/fact-generator/api/topic` takes `topic` + optional `subtopic` and returns a fact relevant to that area with citations.
 
-3. **Reading Level & Language**
+3. **Reading Level and Language**
    - *As a user*, I set level=Kids and language=Tamil.  
    - **AC:** output is simplified and localized; citation anchors stay in English or localized if available.
 
-4. **Explain More & Quizify**
+4. **Explain More and Quizify**
    - *As a user*, I click **Explain More** or **Quizify**.  
    - **AC:** `/fact-generator/api/explain` returns a short explainer; `/fact-generator/api/quiz` returns 3â€“5 MCQs/TF based on the fact.
 
-5. **Save & Packs**
+5. **Save and Packs**
    - *As a user*, I save facts to **Collections** (e.g., â€œSpace wow!â€).  
    - **AC:** `/fact-generator/api/save` stores the fact and associates it with a user collection; `/fact-generator/api/packs/list` lists builtâ€‘in packs.
 
-6. **Daily Fact & Streaks**
+6. **Daily Fact and Streaks**
    - *As a user*, I subscribe to a **Daily Fact**.  
    - **AC:** `/fact-generator/api/daily/today` returns the dayâ€™s fact; streak count increments on view.
 
@@ -59,12 +59,12 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/fact-generator` â€” Hub: Random, Topic chooser, Daily card, recent saves.  
 - `/fact-generator/topic/[topic]` â€” Topic stream (filters: subtopic, difficulty, level, language).  
 - `/fact-generator/daily` â€” Todayâ€™s fact + streak; archive (Pro).  
-- `/fact-generator/packs` â€” Builtâ€‘in packs & user collections.  
+- `/fact-generator/packs` â€” Builtâ€‘in packs and user collections.  
 - `/fact-generator/collection/[id]` â€” A saved collection.  
 - `/fact-generator/settings` â€” Preferences: language, level, kidâ€‘safe, export defaults.
 
@@ -149,7 +149,7 @@
 
 ---
 
-## 6) Trust & Moderation
+## 6) Trust and Moderation
 
 - **Source tiers**:  
   - **A (Primary/Official):** gov/edu standards, official agencies (e.g., NASA, WHO, NOAA).  
@@ -221,7 +221,7 @@ Res: `{ "builtin":[...], "user":[...] }`
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -231,13 +231,13 @@ Res: `{ "builtin":[...], "user":[...] }`
 | Collections | 3 | Unlimited |
 | Packs | Builtâ€‘in only | Import + create |
 | Exports | PNG (watermark) | PNG/MD/JSON (no watermark) |
-| Archive | Today only | Full archive & search |
+| Archive | Today only | Full archive and search |
 
 Rate limits: `userId`+day for random/topic; `userId`+day for exports; `userId`+hour for explain/quiz.
 
 ---
 
-## 11) Accessibility & UX
+## 11) Accessibility and UX
 
 - Large fonts, high contrast, screenâ€‘reader labels; copy buttons have ariaâ€‘labels.  
 - RTL support for Arabic; localized number/date formatting.  

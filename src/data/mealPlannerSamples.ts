@@ -69,7 +69,7 @@ const recipes: MealPlannerRecipe[] = [
   },
   {
     id: 'citrus-chicken-quinoa',
-    title: 'Citrus Herb Chicken & Quinoa',
+    title: 'Citrus Herb Chicken and Quinoa',
     description:
       'Citrus-marinated chicken thighs with tri-color quinoa and roasted broccoli.',
     calories: 550,
@@ -129,7 +129,7 @@ const recipes: MealPlannerRecipe[] = [
   },
   {
     id: 'keto-spinach-omelette',
-    title: 'Spinach & Feta Keto Omelette',
+    title: 'Spinach and Feta Keto Omelette',
     description:
       'Three-egg omelette with spinach, feta, and smoked salmon for keto mornings.',
     calories: 460,
@@ -263,7 +263,7 @@ const groceryLists: MealPlannerGroceryList[] = [
       },
       {
         id: 'pantry',
-        name: 'Pantry & Grains',
+        name: 'Pantry and Grains',
         icon: 'fas fa-wheat-awn',
         items: [
           { id: 'steel-cut-oats', name: 'Steel-cut oats', quantity: 1.5, unit: 'kg', priceEstimate: 5.4 },
@@ -274,7 +274,7 @@ const groceryLists: MealPlannerGroceryList[] = [
       },
       {
         id: 'protein',
-        name: 'Protein & Dairy',
+        name: 'Protein and Dairy',
         icon: 'fas fa-drumstick-bite',
         items: [
           { id: 'salmon-fillets', name: 'Salmon fillets', quantity: 6, unit: 'pieces', priceEstimate: 24.0 },
@@ -313,7 +313,7 @@ const groceryLists: MealPlannerGroceryList[] = [
       },
       {
         id: 'pantry-keto',
-        name: 'Pantry & Snacks',
+        name: 'Pantry and Snacks',
         icon: 'fas fa-jar',
         items: [
           { id: 'olive-oil', name: 'Extra virgin olive oil', quantity: 1, unit: 'liter', priceEstimate: 12.5, pantryItemId: 'olive-oil-tin' },
@@ -434,10 +434,10 @@ const prepSessions: MealPlannerPrepSession[] = [
     day: 'Sunday',
     focus: 'Batch cook grains, proteins, and prep vegetables to cover 3 dinners.',
     tasks: [
-      { id: 'task-roast-veggies', label: 'Roast sheet pans of broccoli & carrots', durationMinutes: 30 },
+      { id: 'task-roast-veggies', label: 'Roast sheet pans of broccoli and carrots', durationMinutes: 30 },
       { id: 'task-marinate-protein', label: 'Marinate chicken and steak for 2 nights', durationMinutes: 20 },
       { id: 'task-portion-breakfast', label: 'Portion chia puddings and smoothie packs', durationMinutes: 15 },
-      { id: 'task-label-storage', label: 'Label containers with day & meal', durationMinutes: 10 },
+      { id: 'task-label-storage', label: 'Label containers with day and meal', durationMinutes: 10 },
     ],
   },
   {
@@ -446,7 +446,7 @@ const prepSessions: MealPlannerPrepSession[] = [
     day: 'Wednesday',
     focus: 'Top-up greens, assemble snack boxes, and refresh leftovers.',
     tasks: [
-      { id: 'task-check-pantry', label: 'Check pantry inventory & mark lows', durationMinutes: 8 },
+      { id: 'task-check-pantry', label: 'Check pantry inventory and mark lows', durationMinutes: 8 },
       { id: 'task-assemble-snacks', label: 'Assemble smoothie freezer bags', durationMinutes: 12 },
       { id: 'task-simmer-broth', label: 'Simmer quick vegetable broth for sipping', durationMinutes: 20 },
     ],

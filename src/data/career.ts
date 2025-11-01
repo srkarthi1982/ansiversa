@@ -236,7 +236,7 @@ export const careerPlanDetail: CareerPlanDetail = {
       },
       {
         week: 3,
-        focus: 'Testing & automation',
+        focus: 'Testing and automation',
         tasks: ['Add testing pipeline', 'Set up GitHub Actions'],
         milestone: '80% coverage with integration tests',
       },
