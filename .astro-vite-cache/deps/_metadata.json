@@ -1,31 +1,43 @@
 {
-  "hash": "a67d8d14",
-  "configHash": "f5d4a031",
+  "hash": "cfcdbbc5",
+  "configHash": "5dfc7b10",
   "lockfileHash": "95a23845",
-  "browserHash": "da83d293",
+  "browserHash": "55cfd4e4",
   "optimized": {
     "astro > cssesc": {
       "src": "../../node_modules/cssesc/cssesc.js",
       "file": "astro___cssesc.js",
-      "fileHash": "3c4fc8da",
+      "fileHash": "e93ac76b",
       "needsInterop": true
     },
     "astro > aria-query": {
       "src": "../../node_modules/aria-query/lib/index.js",
       "file": "astro___aria-query.js",
-      "fileHash": "93b71f7a",
+      "fileHash": "b2cc87ba",
       "needsInterop": true
     },
     "astro > axobject-query": {
       "src": "../../node_modules/axobject-query/lib/index.js",
       "file": "astro___axobject-query.js",
-      "fileHash": "15393e20",
+      "fileHash": "065c106d",
       "needsInterop": true
+    },
+    "alpinejs": {
+      "src": "../../node_modules/alpinejs/dist/module.esm.js",
+      "file": "alpinejs.js",
+      "fileHash": "44c03a38",
+      "needsInterop": false
+    },
+    "astro:schema": {
+      "src": "../../node_modules/astro/dist/zod.js",
+      "file": "astro_schema.js",
+      "fileHash": "7f55860e",
+      "needsInterop": false
     }
   },
   "chunks": {
-    "chunk-BUSYA2B4": {
-      "file": "chunk-BUSYA2B4.js"
+    "chunk-HKJ2B2AA": {
+      "file": "chunk-HKJ2B2AA.js"
     }
   }
 }

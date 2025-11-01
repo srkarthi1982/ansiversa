@@ -1,6 +1,7 @@
 # build output
 dist/
-
+public/questions
+public/questions-sql
 # generated types
 .astro/
 .vercel/
