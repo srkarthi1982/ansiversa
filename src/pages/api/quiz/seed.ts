@@ -311,6 +311,62 @@ const insertQuestions = async (
 
 export const prerender = false;
 
+export const GET: APIRoute = async ({ request }) => {
+  const url = new URL(request.url);
+  const datasetParam = url.searchParams.get('dataset');
+
+  if (!datasetParam) {
+    return new Response(
+      JSON.stringify({ error: 'Dataset parameter is required' }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
+
+  const normalized = datasetParam.trim().toLowerCase();
+  if (!isDatasetKey(normalized)) {
+    return new Response(
+      JSON.stringify({ error: `Unknown dataset "${datasetParam}"` }),
+      {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
+
+  try {
+    const data = await loadDataset(normalized);
+    const definition = questionDatasetDefinitions[normalized];
+    const totalRecords = data.length;
+    const definedChunkSize = Number(definition?.defaultChunkSize);
+    const defaultChunkSize =
+      Number.isFinite(definedChunkSize) && definedChunkSize > 0 ? definedChunkSize : CHUNK_SIZE;
+
+    return new Response(
+      JSON.stringify({
+        dataset: normalized,
+        totalRecords,
+        defaultChunkSize,
+      }),
+      {
+        status: 200,
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
+      },
+    );
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Failed to load dataset summary';
+    return new Response(
+      JSON.stringify({ error: message }),
+      {
+        status: 500,
+        headers: { 'Content-Type': 'application/json' },
+      },
+    );
+  }
+};
+
 export const POST: APIRoute = async ({ request }) => {
   if (request.method !== 'POST') {
     return new Response(

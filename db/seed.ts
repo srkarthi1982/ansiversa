@@ -1,5 +1,4 @@
 import { seedAuth } from './auth/seed';
-import { seedQuiz } from './quiz/seed';
 import { seedResume } from './resume/seed';
 import { seedFlashnote } from './flashnote/seed';
 import { seedProposal } from './proposal/seed';
@@ -11,8 +10,6 @@ import { seedBilling } from './billing/seed';
 export default async function seed() {
   console.log('Seeding auth...');
   await seedAuth();
-  console.log('Seeding quiz...');
-  await seedQuiz();
   console.log('Seeding resume...');
   await seedResume();
   console.log('Seeding flashnote...');
