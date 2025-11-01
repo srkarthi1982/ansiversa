@@ -16,7 +16,7 @@ This document includes a **short summary** for Codex onboarding and the **full t
 - **Pronunciation**: TTS playback + user recording with simple scoring (pronunciation similarity heuristic v1).  
 - **Script practice**: stroke order images (v2), â€œtype the transliteration/answerâ€, keyboard hints.  
 - **Autoâ€‘generate** cards from pasted text (detect language, extract lemmas, frequency rank).  
-- **Deck goals** & **streaks**; analytics for retention and accuracy.  
+- **Deck goals** and **streaks**; analytics for retention and accuracy.  
 - Export/Import: CSV/JSON; shareable deck links (readâ€‘only v1).
 
 ### Core Pages
@@ -24,7 +24,7 @@ This document includes a **short summary** for Codex onboarding and the **full t
 - `/language-flashcards/deck/[id]` â€” Deck home (browse, add, train)  
 - `/language-flashcards/review` â€” SRS session player  
 - `/language-flashcards/create` â€” Generator (paste text â†’ suggest cards)  
-- `/language-flashcards/analytics` â€” Progress & retention  
+- `/language-flashcards/analytics` â€” Progress and retention  
 - `/language-flashcards/settings` â€” Language pair, scripts, audio, review target
 
 ### Minimal Data Model
@@ -46,7 +46,7 @@ Integrations: **Study Planner** (schedule reviews), **Course Tracker** (syllabus
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Deliver a fast, reliable SRS vocabulary/phrase trainer with audio and examples.  
 - Support RTL scripts (Arabic), Indic scripts (Tamil), diacritics, and transliteration.  
@@ -59,7 +59,7 @@ Integrations: **Study Planner** (schedule reviews), **Course Tracker** (syllabus
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/language-flashcards` â€” Todayâ€™s queue, streaks, quick add, recent decks.  
@@ -79,7 +79,7 @@ Integrations: **Study Planner** (schedule reviews), **Course Tracker** (syllabus
 - Settings/Goals: `POST /language-flashcards/api/settings/save` Â· `POST /language-flashcards/api/goal/upsert`  
 - Share: `POST /language-flashcards/api/share/create` (Pro, readâ€‘only link)
 
-Web workers recommended for audio processing & session timing to keep UI responsive.
+Web workers recommended for audio processing and session timing to keep UI responsive.
 
 ---
 
@@ -142,17 +142,17 @@ Daily queue pulls cards with `dueAt <= today`, capped by user goal or plan. New 
 
 ### 5) Review Player UX
 
-- **Modes**: Normal SRS, **Listen & Type**, **Speak & Compare**, **Cloze**, **Typing (strict/lenient)**.  
-- Front shows **prompt** (L1 or L2), optional **audio** & **image**. Back shows answer with **IPA**, **transliteration**, **example sentence**, **notes**.  
+- **Modes**: Normal SRS, **Listen and Type**, **Speak and Compare**, **Cloze**, **Typing (strict/lenient)**.  
+- Front shows **prompt** (L1 or L2), optional **audio** and **image**. Back shows answer with **IPA**, **transliteration**, **example sentence**, **notes**.  
 - **Grade buttons** 0â€“5 with hotkeys (`1..6`).  
 - **Audio**: play TTS; record user (Pro) and show similarity score (rough heuristic v1: Levenshtein/phoneme proxy).  
 - **Typing**: diacritics keyboard helper; RTL alignment; toggle â€œshow transliterationâ€.  
-- **Streak & progress** indicators; due counter; pause/resume.  
+- **Streak and progress** indicators; due counter; pause/resume.  
 - Accessibility: screenâ€‘reader labels, highâ€‘contrast, large text, RTL support, reduced motion.
 
 ---
 
-### 6) Card Creation & Generator
+### 6) Card Creation and Generator
 
 - **Manual add**: base â†” target, IPA/translit, POS, example, audio (optional), image (optional).  
 - **Bulk import**: CSV columns autoâ€‘mapped (base,target,ipa,translit,pos,example_base,example_target,image_url,audio_url,tags).  
@@ -241,7 +241,7 @@ Res: `{ "cardId": "c_123" }`
 
 ---
 
-### 11) Plans & Limits
+### 11) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|

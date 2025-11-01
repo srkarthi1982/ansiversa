@@ -27,7 +27,7 @@ const minutesActions = actions['meeting-minutes-ai'];
 
 type Toast = { message: string; type: 'success' | 'error' } | null;
 
-type MinutesListItem = MinutesRecord & {
+type MinutesListItem = MinutesRecord and {
   agendaLabel: string;
   summaryDescription: string;
   openActions: number;

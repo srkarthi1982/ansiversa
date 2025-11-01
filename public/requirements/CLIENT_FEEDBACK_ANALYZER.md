@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/feedback`  
-**Category:** Career & Professional (CX/PM)  
+**Category:** Career and Professional (CX/PM)  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, optional Workers for NLP jobs  
 **Goal:** Ingest feedback (forms, CSV, pasted text), analyze with **sentiment + topics + aspects**, surface **themes, urgency, churn risk**, and turn insights into **tickets, tasks, and reports**. Integrates with **Email Polisher** (reply drafts), **Presentation Designer** (auto-slides), and **Proposal Writer** (improvement plan).
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - **Ingest** feedback from: CSV upload, paste, simple form, manual entry.  
@@ -30,9 +30,9 @@
 
 ## 2) User Stories (Acceptance Criteria)
 
-1. **Upload & Analyze**
+1. **Upload and Analyze**
    - *As a PM*, I upload a CSV of feedback and click **Analyze**.  
-   - **AC:** `/feedback/api/analyze` queues a job; `/feedback/api/job/[id]/status` reaches `done`; results include sentiment, topics, aspects, and themes with counts & example quotes.
+   - **AC:** `/feedback/api/analyze` queues a job; `/feedback/api/job/[id]/status` reaches `done`; results include sentiment, topics, aspects, and themes with counts and example quotes.
 
 2. **Quick Paste**
    - *As a support lead*, I paste 10 raw comments.  
@@ -60,14 +60,14 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/feedback` â€” Hub: Upload/Paste, recent projects, quick stats.  
 - `/feedback/project/[id]` â€” Project dashboard (KPIs, charts, top themes, open actions).  
 - `/feedback/project/[id]/ingest` â€” Upload CSV, paste, form builder.  
 - `/feedback/project/[id]/explore` â€” Analyzer (filters: time, sentiment, language, cohort, source, topic, aspect).  
 - `/feedback/project/[id]/actions` â€” Action items board (status, assignee, due).  
-- `/feedback/project/[id]/report` â€” Report creator & exports.  
+- `/feedback/project/[id]/report` â€” Report creator and exports.  
 - `/feedback/settings` â€” PII masking, stop-words, aspect schema, scoring weights.
 
 **API (SSR):**  
@@ -119,26 +119,26 @@
 
 ---
 
-## 5) Ingest & Normalization
+## 5) Ingest and Normalization
 
 - **CSV headers** autoâ€‘detect (support: `message, created_at, user_id, email, plan, region, version, channel`). Map with a wizard.  
 - **Cleaning:** trim, Unicode normalize, remove signatures, collapse whitespace, strip quoted replies.  
 - **PII masking:** replace emails/phones/order IDs with tokens (`<email_1>`).  
-- **Language detect & translate:** store `lang`; optional translation to analysis language (`en`).  
+- **Language detect and translate:** store `lang`; optional translation to analysis language (`en`).  
 - **Dedup:** hash(`clean + userMeta.hashable`) to avoid repeats.
 
 ---
 
 ## 6) NLP Pipeline (Deterministic + AIâ€‘assisted)
 
-1. **Sentence segmentation & tokenization**  
+1. **Sentence segmentation and tokenization**  
 2. **Rule filters:** profanity, boilerplate removal, stopâ€‘words per domain  
 3. **Sentiment:** model returns score **-1..1** and label (neg/neu/pos)  
 4. **Aspect tagging:** dictionary + ML classifier â†’ perâ€‘aspect sentiment  
 5. **Topic clustering:** embeddings + HDBSCAN/Kâ€‘means; top keywords per topic  
 6. **Urgency score:** heuristic (`neg strong` + contains trigger words like *crash, refund, broken* â†’ higher)  
 7. **Impact score:** cohort weights (e.g., **Pro plan** > Free), recency, volume, churn risk indicators  
-8. **Summaries:** per aspect & per topic with example quotes  
+8. **Summaries:** per aspect and per topic with example quotes  
 9. **Action synthesis:** ICE or RICE scoring; create tasks
 
 **Configurable Weights** in `/feedback/settings`: urgency/impact multipliers, stopâ€‘words, custom aspects.
@@ -200,7 +200,7 @@ Res: `{ "url":"/exports/feedback_report_Oct-2025.pdf" }`
 
 ---
 
-## 9) Validation & Limits
+## 9) Validation and Limits
 
 - CSV â‰¤ 50 MB (Free: 5 MB); rows per project Free â‰¤ 300, Pro â‰¤ 50k.  
 - Comment length 5â€“5000 chars; languages supported: en/ar/ta/es/hi (extendable).  
@@ -210,7 +210,7 @@ Res: `{ "url":"/exports/feedback_report_Oct-2025.pdf" }`
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -276,7 +276,7 @@ src/components/feedback/Reports/*.astro
 - **Drift detection**: alert when a themeâ€™s negative sentiment spikes.  
 - **Multilingual fineâ€‘tuning** and custom domain taxonomies.  
 - **Closedâ€‘loop tracking**: mark when action resolves a theme; show KPI lift.  
-- **Anomaly & churn predictors**: model top churn drivers per cohort.  
+- **Anomaly and churn predictors**: model top churn drivers per cohort.  
 - **Auto release notes**: compile bullet points from positive deltas.
 
 ---

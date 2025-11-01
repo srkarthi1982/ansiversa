@@ -88,7 +88,7 @@ import Button from "../Button.astro";
               : 'bg-white/5 text-white/60 hover:text-white'"
             @click="quote.setWorkspaceTab('quality')"
           >
-            Quality & safety
+            Quality and safety
           </button>
         </nav>
 
@@ -400,7 +400,7 @@ import Button from "../Button.astro";
                 </template>
               </div>
               <div class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
-                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Alerts & suggestions</p>
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Alerts and suggestions</p>
                 <ul class="space-y-2 text-xs text-white/60">
                   <template x-for="flag in quote.qualityAlerts" :key="flag.id">
                     <li

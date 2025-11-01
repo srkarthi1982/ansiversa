@@ -11,7 +11,7 @@ This document explains how the Ansiversa Astro application is organized across t
 - **AI Integrations:** OpenAI completions for resume content improvements.
 
 ## 2. UI Composition
-### Layout & Pages
+### Layout and Pages
 - **Entry Layout:** `src/layouts/Layout.astro` (imported by most pages) wraps content with the global `<head>` settings and site chrome.
 - **Home Page:** `src/pages/index.astro` renders marketing copy, pricing tiers, and deep links for the 100 mini-app experiences. Data for categories and plans is prepared in frontmatter before being rendered inside a Tailwind-styled `<main>` layout.
 - **Mini Apps:** Each app has its own page under `src/pages/` (e.g., `/quiz`, `/resume-builder`), which can import shared components and Alpine stores as needed.
@@ -25,7 +25,7 @@ This document explains how the Ansiversa Astro application is organized across t
 - **Loader Store:** `src/alpineStores/loader.ts` keeps a reference count of in-flight operations, exposing a `visible` getter that becomes `true` when any consumer calls `show()` without a matching `hide()`.
 - **Page-Specific Stores:** Modules such as `src/alpineStores/home.ts` orchestrate per-page UI state (e.g., toggling the loader during initialization). Additional folders under `src/alpineStores/` group logic by feature domains like authentication, quiz management, resume editing, documentation, and admin tooling.
 
-## 4. Server Actions & API Surface
+## 4. Server Actions and API Surface
 - **Action Registry:** `src/actions/index.ts` exports a `server` object that organizes actions into `auth`, `quiz`, and `resume` namespaces. This allows Astro pages and client scripts to call `server.auth.login`, `server.quiz.fetchPlatforms`, etc.
 - **Auth Actions:** Defined in `src/actions/auth/`. The `login` action validates credentials with Zod, verifies hashed passwords, and issues new sessions via helper utilities. Other actions cover registration, password resets, and logout flows.
 - **Quiz Actions:** `src/actions/quiz/platform.ts` and `src/actions/quiz/subject.ts` manage CRUD and filtering logic against the Astro DB tables using SQL helpers like `eq`, `and`, and `count`.
@@ -41,7 +41,7 @@ This document explains how the Ansiversa Astro application is organized across t
 - **Middleware:** `src/middleware.ts` runs before page rendering to guard routes like `/dashboard` and `/settings`, redirecting unauthenticated users to the login page while skipping API/action requests.
 - **Email Support:** `src/utils/email.server.ts` (placeholder) can be expanded for transactional emails such as verification or reset links.
 
-## 7. Data & Control Flow Summary
+## 7. Data and Control Flow Summary
 1. **Client Interaction:** Pages render via Astro components and Alpine stores initialize to handle local UI (loaders, forms, feature dashboards).
 2. **Server Actions:** Client scripts or forms submit to `astro:actions` endpoints, which validate input with Zod and manipulate the database through typed helpers.
 3. **State Persistence:** Authentication uses hashed tokens stored in the `Session` table and signed cookies. Quiz and resume features read/write to their respective tables, often normalizing data before returning it to the client.

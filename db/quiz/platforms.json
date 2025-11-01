@@ -217,7 +217,7 @@
   },
   {
     "id": 32,
-    "name": "Arts & Humanities",
+    "name": "Arts and Humanities",
     "description": "Dive into arts, culture, literature, and philosophy.",
     "isActive": true,
     "icon": "fa-palette",
@@ -226,7 +226,7 @@
   },
   {
     "id": 33,
-    "name": "Travel & Tourism",
+    "name": "Travel and Tourism",
     "description": "Explore destinations, travel tips, and tourism management.",
     "isActive": true,
     "icon": "fa-plane",
@@ -253,7 +253,7 @@
   },
   {
     "id": 36,
-    "name": "Culture & Mythology",
+    "name": "Culture and Mythology",
     "description": "Explore ancient myths, folklore, and cultural heritage.",
     "isActive": true,
     "icon": "fa-landmark",
@@ -262,7 +262,7 @@
   },
   {
     "id": 37,
-    "name": "Education & Teaching",
+    "name": "Education and Teaching",
     "description": "Focus on teaching strategies, pedagogy, and education systems.",
     "isActive": true,
     "icon": "fa-chalkboard-teacher",
@@ -289,7 +289,7 @@
   },
   {
     "id": 40,
-    "name": "Astronomy & Space",
+    "name": "Astronomy and Space",
     "description": "Learn about planets, galaxies, space exploration, and the universe.",
     "isActive": true,
     "icon": "fa-satellite-dish",
@@ -307,7 +307,7 @@
   },
   {
     "id": 42,
-    "name": "Languages & Literature",
+    "name": "Languages and Literature",
     "description": "Dive into grammar, prose, poetry, world literature, and comprehension.",
     "isActive": true,
     "icon": "fa-book-open",
@@ -316,7 +316,7 @@
   },
   {
     "id": 43,
-    "name": "Health & Nutrition",
+    "name": "Health and Nutrition",
     "description": "Focus on wellness, dietary habits, exercise, and preventive care.",
     "isActive": true,
     "icon": "fa-apple-alt",
@@ -325,7 +325,7 @@
   },
   {
     "id": 44,
-    "name": "Ethical Hacking & Cybersecurity",
+    "name": "Ethical Hacking and Cybersecurity",
     "description": "Learn about penetration testing, threat mitigation, and cyber protection.",
     "isActive": true,
     "icon": "fa-user-secret",
@@ -334,7 +334,7 @@
   },
   {
     "id": 45,
-    "name": "Civics & Governance",
+    "name": "Civics and Governance",
     "description": "Understand political systems, constitutional law, and civic responsibilities.",
     "isActive": true,
     "icon": "fa-landmark",
@@ -343,7 +343,7 @@
   },
   {
     "id": 46,
-    "name": "Wellness & Lifestyle",
+    "name": "Wellness and Lifestyle",
     "description": "Improve mental and physical well-being through mindfulness and healthy living.",
     "isActive": true,
     "icon": "fa-spa",
@@ -370,7 +370,7 @@
   },
   {
     "id": 49,
-    "name": "Architecture & Urban Planning",
+    "name": "Architecture and Urban Planning",
     "description": "Design spaces and understand the principles of urban development.",
     "isActive": false,
     "icon": "fa-drafting-compass",
@@ -379,7 +379,7 @@
   },
   {
     "id": 50,
-    "name": "Design & UX",
+    "name": "Design and UX",
     "description": "Create user-centered digital experiences and visual designs.",
     "isActive": false,
     "icon": "fa-paint-brush",
@@ -397,7 +397,7 @@
   },
   {
     "id": 52,
-    "name": "Game Design & Theory",
+    "name": "Game Design and Theory",
     "description": "Understand game mechanics, user psychology, and development tools.",
     "isActive": false,
     "icon": "fa-gamepad",

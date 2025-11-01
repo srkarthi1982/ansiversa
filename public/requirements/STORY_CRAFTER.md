@@ -7,28 +7,28 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
 ### Overview
-**Story Crafter** is an AIâ€‘assisted creative writing studio for short stories, novellas, and novels. It helps users **ideate**, **outline**, **develop characters & worlds**, and **draft scenes** using structured tools: **beat sheets (3â€‘Act / Save the Cat)**, **character arcs**, **worldbuilding entries**, and **scene cards**. Users can select **genre & tone**, control **POV/tense**, and run **targeted passes** (dialogue polish, showâ€‘donâ€™tâ€‘tell, pacing). The app maintains **canon/continuity** via a project knowledge base and exports to **Markdown/DOCX/EPUB**.
+**Story Crafter** is an AIâ€‘assisted creative writing studio for short stories, novellas, and novels. It helps users **ideate**, **outline**, **develop characters and worlds**, and **draft scenes** using structured tools: **beat sheets (3â€‘Act / Save the Cat)**, **character arcs**, **worldbuilding entries**, and **scene cards**. Users can select **genre and tone**, control **POV/tense**, and run **targeted passes** (dialogue polish, showâ€‘donâ€™tâ€‘tell, pacing). The app maintains **canon/continuity** via a project knowledge base and exports to **Markdown/DOCX/EPUB**.
 
 ### Core Features
 - **Project templates**: short story, novella, novel; common genres (fantasy, mystery, romance, sciâ€‘fi, thriller, litâ€‘fic).  
-- **Outliner**: 3â€‘Act / Save The Cat beats; dragâ€‘drop chapters & scenes with wordâ€‘count goals.  
+- **Outliner**: 3â€‘Act / Save The Cat beats; dragâ€‘drop chapters and scenes with wordâ€‘count goals.  
 - **Character system**: profiles, goals/conflicts, arcs (positive/flat/negative), relationships map.  
 - **Worldbuilding**: locations, factions, items, rules/magic systems, timelines; crossâ€‘references.  
 - **Scene writer**: splitâ€‘pane (notes on left; draft on right); POV/tense lock; â€œexpand/shortenâ€, â€œshowâ€‘donâ€™tâ€‘tellâ€, â€œdialogue passâ€.  
 - **Canon engine**: glossary of facts; **consistency check** (names, ages, dates, places).  
 - **Pitch pack**: logline, oneâ€‘paragraph hook, 1â€‘page synopsis, backâ€‘cover blurb.  
-- **Versioning**: snapshots per scene/chapter; compare & restore.  
-- **Exports**: MD/DOCX/EPUB with styles; chapter separators; title page & ToC.  
+- **Versioning**: snapshots per scene/chapter; compare and restore.  
+- **Exports**: MD/DOCX/EPUB with styles; chapter separators; title page and ToC.  
 - **Integrations**: Prompt Builder (advanced prompts), Research Assistant (background info), Presentation Designer (pitch deck), Grammar Fixer (copy edit).
 
 ### Key Pages
 - `/storycrafter` â€” Library/dashboard  
 - `/storycrafter/new` â€” Project wizard (template, genre, tone, POV/tense, target length)  
 - `/storycrafter/[id]/outline` â€” Beats, chapters, scenes (dragâ€‘drop)  
-- `/storycrafter/[id]/characters` â€” Character sheets & arcs  
+- `/storycrafter/[id]/characters` â€” Character sheets and arcs  
 - `/storycrafter/[id]/world` â€” World entries (locations/factions/items), timeline  
-- `/storycrafter/[id]/editor` â€” Scene editor with side notes & AI tools  
-- `/storycrafter/[id]/export` â€” Compile & export options  
+- `/storycrafter/[id]/editor` â€” Scene editor with side notes and AI tools  
+- `/storycrafter/[id]/export` â€” Compile and export options  
 - `/storycrafter/settings` â€” Defaults (POV/tense, voice presets), safety, backups
 
 ### Minimal Data Model
@@ -51,7 +51,7 @@ Integrations: **Prompt Builder**, **Research Assistant**, **Presentation Designe
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide an endâ€‘toâ€‘end flow from **idea â†’ outline â†’ character/world â†’ drafting â†’ export**.  
 - Keep creative control with **explicit knobs** (genre, tone, POV/tense, word goals).  
@@ -64,12 +64,12 @@ Integrations: **Prompt Builder**, **Research Assistant**, **Presentation Designe
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/storycrafter` â€” Library of projects; create from template; recent scenes; wordâ€‘count progress.  
 - `/storycrafter/new` â€” Wizard (title, logline, genre, subâ€‘genre, tone, target length, POV/tense, template).  
-- `/storycrafter/[id]/outline` â€” Beat sheet selector (3â€‘Act / Save the Cat); chapters & scenes tree; dragâ€‘drop ordering; word goals & status.  
+- `/storycrafter/[id]/outline` â€” Beat sheet selector (3â€‘Act / Save the Cat); chapters and scenes tree; dragâ€‘drop ordering; word goals and status.  
 - `/storycrafter/[id]/characters` â€” Character list; profile editor; arc timeline; relationship matrix.  
 - `/storycrafter/[id]/world` â€” World entries table (type: location/faction/item/rule); detail drawer; timeline; link to canon facts.  
 - `/storycrafter/[id]/editor` â€” Scene editor: left (notes, outline, canon highlights), right (rich text editor); AI toolbar.  
@@ -94,10 +94,10 @@ Optional WebSocket `/storycrafter/ws` for live wordâ€‘count and snapshot no
 
 ---
 
-### 3) AI Controls & Prompts
+### 3) AI Controls and Prompts
 
 **Global controls per project**
-- **Genre/Subâ€‘genre & Tropes** (e.g., cozy mystery, epic fantasy).  
+- **Genre/Subâ€‘genre and Tropes** (e.g., cozy mystery, epic fantasy).  
 - **Tone/Voice** (witty, lyrical, gritty, whimsical).  
 - **POV** (1st/3rd limited/omniscient) and **tense** (past/present).  
 - **Audience** (YA, adult).  
@@ -105,11 +105,11 @@ Optional WebSocket `/storycrafter/ws` for live wordâ€‘count and snapshot no
 
 **Generators**
 - **Idea seeds**: 10 loglines based on genre + tropes.  
-- **Beat sheet**: 15 Save the Cat beats or 3â€‘Act with midpoints & turns.  
+- **Beat sheet**: 15 Save the Cat beats or 3â€‘Act with midpoints and turns.  
 - **Character arcs**: hero, ally, antagonist; desires/ghost/wound/lie/truth.  
 - **World entries**: locations/factions/items; 5â€‘W metadata + rules.  
 - **Scene draft**: expand a beat or outline bullet to target word count.  
-- **Passes**: dialogue punchâ€‘up; showâ€‘donâ€™tâ€‘tell; reduce adverbs; tighten pacing; consistency & foreshadowing hints.  
+- **Passes**: dialogue punchâ€‘up; showâ€‘donâ€™tâ€‘tell; reduce adverbs; tighten pacing; consistency and foreshadowing hints.  
 - **Pitch pack**: logline, 1â€‘para hook, 1â€‘page synopsis, backâ€‘cover blurb, comparable titles.
 
 **Consistency check (v1 heuristic)**
@@ -169,10 +169,10 @@ Indexes on `projectId`, `sceneId`, `characterId`, `createdAt`.
 
 ### 5) UX / UI
 
-- **Library**: cards with wordâ€‘count progress, last edited time; search & tags.  
+- **Library**: cards with wordâ€‘count progress, last edited time; search and tags.  
 - **Outline**: beat sheet view with preset templates; dragâ€‘drop; wordâ€‘goal chips; expand/collapse.  
 - **Characters**: tabbed profiles; relationship matrix graph; arc timeline.  
-- **World**: table & detail drawer; tag filters; crossâ€‘links; timeline strip.  
+- **World**: table and detail drawer; tag filters; crossâ€‘links; timeline strip.  
 - **Editor**: distractionâ€‘free mode; side notes; canon highlights (hover to view fact); toolbar for passes (dialogue, show, pacing, shorten/expand, rewrite in voice).  
 - **Export**: preview with styles; ToC; scene/chapter separators; include/exclude front matter.  
 - Accessibility: keyboard shortcuts; screen reader labels; high contrast; RTL; reduced motion.
@@ -247,7 +247,7 @@ Res: `{ "diffMd":"...", "notes":["Reduced exposition","Sharper retorts"] }`
 
 ---
 
-### 8) Plans & Limits
+### 8) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|
@@ -318,12 +318,12 @@ src/components/storycrafter/Export/*.astro
 
 ### 10) Future Enhancements (v2+)
 
-- **Coâ€‘writing** with share links & comment threads.  
+- **Coâ€‘writing** with share links and comment threads.  
 - **Beat â†’ storyboard** handoff to **Comic Storyboarder** with panel suggestions.  
 - **Style transfer** presets (Hemingway, Austenâ€‘esque, etc.).  
 - **Audio narration** export (TTS).  
 - **Series support** (multiâ€‘book bible).  
-- **PWA** with offline editing & sync queue.
+- **PWA** with offline editing and sync queue.
 
 ---
 

@@ -14,7 +14,7 @@ type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
 type RoadmapRow = typeof Roadmap.$inferSelect;
 
 const normalizeRoadmap = (
-  row: RoadmapRow & { topicName?: string | null; subjectName?: string | null; platformName?: string | null }
+  row: RoadmapRow and { topicName?: string | null; subjectName?: string | null; platformName?: string | null }
 ) => ({
   id: row.id,
   platformId: row.platformId,

@@ -14,7 +14,7 @@ const {
   size = 'md',
   block = false,
   ...rest
-} = Astro.props as Props & Record<string, unknown>;
+} = Astro.props as Props and Record<string, unknown>;
 
 const restProps = { ...(rest as Record<string, unknown>) };
 const extraClass =

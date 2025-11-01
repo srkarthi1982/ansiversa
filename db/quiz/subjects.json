@@ -2,7 +2,7 @@
   {
     "id": 669,
     "platformId": 39,
-    "name": "Logic & Critical Thinking",
+    "name": "Logic and Critical Thinking",
     "isActive": true,
     "qCount": 3733
   },
@@ -72,7 +72,7 @@
   {
     "id": 661,
     "platformId": 47,
-    "name": "Statistics & Data Interpretation",
+    "name": "Statistics and Data Interpretation",
     "isActive": true,
     "qCount": 5724
   },
@@ -86,42 +86,42 @@
   {
     "id": 663,
     "platformId": 47,
-    "name": "Permutations & Combinations",
+    "name": "Permutations and Combinations",
     "isActive": true,
     "qCount": 3328
   },
   {
     "id": 664,
     "platformId": 47,
-    "name": "Time, Speed & Distance",
+    "name": "Time, Speed and Distance",
     "isActive": true,
     "qCount": 3784
   },
   {
     "id": 665,
     "platformId": 47,
-    "name": "Time & Work",
+    "name": "Time and Work",
     "isActive": true,
     "qCount": 2197
   },
   {
     "id": 666,
     "platformId": 47,
-    "name": "Ratio & Proportion",
+    "name": "Ratio and Proportion",
     "isActive": true,
     "qCount": 2338
   },
   {
     "id": 667,
     "platformId": 47,
-    "name": "Percentages & Profit & Loss",
+    "name": "Percentages and Profit and Loss",
     "isActive": true,
     "qCount": 4355
   },
   {
     "id": 668,
     "platformId": 47,
-    "name": "Simple & Compound Interest",
+    "name": "Simple and Compound Interest",
     "isActive": true,
     "qCount": 3850
   },
@@ -149,21 +149,21 @@
   {
     "id": 651,
     "platformId": 48,
-    "name": "Nutrition & Dietetics",
+    "name": "Nutrition and Dietetics",
     "isActive": true,
     "qCount": 5511
   },
   {
     "id": 652,
     "platformId": 48,
-    "name": "Baking & Pastry Arts",
+    "name": "Baking and Pastry Arts",
     "isActive": true,
     "qCount": 5923
   },
   {
     "id": 653,
     "platformId": 48,
-    "name": "Food Presentation & Service",
+    "name": "Food Presentation and Service",
     "isActive": true,
     "qCount": 4175
   },
@@ -205,7 +205,7 @@
   {
     "id": 15,
     "platformId": 7,
-    "name": "Puzzles & Brain Teasers",
+    "name": "Puzzles and Brain Teasers",
     "isActive": true,
     "qCount": 3395
   },
@@ -317,7 +317,7 @@
   {
     "id": 3,
     "platformId": 12,
-    "name": "Data Structures & Algorithms",
+    "name": "Data Structures and Algorithms",
     "isActive": true,
     "qCount": 9378
   },
@@ -814,7 +814,7 @@
   {
     "id": 149,
     "platformId": 24,
-    "name": "Art & Literature",
+    "name": "Art and Literature",
     "isActive": true,
     "qCount": 3469
   },
@@ -912,7 +912,7 @@
   {
     "id": 194,
     "platformId": 32,
-    "name": "Religion & Mythology",
+    "name": "Religion and Mythology",
     "isActive": true,
     "qCount": 9059
   },
@@ -1017,7 +1017,7 @@
   {
     "id": 209,
     "platformId": 35,
-    "name": "Maintenance & Repair",
+    "name": "Maintenance and Repair",
     "isActive": true,
     "qCount": 3673
   },
@@ -1059,7 +1059,7 @@
   {
     "id": 183,
     "platformId": 31,
-    "name": "Pollution & Waste Management",
+    "name": "Pollution and Waste Management",
     "isActive": true,
     "qCount": 3657
   },
@@ -1325,7 +1325,7 @@
   {
     "id": 219,
     "platformId": 37,
-    "name": "Assessment & Evaluation",
+    "name": "Assessment and Evaluation",
     "isActive": true,
     "qCount": 4196
   },
@@ -1374,7 +1374,7 @@
   {
     "id": 644,
     "platformId": 53,
-    "name": "Karnataka SSLC & PUC",
+    "name": "Karnataka SSLC and PUC",
     "isActive": true,
     "qCount": 8042
   },
@@ -1423,7 +1423,7 @@
   {
     "id": 22,
     "platformId": 16,
-    "name": "DevOps & Automation",
+    "name": "DevOps and Automation",
     "isActive": true,
     "qCount": 3925
   },
@@ -1542,7 +1542,7 @@
   {
     "id": 166,
     "platformId": 30,
-    "name": "Movies & TV Shows",
+    "name": "Movies and TV Shows",
     "isActive": true,
     "qCount": 3129
   },
@@ -1570,14 +1570,14 @@
   {
     "id": 170,
     "platformId": 30,
-    "name": "Celebrities & Pop Culture",
+    "name": "Celebrities and Pop Culture",
     "isActive": true,
     "qCount": 2679
   },
   {
     "id": 171,
     "platformId": 30,
-    "name": "Cartoons & Animation",
+    "name": "Cartoons and Animation",
     "isActive": true,
     "qCount": 2761
   },
@@ -1591,21 +1591,21 @@
   {
     "id": 173,
     "platformId": 30,
-    "name": "Comics & Superheroes",
+    "name": "Comics and Superheroes",
     "isActive": true,
     "qCount": 2585
   },
   {
     "id": 174,
     "platformId": 30,
-    "name": "Award Shows & Ceremonies",
+    "name": "Award Shows and Ceremonies",
     "isActive": true,
     "qCount": 2200
   },
   {
     "id": 175,
     "platformId": 30,
-    "name": "World Records & Fun Facts",
+    "name": "World Records and Fun Facts",
     "isActive": true,
     "qCount": 1973
   },
@@ -1696,7 +1696,7 @@
   {
     "id": 674,
     "platformId": 46,
-    "name": "Mindfulness & Meditation",
+    "name": "Mindfulness and Meditation",
     "isActive": true,
     "qCount": 5960
   },
@@ -1710,35 +1710,35 @@
   {
     "id": 676,
     "platformId": 46,
-    "name": "Sleep Science & Hygiene",
+    "name": "Sleep Science and Hygiene",
     "isActive": true,
     "qCount": 5499
   },
   {
     "id": 677,
     "platformId": 46,
-    "name": "Nutrition & Diet",
+    "name": "Nutrition and Diet",
     "isActive": true,
     "qCount": 5675
   },
   {
     "id": 678,
     "platformId": 46,
-    "name": "Fitness & Exercise Science",
+    "name": "Fitness and Exercise Science",
     "isActive": true,
     "qCount": 6066
   },
   {
     "id": 679,
     "platformId": 46,
-    "name": "Habit Building & Behavior Change",
+    "name": "Habit Building and Behavior Change",
     "isActive": true,
     "qCount": 5864
   },
   {
     "id": 680,
     "platformId": 46,
-    "name": "Time Management & Productivity",
+    "name": "Time Management and Productivity",
     "isActive": true,
     "qCount": 5282
   },
@@ -1752,14 +1752,14 @@
   {
     "id": 682,
     "platformId": 46,
-    "name": "Relationships & Communication",
+    "name": "Relationships and Communication",
     "isActive": true,
     "qCount": 5621
   },
   {
     "id": 683,
     "platformId": 46,
-    "name": "Self-Care & Resilience",
+    "name": "Self-Care and Resilience",
     "isActive": true,
     "qCount": 6066
   },
@@ -1773,7 +1773,7 @@
   {
     "id": 685,
     "platformId": 46,
-    "name": "Work–Life Balance & Burnout",
+    "name": "Work–Life Balance and Burnout",
     "isActive": true,
     "qCount": 6024
   },
@@ -1787,14 +1787,14 @@
   {
     "id": 687,
     "platformId": 46,
-    "name": "Yoga & Breathwork",
+    "name": "Yoga and Breathwork",
     "isActive": true,
     "qCount": 6651
   },
   {
     "id": 688,
     "platformId": 46,
-    "name": "Longevity & Healthy Aging",
+    "name": "Longevity and Healthy Aging",
     "isActive": true,
     "qCount": 5652
   },
@@ -1815,7 +1815,7 @@
   {
     "id": 691,
     "platformId": 46,
-    "name": "Substance Use & Recovery",
+    "name": "Substance Use and Recovery",
     "isActive": true,
     "qCount": 5849
   }

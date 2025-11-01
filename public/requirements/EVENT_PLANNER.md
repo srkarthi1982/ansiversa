@@ -2,19 +2,19 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/event-planner`  
-**Category:** Lifestyle & Wellâ€‘Being / Productivity  
+**Category:** Lifestyle and Wellâ€‘Being / Productivity  
 **Stack:** Astro + Tailwind (islands for forms/dragâ€‘drop), Astro SSR API routes, Astro DB / Supabase, optional background workers for reminders  
-**Goal:** Plan single or multiâ€‘day events (meetup, class, workshop, wedding, birthday, webinar) with smart timelines, task checklists, budgets, guest lists (RSVP), venue & vendor tracking, reminders, and exports. Integrates with Presentation Designer (runâ€‘ofâ€‘show deck), Email Polisher (invites/thanks), and Price Checker (vendors).
+**Goal:** Plan single or multiâ€‘day events (meetup, class, workshop, wedding, birthday, webinar) with smart timelines, task checklists, budgets, guest lists (RSVP), venue and vendor tracking, reminders, and exports. Integrates with Presentation Designer (runâ€‘ofâ€‘show deck), Email Polisher (invites/thanks), and Price Checker (vendors).
 
 > Positioning: A lightweight but powerful event OS â€” from idea â†’ plan â†’ invite â†’ execute â†’ recap.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Create events with templates (Birthday, Wedding, Workshop, Meetup, Webinar, Custom).  
-- Manage **agenda/timeline**, **tasks** (with assignees & due dates), **budget**, **guests & RSVPs**, **venues/vendors**, **assets** (files, images), **notes** and **checklists**.  
+- Manage **agenda/timeline**, **tasks** (with assignees and due dates), **budget**, **guests and RSVPs**, **venues/vendors**, **assets** (files, images), **notes** and **checklists**.  
 - Send **invites** and **reminders** (email/SMS placeholder), track **open/RSVP** status.  
 - Generate **runâ€‘ofâ€‘show** and **printable schedules**, export ICS invites, PDF/MD summaries.  
 - Dashboard with **Dâ€‘day countdown**, critical tasks, and budget usage.  
@@ -27,7 +27,7 @@
 
 ---
 
-## 2) Event Types & Templates
+## 2) Event Types and Templates
 
 - **Birthday/Anniversary**: guest list, simple budget, cake/venue/vendor tasks.  
 - **Wedding**: multiâ€‘day ceremonies, vendors per category, advanced budget, seating notes.  
@@ -49,16 +49,16 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
    - *As an organizer*, I drag items in a timeline and set durations.  
    - **AC:** `/event-planner/api/agenda/save` stores items with start/end and dependencies.
 
-3. **Invite & Track RSVPs**
+3. **Invite and Track RSVPs**
    - *As an organizer*, I import guests (CSV) and send invites.  
    - **AC:** `/event-planner/api/guests/import` accepts CSV; `/event-planner/api/invite/send` queues invites; `/event-planner/rsvp/[slug]` shows branded RSVP page; `/event-planner/api/rsvp` records response.
 
-4. **Budget & Vendors**
+4. **Budget and Vendors**
    - *As a finance lead*, I add line items and assign vendors.  
    - **AC:** `/event-planner/api/budget/save` stores items; totals show **planned vs actual** and **variance**.
 
-5. **Tasks & Assignees**
-   - *As a coordinator*, I create tasks with assignee & due date; I get reminders.  
+5. **Tasks and Assignees**
+   - *As a coordinator*, I create tasks with assignee and due date; I get reminders.  
    - **AC:** `/event-planner/api/tasks/save` persists tasks; reminder jobs scheduled for dueâ€‘1d/hour.
 
 6. **Dayâ€‘Of Run Sheet**
@@ -75,7 +75,7 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ---
 
-## 4) Routes & Information Architecture
+## 4) Routes and Information Architecture
 
 - `/event-planner` â€” Hub: Create event (template picker), recent events, quick stats.  
 - `/event-planner/new` â€” Wizard (details, dates, template, branding).  
@@ -137,7 +137,7 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ---
 
-## 6) RSVP & Public Pages
+## 6) RSVP and Public Pages
 
 ### `/event-planner/info/[slug]`
 - Cover image, title, date/time (local + event TZ), location map or virtual link, schedule snippet, CTA: RSVP.
@@ -150,7 +150,7 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ---
 
-## 7) Budget & Reports
+## 7) Budget and Reports
 
 - Budget table with **planned/actual/variance** per category and total.  
 - Export CSV; printable PDF.  
@@ -158,7 +158,7 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ---
 
-## 8) Templates & Seeding
+## 8) Templates and Seeding
 
 - Store builtâ€‘in templates in `TemplatePack` with seeded **phases, tasks, budget categories, RSVP copy**.  
 - Users can clone and customize templates.  
@@ -177,7 +177,7 @@ Each template seeds: default **phases**, **tasks**, **budget categories**, **ema
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -193,7 +193,7 @@ Rate limits: `userId`+day for invites/reminders/export; `eventId`+hour for RSVP 
 
 ---
 
-## 11) Accessibility & UX
+## 11) Accessibility and UX
 
 - Large touch targets, highâ€‘contrast mode, keyboard navigation.  
 - Clear date/time pickers with time zone awareness.  

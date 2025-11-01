@@ -214,7 +214,7 @@ export async function recordHistory(entry: {
   }
 }
 
-export const createDraftRecord = (input: Partial<EmailDraftType> & { userId: string; plan: 'free' | 'pro' }) => {
+export const createDraftRecord = (input: Partial<EmailDraftType> and { userId: string; plan: 'free' | 'pro' }) => {
   const draft = createBlankDraft({ ...input });
   return {
     id: draft.id,
@@ -236,7 +236,7 @@ export const createDraftRecord = (input: Partial<EmailDraftType> & { userId: str
   } satisfies EmailDraftRow;
 };
 
-export const createTemplateRecord = (input: Partial<EmailTemplateType> & { userId: string }) => {
+export const createTemplateRecord = (input: Partial<EmailTemplateType> and { userId: string }) => {
   const template = createTemplate({ ...input });
   return {
     id: template.id,

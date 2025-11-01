@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/social-caption-generator`  
-**Category:** Writing & Creativity / Marketing  
+**Category:** Writing and Creativity / Marketing  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Help users quickly **generate, A/B test, and localize** social media captions for multiple platforms with brand voice, hashtags, emojis, CTAs, and link tracking â€” ready to paste into their social tools.
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Generate captions for **Instagram, X (Twitter), LinkedIn, Facebook, TikTok, YouTube (Shorts description), Pinterest**.  
@@ -40,11 +40,11 @@
    - *As a user*, I choose a brand voice (or create one) and regenerate captions.  
    - **AC:** Captions reflect tone, preferred vocabulary, and emoji policy.
 
-3. **Hashtags & Emojis**
+3. **Hashtags and Emojis**
    - *As a user*, I get **hashtag suggestions** by topic + an option to create **hashtag sets** (reusable).  
    - **AC:** `/social-caption-generator/api/hashtags` returns ranked tags with counts (static heuristics v1). Emoji suggestions appear inline.
 
-4. **CTA & Links**
+4. **CTA and Links**
    - *As a user*, I add a CTA from presets (â€œLearn moreâ€, â€œShop nowâ€, â€œApply todayâ€) and build a **UTM** tracking link.  
    - **AC:** `/social-caption-generator/api/utm` returns a full URL; characters counted accordingly.
 
@@ -60,7 +60,7 @@
    - *As a user*, I pick platformâ€‘specific options (e.g., LinkedIn no emojis; Instagram line breaks; X with 1â€“2 hashtags).  
    - **AC:** Presets are applied before generation and validated after edits.
 
-8. **Export & Copy**
+8. **Export and Copy**
    - *As a user*, I export a **CSV** (platform, caption, hashtags, link, publish date) or copy a single version in platformâ€‘friendly formatting.  
    - **AC:** Newlines and special characters preserved; CSV opens in Google Sheets/Excel.
 
@@ -70,13 +70,13 @@
 
 10. **Plan Gating**
     - Free: 20 generations/month, 1 brand voice, 2 hashtag sets, watermark on exports.  
-    - Pro: unlimited generations (fairâ€‘use), unlimited brand voices & sets, no watermark, localization unlocked.
+    - Pro: unlimited generations (fairâ€‘use), unlimited brand voices and sets, no watermark, localization unlocked.
 
 ---
 
-## 3) Information Architecture & Routes
+## 3) Information Architecture and Routes
 
-- `/social-caption-generator` â€” Dashboard & quick generator  
+- `/social-caption-generator` â€” Dashboard and quick generator  
 - `/social-caption-generator/editor` â€” Full editor (variants, A/B, hashtags, voice, localization, UTM)  
 - `/social-caption-generator/campaigns` â€” Campaign manager  
 - `/social-caption-generator/templates` â€” Prompt templates (product launch, event, hiring, announcement)  
@@ -236,7 +236,7 @@ Req: `{ "id":"<uuid>" }` â†’ `{ "id":"<newUuid>" }`
 
 ---
 
-## 7) Validation & Platform Notes (v1 defaults)
+## 7) Validation and Platform Notes (v1 defaults)
 
 - **X (Twitter)**: recommend â‰¤ 280 chars; 0â€“2 hashtags; 1 link.  
 - **Instagram**: â‰¤ ~2200 chars; line breaks allowed; 3â€“15 hashtags common; â€œlink in bioâ€ warning if URL included.  
@@ -258,7 +258,7 @@ General: strip double spaces; normalize line breaks; ensure URL-encoding for UTM
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -273,7 +273,7 @@ Rate limit keys: `userId` + day for generate/translate; `userId` + month for exp
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Drafts private by default; public share is optâ€‘in.  
 - Sanitize user text; escape markdown on export; block script tags.  
@@ -281,14 +281,14 @@ Rate limit keys: `userId` + day for generate/translate; `userId` + month for exp
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `caption.create`, `caption.generate`, `caption.save`, `caption.translate`, `caption.score`,  
   `caption.export`, `caption.publish`, `caption.delete`, `caption.duplicate`, `campaign.save/export`.
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Keyboard shortcuts (Generate = Cmd/Ctrl+Enter; Copy = Cmd/Ctrl+C).  
 - Clear focus states; colorâ€‘blind safe counters and flags.  
@@ -330,7 +330,7 @@ src/components/social-caption-generator/UTM/*.astro
 
 ## 14) Future Enhancements (v2+)
 
-- Social scheduling & direct publishing integrations.  
+- Social scheduling and direct publishing integrations.  
 - Trending hashtag discovery and performance analytics.  
 - Image ALTâ€‘text suggestions and thumbnail title helper (YouTube).  
 - Team collaboration with approvals and comment threads.  

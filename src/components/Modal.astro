@@ -12,7 +12,7 @@ const {
   className = '',
   showCloseButton = true,
   ...rest
-} = Astro.props as Props & Record<string, unknown>;
+} = Astro.props as Props and Record<string, unknown>;
 
 const sizeClasses: Record<string, string> = {
   sm: 'max-w-sm',

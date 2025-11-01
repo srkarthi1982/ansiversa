@@ -2,18 +2,18 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/concept-explainer`  
-**Category:** Learning & Knowledge  
+**Category:** Learning and Knowledge  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Turn any concept (from school topics to pro subjects) into **clear, levelâ€‘appropriate explanations** with **examples, analogies, visuals, stepâ€‘byâ€‘step breakdowns, and quick checks**. Connects to **FlashNote**, **Quiz Institute**, **Lesson Builder**, and **Blog Writer**.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Input a **topic or pasted text** â†’ get a structured explanation: **definition â†’ breakdown â†’ examples â†’ analogies â†’ visuals â†’ pitfalls â†’ miniâ€‘quiz**.
 - **Audience levels**: Kids (8â€“12), Teen (13â€“17), Undergrad, Professional, Expert.  
-- **Styles**: textbook, teacherâ€‘talk, story, bullet cheatsheet, Socratic Q&A.  
+- **Styles**: textbook, teacherâ€‘talk, story, bullet cheatsheet, Socratic Q and A.  
 - **Add context**: region (e.g., CBSE/State Board), subject, exam tag, language (English/Tamil/Arabic, etc.).  
 - Generate **diagrams** (ASCII/flowchart spec) and **formula derivations** where relevant.  
 - Produce **FlashNotes** and **Quiz Institute** questions with one click.  
@@ -36,7 +36,7 @@
    - *As a user*, I set Board=CBSE, Class=10, Language=Tamil.  
    - **AC:** output respects context (terminology, units, syllabus emphasis, translation).
 
-3. **Generate FlashNotes & Quiz**
+3. **Generate FlashNotes and Quiz**
    - *As a user*, I click **Create FlashNote** and **Create Quiz**.  
    - **AC:** `/concept-explainer/api/flashnote` and `/concept-explainer/api/quiz` return readyâ€‘toâ€‘save items.
 
@@ -48,7 +48,7 @@
    - *As a user*, I paste a passage (or upload txt/pdf) and ask to â€œexplain simplyâ€.  
    - **AC:** `/concept-explainer/api/explain` extracts topics and rewrites in chosen level/style.
 
-6. **Export & Save**
+6. **Export and Save**
    - *As a user*, I export to MD/PDF/JSON or save a version.  
    - **AC:** `/concept-explainer/api/export` + `/concept-explainer/api/save` succeed; slug created.
 
@@ -58,7 +58,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/concept-explainer` â€” Landing: quick form (topic, level, style, language) + recent concepts.  
 - `/concept-explainer/new` â€” Advanced form (subject, region/board, exam tags, tone, depth, include diagram/quiz).  
@@ -207,7 +207,7 @@ Req: `{ "id":"<uuid>" }` â†’ Res: `{ "ok":true }`
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -221,7 +221,7 @@ Rate limits: `userId`+day for explain/variants; `userId`+month for exports.
 
 ---
 
-## 11) Accessibility & UX
+## 11) Accessibility and UX
 
 - Large readable typography; highâ€‘contrast math/diagrams; RTL support.  
 - Keyboard copy buttons; collapsible sections; printâ€‘friendly.  

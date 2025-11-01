@@ -214,7 +214,7 @@ export const contractTemplates: ContractTemplateDefinition[] = [
   {
     key: 'service',
     label: 'Service agreement',
-    headline: 'Professional services & retainers',
+    headline: 'Professional services and retainers',
     description:
       'Create structured service agreements with clear deliverables, payment cadence, and IP transfer conditions.',
     recommendedFor: ['Agencies', 'Studios', 'Specialist vendors'],
@@ -241,7 +241,7 @@ export const contractTemplates: ContractTemplateDefinition[] = [
   {
     key: 'employment',
     label: 'Employment offer',
-    headline: 'Offers & onboarding documentation',
+    headline: 'Offers and onboarding documentation',
     description:
       'Prepare employment offers with compensation, obligations, and policy alignment for new hires.',
     recommendedFor: ['Hiring managers', 'People ops'],

@@ -213,7 +213,7 @@ const baseMatchReport: MatchReport = {
     },
     {
       key: 'location',
-      label: 'Location & legal',
+      label: 'Location and legal',
       weight: 0.05,
       score: 100,
       description: 'North America remote with quarterly travel matches stated preference.',
@@ -250,13 +250,13 @@ const baseMatchReport: MatchReport = {
   gapPlan: {
     modules: [
       {
-        title: 'Advanced GraphQL caching & performance',
+        title: 'Advanced GraphQL caching and performance',
         hours: 6,
         resource: 'Apollo Odyssey Performance Lab',
         link: 'https://apollographql.com/odyssey/performance',
       },
       {
-        title: 'Storybook visual regression & Chromatic workflows',
+        title: 'Storybook visual regression and Chromatic workflows',
         hours: 4,
         resource: 'Chromatic Academy',
         link: 'https://www.chromatic.com/academy',
@@ -372,7 +372,7 @@ const templates: TemplateRecord[] = [
     id: 'data-analyst-mid',
     role: 'Data Analyst II',
     difficulty: 'mid',
-    focus: 'Logistics & operations analytics',
+    focus: 'Logistics and operations analytics',
     summary:
       'Highlights SQL modelling, dashboard storytelling, and stakeholder enablement inside supply chain environments.',
     keywords: ['SQL', 'dbt', 'Tableau', 'Logistics'],
@@ -382,7 +382,7 @@ const templates: TemplateRecord[] = [
     id: 'product-designer-senior',
     role: 'Senior Product Designer',
     difficulty: 'senior',
-    focus: 'Fintech onboarding & servicing flows',
+    focus: 'Fintech onboarding and servicing flows',
     summary:
       'Covers accessibility, design operations, KPI-driven experiments, and compliance collaboration.',
     keywords: ['Figma', 'Design tokens', 'Fintech compliance'],
@@ -392,7 +392,7 @@ const templates: TemplateRecord[] = [
     id: 'devrel-advocate',
     role: 'Developer Advocate',
     difficulty: 'mid',
-    focus: 'Cloud platforms & SDK adoption',
+    focus: 'Cloud platforms and SDK adoption',
     summary:
       'Emphasises product storytelling, community programs, and technical content metrics.',
     keywords: ['SDKs', 'Community', 'Conference speaking'],
@@ -454,9 +454,9 @@ class JobAnalyzerStore extends BaseStore {
     selectedResumeId: 'resume-product',
     analysisSteps: [
       { key: 'ingest', label: 'Normalize job description', status: 'pending' as AnalysisStepStatus },
-      { key: 'extract', label: 'Extract skills & constraints', status: 'pending' as AnalysisStepStatus },
+      { key: 'extract', label: 'Extract skills and constraints', status: 'pending' as AnalysisStepStatus },
       { key: 'compare', label: 'Compare resume/profile', status: 'pending' as AnalysisStepStatus },
-      { key: 'suggest', label: 'Generate keywords & actions', status: 'pending' as AnalysisStepStatus },
+      { key: 'suggest', label: 'Generate keywords and actions', status: 'pending' as AnalysisStepStatus },
     ] as AnalysisStep[],
     busy: false,
     progressLabel: null as string | null,

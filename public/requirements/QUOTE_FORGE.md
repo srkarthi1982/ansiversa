@@ -7,16 +7,16 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 ## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
 ### Overview
-**Quote Forge** helps users generate, curate, and package **original quotes** (motivational, witty, philosophical, leadership, wellness, tech, study, romantic, faithâ€‘safe, etc.) with **tone/style controls**, **topic tags**, and **multiâ€‘language** output. It supports **attribution modes** (anonymous, pen name, brand), **paraphrase & refine**, **antiâ€‘clichÃ© checks**, and **uniqueness scoring**. Users can create **quote packs** for social media and export **image cards** via Presentation Designer integration, plus CSV/JSON for reuse.
+**Quote Forge** helps users generate, curate, and package **original quotes** (motivational, witty, philosophical, leadership, wellness, tech, study, romantic, faithâ€‘safe, etc.) with **tone/style controls**, **topic tags**, and **multiâ€‘language** output. It supports **attribution modes** (anonymous, pen name, brand), **paraphrase and refine**, **antiâ€‘clichÃ© checks**, and **uniqueness scoring**. Users can create **quote packs** for social media and export **image cards** via Presentation Designer integration, plus CSV/JSON for reuse.
 
 ### Core Features
 - **Brief â†’ quote variants** (short oneâ€‘liners, 2â€‘liners, aphorisms, microâ€‘poems).  
 - **Controls**: tone (uplifting/stoic/humorous/poetic), length (â‰¤80/â‰¤140 chars), devices (alliteration, contrast, parallelism, antimetabole), persona (coach/teacher/monk/CEO/scientist), language (EN/TA/AR + more).  
 - **Attribution**: anonymous, pen name, real name, brand handle, or â€œpublic domainâ€‘styleâ€ aphorism (no claim).  
-- **Antiâ€‘clichÃ© & originality**: phrase blacklist and similarity guard; **uniqueness score** vs internal corpus.  
+- **Antiâ€‘clichÃ© and originality**: phrase blacklist and similarity guard; **uniqueness score** vs internal corpus.  
 - **Refine passes**: tighten, simplify, punchline, poetic, faithâ€‘safe, kidâ€‘friendly, formal.  
 - **Bundles**: themed packs (e.g., â€œDaily Discipline x30â€), scheduled calendar (30/60/90â€‘day).  
-- **Hashtag & caption helper**: suggest 5â€“12 tags + a 1â€‘line caption per quote.  
+- **Hashtag and caption helper**: suggest 5â€“12 tags + a 1â€‘line caption per quote.  
 - **Exports**: CSV/JSON; handoff to **Presentation Designer** for image cards (square/vertical/landscape) and to **Social Caption Generator**.  
 - **Collections**: save, tag, favorite, and reorder.  
 - **Integrations**: Presentation Designer (graphics), Creative Title Maker (series names), Blog Writer (epigraphs), Poem Studio (lyrical variants).
@@ -37,8 +37,8 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 | Projects | 3 | Unlimited |
 | Variants per prompt | 10 | 100 |
 | Languages | EN only | EN + TA/AR/ES + more |
-| Antiâ€‘clichÃ© & uniqueness | Basic | Full + packâ€‘level checks |
-| Packs & scheduler | 10 items | 200 items |
+| Antiâ€‘clichÃ© and uniqueness | Basic | Full + packâ€‘level checks |
+| Packs and scheduler | 10 items | 200 items |
 | Exports | CSV | CSV + JSON + push to Designer |
 | History retention | 60 days | Unlimited |
 
@@ -46,7 +46,7 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Generate **concise, originalâ€‘sounding quotes** with tunable style and language.  
 - Enable **batch production** (packs) for consistent social posting.  
@@ -58,7 +58,7 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/quotes` â€” Library with search, tags, and favorites.  
@@ -81,10 +81,10 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
   - `POST /quotes/api/score` (clarity, punch, originality, clichÃ© risk)  
   - `POST /quotes/api/check/cliche`  
   - `POST /quotes/api/check/uniqueness`
-- Packs & schedule:  
+- Packs and schedule:  
   - `POST /quotes/api/pack/create` Â· `POST /quotes/api/pack/add` Â· `POST /quotes/api/pack/reorder`  
   - `POST /quotes/api/schedule/create` (daily/weekly list with timezone and post hints)
-- Export & handoff:  
+- Export and handoff:  
   - `POST /quotes/api/export` (csv|json) Â· `GET /quotes/api/export/status?id=`  
   - `POST /quotes/api/designer/push` (template, colorway, size)
 
@@ -101,7 +101,7 @@ Optional WebSocket `/quotes/ws` for live counters and uniqueness meter.
 **Attribution**:  
 - `mode`: 'anonymous' | 'pen_name' | 'real_name' | 'brand' | 'none'  
 - `display`: suffix (`â€” Name`) or prefix (`Name:`) or inline.  
-**Languages**: English default; Tamil/Arabic/Spanish as Pro starters (respect script & punctuation norms).  
+**Languages**: English default; Tamil/Arabic/Spanish as Pro starters (respect script and punctuation norms).  
 **Safety**: profanity block; sensitive topics filter (religion/politics toggle); faithâ€‘safe wording option.
 
 ---
@@ -187,7 +187,7 @@ Res: `{ "created":30 }`
 ```
 Res: `{ "ok":true, "after":"..." }`
 
-**Score & checks**  
+**Score and checks**  
 `POST /quotes/api/score` â†’ `{ "clarity":0.78, "punch":0.71, "originality":0.83, "clicheRisk":0.12 }`  
 `POST /quotes/api/check/uniqueness` â†’ `{ "similarity":0.07 }`
 
@@ -213,11 +213,11 @@ Res: `{ "ok": true }`
 - Attribution display must match mode; brand glossary protected terms cannot be altered.  
 - ClichÃ© blacklist must be enforced; block save if above max similarity threshold (configurable).  
 - Scheduler dates must be in the future; timezone required.  
-- CSV exports validated for delimiter & quoting.
+- CSV exports validated for delimiter and quoting.
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

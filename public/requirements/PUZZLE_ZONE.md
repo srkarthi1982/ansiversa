@@ -2,13 +2,13 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/puzzle-zone`  
-**Category:** Fun & Engagement  
+**Category:** Fun and Engagement  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, optional WebWorkers for generators/solvers  
 **Goal:** Deliver an everâ€‘fresh library of **logic and word puzzles** with daily challenges, generators, hints, scoring, and packs. Integrates with **Trivia Arena** for streaks and with **FlashNote** for vocabulary.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Support a curated set of puzzle types at v1 with solid UX and generators/validators:
@@ -25,7 +25,7 @@
 - **Hint system** and **error checking**, with configurable strictness.  
 - **Scoring** with time/accuracy, and **streaks** (shared across Fun apps).  
 - **Puzzle Packs** (builtâ€‘in and userâ€‘imported).  
-- **Export** puzzle & solution to PDF/PNG/JSON.  
+- **Export** puzzle and solution to PDF/PNG/JSON.  
 
 ### Nonâ€‘Goals (v1)
 - No multiplayer realtime races (consider later).  
@@ -40,7 +40,7 @@
    - *As a user*, I pick a type (e.g., Sudoku 9Ã—9) and difficulty (Easy/Medium/Hard).  
    - **AC:** `/puzzle-zone/api/create` returns a `PuzzleInstance` with grid + metadata; `/play/[id]` loads it with timer.
 
-2. **Request Hints & Checking**
+2. **Request Hints and Checking**
    - *As a user*, I can **Check Cell/Row/Board**, **Reveal Cell/Word**, or **Get Logical Hint**.  
    - **AC:** `/puzzle-zone/api/hint` returns a hint atom and applies penalties.
 
@@ -60,7 +60,7 @@
    - *As a user*, I import JSON/PUZ (crossword) or simple CSV word lists; I can export to PNG/PDF/JSON.  
    - **AC:** `/puzzle-zone/api/import` validates schema and dedupes by hash; `/export` generates files.
 
-7. **Stats & Streaks**
+7. **Stats and Streaks**
    - *As a user*, I see time to solve, hints used, accuracy, best streak, and perâ€‘type skill chart.  
    - **AC:** `/puzzle-zone/api/stats` aggregates per user and per type.
 
@@ -70,7 +70,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/puzzle-zone` â€” Hub: choose type/difficulty; Daily card; Packs; Time Attack; recent stats.  
 - `/puzzle-zone/play/[id]` â€” Generic play UI container that mounts the correct component by puzzle type.  
@@ -127,7 +127,7 @@
 
 ---
 
-## 5) Generators & Validators (Algorithms)
+## 5) Generators and Validators (Algorithms)
 
 ### Sudoku
 - **Generator:** randomized backtracking with diagonal block seeding; remove clues while ensuring **unique solution** using solver check.  
@@ -140,7 +140,7 @@
 
 ### Word Search
 - **Placement:** place words in 8 directions; fill remainder with random letters; ensure nonâ€‘overlap rules.  
-- **Validator:** coordinates & direction match; caseâ€‘insensitive.
+- **Validator:** coordinates and direction match; caseâ€‘insensitive.
 
 ### Kakuro
 - **Generation:** start from solved grid; carve runs with sum clues; ensure uniqueness.  
@@ -162,7 +162,7 @@
 
 ---
 
-## 6) Scoring & Hints
+## 6) Scoring and Hints
 
 - **Base score:** per type + difficulty (e.g., Easy=100, Medium=200, Hard=300).  
 - **Time bonus:** `ceil((maxTimeMs - timeMs)/maxTimeMs * 100)` with floor at 0.  
@@ -249,7 +249,7 @@ Req: multipart file or JSON body â†’ Res: `{ "ok":true, "imported":12, "dup
 
 ---
 
-## 11) Plans & Limits
+## 11) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -265,7 +265,7 @@ Rate limits: `userId`+day for create/hint/check; `userId`+month for exports/impo
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Full keyboard navigation; highâ€‘contrast themes; large cell sizes; screenâ€‘reader labels for clues.  
 - Reduced motion; haptic feedback on mobile (where supported).  

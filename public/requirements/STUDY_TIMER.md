@@ -13,16 +13,16 @@ This document contains a **short summary** for Codex onboarding and the **full t
 
 ### Core Features
 - Presets: **Pomodoro (25/5)**, **Longâ€‘Pom (50/10)**, **Custom cycles**, **Countâ€‘up timer**, and **Countdown by duration**.  
-- **Tags**: subject/topic/board/class; quick selectors & color chips.  
+- **Tags**: subject/topic/board/class; quick selectors and color chips.  
 - **Distraction logger**: oneâ€‘tap â€œinterruptionâ€ counter + reason list.  
 - **Autoâ€‘resume** options, **smart breaks**, **daily goals** (minutes, pomos).  
-- **Session notes** & links to resources (Quiz/FlashNote/Research).  
+- **Session notes** and links to resources (Quiz/FlashNote/Research).  
 - **Stats**: time focused, pomodoros, interruptions, average session length; export CSV/ICS.  
 - Offlineâ€‘friendly; runs in background tab; gentle notifications.
 
 ### Key Pages
-- `/timer` â€” Main timer & quick tags  
-- `/timer/history` â€” Sessions log & notes  
+- `/timer` â€” Main timer and quick tags  
+- `/timer/history` â€” Sessions log and notes  
 - `/timer/stats` â€” Daily/weekly/monthly analytics  
 - `/timer/settings` â€” Presets, goals, sounds/notifications
 
@@ -44,7 +44,7 @@ Integrations: **Study Planner**, **Quiz Institute**, **FlashNote**, **Research A
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide a zeroâ€‘friction, reliable study timer with accurate logging and simple analytics.  
 - Work great on **mobile**, tolerate tab sleeps, and recover state after refresh.  
@@ -57,20 +57,20 @@ Integrations: **Study Planner**, **Quiz Institute**, **FlashNote**, **Research A
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/timer` â€” Timer UI with presets, tag chips, note field, interruption button, sound toggle.  
 - `/timer/history` â€” List of sessions; filters by date, tag; edit notes.  
 - `/timer/stats` â€” Summaries (daily/weekly/monthly), charts (time, pomos, interruptions).  
-- `/timer/settings` â€” Presets, default tags, goals (min & pomos), sounds, notifications, autoâ€‘start, longâ€‘break every N cycles.
+- `/timer/settings` â€” Presets, default tags, goals (min and pomos), sounds, notifications, autoâ€‘start, longâ€‘break every N cycles.
 
 **API (SSR)**
 - Presets: `GET /timer/api/preset/list` Â· `POST /timer/api/preset/save` Â· `POST /timer/api/preset/delete`  
 - Session lifecycle: `POST /timer/api/session/start` Â· `POST /timer/api/session/pause` Â· `POST /timer/api/session/resume` Â· `POST /timer/api/session/finish`  
 - Interruptions: `POST /timer/api/interrupt` (reason enum or text)  
 - Notes/Tags: `POST /timer/api/session/update` (notes, tags)  
-- History & Stats: `GET /timer/api/history` Â· `GET /timer/api/stats`  
+- History and Stats: `GET /timer/api/history` Â· `GET /timer/api/stats`  
 - Export: `POST /timer/api/export/csv` Â· `POST /timer/api/export/ics` (Pro)  
 - Settings/Goals: `POST /timer/api/settings/save`
 
@@ -78,7 +78,7 @@ Web worker recommended to keep timers accurate when tab sleeps; store authoritat
 
 ---
 
-### 3) Timer Engine & State
+### 3) Timer Engine and State
 
 **Client state (web worker):**
 - Holds current phase: `work` | `short_break` | `long_break` | `countup` | `countdown`.  
@@ -188,7 +188,7 @@ Res: `{ "minutes": 1240, "pomos": 39, "avgSessionMin": 33, "interruptionsPerHour
 
 ---
 
-### 8) Plans & Limits
+### 8) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|

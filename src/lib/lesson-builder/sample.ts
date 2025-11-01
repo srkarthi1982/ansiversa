@@ -324,7 +324,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
       {
         id: crypto.randomUUID(),
         type: 'teach',
-        title: 'Mini-lesson: loops & lists',
+        title: 'Mini-lesson: loops and lists',
         minutes: 15,
         objectiveId: null,
         instructions: 'Instructor demonstrates iteration patterns with live coding.',
@@ -344,7 +344,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
       {
         id: crypto.randomUUID(),
         type: 'wrapup',
-        title: 'Retro & next steps',
+        title: 'Retro and next steps',
         minutes: 10,
         objectiveId: null,
         instructions: 'Teams share insights via 1-2-4-all and log backlog tasks.',
@@ -402,7 +402,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
     id: 'lesson-pitch-studio',
     title: 'Entrepreneurship Pitch Studio',
     slug: 'entrepreneurship-pitch-studio',
-    subject: 'Business & Entrepreneurship',
+    subject: 'Business and Entrepreneurship',
     gradeBand: 'Higher Ed / Corporate',
     status: 'draft',
     templateKey: 'business-strategy',
@@ -426,7 +426,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
       {
         id: crypto.randomUUID(),
         statement: 'Deliver a persuasive two-minute pitch highlighting customer problem, solution, and traction.',
-        successCriteria: 'Pitch hits 4/5 rubric indicators and responds to Q&A with evidence.',
+        successCriteria: 'Pitch hits 4/5 rubric indicators and responds to Q and A with evidence.',
         bloomsLevel: 'evaluate',
       },
     ],
@@ -464,7 +464,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
       {
         id: crypto.randomUUID(),
         type: 'assess',
-        title: 'Pitch recording & reflection',
+        title: 'Pitch recording and reflection',
         minutes: 18,
         objectiveId: null,
         instructions: 'Record a one-take pitch and complete self-assessment reflection.',
@@ -484,7 +484,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
       {
         id: crypto.randomUUID(),
         type: 'document',
-        label: 'Investor Q&A prompts',
+        label: 'Investor Q and A prompts',
         url: 'https://cdn.ansiversa.com/lesson/pitch-qa-prompts',
         notes: 'Used for mock panel practice.',
         plan: 'free',
@@ -528,7 +528,7 @@ export const getSampleLessons = (): LessonWorkspaceItem[] => {
 
   const empathyInterviews = createLessonWorkspaceItem({
     id: 'lesson-empathy-interviews',
-    title: 'Empathy Interviews & Journey Mapping',
+    title: 'Empathy Interviews and Journey Mapping',
     slug: 'empathy-interviews-journey-mapping',
     subject: 'Soft Skills',
     gradeBand: 'Grades 9-12',
@@ -654,7 +654,7 @@ export const getSampleModules = (): LessonModuleRecord[] => {
     id: 'module-sustainable-tech',
     title: 'Sustainable Tech Sprint',
     slug: 'sustainable-tech-sprint',
-    subject: 'STEM & Entrepreneurship',
+    subject: 'STEM and Entrepreneurship',
     gradeBand: 'Grades 9-10',
     status: 'draft',
     description:
@@ -716,7 +716,7 @@ export const getSampleModules = (): LessonModuleRecord[] => {
     id: 'module-digital-storytelling',
     title: 'Digital Storytelling Sprint',
     slug: 'digital-storytelling-sprint',
-    subject: 'Language Arts & SEL',
+    subject: 'Language Arts and SEL',
     gradeBand: 'Grades 5-6',
     status: 'published',
     description:
@@ -736,7 +736,7 @@ export const getSampleModules = (): LessonModuleRecord[] => {
     sequence: [
       {
         lessonId: 'lesson-empathy-interviews',
-        title: 'Empathy Interviews & Journey Mapping',
+        title: 'Empathy Interviews and Journey Mapping',
         duration: 50,
         status: 'published',
         day: 1,

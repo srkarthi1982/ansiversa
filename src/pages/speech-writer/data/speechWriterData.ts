@@ -143,7 +143,7 @@ const templateSource: SpeechTemplate[] = [
         ],
       },
       {
-        title: 'Thesis & pillars',
+        title: 'Thesis and pillars',
         bullets: [
           'Name the product positioning clearly',
           'Three pillars with supporting proof points',
@@ -151,7 +151,7 @@ const templateSource: SpeechTemplate[] = [
         ],
       },
       {
-        title: 'Demo & proof',
+        title: 'Demo and proof',
         bullets: [
           'Live demo cue with [SLIDE ▌] markers',
           'Customer quote with attribution + logo',
@@ -159,7 +159,7 @@ const templateSource: SpeechTemplate[] = [
         ],
       },
       {
-        title: 'Close & CTA',
+        title: 'Close and CTA',
         bullets: [
           'Echo original promise with stronger stakes',
           'Call-to-action for signups and social amplification',
@@ -194,21 +194,21 @@ const templateSource: SpeechTemplate[] = [
     highlight: 'Bilingual welcome and personal story slot with gentle humor pacing.',
     outline: [
       {
-        title: 'Greeting & hook',
+        title: 'Greeting and hook',
         bullets: [
           'Open with Tamil welcome for family inclusivity',
           'Share how you met the couple using the rule-of-three',
         ],
       },
       {
-        title: 'Stories & values',
+        title: 'Stories and values',
         bullets: [
           'Two mini-stories highlighting their partnership',
           'Compliment their shared values with callbacks',
         ],
       },
       {
-        title: 'Blessing & toast',
+        title: 'Blessing and toast',
         bullets: [
           'Quote from beloved elder with attribution',
           'Invite audience to raise a glass with [PAUSE 2s]',
@@ -237,7 +237,7 @@ const templateSource: SpeechTemplate[] = [
     targetWpm: 150,
     language: 'English',
     tone: 'Confident, data-backed, concise',
-    highlight: 'Objection handling lane and runway math keep Q&A crisp.',
+    highlight: 'Objection handling lane and runway math keep Q and A crisp.',
     outline: [
       {
         title: 'Problem framing',
@@ -247,21 +247,21 @@ const templateSource: SpeechTemplate[] = [
         ],
       },
       {
-        title: 'Solution & traction',
+        title: 'Solution and traction',
         bullets: [
           'Product snapshot with hook stats',
           'Revenue, retention, and growth metric chips',
         ],
       },
       {
-        title: 'Moat & plan',
+        title: 'Moat and plan',
         bullets: [
           'Competitive map with contrast pairs',
           '18-month roadmap with hiring plan',
         ],
       },
       {
-        title: 'Ask & CTA',
+        title: 'Ask and CTA',
         bullets: [
           'Funding ask with use of proceeds pie',
           'Invite investors to deeper diligence session',
@@ -376,7 +376,7 @@ const workflowStageSource: WorkflowStage[] = [
   },
   {
     id: 'practice',
-    label: 'Practice & rehearsal',
+    label: 'Practice and rehearsal',
     summary: 'Timing runs, filler word logging, and teleprompter prep.',
     status: 'pending',
     actions: [
@@ -388,7 +388,7 @@ const workflowStageSource: WorkflowStage[] = [
   },
   {
     id: 'teleprompter',
-    label: 'Teleprompter & export',
+    label: 'Teleprompter and export',
     summary: 'Prepare mirror-ready scroll, DOCX/PDF exports, and slide bullets.',
     status: 'pending',
     actions: [
@@ -507,7 +507,7 @@ const workspaceTabSource: WorkspaceTab[] = [
     summary: 'Default voice, banned phrases, compliance notes, and sharing controls.',
     panels: [
       {
-        title: 'Voice & tone profiles',
+        title: 'Voice and tone profiles',
         bullets: [
           'Store multiple personas with tone descriptors and sample paragraphs.',
           'Upload pronunciation notes and phonetic spellings.',
@@ -516,7 +516,7 @@ const workspaceTabSource: WorkspaceTab[] = [
         accent: 'from-indigo-500/20 via-slate-800/60 to-slate-950',
       },
       {
-        title: 'Collaboration & safety',
+        title: 'Collaboration and safety',
         bullets: [
           'Invite reviewers with comment-only or edit rights.',
           'Enable inclusive language guardrails and sensitivity flags.',
@@ -615,7 +615,7 @@ const teleprompterPresetSource: TeleprompterPreset[] = [
 const quoteCollectionSource: QuoteCollection[] = [
   {
     id: 'inspiration',
-    topic: 'Inspiration & leadership',
+    topic: 'Inspiration and leadership',
     description: 'Motivational quotes with strong attribution for keynotes and graduations.',
     quotes: [
       {
@@ -639,7 +639,7 @@ const quoteCollectionSource: QuoteCollection[] = [
   },
   {
     id: 'innovation',
-    topic: 'Innovation & change',
+    topic: 'Innovation and change',
     description: 'Quotes suited for product launches, pitches, and transformation talks.',
     quotes: [
       {
@@ -665,7 +665,7 @@ const quoteCollectionSource: QuoteCollection[] = [
   },
   {
     id: 'ceremony',
-    topic: 'Ceremony & gratitude',
+    topic: 'Ceremony and gratitude',
     description: 'Warm sentiments for weddings, awards, and appreciation moments.',
     quotes: [
       {
@@ -727,7 +727,7 @@ const planComparisonSource: PlanComparisonRow[] = [
   {
     feature: 'Length targeting',
     free: 'Up to 8 minutes · single language',
-    pro: 'Up to 30 minutes · multilingual & bilingual output',
+    pro: 'Up to 30 minutes · multilingual and bilingual output',
   },
   {
     feature: 'Teleprompter',

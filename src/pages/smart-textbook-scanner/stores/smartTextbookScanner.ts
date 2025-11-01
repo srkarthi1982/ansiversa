@@ -101,10 +101,10 @@ class SmartTextbookScannerStore extends BaseStore {
       this.appendPipelineLog(`${label} complete. 12 pages queued for preprocessing.`);
       const firstStage = this.pipelineStages[0];
       if (firstStage && firstStage.status === 'active') {
-        this.logStatus('Preprocess & Clean running. Deskew and denoise in progress.');
+        this.logStatus('Preprocess and Clean running. Deskew and denoise in progress.');
       } else if (firstStage) {
         firstStage.status = 'active';
-        this.logStatus('Preprocess & Clean initialised.');
+        this.logStatus('Preprocess and Clean initialised.');
       }
       this.recalculateProgress();
     });

@@ -5,7 +5,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
 
 const heroHighlights = [
   {
-    label: "Board & competitive presets",
+    label: "Board and competitive presets",
     value: "CBSE, JEE, NEET, SAT",
     icon: "fas fa-graduation-cap",
   },
@@ -58,7 +58,7 @@ const flows = [
     eyebrow: "Route: /exam/builder",
   },
   {
-    title: "Start & configuration",
+    title: "Start and configuration",
     description:
       "Learners review instructions, toggle shuffle or attempt rules, and confirm per-section timings before beginning.",
     icon: "fas fa-clipboard-list",
@@ -72,14 +72,14 @@ const flows = [
     eyebrow: "Route: /exam/test/[attemptId]",
   },
   {
-    title: "Results & analytics",
+    title: "Results and analytics",
     description:
       "Score breakdowns, normalized scores, solution walkthroughs, and one-click exports or revision tasks.",
     icon: "fas fa-chart-line",
     eyebrow: "Route: /exam/result/[attemptId]",
   },
   {
-    title: "History & admin",
+    title: "History and admin",
     description:
       "Attempt archives with filters plus internal tools for seeding papers, mapping topics, and managing presets.",
     icon: "fas fa-database",
@@ -92,14 +92,14 @@ const scoringRules = [
     name: "Paper",
     points: [
       "Title, board/class, subjects",
-      "Global time & marks, shuffle seed",
+      "Global time and marks, shuffle seed",
       "Per-section timer and navigation rules",
     ],
   },
   {
     name: "Section",
     points: [
-      "Topic focus & question counts",
+      "Topic focus and question counts",
       "Marks and negative scoring per question",
       "Difficulty composition controls",
     ],
@@ -107,7 +107,7 @@ const scoringRules = [
   {
     name: "Question types",
     points: [
-      "MCQ single & multi with partial scoring",
+      "MCQ single and multi with partial scoring",
       "True/False and numeric entry",
       "Matching grids and short-text evaluators",
     ],
@@ -128,7 +128,7 @@ const analyticsHighlights = [
     icon: "fas fa-arrows-rotate",
   },
   {
-    title: "Exports & sharing",
+    title: "Exports and sharing",
     description:
       "Download PDF/CSV reports or share attempt summaries with mentors in a single click.",
     icon: "fas fa-file-export",
@@ -148,7 +148,7 @@ const integrations = [
     tier: "Pro",
     details: [
       "Unlimited attempts and all presets",
-      "Custom paper builder & exports",
+      "Custom paper builder and exports",
       "Full analytics plus Study Planner and FlashNote actions",
     ],
   },
@@ -156,7 +156,7 @@ const integrations = [
 
 const apiRoutes = [
   {
-    label: "Papers & presets",
+    label: "Papers and presets",
     endpoints: [
       "GET /exam/api/paper?id=",
       "POST /exam/api/paper/create",
@@ -165,7 +165,7 @@ const apiRoutes = [
     ],
   },
   {
-    label: "Delivery & attempts",
+    label: "Delivery and attempts",
     endpoints: [
       "POST /exam/api/attempt/start",
       "GET /exam/api/attempt?id=",
@@ -176,7 +176,7 @@ const apiRoutes = [
     ],
   },
   {
-    label: "Analytics & actions",
+    label: "Analytics and actions",
     endpoints: [
       "GET /exam/api/analysis?attemptId=",
       "POST /exam/api/flashnote/add",
@@ -322,7 +322,7 @@ const apiRoutes = [
           ))}
         </div>
         <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
-          <h3 class="text-xl font-semibold text-slate-900">Navigation & fairness</h3>
+          <h3 class="text-xl font-semibold text-slate-900">Navigation and fairness</h3>
           <div class="mt-4 grid gap-6 lg:grid-cols-2">
             <div>
               <p class="text-sm text-slate-600">
@@ -393,7 +393,7 @@ const apiRoutes = [
           <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div class="space-y-3">
               <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Data Model Snapshot</p>
-              <h3 class="text-2xl font-semibold text-slate-900">Entities & relationships</h3>
+              <h3 class="text-2xl font-semibold text-slate-900">Entities and relationships</h3>
               <p class="text-sm text-slate-600">
                 The simulator revolves around curated papers, tracked attempts, and analysed results. Each entity supports integrations with other Ansiversa learning tools.
               </p>

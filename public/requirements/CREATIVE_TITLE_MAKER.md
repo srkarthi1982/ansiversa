@@ -7,7 +7,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
 ### Overview
-**Creative Title Maker** generates **catchy, onâ€‘brand titles** for posts, videos, podcasts, books, courses, landing pages, and campaigns. It supports **style constraints** (length, syllables, alliteration, rhyme, power words), **SEO focus** (keyword placement, SERP length), **tone & audience controls**, **localization**, and **A/B multiâ€‘variant packs** with **scoring** (clarity, novelty, searchability, CTRâ€‘intent). The tool explains **why a title works**, offers **alternatives**, and exports to **CSV/JSON/PDF**. Integrates with **Blog Writer, Presentation Designer, Story Crafter, Ad Copy Assistant, Song Lyric Maker**.
+**Creative Title Maker** generates **catchy, onâ€‘brand titles** for posts, videos, podcasts, books, courses, landing pages, and campaigns. It supports **style constraints** (length, syllables, alliteration, rhyme, power words), **SEO focus** (keyword placement, SERP length), **tone and audience controls**, **localization**, and **A/B multiâ€‘variant packs** with **scoring** (clarity, novelty, searchability, CTRâ€‘intent). The tool explains **why a title works**, offers **alternatives**, and exports to **CSV/JSON/PDF**. Integrates with **Blog Writer, Presentation Designer, Story Crafter, Ad Copy Assistant, Song Lyric Maker**.
 
 ### Core Features
 - **Brief â†’ 50+ title variants** across formats (article/video/podcast/course/book/landing page/ad).  
@@ -45,7 +45,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Produce **highâ€‘quality, constraintâ€‘aware** titles that match **audience + channel**.  
 - Provide **transparent scoring** and concise rationales to choose confidently.  
@@ -57,7 +57,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/titles` â€” Library with search/tags; recent projects.  
@@ -72,15 +72,15 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
   - `GET  /titles/api/project?id=`  
   - `POST /titles/api/project/update`  
   - `POST /titles/api/project/archive`
-- Generation & editing:  
+- Generation and editing:  
   - `POST /titles/api/generate` (brief â†’ variants)  
   - `POST /titles/api/variant/edit` Â· `POST /titles/api/variant/delete`  
   - `POST /titles/api/bucket/apply` (benefit/curiosity/contrarian/proof/social/command/howto/listicle/question)
-- Scoring & checks:  
+- Scoring and checks:  
   - `POST /titles/api/score` (clarity/novelty/seo/ctr/brandfit)  
   - `POST /titles/api/check/compliance` (banned words, legal claims)  
   - `POST /titles/api/check/seo` (length, keyword position, slug)
-- Localization & voice:  
+- Localization and voice:  
   - `POST /titles/api/localize` (target locales; preserve voice; reâ€‘invent puns)  
   - `POST /titles/api/voice/save`
 - Export:  
@@ -99,14 +99,14 @@ Optional WebSocket `/titles/ws` for live counters and autosave notices.
 - Numerals (Top 7), Alliteration, Rhyme, Pun/Wordplay, Colon split, Parenthetical, Brackets, Emoji (video only), Question hooks, Command hooks.
 
 **Constraints**  
-- **Length**: chars/words; hard & soft limits per platform (e.g., email subject â‰¤ 60 chars, YouTube â‰¤ 100).  
+- **Length**: chars/words; hard and soft limits per platform (e.g., email subject â‰¤ 60 chars, YouTube â‰¤ 100).  
 - **Syllables** target (optional) and **readability grade** (Fleschâ€‘Kincaid).  
 - **Keywords**: primary (mustâ€‘include), secondary (niceâ€‘toâ€‘have), **placement** (front/middle/end).  
 - **Brand glossary**: required phrases; protected terms (never alter).  
 - **Risk flags**: superlatives, clickbait patterns, overâ€‘promise words; generate safer rewrites.
 
 **Theme buckets**  
-- Benefitâ€‘led, Painâ€‘relief, Curiosity gap, Contrarian/Challenge, Social proof & numbers, Howâ€‘to/tutorial, Listicle, Case study/result, Timely/newsâ€‘jacking.
+- Benefitâ€‘led, Painâ€‘relief, Curiosity gap, Contrarian/Challenge, Social proof and numbers, Howâ€‘to/tutorial, Listicle, Case study/result, Timely/newsâ€‘jacking.
 
 ---
 
@@ -114,7 +114,7 @@ Optional WebSocket `/titles/ws` for live counters and autosave notices.
 
 - **Clarity** (0â€“1): unambiguous topic, active voice, jargon penalty.  
 - **Novelty** (0â€“1): nâ€‘gram overlap vs brief/other variants; clichÃ© penalty list.  
-- **SEO** (0â€“1): primary keyword inclusion & early placement; SERP length; slug cleanliness.  
+- **SEO** (0â€“1): primary keyword inclusion and early placement; SERP length; slug cleanliness.  
 - **CTRâ€‘Intent** (0â€“1): presence of benefits, specificity, curiosity without deception.  
 - **Brand Fit** (0â€“1): tone match vs saved voice, banned words avoidance.
 
@@ -225,7 +225,7 @@ Res: `{ "jobId":"e_12" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

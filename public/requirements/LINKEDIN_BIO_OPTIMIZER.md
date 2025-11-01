@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/linkedin-bio`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands for editors/forms), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Generate and refine **LinkedIn headlines, About/Bio, and Featured sections** that are keywordâ€‘rich, authentic, and aligned to target roles/industries. Produce multiple tone/length variants, quantify impact, and ensure policyâ€‘safe output.
 
@@ -10,21 +10,21 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - **Import** user data from: Resume Builder (JSON), pasted text, or manual form.  
 - Create **3 artifact types**:
   1) **Headline** (â‰¤ 220 chars) â€” keywordâ€‘optimized, roleâ€‘targeted.  
-  2) **About / Bio** (â‰¤ 2,600 chars) â€” narrative with proof points & metrics.  
+  2) **About / Bio** (â‰¤ 2,600 chars) â€” narrative with proof points and metrics.  
   3) **Featured** suggestions â€” top links/media to showcase (portfolio, posts, talks).
-- **Variants & tone** controls: professional, friendly, confident, humble, storyteller, dataâ€‘driven.  
+- **Variants and tone** controls: professional, friendly, confident, humble, storyteller, dataâ€‘driven.  
 - **Targeting:** role(s), seniority, industries, location, visa/remote, and top 10 keywords/skills.  
 - **Frameworks:** **STAR/CAR** microâ€‘bullets, value proposition, elevator pitch.  
 - **Compliance:** no exaggeration/claims without evidence; optional **â€œevidence mapâ€** showing which data point supports which line.
 - **Scoring:** keyword coverage %, reading level, buzzword density, length checks, inclusive language linting.
 - **Localization:** language (EN/Tamil/Arabic + others), emoji toggle, first/third person selection.
-- **Export:** copy blocks, MD/PDF; push to Resume Builder & Cover Letter Writer.
+- **Export:** copy blocks, MD/PDF; push to Resume Builder and Cover Letter Writer.
 
 ### Nonâ€‘Goals (v1)
 - No automated LinkedIn API publishing (manual copy/paste).  
@@ -43,19 +43,19 @@
    - *As a user*, I select â€œFrontend Engineer Â· Astro/React Â· Dubai/UAEâ€.  
    - **AC:** variants prioritize relevant keywords (Astro, React, SSR, Tailwind, Vercel), show domain proof, and respect character limits.
 
-3. **Tone & Persona**
+3. **Tone and Persona**
    - *As a user*, I switch tone to **confident + dataâ€‘driven** and persona to **firstâ€‘person**.  
    - **AC:** text updates while keeping facts from evidence map; buzzword linting stays green.
 
-4. **Metrics & STAR**
+4. **Metrics and STAR**
    - *As a user*, I click **Add metrics**.  
    - **AC:** bullets convert achievements into STAR/CAR lines with numbers (e.g., â€œCut TTFB 38% byâ€¦â€) using resume evidence.
 
-5. **Score & Lint**
+5. **Score and Lint**
    - *As a user*, I see **Coverage 86%**, **Readability B2**, **Length OK**, **Biasâ€‘free OK**.  
    - **AC:** `/linkedin-bio/api/score` returns structured scores and suggestions.
 
-6. **Export & Save**
+6. **Export and Save**
    - *As a user*, I save the winning variant and export MD/PDF.  
    - **AC:** `/linkedin-bio/api/save` persists artifacts; `/linkedin-bio/api/export` returns a file URL.
 
@@ -65,7 +65,7 @@
 
 ---
 
-## 3) Artifacts & Content Schema
+## 3) Artifacts and Content Schema
 
 **InputData**  
 ```json
@@ -98,7 +98,7 @@
 
 ---
 
-## 4) Routes & Information Architecture
+## 4) Routes and Information Architecture
 
 - `/linkedin-bio` â€” Hub: Import resume, set targets, generate variants, compare.  
 - `/linkedin-bio/editor/[profileId]` â€” Editor: sideâ€‘byâ€‘side variants, tone sliders, keyword checklist, scores.  
@@ -135,7 +135,7 @@
 
 ---
 
-## 6) Scoring & Linting
+## 6) Scoring and Linting
 
 - **Coverage:** ratio of target keywords present (stemmed + synonyms).  
 - **Readability:** CEFR estimate (A2â€“C2) using heuristics (sentence length, vocab).  
@@ -204,7 +204,7 @@ Res: `{ "url":"/exports/LinkedIn_Bio_Karthik.md" }`
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -220,9 +220,9 @@ Rate limits: per `userId`/day for generate/score; per `profileId`/hour for expor
 
 ---
 
-## 11) Accessibility & UX
+## 11) Accessibility and UX
 
-- Screenâ€‘reader labels; highâ€‘contrast & largeâ€‘text modes.  
+- Screenâ€‘reader labels; highâ€‘contrast and largeâ€‘text modes.  
 - Keyboard shortcuts (cycle variants, copy).  
 - RTL support; localized punctuation rules; emoji toggle for readability.
 
@@ -258,7 +258,7 @@ src/components/linkedin-bio/Scoring/*.astro
 - **Role libraries** (preset keyword banks for common roles/industries).  
 - **ATS/SEO simulators** (searchability estimation for recruiter queries).  
 - **A/B test assistant** to rotate headlines and gather soft feedback.  
-- **â€œTurn posts into Featuredâ€** helper that extracts best lines & thumbnails.  
+- **â€œTurn posts into Featuredâ€** helper that extracts best lines and thumbnails.  
 - **Multilingual parity** with translation memory between languages.
 
 ---

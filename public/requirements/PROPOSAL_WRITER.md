@@ -7,13 +7,13 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Create proposals quickly with **guided sections** and **live preview**.  
 - **AI Draft/Improve** for any section (scope, timeline, budget, terms).  
 - **Template system** (Business, Startup, Agency, Grant, RFP Response).  
-- **Client-tailoring wizard**: paste RFP / client brief â†’ extract requirements & risks.  
+- **Client-tailoring wizard**: paste RFP / client brief â†’ extract requirements and risks.  
 - **Export** to **PDF/DOCX/Markdown**; optional shareable link.  
 - Store multiple proposals per user; **duplicate/rename/delete**.
 
@@ -34,27 +34,27 @@
    - *As a user*, I can paste a client brief/RFP or a URL.  
    - **AC:** `/proposal/api/brief-analyze` extracts goals, scope, constraints, and risks into a sidebar checklist.
 
-3. **AI Draft & Improve**
+3. **AI Draft and Improve**
    - *As a user*, I can generate a first draft or improve selected sections with tone options.  
    - **AC:** `/proposal/api/ai-draft` and `/proposal/api/ai-improve` return safe text with placeholders filled.
 
-4. **Budget & Timeline**
+4. **Budget and Timeline**
    - *As a user*, I can add cost line items, totals, and a milestone timeline.  
    - **AC:** Totals auto-calc; validation for currency; dates ordered.
 
-5. **Scope & Deliverables**
+5. **Scope and Deliverables**
    - *As a user*, I can define scope, deliverables, out-of-scope, and assumptions.  
    - **AC:** Sections saved as structured JSON; preview updates instantly.
 
-6. **Terms & Conditions**
+6. **Terms and Conditions**
    - *As a user*, I can pick from preset T&C blocks (IP, confidentiality, payment terms).  
    - **AC:** Inserted blocks are editable; stored in JSON.
 
-7. **Branding & Templates**
+7. **Branding and Templates**
    - *As a user*, I can switch templates and upload a logo.  
    - **AC:** Template change preserves content; logo appears in header.
 
-8. **Export & Share**
+8. **Export and Share**
    - *As a user*, I can export to PDF/DOCX/MD and optionally create a public view link.  
    - **AC:** Files download; public link `/proposal/view/<slug>` (read-only).
 
@@ -64,7 +64,7 @@
 
 ---
 
-## 3) Information Architecture & Routes
+## 3) Information Architecture and Routes
 
 - `/proposal` â€” Dashboard (list + â€œNew Proposalâ€)  
 - `/proposal/builder` â€” Main editor (form + live preview)  
@@ -149,7 +149,7 @@
 - CTA: â€œNew Proposalâ€ (blank or from template).
 
 ### `/proposal/builder`
-- **Left panel** (accordion): Client, Overview, Goals, Scope, Deliverables, Out-of-scope, Assumptions, Timeline, Budget, Team, Case Studies, Risks & Mitigations, Terms, Branding.  
+- **Left panel** (accordion): Client, Overview, Goals, Scope, Deliverables, Out-of-scope, Assumptions, Timeline, Budget, Team, Case Studies, Risks and Mitigations, Terms, Branding.  
 - **Right panel**: live preview (template).  
 - Top bar: template switcher, currency selector, AI Draft/Improve, Publish, Export.  
 - Autosave indicator.
@@ -213,7 +213,7 @@ Res: `{ "url": "/proposal/view/website-redesign-proposal" }`
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -227,7 +227,7 @@ Rate limit keys: `userId` + day.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Client data is private by default; only published proposals are public.  
 - No secrets in logs; sanitize AI inputs/outputs.  
@@ -235,13 +235,13 @@ Rate limit keys: `userId` + day.
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `proposal.create`, `proposal.save`, `proposal.publish`, `proposal.export`, `proposal.aiDraft`, `proposal.aiImprove`, `proposal.duplicate`, `proposal.delete`.
 
 ---
 
-## 12) Accessibility & SEO
+## 12) Accessibility and SEO
 
 - Keyboard navigation, labeled controls, aria for accordions.  
 - SEO meta for public view; OpenGraph preview for sharing.
@@ -277,11 +277,11 @@ src/components/proposal/templates/Grant.astro
 
 ## 14) Future Enhancements (v2+)
 
-- Eâ€‘signature & acceptance tracking.  
-- Pricing tables with tiers & optional line items.  
-- Collaboration & comments.  
+- Eâ€‘signature and acceptance tracking.  
+- Pricing tables with tiers and optional line items.  
+- Collaboration and comments.  
 - CRM sync (HubSpot/Notion).  
-- Multi-currency quotes & tax/VAT handling.
+- Multi-currency quotes and tax/VAT handling.
 
 ---
 

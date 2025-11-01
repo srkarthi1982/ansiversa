@@ -14,7 +14,7 @@ This document provides a **Codex-friendly summary** plus a **complete technical 
 - **Channel presets** with **hard character limits** and field schemas (e.g., Google headlines 30 chars, descriptions 90; FB primary text, headline, description).  
 - **Variant generation**: A/B/C per channel; tone sliders (professional â†” playful), angles (price, scarcity, social proof, pain relief).  
 - **Compliance assistant**: flags risky wording (medical/financial claims, superlatives, banned words) and suggests compliant rewrites.  
-- **Keyword & audience hooks**: insert keywords, pain points, benefits; dynamic keyword insertion (DKI) stubs for search.  
+- **Keyword and audience hooks**: insert keywords, pain points, benefits; dynamic keyword insertion (DKI) stubs for search.  
 - **Creative hints**: autoâ€‘suggest image/video specs, hooks, and CTAs per platform.  
 - **Localization**: translate + culturally adapt; multiâ€‘locale bundles.  
 - **Tracking**: UTM builder + template library; shortlinks field.  
@@ -47,7 +47,7 @@ This document provides a **Codex-friendly summary** plus a **complete technical 
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Produce **uploadâ€‘ready** creatives tailored to each ad platform with **real limits** and **compliance hints**.  
 - Accelerate experimentation via **multiâ€‘angle variants** and **clear A/B matrices**.  
@@ -59,14 +59,14 @@ This document provides a **Codex-friendly summary** plus a **complete technical 
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/ads` â€” Card list of campaigns; search, tags, status.  
 - `/ads/new` â€” Brief wizard: product, audience, pain/benefit, offer, CTA, channels, locales, budget notes, KPIs.  
 - `/ads/campaign/[id]` â€” Workspace: tabs for **Overview**, **Variants**, **Compliance**, **Localization**, **Settings**.  
 - `/ads/export/[id]` â€” Export presets (Google CSV, Meta CSV, JSON bundle, PDF sheet).  
-- `/ads/settings` â€” Brand voice & tone sliders; banned words; default UTMs; locales.
+- `/ads/settings` â€” Brand voice and tone sliders; banned words; default UTMs; locales.
 
 **API (SSR)**
 - Campaigns/briefs:  
@@ -74,27 +74,27 @@ This document provides a **Codex-friendly summary** plus a **complete technical 
   - `GET  /ads/api/campaign?id=`  
   - `POST /ads/api/campaign/update`  
   - `POST /ads/api/campaign/archive`
-- Generation & editing:  
+- Generation and editing:  
   - `POST /ads/api/generate` (brief â†’ multiâ€‘channel creative sets)  
   - `POST /ads/api/variant/add` `.../edit` `.../delete`  
   - `POST /ads/api/angle/apply` (price/scarcity/social proof/problem/benefit/testimonial/urgency)  
-- Compliance & checks:  
+- Compliance and checks:  
   - `POST /ads/api/compliance/check`  
   - `POST /ads/api/compliance/auto_rewrite`
-- Localization & voice:  
+- Localization and voice:  
   - `POST /ads/api/localize` (targets locales, honor tone/voice)  
   - `POST /ads/api/voice/save`
-- Tracking & export:  
+- Tracking and export:  
   - `POST /ads/api/utm/apply`  
   - `POST /ads/api/export` (csv|json|pdf) Â· `GET /ads/api/export/status?id=`
-- Specs & references:  
+- Specs and references:  
   - `GET  /ads/api/channelspec?platform=facebook|google|linkedin|x|tiktok|youtube`
 
 Optional WebSocket `/ads/ws` for live characterâ€‘limit meters and autosave notices.
 
 ---
 
-### 3) Channel Schemas & Limits (v1 Targets)
+### 3) Channel Schemas and Limits (v1 Targets)
 
 **Google Search/PMAX**
 - Headlines (up to 15 Ã— **30 chars**), Descriptions (up to 4 Ã— **90 chars**), Path (2 Ã— 15), Final URL, Business name; optional callouts/sitelinks (v2).
@@ -242,7 +242,7 @@ Res: `{ "jobId":"e55" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

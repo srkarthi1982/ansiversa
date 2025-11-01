@@ -2,21 +2,21 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/course-tracker`  
-**Category:** Learning & Knowledge  
+**Category:** Learning and Knowledge  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
-**Goal:** Help users **track online courses, lessons, and progress** across platforms (Coursera, Udemy, YouTube, etc.), create **study plans**, log **notes & highlights**, and stay consistent with **reminders** and **streaks**. Integrates with **Lesson Builder**, **Quiz Institute**, and **Blog Writer** for deeper learning workflows.
+**Goal:** Help users **track online courses, lessons, and progress** across platforms (Coursera, Udemy, YouTube, etc.), create **study plans**, log **notes and highlights**, and stay consistent with **reminders** and **streaks**. Integrates with **Lesson Builder**, **Quiz Institute**, and **Blog Writer** for deeper learning workflows.
 
 ---
 
-## 1) Objectives & Non-Goals
+## 1) Objectives and Non-Goals
 
 ### Objectives
 - Save **courses** from any URL with metadata (title, provider, duration, difficulty).  
 - Break courses into **modules/lessons**; mark progress, completion %, and time spent.  
 - Create a **study plan** (weekly schedule + target end date); track **streaks** and **reminders**.  
-- Inline **notes & highlights** per lesson; export notes.  
+- Inline **notes and highlights** per lesson; export notes.  
 - **Quizzes**: attach Quiz Institute sets to lessons; quick self-check.  
-- **Reflections** & **blog export**: turn notes into a blog draft (to Blog Writer).  
+- **Reflections** and **blog export**: turn notes into a blog draft (to Blog Writer).  
 - **Dashboard**: What to study today, overdue items, weekly time chart.  
 - Export to **CSV/Markdown/PDF**.
 
@@ -30,19 +30,19 @@
 ## 2) User Stories (Acceptance Criteria)
 
 1. **Add a Course** â€” Paste URL or enter details manually â†’ creates course record.  
-2. **Build Outline** â€” Add/edit modules & lessons; mark progress and completion.  
+2. **Build Outline** â€” Add/edit modules and lessons; mark progress and completion.  
 3. **Study Plan** â€” Auto-generate weekly study schedule based on target end date and hours/week.  
-4. **Track Session** â€” Start/pause/stop timers; logs minutes & updates streaks.  
-5. **Notes & Highlights** â€” Markdown notes per lesson; searchable & exportable.  
+4. **Track Session** â€” Start/pause/stop timers; logs minutes and updates streaks.  
+5. **Notes and Highlights** â€” Markdown notes per lesson; searchable and exportable.  
 6. **Attach Quiz** â€” Link quizzes from Quiz Institute to lessons.  
-7. **Reminders & Streaks** â€” Daily/weekly reminders; auto streak calculation.  
-8. **Export & Blog Draft** â€” Export summaries or send to Blog Writer for reflection posts.  
+7. **Reminders and Streaks** â€” Daily/weekly reminders; auto streak calculation.  
+8. **Export and Blog Draft** â€” Export summaries or send to Blog Writer for reflection posts.  
 9. **Complete / Archive** â€” Mark courses done or archived; preserve data.  
 10. **Plan Gating** â€” Free plan limits; Pro unlocks all.
 
 ---
 
-## 3) Routes & Pages
+## 3) Routes and Pages
 
 | Route | Description |
 |-------|--------------|
@@ -115,7 +115,7 @@
 
 ---
 
-## 8) Plans & Limits
+## 8) Plans and Limits
 
 | Feature | Free | Pro |
 |----------|------|-----|
@@ -126,7 +126,7 @@
 
 ---
 
-## 9) Security & Privacy
+## 9) Security and Privacy
 
 - User data private by default.  
 - Sanitize all Markdown and block scripts.  

@@ -2,13 +2,13 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/lesson`  
-**Category:** Learning & Knowledge  
+**Category:** Learning and Knowledge  
 **Stack:** Astro + Tailwind (islands as needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Let educators, creators, and teams **design, generate (AI), organize, and publish** lesson plans and microâ€‘courses (with outcomes, activities, resources, and quizzes) that integrate with **Quiz Institute**.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Create lessons and multiâ€‘lesson **modules** with clear **learning outcomes** and **success criteria**.  
@@ -32,11 +32,11 @@
    - *As a user*, I create a new lesson from blank or template.  
    - **AC:** Draft with `status='draft'`; redirect to `/lesson/editor?id=<uuid>`.
 
-2. **AI Outline & Objectives**
+2. **AI Outline and Objectives**
    - *As a user*, I enter a topic, audience, and duration â†’ get **outline** and **SMART objectives**.  
    - **AC:** `/lesson/api/ai-outline` returns sections and measurable outcomes.
 
-3. **Add Sections & Activities**
+3. **Add Sections and Activities**
    - *As a user*, I add blocks (Warmâ€‘up, Teach, Practice, Assess) with materials, timing, and instructions.  
    - **AC:** Items are reorderable; total duration autoâ€‘sums; warnings if over/under plan.
 
@@ -44,33 +44,33 @@
    - *As a user*, I attach an existing quiz from `/quiz` or ask AI to generate MCQs.  
    - **AC:** `/lesson/api/quiz-link` links a quiz ID; `/lesson/api/ai-quiz` creates draft questions JSON.
 
-5. **Resources & Handouts**
+5. **Resources and Handouts**
    - *As a user*, I attach files/links (slides, worksheets, videos).  
    - **AC:** Resources appear in preview and export; file metadata stored.
 
-6. **Differentiation & Accessibility**
+6. **Differentiation and Accessibility**
    - *As a user*, I add accommodations (ELL/SpEd), extension tasks, and accessibility notes.  
    - **AC:** Structured fields saved and shown in export.
 
-7. **Publish & Export**
+7. **Publish and Export**
    - *As a user*, I publish a readâ€‘only page and export PDF/Docx/Markdown.  
    - **AC:** `/lesson/view/<slug>` is clean, printable; exports include timings and materials list.
 
-8. **Modules & Sequencing**
+8. **Modules and Sequencing**
    - *As a user*, I group lessons into a module and define prerequisites and pacing.  
    - **AC:** `/lesson/module` shows sequence and hours; can export a module overview.
 
 9. **Plan Gating**
    - Free: up to 10 lessons, 2 modules, watermark on exports, limited AI.  
-   - Pro: unlimited, no watermark, advanced AI & translation, calendar export, quiz autoâ€‘gen.
+   - Pro: unlimited, no watermark, advanced AI and translation, calendar export, quiz autoâ€‘gen.
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/lesson` â€” Dashboard (lessons list + â€œNew Lessonâ€ + Modules tab)  
 - `/lesson/editor` â€” Lesson editor (outline/sections/resources/assessment)  
-- `/lesson/module` â€” Module overview & sequencing  
+- `/lesson/module` â€” Module overview and sequencing  
 - `/lesson/templates` â€” Template gallery  
 - `/lesson/view/[slug].astro` â€” Public readâ€‘only lesson view  
 - `/lesson/module/[slug].astro` â€” Public readâ€‘only module view
@@ -166,7 +166,7 @@
 - Modules list: title, lessons count, hours; actions: **Open**, **Publish**, **Export**.
 
 ### `/lesson/editor`
-- **Left**: Outline & Sections (drag to reorder). Quick add: Warmâ€‘up, Teach, Practice, Assess, Wrapâ€‘up.  
+- **Left**: Outline and Sections (drag to reorder). Quick add: Warmâ€‘up, Teach, Practice, Assess, Wrapâ€‘up.  
 - **Center**: Rich form for the selected block (title, minutes, instructions, materials).  
 - **Right**: Objectives/Outcomes, Quiz, Resources, Accommodations, Standards.  
 - Top bar: AI Outline, AI Activities, AI Quiz, Publish, Export (PDF/DOCX/MD). Autosave indicator.  
@@ -250,7 +250,7 @@ Res: `{ "items": ["stem","coding","soft-skills","business-training","language-ar
 
 ---
 
-## 8) Export & Rendering
+## 8) Export and Rendering
 
 - **PDF**: printable layout with timing table, objectives/outcomes, sections, materials, and attached quiz link.  
 - **DOCX**: structured headings and tables (sections, timings, materials).  
@@ -259,7 +259,7 @@ Res: `{ "items": ["stem","coding","soft-skills","business-training","language-ar
 
 ---
 
-## 9) Plans & Limits
+## 9) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -273,7 +273,7 @@ Rate limit keys: `userId` + day for AI; perâ€‘month for create/publish quot
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Drafts private by default; publish makes readâ€‘only page public.  
 - Sanitize/escape user input in exports and public views.  
@@ -281,14 +281,14 @@ Rate limit keys: `userId` + day for AI; perâ€‘month for create/publish quot
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `lesson.create`, `lesson.save`, `lesson.publish`, `lesson.export`, `lesson.delete`, `lesson.duplicate`,  
   `lesson.aiOutline`, `lesson.aiActivities`, `lesson.aiQuiz`, `module.create`, `module.publish`.
 
 ---
 
-## 12) Accessibility & SEO
+## 12) Accessibility and SEO
 
 - Keyboard navigable editor; aria for tabs/accordions and drag handles.  
 - Public views with SEO meta, canonical URL, and OpenGraph.  

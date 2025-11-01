@@ -4,7 +4,7 @@ import SectionHeading from '../../../components/SectionHeading.astro';
 <section id="ai-meme-safety" class="border-t border-slate-200 bg-slate-50 py-16" x-data="() => ({ meme: $store.aiMemeCreator })">
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
     <SectionHeading
-      eyebrow="Safety & compliance"
+      eyebrow="Safety and compliance"
       title="Keep memes on-brand with profanity filters, sensitive-topic guards, and watermark locks"
       description="Safety controls stay live in the workspace so brand teams can approve exports confidently. Toggle guardrails per plan and log overrides for audits."
     />
@@ -96,7 +96,7 @@ import SectionHeading from '../../../components/SectionHeading.astro';
 
       <div class="space-y-6">
         <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-          <h3 class="text-sm font-semibold text-slate-900">Alerts & resolutions</h3>
+          <h3 class="text-sm font-semibold text-slate-900">Alerts and resolutions</h3>
           <p class="mt-2 text-xs text-slate-500">When something needs review, we surface the issue and recommended fixes.</p>
           <div class="mt-4 space-y-3">
             <template x-for="alert in meme.state.safetyAlerts" :key="alert.id">

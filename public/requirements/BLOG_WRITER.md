@@ -2,16 +2,16 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/blog-writer` (builder) and `/blog` (public posts)  
-**Category:** Writing & Creativity  
+**Category:** Writing and Creativity  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, optional image generation API  
 **Goal:** Help users **ideate, outline, draft, optimize (SEO), and publish** longâ€‘form blog posts with AI assistance â€” including image prompts, internal linking, and clean exports.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
-- Generate **ideas & outlines**; expand sections into **drafts**; **rewrite** for tone/reading level.
+- Generate **ideas and outlines**; expand sections into **drafts**; **rewrite** for tone/reading level.
 - Builtâ€‘in **editor** with headings, lists, code blocks, and images (Markdownâ€‘first).
 - **SEO assistant**: title/slug, meta description, keywords, internal links, readability metrics.
 - **Templates** for posts (Tutorial, Listicle, Case Study, Opinion, Release Notes).
@@ -69,7 +69,7 @@
 
 ---
 
-## 3) Information Architecture & Routes
+## 3) Information Architecture and Routes
 
 - `/blog-writer` â€” Dashboard (drafts list + â€œNew Postâ€)  
 - `/blog-writer/editor` â€” Main editor (outline tree + rich editor + SEO panel + media)  
@@ -122,7 +122,7 @@
   "tree": [
     {"h": 2, "text": "Why performance matters"},
     {"h": 2, "text": "Rendering models"},
-    {"h": 2, "text": "DX & ecosystem"},
+    {"h": 2, "text": "DX and ecosystem"},
     {"h": 2, "text": "Case studies"}
   ]
 }
@@ -239,16 +239,16 @@ Res: `{ "id": "<newUuid>" }`
 
 ---
 
-## 8) Export & Rendering
+## 8) Export and Rendering
 
-- **Markdown**: primary storage & export; supports code fences and tables.  
+- **Markdown**: primary storage and export; supports code fences and tables.  
 - **HTML**: SSR render with clean typography and syntax highlighting.  
 - **PDF**: server rendering with page numbers, cover (optional).  
 - **RSS**: generated from latest 20 published posts.
 
 ---
 
-## 9) Plans & Limits
+## 9) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -262,7 +262,7 @@ Rate limit keys: `userId` + day for AI; `userId` + month for publish.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Drafts private; public only when published.  
 - Sanitize Markdown on publish; allow basic HTML whitelisting for embeds (Phase 2).  
@@ -270,14 +270,14 @@ Rate limit keys: `userId` + day for AI; `userId` + month for publish.
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `post.create`, `post.save`, `post.publish`, `post.export`, `post.delete`, `post.duplicate`, `ai.ideas`, `ai.outline`, `ai.expand`, `ai.rewrite`, `ai.seo`.  
 - Track word count growth and read-time.
 
 ---
 
-## 12) Accessibility & SEO
+## 12) Accessibility and SEO
 
 - Keyboardâ€‘accessible editor controls; aria labels.  
 - Public posts include structured data (Article JSONâ€‘LD), OG/Twitter cards, canonical URL.  

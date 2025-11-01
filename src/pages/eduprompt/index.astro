@@ -7,7 +7,7 @@ import SectionHeading from "../../components/SectionHeading.astro";
 const heroHighlights = [
   {
     label: "Curriculum-aligned templates",
-    value: "80+ CBSE 9-12, STEM & Humanities",
+    value: "80+ CBSE 9-12, STEM and Humanities",
     icon: "fas fa-layer-group",
   },
   {
@@ -16,7 +16,7 @@ const heroHighlights = [
     icon: "fas fa-diagram-project",
   },
   {
-    label: "Exports & hand-offs",
+    label: "Exports and hand-offs",
     value: "Markdown · JSON · DOCX · Mini-app handoffs",
     icon: "fas fa-file-export",
   },
@@ -37,8 +37,8 @@ const planMatrix = [
     perks: [
       "Full library + custom templates",
       "200 batch items per run",
-      "DOCX & JSON exports + app send",
-      "Plagiarism scan & coverage reports",
+      "DOCX and JSON exports + app send",
+      "Plagiarism scan and coverage reports",
     ],
   },
 ];
@@ -117,7 +117,7 @@ const flowSteps = [
   },
   {
     eyebrow: "Route: /eduprompt/settings",
-    title: "Defaults & guardrails",
+    title: "Defaults and guardrails",
     description:
       "Define default models, tone, safety toggles, and parameter profiles shared across the workspace.",
     icon: "fas fa-gear",
@@ -126,7 +126,7 @@ const flowSteps = [
 
 const builderSections = [
   {
-    title: "Role & persona",
+    title: "Role and persona",
     points: [
       "Teacher, tutor, examiner, coach, curriculum specialist presets",
       "Optional multi-persona runs to compare tone and depth",
@@ -135,7 +135,7 @@ const builderSections = [
     icon: "fas fa-user-graduate",
   },
   {
-    title: "Task & objectives",
+    title: "Task and objectives",
     points: [
       "Single-sentence imperative plus success conditions",
       "Attach board/class alignment and reference standards",
@@ -144,7 +144,7 @@ const builderSections = [
     icon: "fas fa-bullseye",
   },
   {
-    title: "Context & inputs",
+    title: "Context and inputs",
     points: [
       "Syllabus snippets, prior knowledge, classroom constraints",
       "Drop passages, example problems, or datasets for conditioning",
@@ -153,7 +153,7 @@ const builderSections = [
     icon: "fas fa-book-open",
   },
   {
-    title: "Format & examples",
+    title: "Format and examples",
     points: [
       "Markdown or JSON scaffolds with headings and token targets",
       "Few-shot input/output pairs saved with reusable labels",
@@ -162,7 +162,7 @@ const builderSections = [
     icon: "fas fa-code",
   },
   {
-    title: "Constraints & rubric",
+    title: "Constraints and rubric",
     points: [
       "Reading level (A1–C2) and tone (formal, friendly, coaching)",
       "Plagiarism guard, sources required, length control",
@@ -171,7 +171,7 @@ const builderSections = [
     icon: "fas fa-scale-balanced",
   },
   {
-    title: "Parameters & metadata",
+    title: "Parameters and metadata",
     points: [
       "Temperature, top-p, max tokens, stop sequences, seed",
       "Tag prompts by subject, class, language, skills",
@@ -224,7 +224,7 @@ const datasetHighlights = [
     icon: "fas fa-chart-pie",
   },
   {
-    title: "Deduplication & QA",
+    title: "Deduplication and QA",
     description:
       "N-gram similarity checks flag near duplicates. Human reviewers can mark keep/remove before export.",
     icon: "fas fa-clone",
@@ -245,7 +245,7 @@ const qualityHighlights = [
     icon: "fas fa-shield-halved",
   },
   {
-    title: "Citations & attribution",
+    title: "Citations and attribution",
     description:
       "When sources are provided, enforce inline or footnote citations with configurable style guides.",
     icon: "fas fa-quote-right",
@@ -266,13 +266,13 @@ const exportHighlights = [
     icon: "fas fa-square-poll-vertical",
   },
   {
-    title: "FlashNote & Presentation Designer",
+    title: "FlashNote and Presentation Designer",
     description:
       "Generate flashcards or slide outlines in one click, with Markdown previews for editing before publishing.",
     icon: "fas fa-bolt",
   },
   {
-    title: "Study Planner & Research Assistant",
+    title: "Study Planner and Research Assistant",
     description:
       "Attach prompts and outputs as tasks or reference packets for revision workflows and research briefs.",
     icon: "fas fa-link",
@@ -290,7 +290,7 @@ const apiRoutes = [
     ],
   },
   {
-    label: "Builder & runs",
+    label: "Builder and runs",
     endpoints: [
       "POST /eduprompt/api/prompt/preview",
       "POST /eduprompt/api/run",
@@ -298,7 +298,7 @@ const apiRoutes = [
     ],
   },
   {
-    label: "Datasets & quality",
+    label: "Datasets and quality",
     endpoints: [
       "POST /eduprompt/api/dataset/create",
       "POST /eduprompt/api/dataset/run",
@@ -308,14 +308,14 @@ const apiRoutes = [
     ],
   },
   {
-    label: "Exports & integrations",
+    label: "Exports and integrations",
     endpoints: [
       "POST /eduprompt/api/export",
       "POST /eduprompt/api/send",
     ],
   },
   {
-    label: "Settings & guardrails",
+    label: "Settings and guardrails",
     endpoints: [
       "POST /eduprompt/api/settings/save",
       "POST /eduprompt/api/eval",
@@ -396,7 +396,7 @@ const dataModel = [
           <div class="space-y-6 text-center lg:text-left">
             <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-sm font-semibold text-indigo-700">
               <i class="fas fa-graduation-cap text-xs" aria-hidden="true"></i>
-              Learning &amp; Knowledge Suite
+              Learning and Knowledge Suite
             </span>
             <h1 class="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
               EduPrompt
@@ -558,7 +558,7 @@ const dataModel = [
           ))}
         </div>
         <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
-          <h3 class="text-xl font-semibold text-slate-900">Persona presets & tone control</h3>
+          <h3 class="text-xl font-semibold text-slate-900">Persona presets and tone control</h3>
           <div class="mt-4 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {personaModes.map((mode) => (
               <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
@@ -578,7 +578,7 @@ const dataModel = [
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
         <SectionHeading
           align="center"
-          eyebrow="DATASETS & QA"
+          eyebrow="DATASETS and QA"
           title="Generate large prompt batches with confidence"
           description="Dataset mode scales ideation while maintaining variety and quality."
         />
@@ -629,7 +629,7 @@ const dataModel = [
       <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
         <SectionHeading
           align="center"
-          eyebrow="QUALITY & SAFETY"
+          eyebrow="QUALITY and SAFETY"
           title="Guardrails keep prompts classroom-ready"
           description="Every output passes through evaluation, dedupe, and safety checks."
         />
@@ -712,7 +712,7 @@ const dataModel = [
           <div class="grid gap-6 lg:grid-cols-[1fr_1.1fr] lg:items-center">
             <div class="space-y-3">
               <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Data model snapshot</p>
-              <h3 class="text-2xl font-semibold text-slate-900">Entities &amp; relationships</h3>
+              <h3 class="text-2xl font-semibold text-slate-900">Entities and relationships</h3>
               <p class="text-sm text-slate-600">
                 EduPrompt keeps prompts auditable. Templates feed prompts and runs; outputs and evals link back for quality review. Datasets and param profiles orchestrate batch behaviour across the workspace.
               </p>

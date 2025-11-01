@@ -17,7 +17,7 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 - **Pronunciation**: onâ€‘device **TTS** playback; user recording (Pro) with similarity score (light heuristic).  
 - **Bilingual mode**: baseâ†”target language translations with usage notes.  
 - **Word lists**: custom lists (A1â€“C2, exam lists, user lists), â€œlearn this listâ€ â†’ Language Flashcards.  
-- **History & bookmarks**; offline cache of last N entries.  
+- **History and bookmarks**; offline cache of last N entries.  
 - **Exports**: Markdown/CSV; â€œSend to Flashcards/Study Plannerâ€.
 
 ### Key Pages
@@ -25,7 +25,7 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 - `/dictionary/word/[slug]` â€” Full entry page  
 - `/dictionary/lists` â€” Curated/user lists  
 - `/dictionary/compare` â€” Synonym/antonym compare view  
-- `/dictionary/history` â€” Recent & bookmarks  
+- `/dictionary/history` â€” Recent and bookmarks  
 - `/dictionary/settings` â€” Lang pair, phonetics, audio, cache limits
 
 ### Minimal Data Model
@@ -47,7 +47,7 @@ Integrations: **Language Flashcards**, **Study Planner**, **Research Assistant**
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Deliver a reliable learnerâ€™s dictionary with **fast search**, **clean entries**, and **useful learning tools**.  
 - Support **multilingual pairs** and **bilingual translations** (seed a few popular pairs first).  
@@ -60,14 +60,14 @@ Integrations: **Language Flashcards**, **Study Planner**, **Research Assistant**
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/dictionary` â€” Search with instant results + compact entry drawer; filters: language pair, POS, CEFR.  
 - `/dictionary/word/[slug]` â€” Full entry: definitions by sense; IPA/audio; morphology; synonyms/antonyms; collocations; examples; translations; notes; frequency/CEFR; related words.  
 - `/dictionary/lists` â€” Curated (A1â€“A2/IELTS/TOEFL) + user lists.  
 - `/dictionary/compare` â€” Sideâ€‘byâ€‘side synonym/antonym compare with example sentences.  
-- `/dictionary/history` â€” Recent searches & bookmarks; bulk actions/export.  
+- `/dictionary/history` â€” Recent searches and bookmarks; bulk actions/export.  
 - `/dictionary/settings` â€” Phonetics style (IPA vs none), default languages, audio, offline cache limits.
 
 **API (SSR)**
@@ -126,7 +126,7 @@ Indexes: `Lemma.slug`, `Lemma.languageId`, `Sense.lemmaId`, `Relation.fromLemmaI
 
 ---
 
-### 4) Search & Ranking
+### 4) Search and Ranking
 
 - Tokenize on **lemma**, **lowercased**; include **phonetic key** (Soundexâ€‘like/Doubleâ€‘Metaphone for Latn; simple mapping for others).  
 - Rank by: exact lemma match > lemma prefix > edit distance (â‰¤2) > token overlap in examples/definitions.  
@@ -146,7 +146,7 @@ Each **Sense** renders with:
 - Collocations (Relation type `colloc`) listed by strength.  
 - IPA; audio buttons (TTS; user record on Pro).  
 - Morphology table (plural, past, comparatives, derived forms).  
-- Frequency band & CEFR badge (if known).
+- Frequency band and CEFR badge (if known).
 
 **Compare view** merges two lemmas: show differences in register/meaning with examples sideâ€‘byâ€‘side.
 
@@ -210,7 +210,7 @@ Res: `{ "deckId":"d_99", "cardId":"c_77" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|
@@ -259,10 +259,10 @@ src/components/dictionary/History/*.astro
 
 ---
 
-### 11) Seed & Curation Plan (v1)
+### 11) Seed and Curation Plan (v1)
 
 - **Languages**: English (base) with **ENâ†”ES**, **ENâ†”AR**, **ENâ†”TA** seed translations.  
-- **POS coverage**: noun, verb, adjective, adverb; common phrasal verbs & idioms.  
+- **POS coverage**: noun, verb, adjective, adverb; common phrasal verbs and idioms.  
 - **Lists**: CEFR A1â€“B2 cores (500â€“1500 words each).  
 - **Morph rules**: light rule tables for EN/ES/AR/TA to lemmatize common forms.  
 - **Audio**: TTS generated; optional curated human clips (later).

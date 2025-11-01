@@ -35,7 +35,7 @@ const buildFinalUrl = (utm: AdUtmPayload): string => {
 const channelCatalog: AdChannelSpec[] = [
   {
     id: 'google-search',
-    name: 'Google Search & Performance Max',
+    name: 'Google Search and Performance Max',
     icon: 'fab fa-google',
     summary:
       'Responsive search ads with fifteen headlines, four descriptions, and URL paths tuned for conversion intent.',
@@ -131,7 +131,7 @@ const channelCatalog: AdChannelSpec[] = [
   },
   {
     id: 'meta-feed',
-    name: 'Meta Feed (Facebook & Instagram)',
+    name: 'Meta Feed (Facebook and Instagram)',
     icon: 'fab fa-facebook',
     summary:
       'Primary text, headline, and description tailored for feed and placement variations with CTA enums.',
@@ -417,7 +417,7 @@ const angles: AdAnglePreset[] = [
   },
   {
     id: 'urgency-fomo',
-    title: 'Scarcity & Urgency',
+    title: 'Scarcity and Urgency',
     description: 'Limited-time offers, fast-track onboarding, or bonus bundles to drive immediate action.',
     bestFor: ['Seasonal promos', 'Beta invites', 'Limited seats'],
     hook: 'Lock your seat in the LaunchPad beta — doors close Friday.',
@@ -452,7 +452,7 @@ const angles: AdAnglePreset[] = [
   },
   {
     id: 'curiosity',
-    title: 'Curiosity & Pattern Breaks',
+    title: 'Curiosity and Pattern Breaks',
     description: 'Unexpected questions or contrasts that spark intrigue.',
     bestFor: ['Social feeds', 'Video hooks'],
     hook: 'What if every channel shared the same brand voice automatically?',
@@ -466,7 +466,7 @@ const angles: AdAnglePreset[] = [
   },
   {
     id: 'guarantee',
-    title: 'Guarantee & Risk Reversal',
+    title: 'Guarantee and Risk Reversal',
     description: 'Offer assurance like trials, guarantees, or cancel-anytime policies.',
     bestFor: ['Pricing pages', 'Conversion-focused retargeting'],
     hook: 'Start free for 14 days — cancel anytime, keep your creative library.',
@@ -537,7 +537,7 @@ const defaultBrief: AdCampaignBrief = {
   audience: 'Growth marketers and RevOps teams at B2B SaaS companies',
   goal: 'Book product demos for the LaunchPad workspace',
   valueProp: 'Unified campaign brief to multi-channel variants with compliance guardrails.',
-  differentiators: ['Compliance-aware copy rewrites', 'Cross-app integrations with Ansiversa suite', 'Bulk export templates for Google & Meta'],
+  differentiators: ['Compliance-aware copy rewrites', 'Cross-app integrations with Ansiversa suite', 'Bulk export templates for Google and Meta'],
   keywords: ['pipeline automation', 'ai ad copy', 'revops workflow'],
   requiredPhrases: ['Ansiversa LaunchPad', '14-day free trial'],
   bannedWords: ['guaranteed results', 'best-in-class'],
@@ -674,7 +674,7 @@ const computeCounters = (channelId: AdChannelId, fields: Record<string, string>)
 
 const createVariant = (
   channelId: AdChannelId,
-  config: Omit<AdVariant, 'channelId' | 'counters'> & { fields: Record<string, string> },
+  config: Omit<AdVariant, 'channelId' | 'counters'> and { fields: Record<string, string> },
 ): AdVariant => ({
   ...config,
   channelId,
@@ -899,7 +899,7 @@ const exportPresets: AdExportPreset[] = [
     label: 'Google Ads CSV',
     format: 'csv',
     description: 'Bulk upload template with RSA columns, path fields, and labels.',
-    includes: ['Headlines & descriptions', 'Path 1/2', 'UTM appended final URL'],
+    includes: ['Headlines and descriptions', 'Path 1/2', 'UTM appended final URL'],
     plan: 'free',
   },
   {
@@ -907,7 +907,7 @@ const exportPresets: AdExportPreset[] = [
     label: 'Meta Creative JSON',
     format: 'json',
     description: 'Ready for Marketing API upload with tone metadata and CTA enums.',
-    includes: ['Primary text', 'Headlines & descriptions', 'Compliance checklist'],
+    includes: ['Primary text', 'Headlines and descriptions', 'Compliance checklist'],
     plan: 'pro',
   },
   {

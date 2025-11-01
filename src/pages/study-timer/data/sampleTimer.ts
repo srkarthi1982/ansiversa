@@ -228,7 +228,7 @@ export const getStudyTimerIntegrations = (): StudyTimerIntegrationCard[] => [
 
 export const getStudyTimerPlanFeatures = (): StudyTimerPlanFeature[] => [
   { label: 'Custom presets', free: '2 saved presets', pro: 'Unlimited saved cycles + import/export' },
-  { label: 'Goals & streaks', free: 'Daily minutes target', pro: 'Daily + weekly + Pomodoro streaks' },
+  { label: 'Goals and streaks', free: 'Daily minutes target', pro: 'Daily + weekly + Pomodoro streaks' },
   { label: 'Interruptions log', free: 'Manual quick log', pro: 'Auto-tag reasons + analytics' },
   { label: 'Exports', free: '—', pro: 'CSV + ICS calendar download' },
   { label: 'Integrations', free: 'Links to Planner/Quiz/FlashNote', pro: 'One-click attach + automation' },

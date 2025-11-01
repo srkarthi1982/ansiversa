@@ -18,15 +18,15 @@ This document contains a **short summary** for Codex onboarding and the **full t
 - **Leaderboards:** Global, weekly season, friends, and category ladders.  
 - **Antiâ€‘Cheat:** serverâ€‘timed questions, answer hashing, rate limits, anomaly detection.  
 - **Rewards:** XP, badges, streaks; optional coins for cosmetics.  
-- **Spectate & Share:** postâ€‘match recap, shareable highlights.  
+- **Spectate and Share:** postâ€‘match recap, shareable highlights.  
 - **Integrations:** Quiz Institute (questions), Trivia Arena (solo play), Profile/Resume badges.
 
 ### Key Pages
 - `/knowledge-duel` â€” Lobby (find match, create room, join via code)  
 - `/knowledge-duel/match/[id]` â€” Live match UI  
-- `/knowledge-duel/results/[id]` â€” Recap & breakdown  
-- `/knowledge-duel/leaderboards` â€” Ladders & seasons  
-- `/knowledge-duel/history` â€” Past matches & replays  
+- `/knowledge-duel/results/[id]` â€” Recap and breakdown  
+- `/knowledge-duel/leaderboards` â€” Ladders and seasons  
+- `/knowledge-duel/history` â€” Past matches and replays  
 - `/knowledge-duel/settings` â€” Preferences (topics, time, difficulty)
 
 ### Minimal Data Model
@@ -45,7 +45,7 @@ This document contains a **short summary** for Codex onboarding and the **full t
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Fair, fun duels using trusted question banks.  
 - Multiple modes (realâ€‘time, turnâ€‘based) with solid antiâ€‘cheat.  
@@ -60,7 +60,7 @@ This document contains a **short summary** for Codex onboarding and the **full t
 
 ---
 
-### 2) Game Modes & Mechanics
+### 2) Game Modes and Mechanics
 
 **2.1 Realâ€‘time Duel**
 - 1v1, 5â€“10 questions; 10â€“30s per question.
@@ -83,7 +83,7 @@ This document contains a **short summary** for Codex onboarding and the **full t
 
 ---
 
-### 3) Information Architecture & Routes
+### 3) Information Architecture and Routes
 
 **Pages**
 - `/knowledge-duel` â€” Lobby: Quick Match, Create Room, Join with Code, Practice.  
@@ -100,20 +100,20 @@ This document contains a **short summary** for Codex onboarding and the **full t
   - `GET  /knowledge-duel/api/match` (state by id)  
   - `POST /knowledge-duel/api/match/ready`  
   - `POST /knowledge-duel/api/match/finish`
-- Rounds & answers:  
+- Rounds and answers:  
   - `GET  /knowledge-duel/api/round/next`  
   - `POST /knowledge-duel/api/answer/submit`  
   - `GET  /knowledge-duel/api/results`
-- Matchmaking & ratings:  
+- Matchmaking and ratings:  
   - `POST /knowledge-duel/api/matchmaking/queue`  
   - `POST /knowledge-duel/api/rating/update` (serverâ€‘side only)  
-- Leaderboards & seasons:  
+- Leaderboards and seasons:  
   - `GET  /knowledge-duel/api/leaderboard`  
   - `GET  /knowledge-duel/api/season/current`
-- History & replays:  
+- History and replays:  
   - `GET  /knowledge-duel/api/history`  
   - `GET  /knowledge-duel/api/replay`
-- Reports & abuse:  
+- Reports and abuse:  
   - `POST /knowledge-duel/api/report`
 
 **WebSocket (optional for realâ€‘time)**
@@ -156,7 +156,7 @@ This document contains a **short summary** for Codex onboarding and the **full t
 
 ---
 
-### 5) Scoring & Rating
+### 5) Scoring and Rating
 
 **Perâ€‘question scoring (default):**  
 - Correct: +10; Wrong: âˆ’3; Skip/Timeout: 0.  
@@ -170,21 +170,21 @@ This document contains a **short summary** for Codex onboarding and the **full t
 
 ---
 
-### 6) Antiâ€‘Cheat & Fair Play
+### 6) Antiâ€‘Cheat and Fair Play
 
 - **Serverâ€‘timed windows**: round `startAt`/`endAt` from server; client clocks ignored.  
 - **Answer hashing**: send answer choice, server validates vs hashed canonical solution.  
 - **No prefetch**: next question payload available **only** after both answers submitted or time up.  
 - **Latency tolerance**: grace period 300ms; record `elapsedMs` based on server receipt time.  
 - **Anomaly detection**: flag if `elapsedMs < 250ms` repeatedly or accuracy > 99% over 100+ questions.  
-- **Rate limits**: per user & IP on `/answer/submit`, `/match/create`, `/matchmaking/queue`.  
+- **Rate limits**: per user and IP on `/answer/submit`, `/match/create`, `/matchmaking/queue`.  
 - **Turnâ€‘based expiry**: 24h; autoâ€‘forfeit if no response.
 
 ---
 
 ### 7) UX / UI
 
-- **Lobby**: Quick Match, Create Room (code), Join, Practice; topic & difficulty filters.  
+- **Lobby**: Quick Match, Create Room (code), Join, Practice; topic and difficulty filters.  
 - **Live match**: question card, timer ring, choices, lockâ€‘in state, emoji reactions (ðŸ‘ðŸ˜®ðŸ”¥), progress bar, perâ€‘round results.  
 - **Results**: accuracy %, average time, streak chart, perâ€‘question review with explanations.  
 - **Leaderboards**: tabs (Global, Season, Friends, Category), search, country flags.  
@@ -248,7 +248,7 @@ Res: `{ "winnerId":"u_1", "p1":{"score":81,"accuracy":86}, "p2":{"score":77,"acc
 
 ---
 
-### 10) Plans & Limits
+### 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -256,7 +256,7 @@ Res: `{ "winnerId":"u_1", "p1":{"score":81,"accuracy":86}, "p2":{"score":77,"acc
 | Turnâ€‘based slots | 2 | 10 |
 | Categories | Core | All + premium |
 | Leaderboards | Global | + Friends + Category |
-| Rematch & friends list | â€” | Enabled |
+| Rematch and friends list | â€” | Enabled |
 | Replays/analytics | Basic | Detailed graphs |
 | Custom rooms | â€” | Password + private |
 | Cosmetics | Limited | Full set |
@@ -304,7 +304,7 @@ src/components/knowledge-duel/Leaderboards/*.astro
 - **Category streak quests** and daily missions.  
 - **Classrooms mode** for teachers to host live games.  
 - **Regional servers** and latencyâ€‘adaptive timers.  
-- **PWA offline** (practice & replays).
+- **PWA offline** (practice and replays).
 
 ---
 

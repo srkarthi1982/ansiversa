@@ -2,22 +2,22 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/prompt-builder`  
-**Category:** Writing & Creativity / Developer Tools  
+**Category:** Writing and Creativity / Developer Tools  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Help users **design, test, version, and share** effective prompts (system/instruction/fewâ€‘shot) with variables, test benches, cost/token estimates, and exports for quick integration in apps.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Compose prompts from **blocks**: System, Instruction, Fewâ€‘shot examples, Tool/Function hints, and User variables.  
-- **Variables & slots** like `{product}`, `{tone}`, `{audience}` with default values and validation.  
+- **Variables and slots** like `{product}`, `{tone}`, `{audience}` with default values and validation.  
 - **Test bench**: run prompt against a set of test cases; capture outputs, token/cost, latency.  
 - **A/B compare** prompt variants; highlight differences and score results.  
-- **Versioning** & rollback; **templates** for common tasks (email, code, blog, support, sql).  
+- **Versioning** and rollback; **templates** for common tasks (email, code, blog, support, sql).  
 - **Export/Share**: JSON/.prompt, Markdown, copyâ€‘ready code (fetch/cURL/JS/TS), sharable readâ€‘only link.  
-- **Safety & quality checks**: prompt linter (ambiguity, missing vars), redâ€‘flag terms, PII reminders.
+- **Safety and quality checks**: prompt linter (ambiguity, missing vars), redâ€‘flag terms, PII reminders.
 
 ### Nonâ€‘Goals (v1)
 - No multiâ€‘tenant team collaboration or comments (v2).  
@@ -48,7 +48,7 @@
    - *As a user*, I can duplicate the prompt to Variant B and run the same test bench.  
    - **AC:** Sideâ€‘byâ€‘side results; shows token and cost deltas with color cues.
 
-6. **Prompt Linter & Safety**
+6. **Prompt Linter and Safety**
    - *As a user*, I see warnings: undefined variables, vague words, jailbreak magnets, personal data hints.  
    - **AC:** `/prompt-builder/api/lint` returns issues by severity with quick fixes.
 
@@ -70,7 +70,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/prompt-builder` â€” Dashboard (projects list + â€œNew Promptâ€).  
 - `/prompt-builder/builder` â€” Main editor (blocks + variables + test bench + results).  
@@ -214,17 +214,17 @@ Res: `{ "items": ["email","support","blog-outline","sql-helper","code-review"] }
 
 ---
 
-## 8) Export & Code Snippets
+## 8) Export and Code Snippets
 
 - **JSON**: full project (blocks, vars, model).  
 - **.prompt**: plain text with block markers.  
 - **Markdown**: humanâ€‘readable doc for reviews.  
 - **Code**: JS/TS `fetch` snippet and cURL including variable injection.  
-- **Token & cost** estimates shown preâ€‘run based on block lengths and model rates (config table).
+- **Token and cost** estimates shown preâ€‘run based on block lengths and model rates (config table).
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -239,7 +239,7 @@ Rate limit keys: `userId` + day for runs; `userId` + hour for lint.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Drafts private; share pages public only when published.  
 - Sanitize all text; block script tags; escape curly braces within content.  
@@ -247,14 +247,14 @@ Rate limit keys: `userId` + day for runs; `userId` + hour for lint.
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `prompt.create`, `prompt.save`, `prompt.run`, `prompt.ab`, `prompt.export`, `prompt.publish`, `prompt.delete`, `prompt.duplicate`, `prompt.lint`.  
 - Capture token/cost totals per project and top performing variants.
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Keyboard shortcuts (Run = Cmd/Ctrl+Enter; Duplicate = Cmd/Ctrl+D).  
 - Clear focus states; aria for tabs/tables; code fonts in blocks editor.  
@@ -291,9 +291,9 @@ src/components/prompt-builder/Results/*.astro
 ## 14) Future Enhancements (v2+)
 
 - Team spaces, comments, and approvals.  
-- Dataset eval with scoring functions & golden sets.  
+- Dataset eval with scoring functions and golden sets.  
 - Prompt chaining (multiâ€‘step workflows) and toolâ€‘calling mocks.  
-- Model routing & fallback policies; budget caps per project.  
+- Model routing and fallback policies; budget caps per project.  
 - Oneâ€‘click export to other Ansiversa apps (Email, Blog, Proposal).
 
 ---

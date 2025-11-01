@@ -22,8 +22,8 @@ This document contains a **short summary** for Codex onboarding and the **full t
 ### Key Pages
 - `/study` â€” Dashboard (today plan, next steps, timer)  
 - `/study/plan` â€” Planner (subjects/topics, backlog, calendar)  
-- `/study/tasks/[id]` â€” Task detail & history  
-- `/study/revision` â€” Spaced repetition & reviews  
+- `/study/tasks/[id]` â€” Task detail and history  
+- `/study/revision` â€” Spaced repetition and reviews  
 - `/study/analytics` â€” Reports (time, completion, mastery)  
 - `/study/settings` â€” Availability, board, class, goals
 
@@ -47,7 +47,7 @@ Integrations: **FlashNote** (reviews), **Quiz Institute** (practice links), **Ho
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide a reliable personal study operating system with scheduling, review cycles, and analytics.  
 - Support CBSE Classes 9â€“12 and general/college tracks with simple board filters.  
@@ -60,7 +60,7 @@ Integrations: **FlashNote** (reviews), **Quiz Institute** (practice links), **Ho
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/study` â€” Today: agenda, â€œNext best taskâ€, Pomodoro, quick add.  
@@ -74,10 +74,10 @@ Integrations: **FlashNote** (reviews), **Quiz Institute** (practice links), **Ho
 - Subjects/Topics:  
   - `POST /study/api/subject/create` Â· `GET /study/api/subject/list`  
   - `POST /study/api/topic/create` Â· `GET /study/api/topic/list`
-- Tasks & Planning:  
+- Tasks and Planning:  
   - `POST /study/api/task/create` Â· `POST /study/api/task/update` Â· `GET /study/api/task/list`  
   - `POST /study/api/schedule/plan` (autoâ€‘schedule) Â· `POST /study/api/slot/update` Â· `GET /study/api/agenda/today`
-- Sessions & Timer:  
+- Sessions and Timer:  
   - `POST /study/api/session/start` Â· `POST /study/api/session/pause` Â· `POST /study/api/session/finish`
 - Revision (Spaced Repetition):  
   - `GET /study/api/review/due` Â· `POST /study/api/review/submit`  
@@ -153,7 +153,7 @@ Integrations: **FlashNote** (reviews), **Quiz Institute** (practice links), **Ho
 
 ---
 
-### 5) Pomodoro & Sessions
+### 5) Pomodoro and Sessions
 
 - Defaults: 25â€‘min work / 5â€‘min break; configurable.  
 - Track focus time, interruptions, and mood; autoâ€‘append to current PlanSlot.  
@@ -217,7 +217,7 @@ Res: `{ "slots":[{"taskId":"t1","startAt":"2025-11-01T18:00","endAt":"2025-11-01
 
 ---
 
-### 10) Plans & Limits
+### 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|

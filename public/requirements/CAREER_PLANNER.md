@@ -2,18 +2,18 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/career`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, optional skills/occupations taxonomy seed  
 **Goal:** Help users **assess skills, choose target roles, and build an actionable plan** (skills gap, learning path, portfolio items, applications, and milestones) with AI assistance and integrations to other Ansiversa apps (Resume, Portfolio, Interview Coach, Proposal Writer).
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Collect a **profile** (current role, skills, experience, interests, constraints like location/remote).  
 - Suggest **target roles/paths** with salary ranges and demand indicators (as static seeded hints in v1).  
-- Compute **skills gap** vs chosen target role; propose a **learning plan** with resources & milestones.  
+- Compute **skills gap** vs chosen target role; propose a **learning plan** with resources and milestones.  
 - Create a **90â€‘day career sprint plan**: weekly tasks, checkpoints, portfolio projects, and jobâ€‘search cadence.  
 - Generate **resume bullets** and **portfolio project briefs** tied to target role.  
 - Track **applications**, **interviews**, and **offers**; calendar reminders (v2).  
@@ -32,19 +32,19 @@
    - *As a user*, I start a plan from my profile or resume import.  
    - **AC:** Draft created; redirect to `/career/builder?id=<uuid>`.
 
-2. **Profile & Assessment**
+2. **Profile and Assessment**
    - *As a user*, I add current role, years of experience, skills (tags + levels), industries, constraints (location/remote).  
    - **AC:** `/career/api/assess` summarises strengths and suggested paths; creates baseline skills map.
 
 3. **Target Roles**
-   - *As a user*, I browse suggested roles (e.g., Frontend Engineer, Data Analyst, PM) with typical skills & sample JDs.  
+   - *As a user*, I browse suggested roles (e.g., Frontend Engineer, Data Analyst, PM) with typical skills and sample JDs.  
    - **AC:** Selecting a target populates **required skills** and **example responsibilities**.
 
-4. **Skills Gap & Learning Plan**
+4. **Skills Gap and Learning Plan**
    - *As a user*, I view a gap matrix (current vs required) and generate a **learning plan** with resources (courses, docs, practice tasks).  
    - **AC:** `/career/api/plan/learning` returns modules with duration estimates and checkpoints.
 
-5. **Projects & Portfolio**
+5. **Projects and Portfolio**
    - *As a user*, I generate **project briefs** (scope, deliverables, acceptance criteria) and link to **Portfolio Creator**.  
    - **AC:** `/career/api/projects` returns 2â€“4 scoped projects aligned to target skills.
 
@@ -60,7 +60,7 @@
    - *As a user*, I see a weekly calendar of tasks (learning, projects, networking, applications).  
    - **AC:** `/career/api/plan/sprint` returns a 13â€‘week schedule with milestones.
 
-9. **Export & Share**
+9. **Export and Share**
    - *As a user*, I export my plan to PDF/DOCX/Markdown and optionally publish a readâ€‘only share page.  
    - **AC:** `/career/view/<slug>` hides private notes by default.
 
@@ -70,7 +70,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/career` â€” Dashboard (plans list + trackers)  
 - `/career/builder` â€” Main wizard/editor (Profile â†’ Targets â†’ Gaps â†’ Plan â†’ Projects â†’ Job Search)  
@@ -305,7 +305,7 @@ Res: `{ "items":[{"id":"frontend_engineer", "title":"Frontend Engineer", "skills
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -319,7 +319,7 @@ Rate-limit keys: `userId` + day for AI; `userId` + month for exports.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Plans are private by default; public only when published.  
 - Redact emails/phone and company secrets from public view.  
@@ -328,7 +328,7 @@ Rate-limit keys: `userId` + day for AI; `userId` + month for exports.
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `career.create`, `career.save`, `career.publish`, `career.export`, `career.delete`, `career.duplicate`,  
 - `career.assess`, `career.learningPlan`, `career.sprintPlan`, `career.projects`, `career.resumeBullets`,  
@@ -336,10 +336,10 @@ Rate-limit keys: `userId` + day for AI; `userId` + month for exports.
 
 ---
 
-## 12) Accessibility & SEO
+## 12) Accessibility and SEO
 
 - Keyboardâ€‘accessible forms/tables; aria for stepper and drag handles.  
-- Public view with SEO meta & OG; `noindex` for drafts.  
+- Public view with SEO meta and OG; `noindex` for drafts.  
 - RTL support (Arabic).
 
 ---

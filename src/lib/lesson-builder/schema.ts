@@ -68,7 +68,7 @@ export const lessonTemplates: Array<{
     description: 'Case study, collaborative canvas, pitch practice, and feedback rubrics.',
     icon: 'fas fa-chart-line',
     plan: 'pro',
-    subject: 'Business & Entrepreneurship',
+    subject: 'Business and Entrepreneurship',
     gradeBand: 'Higher Ed / Corporate',
     recommendedDuration: 75,
   },
@@ -324,7 +324,7 @@ export const aiPlaybooks: LessonAiPlaybook[] = [
   },
   {
     key: 'translation',
-    title: 'Localise & translate',
+    title: 'Localise and translate',
     description: 'Provide dual-language exports and RTL-friendly layouts.',
     icon: 'fas fa-language',
     plan: 'pro',

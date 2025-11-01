@@ -262,7 +262,7 @@ export const triviaQuestionPacks = (): TriviaQuestionPack[] => [
   },
   {
     id: 'pack-3',
-    title: 'Esports & Gaming',
+    title: 'Esports and Gaming',
     description: 'Fast-paced trivia for modern gaming communities.',
     category: 'Tech',
     difficulty: 'hard',
@@ -324,7 +324,7 @@ export const triviaDailyMeta = (): TriviaDailyChallengeMeta => ({
 
 export const triviaPlanFeatures = (): TriviaPlanFeature[] => [
   {
-    label: 'Solo drills & smart review',
+    label: 'Solo drills and smart review',
     free: true,
     pro: true,
   },
@@ -349,12 +349,12 @@ export const triviaPlanFeatures = (): TriviaPlanFeature[] => [
     pro: true,
   },
   {
-    label: 'Advanced analytics & exports',
+    label: 'Advanced analytics and exports',
     free: false,
     pro: true,
   },
   {
-    label: 'Live rooms & tournaments (v2)',
+    label: 'Live rooms and tournaments (v2)',
     free: false,
     pro: 'Priority beta access',
   },

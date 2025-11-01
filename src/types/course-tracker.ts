@@ -13,8 +13,8 @@ export type ReminderCadence = 'Daily' | 'Weekly' | 'Biweekly' | 'Custom';
 export type ReminderChannel = 'Email' | 'Push' | 'SMS';
 
 export type CourseFocusArea =
-  | 'Data & AI'
-  | 'Product & Strategy'
+  | 'Data and AI'
+  | 'Product and Strategy'
   | 'Creative'
   | 'Productivity'
   | 'Wellness'

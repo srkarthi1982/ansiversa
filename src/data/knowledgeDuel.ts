@@ -74,7 +74,7 @@ export const duelMatchFlow: DuelMatchFlowStep[] = [
   },
   {
     id: 'rounds',
-    title: 'Round cadence & timers',
+    title: 'Round cadence and timers',
     summary:
       'Server ticks reveal each question, broadcast timers, and collect hashed answers to prevent client manipulation.',
     icon: 'fas fa-stopwatch',
@@ -138,7 +138,7 @@ export const duelLeaderboardTabs: DuelLeaderboardTab[] = [
   },
   {
     id: 'friends',
-    name: 'Friends & Clubs',
+    name: 'Friends and Clubs',
     description: 'Private ladders with invite codes and classroom rosters.',
     metrics: ['Club rank', 'Head-to-head record', 'Participation rate'],
   },
@@ -175,7 +175,7 @@ export const duelAntiCheat: DuelAntiCheatMeasure[] = [
     icon: 'fas fa-clock-rotate-left',
   },
   {
-    title: 'Answer hashing & audit logs',
+    title: 'Answer hashing and audit logs',
     description: 'Client submissions are hashed with salt, stored alongside device fingerprints, and available for anomaly review.',
     icon: 'fas fa-shield-halved',
   },
@@ -185,7 +185,7 @@ export const duelAntiCheat: DuelAntiCheatMeasure[] = [
     icon: 'fas fa-magnifying-glass-chart',
   },
   {
-    title: 'Rate limiting & locks',
+    title: 'Rate limiting and locks',
     description: 'Queue throttles and report workflows halt suspected sessions for manual review without blocking the ecosystem.',
     icon: 'fas fa-lock',
   },
@@ -193,7 +193,7 @@ export const duelAntiCheat: DuelAntiCheatMeasure[] = [
 
 export const duelRewards: DuelRewardTrackItem[] = [
   {
-    name: 'XP & Mastery badges',
+    name: 'XP and Mastery badges',
     description: 'Earn persistent XP for every match with badge showcases for perfect accuracy streaks and win milestones.',
     icon: 'fas fa-medal',
   },
@@ -213,6 +213,6 @@ export const duelPlanBenefits: DuelPlanBenefit[] = [
   { feature: 'Daily matches', free: '10 per day', pro: 'Unlimited' },
   { feature: 'Question sets', free: 'Core difficulty tiers', pro: 'All tiers + custom mixes' },
   { feature: 'Leaderboards', free: 'Global ladder', pro: 'Global + friends + category tabs' },
-  { feature: 'Rematches & friend codes', free: 'Restricted access', pro: 'Always on' },
-  { feature: 'Replay analytics', free: 'Basic timeline', pro: 'Full breakdown & exports' },
+  { feature: 'Rematches and friend codes', free: 'Restricted access', pro: 'Always on' },
+  { feature: 'Replay analytics', free: 'Basic timeline', pro: 'Full breakdown and exports' },
 ];

@@ -148,7 +148,7 @@ export const getHomeworkHighlights = () => ({
     },
     {
       name: 'Science',
-      coverage: 'Physics, Chemistry, Biology with units & citations',
+      coverage: 'Physics, Chemistry, Biology with units and citations',
       icon: 'fas fa-atom',
     },
     {

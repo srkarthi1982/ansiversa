@@ -1,16 +1,16 @@
-# ðŸ§¾ Invoice & Receipt Maker â€” Detailed Requirements (Ansiversa)
+# ðŸ§¾ Invoice and Receipt Maker â€” Detailed Requirements (Ansiversa)
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/invoice`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands as needed), Astro SSR routes, Astro DB / Supabase, optional currency/exchange API  
-**Goal:** Let users **create, send, and export** professional invoices & receipts with itemized lines, taxes/discounts, branding, and simple tracking â€” with optional AI assistance for descriptions and polite payment reminders.
+**Goal:** Let users **create, send, and export** professional invoices and receipts with itemized lines, taxes/discounts, branding, and simple tracking â€” with optional AI assistance for descriptions and polite payment reminders.
 
 > âš ï¸ **Note:** This app is not a payment processor. For live payments, integrate external gateways in v2.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Create invoices (and receipts) from templates with **items, taxes, discounts, notes, and terms**.  
@@ -34,19 +34,19 @@
    - *As a user*, I can create a new invoice with my business details and client details.  
    - **AC:** Draft created with ID and number pattern; open `/invoice/builder?id=<uuid>`.
 
-2. **Add Items & Totals**
+2. **Add Items and Totals**
    - *As a user*, I can add items with qty, unit price, tax %, and discount %.  
    - **AC:** Subtotal, tax, discount, and **grand total** auto-calculate; currency symbol correct.
 
-3. **Branding & Template**
+3. **Branding and Template**
    - *As a user*, I can upload a logo, set accent color, and pick a template.  
    - **AC:** Preview updates instantly; settings persist per invoice and default profile.
 
-4. **Issue & Send**
+4. **Issue and Send**
    - *As a user*, I can mark an invoice as **sent**, and get a public share link.  
    - **AC:** Status changes to `sent`; `/invoice/view/<slug>` is readable on mobile and desktop.
 
-5. **Record Payment & Receipt**
+5. **Record Payment and Receipt**
    - *As a user*, I can record a **full or partial payment** with date and method.  
    - **AC:** Balance updates; status becomes `paid` when fully settled; **generate receipt** PDF with payment details.
 
@@ -64,7 +64,7 @@
 
 ---
 
-## 3) Information Architecture & Routes
+## 3) Information Architecture and Routes
 
 - `/invoice` â€” Dashboard (list + â€œNew Invoiceâ€)  
 - `/invoice/builder` â€” Main editor (form + live preview)  
@@ -151,7 +151,7 @@
 - CTA: â€œNew Invoiceâ€.
 
 ### `/invoice/builder` (Editor)
-- **Left Form** (accordion): Business Info, Client Info, Items, Taxes & Discounts, Notes, Terms, Payments, Branding.  
+- **Left Form** (accordion): Business Info, Client Info, Items, Taxes and Discounts, Notes, Terms, Payments, Branding.  
 - **Right Preview**: Live invoice; template switcher; currency selector.  
 - Toolbar: Send (create public link), Export (PDF/HTML), Add Payment, Duplicate, Delete.  
 - Autosave indicator and last saved timestamp.
@@ -213,11 +213,11 @@ Res: `{ "ok": true }`
 - **Totals**: computed server-side; cannot be negative.  
 - **Dates**: issueDate â‰¤ dueDate.  
 - **Payments**: amount > 0; total paid â‰¤ grandTotal.  
-- **Client & business info**: required fields must be present for send/export.
+- **Client and business info**: required fields must be present for send/export.
 
 ---
 
-## 8) Export & Rendering
+## 8) Export and Rendering
 
 - **PDF**: SSR (consistent fonts, page numbers, table layout, totals).  
 - **HTML ZIP**: static bundle with CSS/fonts/images.  
@@ -226,7 +226,7 @@ Res: `{ "ok": true }`
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -241,7 +241,7 @@ Rate limit keys: by `userId` + day for AI; `userId` + month for create/send.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - Private by default; **public only when sent/published**.  
 - Do not store payment instrument details.  
@@ -250,14 +250,14 @@ Rate limit keys: by `userId` + day for AI; `userId` + month for create/send.
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `invoice.create`, `invoice.save`, `invoice.send`, `invoice.view`, `invoice.payment`, `invoice.export`, `invoice.delete`, `invoice.duplicate`, `invoice.reminder`.  
 - Track template usage and currency spread.
 
 ---
 
-## 12) Accessibility & SEO
+## 12) Accessibility and SEO
 
 - Keyboard-friendly forms; visible focus; aria labels for tables.  
 - Public view with SEO meta and OpenGraph preview; `noindex` for drafts.
@@ -294,7 +294,7 @@ src/components/invoice/templates/Minimal.astro
 ## 14) Future Enhancements (v2+)
 
 - Payment links (Stripe, Razorpay, PayPal) and automatic paid status on webhook.  
-- Recurring invoices & subscriptions.  
+- Recurring invoices and subscriptions.  
 - Tax profiles (VAT/GST) with per-item tax.  
 - Multi-language and RTL templates (Arabic).  
 - Email sending from app (SMTP/Mail API).  

@@ -7,10 +7,10 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
 ### Overview
-**Song Lyric Maker** helps users **ideate, structure, and polish** song lyrics across genres (pop, hipâ€‘hop, indie, EDM toplines, rock, Kâ€‘pop, R&B, devotional, kids). It supports **sectioned structures** (verse/chorus/pre/bridge/outro), **hook generation**, **rhyme & syllable guidance**, **prosody alignment** (stress vs beat), and **theme/tone controls**. Users can import a **chord progression or syllable map** to guide line lengths and stresses. Exports include **lyric sheet (MD/DOCX/PDF)** and **singâ€‘along timing sheet**. Integrates with **Poem Studio** (for craft passes), **Presentation Designer** (lyric slides), and **Story Crafter** (diegetic songs).
+**Song Lyric Maker** helps users **ideate, structure, and polish** song lyrics across genres (pop, hipâ€‘hop, indie, EDM toplines, rock, Kâ€‘pop, Rhythm and Blues, devotional, kids). It supports **sectioned structures** (verse/chorus/pre/bridge/outro), **hook generation**, **rhyme and syllable guidance**, **prosody alignment** (stress vs beat), and **theme/tone controls**. Users can import a **chord progression or syllable map** to guide line lengths and stresses. Exports include **lyric sheet (MD/DOCX/PDF)** and **singâ€‘along timing sheet**. Integrates with **Poem Studio** (for craft passes), **Presentation Designer** (lyric slides), and **Story Crafter** (diegetic songs).
 
 ### Core Features
-- **Genre templates** with common section orders & syllable/rhyme expectations.  
+- **Genre templates** with common section orders and syllable/rhyme expectations.  
 - **Hook/Title generator** with variants and **melodic syllable map**.  
 - **Lyric editor** with **rhyme suggestions**, **nearâ€‘rhyme**, **alliteration/assonance** hints.  
 - **Prosody tools**: align syllables to beats/measures; stress checks with tolerance.  
@@ -27,7 +27,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 - `/lyrics/new` â€” Project wizard (genre, vibe, theme, section template)  
 - `/lyrics/[id]/edit` â€” Sectioned editor with craft panel and structure lab  
 - `/lyrics/[id]/analyze` â€” Rhyme/syllable/prosody report  
-- `/lyrics/[id]/export` â€” Compile & export options  
+- `/lyrics/[id]/export` â€” Compile and export options  
 - `/lyrics/settings` â€” Defaults (language, rhyme style, profanity filter), privacy
 
 ### Minimal Data Model
@@ -38,7 +38,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 |---|---|---|
 | Projects | 3 | Unlimited |
 | Hook variants per prompt | 5 | 30 |
-| Nearâ€‘rhyme & prosody analysis | Basic | Full + timing sheet |
+| Nearâ€‘rhyme and prosody analysis | Basic | Full + timing sheet |
 | Multilingual drafting | EN only | EN + TA/AR/ES |
 | Exports | MD | MD + PDF + DOCX + CSV |
 | AI passes/day | 25 | 400 |
@@ -48,7 +48,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Make it **fast** to reach a **singable**, catchy lyric with proper **sections** and a **memorable hook**.  
 - Offer helpful **rhyme/syllable** guidance without being rigid.  
@@ -60,12 +60,12 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/lyrics` â€” Library with recent projects; quick start and templates.  
 - `/lyrics/new` â€” Wizard: genre, subâ€‘genre, theme/topic, POV, tone, section template (e.g., V1â€“Preâ€“Châ€“V2â€“Châ€“Brâ€“Châ€“Out).  
-- `/lyrics/[id]/edit` â€” Core editor: left (sections + lines), right (craft panel: rhyme suggestions, syllable bars, imagery), bottom (structure lab & tempo).  
+- `/lyrics/[id]/edit` â€” Core editor: left (sections + lines), right (craft panel: rhyme suggestions, syllable bars, imagery), bottom (structure lab and tempo).  
 - `/lyrics/[id]/analyze` â€” Detailed report: rhyme map, syllable histograms, stress/beat alignment, clichÃ© detector, repetition map.  
 - `/lyrics/[id]/export` â€” Choose formats; include chord symbols, timestamps, or karaoke cues.  
 - `/lyrics/settings` â€” Defaults: language, rhyme style (perfect/near/internal), profanity/clean toggle, allowed vocabulary lists.
@@ -85,10 +85,10 @@ Optional WebSocket `/lyrics/ws` for live syllable counts and tapâ€‘tempo fe
 
 ---
 
-### 3) Generators & Controls
+### 3) Generators and Controls
 
 **Genre presets**  
-- Pop, Rock, Indie, Hipâ€‘hop, R&B, EDM (topline), Kâ€‘pop, Country, Devotional, Childrenâ€™s.  
+- Pop, Rock, Indie, Hipâ€‘hop, Rhythm and Blues, EDM (topline), Kâ€‘pop, Country, Devotional, Childrenâ€™s.  
 - Each preset provides: **common section order**, **target syllable spans** per line, **rhyme tendencies** (e.g., couplets for rap, alt rhymes for indie).
 
 **Prompt controls**  
@@ -218,7 +218,7 @@ Res: `{ "jobId":"e101" }`
 
 ---
 
-### 8) Plans & Limits
+### 8) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|
@@ -277,7 +277,7 @@ src/components/lyrics/HookBoard/*.astro
 
 - **Melody helper**: noteâ€‘name suggestions per syllable; MIDI export.  
 - **Rhyme dictionary customization** per language; user word lists.  
-- **Collaborative writing** with comments & roles (topliner/rapper).  
+- **Collaborative writing** with comments and roles (topliner/rapper).  
 - **Beat import** (tempo autoâ€‘detect from audio; align bars).  
 - **Karaoke preview** with autoâ€‘scroll lyrics.  
 - **PWA** for offline drafting and rehearsal.

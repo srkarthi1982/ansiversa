@@ -93,9 +93,9 @@ const creationModes: CreationMode[] = [
     highlight: 'Topic → outline in under 10 seconds',
     inputFields: ['Topic focus', 'Target audience', 'Tone', 'Desired slide count'],
     sampleOutline: [
-      { title: 'Vision & stakes', bullets: ['Frame the audience challenge', 'Share desired transformation', 'Set the hook with a bold stat'] },
+      { title: 'Vision and stakes', bullets: ['Frame the audience challenge', 'Share desired transformation', 'Set the hook with a bold stat'] },
       { title: 'Solution pillars', bullets: ['Introduce 3 guiding themes', 'Showcase quick wins', 'Flag deeper dives for appendix'] },
-      { title: 'Roadmap & next steps', bullets: ['Timeline with milestones', 'Resourcing snapshot', 'Call to action for stakeholders'] },
+      { title: 'Roadmap and next steps', bullets: ['Timeline with milestones', 'Resourcing snapshot', 'Call to action for stakeholders'] },
     ],
     estimatedSlides: 14,
     estimatedDuration: 18,
@@ -111,7 +111,7 @@ const creationModes: CreationMode[] = [
     sampleOutline: [
       { title: 'Current state', bullets: ['Snapshots by team', 'Open risks and blockers', 'Metrics trending month over month'] },
       { title: 'Opportunities', bullets: ['Quick wins (<90 days)', 'Strategic bets', 'Dependencies and asks'] },
-      { title: 'Action plan', bullets: ['Owners & deadlines', 'KPIs to monitor', 'Follow-up cadence'] },
+      { title: 'Action plan', bullets: ['Owners and deadlines', 'KPIs to monitor', 'Follow-up cadence'] },
     ],
     estimatedSlides: 12,
     estimatedDuration: 15,
@@ -127,7 +127,7 @@ const creationModes: CreationMode[] = [
     sampleOutline: [
       { title: 'Executive summary', bullets: ['Key headline with metrics', 'Supporting insight', 'Recommended motion'] },
       { title: 'Evidence pack', bullets: ['Charts from pasted tables', 'Quotes highlighted', 'Appendix auto-linked'] },
-      { title: 'Decisions & owners', bullets: ['Decision log', 'Risks to monitor', 'Owner + due date table'] },
+      { title: 'Decisions and owners', bullets: ['Decision log', 'Risks to monitor', 'Owner + due date table'] },
     ],
     estimatedSlides: 16,
     estimatedDuration: 22,
@@ -143,7 +143,7 @@ const creationModes: CreationMode[] = [
     sampleOutline: [
       { title: 'Origin story', bullets: ['Auto-pulled from Resume Builder', 'Highlights professional trajectory', 'Calls out signature achievements'] },
       { title: 'Deep dive', bullets: ['Lesson Builder modules become workshop slides', 'Blog visuals remixed for slides', 'Concept Explainer analogies reused for stories'] },
-      { title: 'Next moves', bullets: ['Personalised CTA slide', 'Q&A placeholder', 'Thank-you with brand footer'] },
+      { title: 'Next moves', bullets: ['Personalised CTA slide', 'Q and A placeholder', 'Thank-you with brand footer'] },
     ],
     estimatedSlides: 11,
     estimatedDuration: 14,
@@ -182,7 +182,7 @@ const slideLayouts: SlideLayout[] = [
     description: 'Grid for screenshots, mockups, or imagery with caption overlays.',
     usage: 'Demonstrate UI, product shots, or media collages.',
     bestFor: ['Product demos', 'Case studies', 'Design showcases'],
-    bullets: ['Drag-and-drop media placeholders', 'Auto-generate alt text & captions', 'Optional background blur for focus'],
+    bullets: ['Drag-and-drop media placeholders', 'Auto-generate alt text and captions', 'Optional background blur for focus'],
   },
   {
     key: 'timeline',
@@ -196,7 +196,7 @@ const slideLayouts: SlideLayout[] = [
     key: 'summary',
     name: 'Executive summary',
     description: 'Bring the narrative home with KPIs, learnings, and clear CTA.',
-    usage: 'Final summary before Q&A or sign-off.',
+    usage: 'Final summary before Q and A or sign-off.',
     bestFor: ['Leadership updates', 'Investor recaps', 'Client proposals'],
     bullets: ['Metric trio with trend arrows', 'Narrative paragraph slot', 'CTA button with icon'],
   },
@@ -254,10 +254,10 @@ const assistantActions: AssistantAction[] = [
 ];
 
 const timeline: TimelineSegment[] = [
-  { id: 'intro', label: 'Opening & stakes', minutes: 3, description: 'Title, agenda, and framing slides.' },
-  { id: 'insights', label: 'Insights & evidence', minutes: 7, description: 'Charts, comparisons, and story slides.' },
-  { id: 'solution', label: 'Solution & roadmap', minutes: 5, description: 'Roadmap timeline and feature highlights.' },
-  { id: 'close', label: 'Close & CTA', minutes: 3, description: 'Summary, Q&A, and thank you slide.' },
+  { id: 'intro', label: 'Opening and stakes', minutes: 3, description: 'Title, agenda, and framing slides.' },
+  { id: 'insights', label: 'Insights and evidence', minutes: 7, description: 'Charts, comparisons, and story slides.' },
+  { id: 'solution', label: 'Solution and roadmap', minutes: 5, description: 'Roadmap timeline and feature highlights.' },
+  { id: 'close', label: 'Close and CTA', minutes: 3, description: 'Summary, Q and A, and thank you slide.' },
 ];
 
 const apiEndpoints: ApiEndpoint[] = [
@@ -384,9 +384,9 @@ const sampleSlides: SlidePreview[] = [
   {
     id: 'slide-6',
     layoutKey: 'summary',
-    title: 'Decision & next steps',
+    title: 'Decision and next steps',
     context: 'Close with clear asks.',
-    bullets: ['Approve enablement budget', 'Nominate cross-functional champions', 'Schedule Q&A follow-up'],
+    bullets: ['Approve enablement budget', 'Nominate cross-functional champions', 'Schedule Q and A follow-up'],
   },
 ];
 

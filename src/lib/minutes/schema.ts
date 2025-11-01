@@ -155,7 +155,7 @@ export const minutesTemplates: MinutesTemplateDefinition[] = [
     key: 'client_call',
     label: 'Client Call',
     description: 'Capture notes from client status or discovery calls.',
-    agendaExamples: ['Introductions', 'Status updates', 'Opportunities', 'Risks & blockers'],
+    agendaExamples: ['Introductions', 'Status updates', 'Opportunities', 'Risks and blockers'],
     summaryHighlights: [
       'Record commitments made to the client with owners.',
       'Note concerns or escalations raised.',
@@ -174,7 +174,7 @@ export const minutesTemplates: MinutesTemplateDefinition[] = [
     key: 'sales_discovery',
     label: 'Sales Discovery',
     description: 'Organize discovery calls and qualification notes.',
-    agendaExamples: ['Pain points', 'Current solutions', 'Budget & timeline', 'Stakeholders'],
+    agendaExamples: ['Pain points', 'Current solutions', 'Budget and timeline', 'Stakeholders'],
     summaryHighlights: [
       'Map pain points to product capabilities.',
       'Identify buying committee members.',

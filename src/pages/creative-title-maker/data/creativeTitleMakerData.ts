@@ -50,7 +50,7 @@ const briefKnobs: TitleBriefKnob[] = [
   },
   {
     id: 'tone',
-    label: 'Tone & POV',
+    label: 'Tone and POV',
     description: 'Lock brand personality and point-of-view before generation to maintain voice.',
     type: 'select',
     icon: 'fas fa-pen-nib',
@@ -71,7 +71,7 @@ const briefKnobs: TitleBriefKnob[] = [
   },
   {
     id: 'syllables',
-    label: 'Syllables & readability',
+    label: 'Syllables and readability',
     description: 'Balance cadence with grade-level guardrails for email, video, or long-form titles.',
     type: 'slider',
     icon: 'fas fa-wave-square',
@@ -107,12 +107,12 @@ const povOptions = [
 const styleDeviceOptions = [
   { id: 'numeral', label: 'Numeral power', icon: 'fas fa-list-ol' },
   { id: 'alliteration', label: 'Alliteration', icon: 'fas fa-feather-pointed' },
-  { id: 'rhyme', label: 'Rhyme & cadence', icon: 'fas fa-music' },
-  { id: 'pun', label: 'Wordplay & pun', icon: 'fas fa-face-laugh-beam' },
+  { id: 'rhyme', label: 'Rhyme and cadence', icon: 'fas fa-music' },
+  { id: 'pun', label: 'Wordplay and pun', icon: 'fas fa-face-laugh-beam' },
   { id: 'colon', label: 'Colon split', icon: 'fas fa-ellipsis' },
   { id: 'question', label: 'Question hook', icon: 'fas fa-question' },
   { id: 'command', label: 'Command hook', icon: 'fas fa-bullhorn' },
-  { id: 'proof', label: 'Proof & numbers', icon: 'fas fa-chart-column' },
+  { id: 'proof', label: 'Proof and numbers', icon: 'fas fa-chart-column' },
   { id: 'emoji', label: 'Emoji accent (shorts)', icon: 'fas fa-face-smile' },
 ];
 
@@ -261,7 +261,7 @@ const bundles: TitleBundle[] = [
   },
   {
     id: 'curiosity-pack',
-    label: 'Curiosity & Hook Pack',
+    label: 'Curiosity and Hook Pack',
     description: 'Teaser-style lines to spark intrigue for teasers and short-form video.',
     focus: 'awareness',
     variantIds: ['variant-curiosity-1'],
@@ -270,7 +270,7 @@ const bundles: TitleBundle[] = [
   },
   {
     id: 'proof-pack',
-    label: 'Proof & Social Pack',
+    label: 'Proof and Social Pack',
     description: 'Evidence-backed statements leveraging stats and social proof.',
     focus: 'credibility',
     variantIds: ['variant-proof-1'],
@@ -393,7 +393,7 @@ const exportPresets: TitleExportPreset[] = [
     label: 'CSV bulk export',
     description: 'Download variants with scores, rationale, and locale columns.',
     includes: ['Variant text', 'Scores', 'Bucket', 'Locale', 'Flags'],
-    bestFor: 'Spreadsheet editing & import to ad platforms',
+    bestFor: 'Spreadsheet editing and import to ad platforms',
     plan: 'free',
   },
   {
@@ -402,7 +402,7 @@ const exportPresets: TitleExportPreset[] = [
     label: 'JSON automation payload',
     description: 'Structured payload for pushing titles into downstream workflows.',
     includes: ['Variant text', 'Slug', 'Scores', 'Metadata'],
-    bestFor: 'Zapier & custom APIs',
+    bestFor: 'Zapier and custom APIs',
     plan: 'pro',
   },
   {
@@ -411,7 +411,7 @@ const exportPresets: TitleExportPreset[] = [
     label: 'PDF stakeholder board',
     description: 'Curated PDF with rationale, scoring heatmap, and recommendations.',
     includes: ['Variant gallery', 'Score heatmap', 'Risk flags', 'Approvals'],
-    bestFor: 'Executive reviews & creative presentations',
+    bestFor: 'Executive reviews and creative presentations',
     plan: 'pro',
   },
 ];

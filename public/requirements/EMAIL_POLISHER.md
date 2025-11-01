@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/email`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Help users **write, rewrite, and optimize** emails fast â€” with tone control, grammar/style fixes, reply suggestions, thread summaries, and reusable templates.
 
@@ -10,16 +10,16 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - **Rewrite/Polish** any email to a selected tone and formality (e.g., friendly, professional, concise).  
-- **Grammar & Clarity** fixes; **shorten/expand** options.  
+- **Grammar and Clarity** fixes; **shorten/expand** options.  
 - **Reply Suggestions**: paste an incoming email â†’ get 3 suggested replies.  
 - **Thread Summary**: paste a thread â†’ get key points and asks.  
 - **Personalization**: smart placeholders (e.g., `{FirstName}`, `{Company}`, `{Role}`) with quick fill.  
 - **Templates**: reusable email templates (cold outreach, followâ€‘up, status update, apology, intro, etc.).  
-- **Signatures** & brand blocks; detect schedule/time zone hints.  
+- **Signatures** and brand blocks; detect schedule/time zone hints.  
 - **Export/Copy** to clipboard; optional `mailto:` prefill; v2 SMTP send.
 
 ### Nonâ€‘Goals (v1)
@@ -47,15 +47,15 @@
    - *As a user*, I can click quick actions: **Shorten**, **Expand**, **Make Polite**, **Make Clear**, **Fix Grammar**.  
    - **AC:** `/email/api/rewrite` returns the transformed text and highlights changes (diff optional).
 
-5. **Templates & Variables**
+5. **Templates and Variables**
    - *As a user*, I can pick a template and auto-fill `{FirstName}`, `{Company}`, `{Role}`, `{MyName}`, `{MyTitle}`.  
    - **AC:** `/email/api/render-template` merges variables with preview; missing fields prompt quick fill.
 
-6. **Signature & Brand Block**
+6. **Signature and Brand Block**
    - *As a user*, I can define a **default signature** and optional brand footer.  
    - **AC:** Signature appended automatically on copy/export; can be toggled per email.
 
-7. **Localization & Translate**
+7. **Localization and Translate**
    - *As a user*, I can translate my email to another language while keeping tone.  
    - **AC:** `/email/api/translate` returns translated draft; RTL support for Arabic.
 
@@ -65,13 +65,13 @@
 
 9. **Plan Gating**
    - Free: 30 polishes/month, 5 templates, watermark â€œPolished with Ansiversaâ€ (on copy/export).  
-   - Pro: unlimited polishes (fair-use), unlimited templates, no watermark, translate & thread summary unlocked.
+   - Pro: unlimited polishes (fair-use), unlimited templates, no watermark, translate and thread summary unlocked.
 
 ---
 
-## 3) Information Architecture & Routes
+## 3) Information Architecture and Routes
 
-- `/email` â€” Dashboard & Quick Polish (paste box + tone controls + output pane)  
+- `/email` â€” Dashboard and Quick Polish (paste box + tone controls + output pane)  
 - `/email/editor` â€” Full editor with templates, variables, signature, history  
 - `/email/templates` â€” Template gallery (create/edit/duplicate)  
 - `/email/history` â€” (optional) Saved drafts/polishes
@@ -194,7 +194,7 @@
 
 ---
 
-## 8) Export & Integration
+## 8) Export and Integration
 
 - **Copy** to clipboard (primary).  
 - **Export** `.md` / `.txt`.  
@@ -203,7 +203,7 @@
 
 ---
 
-## 9) Plans & Rate Limits
+## 9) Plans and Rate Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -217,7 +217,7 @@ Rate limit keys: `userId` + day for API calls; `userId` + month for quota.
 
 ---
 
-## 10) Security & Privacy
+## 10) Security and Privacy
 
 - **Ephemeral mode**: do not persist input/output; show warning before navigation.  
 - Drafts private by default.  
@@ -226,14 +226,14 @@ Rate limit keys: `userId` + day for API calls; `userId` + month for quota.
 
 ---
 
-## 11) Analytics & Events
+## 11) Analytics and Events
 
 - `email.polish`, `email.reply`, `email.summarize`, `email.translate`, `email.rewrite`, `email.save`, `email.delete`, `email.duplicate`, `template.use`, `template.create`.  
 - Track tone/formality distribution for UX improvements.
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Keyboard shortcuts (Polish = Cmd/Ctrl+Enter; Copy = Cmd/Ctrl+C).  
 - Clear focus states; aria labels; high-contrast mode.  

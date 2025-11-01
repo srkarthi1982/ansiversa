@@ -45,7 +45,7 @@ Tables: `User`, `Note`, `Summary`, `Tag`, `History`
 
 ## ðŸ§© PART 2 â€” DETAILED REQUIREMENTS
 
-### 1. Objectives & Nonâ€‘Goals
+### 1. Objectives and Nonâ€‘Goals
 **Objectives:**
 - Accept text, pasted notes, or uploaded files.  
 - Generate structured summaries and highlights.  
@@ -67,15 +67,15 @@ Tables: `User`, `Note`, `Summary`, `Tag`, `History`
    - `/ai-notes-summarizer/api/summarize`
    - Modes: *Concise*, *Detailed*, *Bullet*, *Abstract*, *Action Plan*.
 
-3. **Edit & Save Summary**
+3. **Edit and Save Summary**
    - `/ai-notes-summarizer/api/save`
    - Users can tweak AI output before saving.
 
-4. **Tag & Export**
+4. **Tag and Export**
    - `/ai-notes-summarizer/api/export`
    - Exports to MD or PDF; tags summaries by topic (Education, Business, etc.).
 
-5. **History & Search**
+5. **History and Search**
    - `/ai-notes-summarizer/api/history/list`
    - Retrieve previous summaries with metadata and timestamps.
 
@@ -84,9 +84,9 @@ Tables: `User`, `Note`, `Summary`, `Tag`, `History`
 
 ---
 
-### 3. Pages & Routes
+### 3. Pages and Routes
 - `/ai-notes-summarizer` â†’ Input box + Upload panel + Mode selector  
-- `/ai-notes-summarizer/summary/[id]` â†’ Output editor & export  
+- `/ai-notes-summarizer/summary/[id]` â†’ Output editor and export  
 - `/ai-notes-summarizer/history` â†’ History viewer  
 - `/ai-notes-summarizer/settings` â†’ Preferences (tone, max length, language)
 
@@ -151,12 +151,12 @@ Response:
 
 ---
 
-### 7. UX & Accessibility
+### 7. UX and Accessibility
 - Upload or paste text directly.  
 - Choose tone: *Neutral*, *Professional*, *Academic*, *Creative*.  
 - Inline edit summary before saving.  
 - Keyboard shortcuts: `Ctrl+Enter` to summarize, `Ctrl+S` to save.  
-- Autosave & progress indicator during generation.  
+- Autosave and progress indicator during generation.  
 - High contrast and mobile responsive layout.
 
 ---

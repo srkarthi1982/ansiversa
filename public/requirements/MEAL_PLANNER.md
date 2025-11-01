@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/meal-planner`  
-**Category:** Lifestyle & Wellâ€‘Being  
+**Category:** Lifestyle and Wellâ€‘Being  
 **Stack:** Astro + Tailwind (islands for planners/forms), Astro SSR API routes, Astro DB / Supabase, optional workers for weekly jobs  
 **Goal:** Help users plan nutritious, budgetâ€‘aware meals for the week. Generate meal plans by calories/macros, diet type, allergies, cuisine, and budget; produce grocery lists; track pantry; and export/share.
 
@@ -10,16 +10,16 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Create **weekly/biâ€‘weekly** meal plans (Breakfast/Lunch/Dinner/Snacks).  
 - Support **dietary patterns** (Veg/Nonâ€‘veg/Vegan/Keto/Lowâ€‘carb/Highâ€‘protein/Diabeticâ€‘friendly/Halal/Jain/etc.).  
 - Handle **allergies** (nuts, dairy, gluten, eggs, soy, shellfish) and **dislikes**.  
-- **Calorie & macro** targets (per day or per meal).  
+- **Calorie and macro** targets (per day or per meal).  
 - **Budget control** and **prep time** constraints (e.g., â‰¤ 30 min).  
 - **Grocery list** builder with aisle categories, quantities, and unit conversions.  
-- **Pantry** & **Leftovers** tracking with autoâ€‘suggestions to reduce waste.  
+- **Pantry** and **Leftovers** tracking with autoâ€‘suggestions to reduce waste.  
 - **Recipe vault** (builtâ€‘in + user) with nutrition estimates and tags.  
 - Exports: **PDF**, **CSV**, **MD**, **Share Link**.  
 - Multiâ€‘language and metric/imperial units.
@@ -37,7 +37,7 @@
    - *As a user*, I set calories (e.g., 2,000/day), protein min (100g), diet=Vegetarian, and budget=moderate.  
    - **AC:** `/meal-planner/api/plan/generate` returns a 7â€‘day plan with recipes per meal, nutrition totals, and grocery list draft.
 
-2. **Customize & Swap**
+2. **Customize and Swap**
    - *As a user*, I replace a dinner with a different recipe respecting allergies.  
    - **AC:** `/meal-planner/api/plan/swap` suggests compatible alternatives; totals update.
 
@@ -45,7 +45,7 @@
    - *As a user*, I view a consolidated list grouped by aisle.  
    - **AC:** `/meal-planner/api/grocery/list` aggregates ingredients across the week, dedupes, and converts units.
 
-4. **Pantry & Leftovers**
+4. **Pantry and Leftovers**
    - *As a user*, I mark items I already have.  
    - **AC:** `/meal-planner/api/pantry/apply` subtracts pantry items; leftover recipes are suggested for unused ingredients.
 
@@ -53,7 +53,7 @@
    - *As a user*, I mark â€œmeal prep Sundayâ€ for lunches.  
    - **AC:** `/meal-planner/api/prep/plan` merges steps and generates a prep checklist.
 
-6. **Allergies & Dislikes**
+6. **Allergies and Dislikes**
    - *As a user*, I set allergens and disliked ingredients/cuisines.  
    - **AC:** generator excludes them; warnings show if a user recipe conflicts.
 
@@ -67,7 +67,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/meal-planner` â€” Hub: New plan wizard, recent plans, quick add recipes.  
 - `/meal-planner/new` â€” Wizard: profiles (user/family), calories/macros, diet, allergies, budget, time, cuisines, days, meal slots.  
@@ -75,7 +75,7 @@
 - `/meal-planner/grocery/[id]` â€” Grocery list (aisle groups, pantry toggle).  
 - `/meal-planner/recipes` â€” Browse/search recipes.  
 - `/meal-planner/recipes/new` â€” Add recipe form (ingredients, steps, tags, nutrition).  
-- `/meal-planner/pantry` â€” Pantry inventory & expiries.  
+- `/meal-planner/pantry` â€” Pantry inventory and expiries.  
 - `/meal-planner/settings` â€” Units, language, default targets.
 
 **API (SSR):**  
@@ -118,19 +118,19 @@
 - `id` (pk), `userId` (fk), `name`, `qty`, `unit`, `expiresOn` (date|null), `sourceRecipeId` (fk|null)
 
 **SubstitutionRule**  
-- `id` (pk), `name`, `appliesTo` (ingredient name/tag), `alternatives` (array with qty factor & notes)
+- `id` (pk), `name`, `appliesTo` (ingredient name/tag), `alternatives` (array with qty factor and notes)
 
 ---
 
 ## 5) Plan Generation Logic (Outline)
 
 1. **Constraints** from DietProfile (diet, allergies, dislikes, cuisines, kcal/macros, budget, prep time).  
-2. **Candidate recipes** filtered by diet & allergens; score by fit (macros proximity, prep time, budget, cuisine).  
+2. **Candidate recipes** filtered by diet and allergens; score by fit (macros proximity, prep time, budget, cuisine).  
 3. **Diversity rule**: avoid repeating the same primary protein/cuisine >2Ã— in a row.  
 4. **Assemble week** per slot; compute daily totals; backâ€‘fill gaps with quick recipes.  
 5. **Grocery aggregation** with unit normalization (g â†” kg, ml â†” L, cups â†” ml using a conversion table).  
 6. **Pantry match** subtracts onâ€‘hand quantities; mark remaining as â€œto buyâ€.  
-7. **Prep plan**: group steps (e.g., batchâ€‘cook rice & roast veggies Sunday).
+7. **Prep plan**: group steps (e.g., batchâ€‘cook rice and roast veggies Sunday).
 
 ---
 
@@ -144,7 +144,7 @@
 - Side panel: daily totals vs targets; warnings for macro deviations; prep suggestions.
 
 ### `/meal-planner/grocery/[id]`
-- Aisle groups, pantry toggle, checkboxes, print & export; â€œconvert to CSV for retailerâ€.
+- Aisle groups, pantry toggle, checkboxes, print and export; â€œconvert to CSV for retailerâ€.
 
 ### `/meal-planner/recipes`
 - Search + filters (diet, time, kcal/serving, tags); import from URL (parse basic fields).
@@ -200,7 +200,7 @@ Res: `{ "url":"/exports/grocery_2025-11-02.csv" }`
 
 ---
 
-## 9) Plans & Limits
+## 9) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
@@ -217,7 +217,7 @@ Rate limits: `userId`+day for generations/exports; `planId`+hour for swaps.
 
 ---
 
-## 10) Accessibility & UX
+## 10) Accessibility and UX
 
 - Large touch targets; keyboard navigation; highâ€‘contrast mode.  
 - Screenâ€‘reader labels on buttons and ingredient checkboxes.  
@@ -270,7 +270,7 @@ src/components/meal-planner/Pantry/*.astro
 - **Nutrient optimizer** (micros: potassium, calcium, iron, vitamins).  
 - **Meal plan marketplace** (moderated templates).  
 - **Wearable sync** (calories burned) to adjust targets.  
-- **PWA offline** for grocery list & recipes in-store.
+- **PWA offline** for grocery list and recipes in-store.
 
 ---
 

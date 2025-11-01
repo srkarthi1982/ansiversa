@@ -91,7 +91,7 @@ const templateCategories: MemeTemplateCategory[] = [
   },
   {
     id: 'corporate',
-    title: 'Corporate & brand mode',
+    title: 'Corporate and brand mode',
     description: 'Clean layouts with ample space for logos, annotations, and CTA captions.',
     tags: ['#b2b', '#product', '#case-study'],
     templates: [
@@ -132,7 +132,7 @@ const templateCategories: MemeTemplateCategory[] = [
   },
   {
     id: 'comic-grid',
-    title: 'Comic & multi-panel',
+    title: 'Comic and multi-panel',
     description: 'Story grids from two to six panels with gutter controls and tone-friendly palettes.',
     tags: ['#series', '#story', '#multi-panel'],
     templates: [
@@ -207,7 +207,7 @@ const promptPresets: MemePromptPreset[] = [
     tone: 'assuring',
     recommendedTemplates: ['object-labeler', 'boardroom-split'],
     captionIdeas: [
-      'Profanity filter: “Nice try.” · Meme: Sanitized & ready.',
+      'Profanity filter: “Nice try.” · Meme: Sanitized and ready.',
       'Sensitive topic guard: Flagged → Auto rewrite → Approved.',
       'Face blur toggle: On. Brand team: Breathing easy.',
     ],
@@ -266,7 +266,7 @@ const promptStages: MemePromptStage[] = [
     title: 'Template match',
     description: 'AI scans the library to suggest look-alike templates and panel counts.',
     icon: 'fas fa-images',
-    actions: ['Filter by ratio or animation', 'Preview object labels & speech bubbles', 'Swap palette with brand preset'],
+    actions: ['Filter by ratio or animation', 'Preview object labels and speech bubbles', 'Swap palette with brand preset'],
   },
   {
     id: 'captioning',
@@ -413,7 +413,7 @@ const batchPresets: MemeBatchPreset[] = [
     description: 'Square, vertical, and landscape set with auto-caption variations.',
     variants: 6,
     includes: ['PNG', 'MP4 (caption motion)', 'CSV caption sheet'],
-    bestFor: 'Launch campaigns & cross-platform drops',
+    bestFor: 'Launch campaigns and cross-platform drops',
     plan: 'free',
   },
   {
@@ -422,7 +422,7 @@ const batchPresets: MemeBatchPreset[] = [
     description: 'Tone dial sweeps across wholesome → savage with UTM filenames.',
     variants: 12,
     includes: ['PNG', 'WebP', 'GIF loop'],
-    bestFor: 'Growth experiments & paid social tests',
+    bestFor: 'Growth experiments and paid social tests',
     plan: 'pro',
   },
   {
@@ -431,7 +431,7 @@ const batchPresets: MemeBatchPreset[] = [
     description: 'Locale-aware captions, audit log export, and bulk watermarking.',
     variants: 24,
     includes: ['PNG', 'MP4', 'ZIP bundle', 'Audit log JSON'],
-    bestFor: 'Global comms & enablement teams',
+    bestFor: 'Global comms and enablement teams',
     plan: 'pro',
   },
 ];
@@ -449,7 +449,7 @@ const exportFormats: MemeExportFormat[] = [
     id: 'webp-social',
     label: 'WebP (lightweight)',
     format: 'webp',
-    description: 'Optimized for web & chat drops with color profile preservation.',
+    description: 'Optimized for web and chat drops with color profile preservation.',
     plan: 'free',
     options: ['Quality slider', 'Embed metadata'],
   },
@@ -591,7 +591,7 @@ const planComparison: MemePlanComparisonRow[] = [
     feature: 'Projects',
     icon: 'fas fa-folder-tree',
     free: 'Up to 5 active MemeProjects',
-    pro: 'Unlimited projects & archives',
+    pro: 'Unlimited projects and archives',
   },
   {
     id: 'panels',
@@ -609,7 +609,7 @@ const planComparison: MemePlanComparisonRow[] = [
   },
   {
     id: 'safety',
-    feature: 'Safety & compliance',
+    feature: 'Safety and compliance',
     icon: 'fas fa-user-shield',
     free: 'Profanity filter · Face blur',
     pro: 'Sensitive guard · Watermark lock · Audit log',

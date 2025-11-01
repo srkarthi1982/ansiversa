@@ -10,12 +10,12 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 **AI Meme Creator** lets users produce **instant, onâ€‘trend memes** from prompts, images, or templates. It supports classic formats (Drake Hotline, Distracted Boyfriend, Expanding Brainâ€¦), **custom image uploads**, **auto text layout**, **multiâ€‘panel comics**, **object labels**, **brandâ€‘safe filters**, and **batch creation** for campaigns. Export as **PNG/JPEG/WebP**, **MP4/GIF** for motion captions, and **square/vertical** sizes for social. Integrates with **Ad Copy Assistant** (campaign hooks), **Creative Title Maker** (caption brainstorming), and **Presentation Designer** (slide memes).
 
 ### Core Features
-- **Template library** with search & trending tags; **custom upload** (transparent PNG/JPG/WebP).  
+- **Template library** with search and trending tags; **custom upload** (transparent PNG/JPG/WebP).  
 - **Smart text engine**: automatic font sizing, stroke/outline, text wrap, top/bottom captions, **objectâ€‘label arrows**, and **speech bubbles**.  
 - **Prompt â†’ meme**: enter idea; generate suggested captions + pick a template automatically.  
-- **Multiâ€‘panel & comics**: 2â€“6 panels; perâ€‘panel captions; grid layout; spacing/gutters.  
+- **Multiâ€‘panel and comics**: 2â€“6 panels; perâ€‘panel captions; grid layout; spacing/gutters.  
 - **Style controls**: Impact/Anton/Inter, outline width, shadow, color theme, watermark logo, brand palette.  
-- **Safety & brand mode**: profanity filter, sensitiveâ€‘topic guard, face blurring toggle.  
+- **Safety and brand mode**: profanity filter, sensitiveâ€‘topic guard, face blurring toggle.  
 - **Batch mode**: create N variants for A/B tests; bulk export with filenames/UTM in caption.  
 - **AI explain**: rationale for why a meme works; alt punchlines.  
 - **Exports**: PNG/JPEG/WebP; GIF/MP4 for animated text; ZIP bundle; copy to clipboard (web).  
@@ -38,7 +38,7 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 | Batch variants | 3 | 30 |
 | Multiâ€‘panel | Up to 3 | Up to 6 |
 | Animated/GIF export | â€” | âœ… |
-| Brand presets & watermark | 1 | Unlimited |
+| Brand presets and watermark | 1 | Unlimited |
 | Max export size | 1080px | 2048px |
 | History retention | 30 days | Unlimited |
 
@@ -46,7 +46,7 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide a **fast, delightful** meme creation flow with **auto layout** and **safe defaults**.  
 - Support **templates + custom images** and **multiâ€‘panel** storytelling.  
@@ -59,14 +59,14 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/meme` â€” Library with search (by tag/template), filters (size, animated, multiâ€‘panel), and recent projects.  
 - `/meme/new` â€” Wizard: choose **Template** or **Upload**; optionally enter a **prompt** to suggest captions and template.  
 - `/meme/project/[id]` â€” Canvas with left sidebar (templates, stickers), main artboard, right sidebar (layers, properties, brand).  
 - `/meme/export/[id]` â€” Export presets (PNG/WebP, GIF/MP4); ZIP batch.  
-- `/meme/settings` â€” Brand fonts/colors, watermark logo position, default safety mode & profanity list.
+- `/meme/settings` â€” Brand fonts/colors, watermark logo position, default safety mode and profanity list.
 
 **API (SSR)**
 - Projects:  
@@ -74,20 +74,20 @@ This document includes a **Codexâ€‘friendly summary** and a **full technica
   - `GET  /meme/api/project?id=`  
   - `POST /meme/api/project/update`  
   - `POST /meme/api/project/archive`
-- Templates & assets:  
+- Templates and assets:  
   - `GET  /meme/api/template/list?query=&tag=`  
   - `POST /meme/api/template/create` (admin only)  
-  - `POST /meme/api/upload` (image; validates dimensions & size)
-- Generation & editing:  
+  - `POST /meme/api/upload` (image; validates dimensions and size)
+- Generation and editing:  
   - `POST /meme/api/suggest` (prompt â†’ {template, captions})  
   - `POST /meme/api/caption/generate` (alt punchlines)  
   - `POST /meme/api/layer/add` `.../update` `.../delete` `.../reorder`  
   - `POST /meme/api/panel/add` `.../remove` `.../reflow`  
   - `POST /meme/api/brand/apply` (font/colors/watermark)
-- Safety & checks:  
+- Safety and checks:  
   - `POST /meme/api/safety/check` (profanity/sensitive topics/NSFW heuristic)  
-  - `POST /meme/api/face/blur` (toggle & strength)
-- Rendering & export:  
+  - `POST /meme/api/face/blur` (toggle and strength)
+- Rendering and export:  
   - `POST /meme/api/render` (static)  
   - `POST /meme/api/animate` (caption entrance; bounce/fade/slide; perâ€‘panel timing)  
   - `POST /meme/api/export` (png|jpg|webp|gif|mp4|zip) Â· `GET /meme/api/export/status?id=`
@@ -97,21 +97,21 @@ Optional WebSocket `/meme/ws` for render progress, live charâ€‘fit meter, a
 
 ---
 
-### 3) Canvas & Layout Engine
+### 3) Canvas and Layout Engine
 
 **Layers**: Background (image/template), Text (caption/speech bubble/object label), Sticker/Emoji, Shape (box/arrow/line), Watermark Logo.  
-**Autoâ€‘fit text**: shrinkâ€‘toâ€‘fit within bounding box; **Impactâ€‘style outline** (stroke), shadow toggle; vertical & horizontal align.  
-**Captions**: Top/Bottom classic, Freeâ€‘position, **speech bubble** with tail orientation, **object label** with arrow & anchor.  
+**Autoâ€‘fit text**: shrinkâ€‘toâ€‘fit within bounding box; **Impactâ€‘style outline** (stroke), shadow toggle; vertical and horizontal align.  
+**Captions**: Top/Bottom classic, Freeâ€‘position, **speech bubble** with tail orientation, **object label** with arrow and anchor.  
 **Multiâ€‘panel**: 2â€“6 panels; gutter, border radius, panel aspect options (1:1, 4:5, 9:16, 16:9).  
 **Smart contrast**: automatic white/black text swap or add outline for legibility.  
-**Snap & guides**: edges, center lines, equal spacing; **safe zones** for platform overlays.  
+**Snap and guides**: edges, center lines, equal spacing; **safe zones** for platform overlays.  
 **Undo/Redo**, **duplicate**, **lock**, **group/ungroup** layers.
 
 ---
 
 ### 4) Caption Intelligence
 
-- **Prompt assist**: given a scenario (`"When deploy fails on Friday"`), propose 5â€“15 punchlines & pick templates.  
+- **Prompt assist**: given a scenario (`"When deploy fails on Friday"`), propose 5â€“15 punchlines and pick templates.  
 - **Alt punchlines**: generate familyâ€‘friendly, sarcastic, wholesome, businessâ€‘safe variants.  
 - **Pattern bank**: setups like *Expectation vs Reality*, *Drake Approves/Disapproves*, *Galaxy Brain*, *Two Buttons*, *Change My Mind*, *Surprised Pikachu* (generic placeholders for nonâ€‘copyrighted lookâ€‘alikes).  
 - **Tone sliders**: wholesome â†” savage, corporate â†” casual, simple â†” absurd.  
@@ -167,7 +167,7 @@ Shortcuts: arrows to nudge; `Shift`+arrows bigâ€‘nudge; `Ctrl/Cmd+D` duplic
 
 ---
 
-### 7) Rendering & Animation
+### 7) Rendering and Animation
 
 - **Static render**: rasterize canvas at selected size (1x/2x) with PNG transparency when needed.  
 - **Animated text**: perâ€‘caption entrance (fade, slide, bounce); duration per panel; loop flag for GIF; export **MP4 (H.264)** and **GIF**.  
@@ -176,9 +176,9 @@ Shortcuts: arrows to nudge; `Shift`+arrows bigâ€‘nudge; `Ctrl/Cmd+D` duplic
 
 ---
 
-### 8) Safety, Copyright & Policy Guards
+### 8) Safety, Copyright and Policy Guards
 
-- **Profanity & sensitive topic filter** (userâ€‘configurable levels).  
+- **Profanity and sensitive topic filter** (userâ€‘configurable levels).  
 - **Face blur** control (Gaussian or mosaic) for uploaded faces.  
 - **Trademark/brand usage warning**; disallow default inclusion of known logos.  
 - **Template sourcing**: use **copyrightâ€‘safe, lookâ€‘alike** graphics for famous formats.  
@@ -209,7 +209,7 @@ Res: `{ "template":"two_buttons_lookalike", "captions":["Local âœ… / Prod â
 ```
 Res: `{ "layerId":"l_12" }`
 
-**Render & export**  
+**Render and export**  
 `POST /meme/api/render` â†’ `{ "renderId":"r_9" }`  
 `POST /meme/api/export`  
 ```json
@@ -232,7 +232,7 @@ Res: `{ "jobId":"e_22" }`
 
 ---
 
-### 11) Plans & Limits
+### 11) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|
@@ -298,7 +298,7 @@ src/components/meme/Safety/*.astro
 - **Sticker packs** with seasonal content.  
 - **Live social posting** via platform APIs.  
 - **Promptâ€‘toâ€‘image** gen (with strong content guardrails).  
-- **Collaboration & comments**; team watermark per user.
+- **Collaboration and comments**; team watermark per user.
 
 ---
 

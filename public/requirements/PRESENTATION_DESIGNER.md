@@ -2,25 +2,25 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/presentation-designer`  
-**Category:** Career & Professional  
+**Category:** Career and Professional  
 **Stack:** Astro + Tailwind (islands for editors), Astro SSR API routes, Astro DB / Supabase, PPTX/PDF export via server runtime (e.g., pptxgen or node-pptx + headless PDF)  
 **Goal:** Let users turn ideas (outline, prompt, or imported doc) into polished slide decks fast, with themes, brand kits, smart layouts, media helpers, charts/tables, notes, and oneâ€‘click export (PPTX/PDF).
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - **Create from:** prompt, outline bullets, uploaded doc (txt/md), or imported Ansiversa app output (Resume, Blog, Concept Explainer, Lesson Builder).
 - **Design system:** themes, palettes, fonts, layout packs, iconography.
-- **Smart slides:** title, section, bullets, comparison, image grid, quote, agenda, chart, table, KPI, timeline, steps, pros/cons, Q&A, thank you.
-- **Brand kit:** logo, brand colors, fonts, spacing, default footer & watermark.
+- **Smart slides:** title, section, bullets, comparison, image grid, quote, agenda, chart, table, KPI, timeline, steps, pros/cons, Q and A, thank you.
+- **Brand kit:** logo, brand colors, fonts, spacing, default footer and watermark.
 - **Assets:** media search placeholder (user uploads/URLs), SVG/PNG icons, screenshots.
 - **Data viz:** charts (bar/line/pie/donut/scatter) from pasted CSV/JSON; simple tables.
 - **Editing:** slide reorder/duplicate, drag media, edit text blocks, style overrides.
 - **Assistants:** rewrite tone (concise/professional/story), summarize/expand, spell/grammar.
-- **Notes & timing:** presenter notes, slide timing estimates.
-- **Export & share:** PPTX/PDF export, share readâ€‘only link, version history.
+- **Notes and timing:** presenter notes, slide timing estimates.
+- **Export and share:** PPTX/PDF export, share readâ€‘only link, version history.
 
 ### Nonâ€‘Goals (v1)
 - No online live collaboration cursors (singleâ€‘user editing only).  
@@ -65,12 +65,12 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/presentation-designer` â€” Hub: New from Prompt/Outline/Import; Recent decks; Templates.  
 - `/presentation-designer/new` â€” Wizard: Topic, audience, length, style, theme, brand kit.  
 - `/presentation-designer/editor/[deckId]` â€” Slide editor (canvas, left slide list, right inspector).  
-- `/presentation-designer/templates` â€” Theme gallery & layout packs.  
+- `/presentation-designer/templates` â€” Theme gallery and layout packs.  
 - `/presentation-designer/brand` â€” Brand Kit manager.  
 - `/presentation-designer/view/[deckId]` â€” Readâ€‘only viewer (for sharing).
 
@@ -127,7 +127,7 @@
 ```json
 {
   "heading": "Why Ansiversa?",
-  "bullets": ["100+ AI mini apps", "Unified UX", "One subscription", "Fast & fun"]
+  "bullets": ["100+ AI mini apps", "Unified UX", "One subscription", "Fast and fun"]
 }
 ```
 
@@ -219,26 +219,26 @@ Res: `{ "text":"Our platform unifies 100+ AI miniâ€‘apps for faster results
 
 ---
 
-## 9) Plans & Limits
+## 9) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
 | Generate from prompt | Yes | Yes |
-| Templates & themes | Basic | All + custom |
+| Templates and themes | Basic | All + custom |
 | Brand kit | â€” | Yes (multiple) |
 | Slides/export | 10 | Unlimited |
 | Export watermark | Yes | No |
 | PPTX export | â€” | Yes |
-| Charts & tables | Basic | Full options |
+| Charts and tables | Basic | Full options |
 | Public share | Readâ€‘only | Readâ€‘only + theme lock |
 
 Rate limits: `userId`+day for generate/export; `userId`+hour for assist calls.
 
 ---
 
-## 10) Accessibility & UX
+## 10) Accessibility and UX
 
-- Large text & highâ€‘contrast modes; focus outlines; ARIA labels for canvas controls.  
+- Large text and highâ€‘contrast modes; focus outlines; ARIA labels for canvas controls.  
 - Keyboard shortcuts for all key actions; undo/redo history.  
 - RTL support for Arabic; localeâ€‘aware fonts.
 

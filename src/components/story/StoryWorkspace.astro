@@ -77,7 +77,7 @@ import Button from "../Button.astro";
 
             <div class="rounded-3xl border border-slate-200 bg-white p-6">
               <header class="flex items-center justify-between">
-                <h3 class="text-lg font-semibold text-slate-900">Canon & continuity</h3>
+                <h3 class="text-lg font-semibold text-slate-900">Canon and continuity</h3>
                 <Button type="button" size="sm" variant="ghost" @click="story.addCanonFact({ key: 'New detail', value: 'Describe here' })">
                   <i class="fas fa-circle-plus text-xs"></i>
                   Add fact
@@ -171,7 +171,7 @@ import Button from "../Button.astro";
         <section x-show="story.view.activePanel === 'outline'" x-cloak class="space-y-8">
           <header class="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h3 class="text-2xl font-semibold text-slate-900">Outline & beats</h3>
+              <h3 class="text-2xl font-semibold text-slate-900">Outline and beats</h3>
               <p class="text-sm text-slate-600">Generate Save the Cat or 3-Act beats, then promote scenes directly from beats.</p>
             </div>
             <div class="flex flex-wrap gap-2">
@@ -354,7 +354,7 @@ import Button from "../Button.astro";
                 </div>
                 <div class="mt-4 grid gap-3 text-xs text-slate-500 sm:grid-cols-2">
                   <div class="rounded-2xl bg-slate-50 px-4 py-3">
-                    <p class="font-semibold text-slate-700">POV & tense</p>
+                    <p class="font-semibold text-slate-700">POV and tense</p>
                     <p>POV <span class="font-medium" x-text="scene.pov"></span> · <span class="font-medium" x-text="scene.tense"></span></p>
                   </div>
                   <div class="rounded-2xl bg-slate-50 px-4 py-3">
@@ -384,7 +384,7 @@ import Button from "../Button.astro";
         <section x-show="story.view.activePanel === 'export'" x-cloak class="space-y-8">
           <header class="flex flex-wrap items-center justify-between gap-4">
             <div>
-              <h3 class="text-2xl font-semibold text-slate-900">Export & pitch</h3>
+              <h3 class="text-2xl font-semibold text-slate-900">Export and pitch</h3>
               <p class="text-sm text-slate-600">Compile Markdown, DOCX, or EPUB packages with configurable front/back matter.</p>
             </div>
             <Button type="button" variant="outline" size="sm" @click="story.requestExport(story.exportPresets[0]?.id ?? 'export-draft')">

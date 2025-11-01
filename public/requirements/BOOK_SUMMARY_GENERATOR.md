@@ -12,11 +12,11 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ### Core Features
 - **Ingestion**: upload PDF/EPUB/TXT or paste text; auto chapter detection; page mapping where available.  
 - **Summaries**: TL;DR, 5 key ideas, 1â€‘page executive summary, and chapter summaries; **persona/reading level** control.  
-- **Quotes & citations**: pull notable quotes with **page/location references**; extract references/footnotes.  
+- **Quotes and citations**: pull notable quotes with **page/location references**; extract references/footnotes.  
 - **Concept graph**: characters/entities/terms and their relationships; timelines (for fiction) or frameworks (nonâ€‘fiction).  
-- **Flashcards & quiz**: autoâ€‘generate Q/A cards (cloze, definition, concept), and quiz items; export CSV to **Exam Simulator**.  
+- **Flashcards and quiz**: autoâ€‘generate Q/A cards (cloze, definition, concept), and quiz items; export CSV to **Exam Simulator**.  
 - **Comparisons**: compare two books or editions; highlight overlapping ideas and disagreements.  
-- **Bias & reliability hints**: flag opinion vs evidence and note potential biases.  
+- **Bias and reliability hints**: flag opinion vs evidence and note potential biases.  
 - **Reading progress**: track % read, notes, highlights; continue where you left off.  
 - **Exports**: MD, PDF, DOCX; CSV for flashcards/quiz; image of mind map (PNG).  
 - **Integrations**: **FlashNote**, **Language Flashcards**, **Study Planner**, **Presentation Designer** (slide deck from key ideas).
@@ -47,7 +47,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Create **reliable, citeâ€‘anchored** layered summaries that adapt to **audience level** and **purpose**.  
 - Provide **study artifacts** (cards, quizzes, slides) to reinforce learning.  
@@ -59,10 +59,10 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
-- `/book-summary-generator` â€” Library with search & tags; recent books; â€œcontinue readingâ€.  
+- `/book-summary-generator` â€” Library with search and tags; recent books; â€œcontinue readingâ€.  
 - `/book-summary-generator/new` â€” Upload or paste; enter metadata (title, author, year, edition), goal (exam/business/pleasure), persona/level, tone; consent for processing.  
 - `/book-summary-generator/[id]` â€” Tabs:  
   - **Overview**: TL;DR, 5 bullets, 1â€‘page summary, key themes.  
@@ -70,7 +70,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
   - **Quotes**: filterable list with page refs; copy with citation.  
   - **Cards**: generated flashcards; export/push.  
   - **Graph**: concept/character map; timeline (fiction).  
-  - **Notes**: user highlights & notes with page anchors.  
+  - **Notes**: user highlights and notes with page anchors.  
 - `/book-summary-generator/compare` â€” Upload/select two books; diff their ideas/themes.  
 - `/book-summary-generator/export/[id]` â€” Export presets (study sheet, executive brief, slide outline).  
 - `/book-summary-generator/settings` â€” Defaults: level, tone, privacy, preferred citation style (APA/MLA/Chicago).
@@ -82,16 +82,16 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 - Summaries:  
   - `POST /book-summary-generator/api/summarize` (layer=`tldr|bullets|onepager|chapters`, audience, tone, purpose).  
   - `GET  /book-summary-generator/api/summary?id=&layer=`  
-- Quotes & entities:  
+- Quotes and entities:  
   - `POST /book-summary-generator/api/quotes/extract`  
   - `POST /book-summary-generator/api/entities/extract`  
   - `POST /book-summary-generator/api/relations/derive`  
-- Cards & quiz:  
+- Cards and quiz:  
   - `POST /book-summary-generator/api/cards/generate` (types: cloze/definition/concept)  
   - `POST /book-summary-generator/api/quiz/generate` (formats: MCQ/TF/short)  
 - Compare:  
   - `POST /book-summary-generator/api/compare` (bookA, bookB, focus: themes/findings/arguments)  
-- Notes & highlights:  
+- Notes and highlights:  
   - `POST /book-summary-generator/api/highlight/add` Â· `POST /book-summary-generator/api/note/add`  
 - Export:  
   - `POST /book-summary-generator/api/export` (md|pdf|docx|csv|png) Â· `GET /book-summary-generator/api/export/status?id=`  
@@ -101,7 +101,7 @@ Optional WebSocket `/book-summary-generator/ws` for ingest progress and longâ�
 
 ---
 
-### 3) Summarization Layers & Controls
+### 3) Summarization Layers and Controls
 
 **Layers**  
 - **TL;DR (1â€“2 sentences)**  
@@ -116,7 +116,7 @@ Optional WebSocket `/book-summary-generator/ws` for ingest progress and longâ�
 - **Citation style**: APA, MLA, Chicago (for quotes).  
 - **Compression**: conservative â†” aggressive; **Hallucination guard**: must anchor facts to pages/locations.
 
-**Bias & reliability flags**  
+**Bias and reliability flags**  
 - Identify claims without evidence â†’ mark as opinion.  
 - Highlight author assumptions and perspective; suggest counterpoints.
 
@@ -176,7 +176,7 @@ Indexes: `BookItem.userId`, `Summary.bookId+layer`, `Quote.bookId+page`, `Entity
 
 ---
 
-### 5) Summarization & Extraction Pipeline
+### 5) Summarization and Extraction Pipeline
 
 1) **Parse**: detect chapters via TOC, headings, or heuristics; map page numbers/locations.  
 2) **Chunk**: create semantic chunks (â‰ˆ1â€“2k tokens) with overlap.  
@@ -264,7 +264,7 @@ Res: `{ "jobId":"e_88" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

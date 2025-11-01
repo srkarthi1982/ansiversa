@@ -12,7 +12,7 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 ### Core Features
 - **Daily pack** (rotates by language, level A1â€“C2, and theme).  
 - **Task types**: definition guess (MCQ), usage pick, synonym/antonym, cloze typing, audioâ€‘toâ€‘word (Pro), image hint (v2).  
-- **Streaks & scoring**: score = accuracy Ã— speed bonus; daily leaderboard (Pro, optional).  
+- **Streaks and scoring**: score = accuracy Ã— speed bonus; daily leaderboard (Pro, optional).  
 - **Hints**: IPA, part of speech, brief usage note; â€œOpen in Dictionary+â€.  
 - **Afterâ€‘action**: add missed words to **Language Flashcards** in one click.  
 - **Archive**: play previous days (Pro) without affecting â€œtodayâ€™sâ€ streak.  
@@ -21,9 +21,9 @@ This document includes a **Codex-friendly summary** and a **full technical speci
 ### Key Pages
 - `/daily-word-challenge` â€” Todayâ€™s challenge start/resume  
 - `/daily-word-challenge/play` â€” Game UI  
-- `/daily-word-challenge/summary/[id]` â€” Results & learning links  
+- `/daily-word-challenge/summary/[id]` â€” Results and learning links  
 - `/daily-word-challenge/archive` â€” Past challenges (Pro)  
-- `/daily-word-challenge/stats` â€” Streaks & accuracy trends  
+- `/daily-word-challenge/stats` â€” Streaks and accuracy trends  
 - `/daily-word-challenge/settings` â€” Language level, reminder time, hints
 
 ### Minimal Data Model
@@ -45,7 +45,7 @@ Integrations: **Dictionary+**, **Language Flashcards**, **Study Planner** (sched
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide a **fast, fun** daily vocabulary drill that nudges longâ€‘term retention.  
 - Respect **multilingual** pairs and **CEFR** levels.  
@@ -58,7 +58,7 @@ Integrations: **Dictionary+**, **Language Flashcards**, **Study Planner** (sched
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/daily-word-challenge` â€” â€œPlay Todayâ€™s Packâ€; shows level, theme, time estimate, streak badge.  
@@ -82,7 +82,7 @@ Optional WebSocket `/daily-word-challenge/ws` for timer ticks; HTTP is fine for 
 
 ---
 
-### 3) Game Mechanics & Scoring
+### 3) Game Mechanics and Scoring
 
 **Task types**
 - `mcq_def`: choose the correct definition among 4 options.  
@@ -98,7 +98,7 @@ Optional WebSocket `/daily-word-challenge/ws` for timer ticks; HTTP is fine for 
 - Daily total = sum of item scores.  
 - Streak day counts if daily total â‰¥ **threshold** (e.g., 250 points).
 
-**Hints & penalties**
+**Hints and penalties**
 - Show IPA/POS/usage hint â†’ âˆ’10 points each time used.  
 - â€œOpen in Dictionary+â€ does not award/penalize (just opens in new tab).
 
@@ -142,7 +142,7 @@ Indexes: `DailyPack.date+langCode+level` unique; `Attempt.userId+packId`, `Score
 
 ---
 
-### 5) Content & Pack Generation
+### 5) Content and Pack Generation
 
 - Start from **Dictionary+ Lemma** seed lists by level/theme.  
 - For MCQ distractors: sample **sameâ€‘POS** lemmas with **similar frequency** and **different definitions**.  
@@ -204,7 +204,7 @@ Res: `{ "items":[{"rank":1,"user":"Akash","score":487}], "you":{"rank":27,"score
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

@@ -11,14 +11,14 @@ Codexâ€‘ready specification for building the **Speech Writer** mini app.
 
 ### Core Features
 - **Brief â†’ outline â†’ full draft** pipeline with **length target** (e.g., 5/10/18 minutes) and **wordsâ€‘perâ€‘minute pacing**.  
-- **Audience & purpose controls**: persuade/inform/inspire/entertain; expertise level; cultural sensitivity.  
+- **Audience and purpose controls**: persuade/inform/inspire/entertain; expertise level; cultural sensitivity.  
 - **Rhetoric toggles**: ruleâ€‘ofâ€‘three, contrast, callâ€‘backs, anaphora, metaphors, statistics, personal story slot.  
 - **Section builder**: cold open hooks, thesis, key points (2â€“5), proof, objection handling, CTA, memorable close.  
-- **Tone & voice**: formal/professional/warm/playful/ceremonial; brand/persona preservation.  
-- **Quotations & sources**: curated suggested quotes with author, source, year; inline citation stubs.  
+- **Tone and voice**: formal/professional/warm/playful/ceremonial; brand/persona preservation.  
+- **Quotations and sources**: curated suggested quotes with author, source, year; inline citation stubs.  
 - **Practice suite**: teleprompter with autoâ€‘scroll, **timing meter**, **applause/pause marks**, and **fillerâ€‘word detector**.  
-- **Language & localization**: EN/TA/AR + others (Pro); bilingual versions and transliteration.  
-- **Safety & originality**: plagiarism check summary, sensitiveâ€‘content flags, inclusiveâ€‘language suggestions.  
+- **Language and localization**: EN/TA/AR + others (Pro); bilingual versions and transliteration.  
+- **Safety and originality**: plagiarism check summary, sensitiveâ€‘content flags, inclusiveâ€‘language suggestions.  
 - **Exports**: DOCX, PDF, MD, Teleprompter TXT; **Slide bullets** push to Presentation Designer.  
 - **Templates**: toast, keynote, pitch, panel intro, award acceptance, graduation, wedding, eulogy, tech talk, investor pitch, debate opening/rebuttal.
 
@@ -47,11 +47,11 @@ Codexâ€‘ready specification for building the **Speech Writer** mini app.
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
-- Generate **compelling, wellâ€‘structured** speeches aligned to audience & purpose.  
-- Keep **time accuracy** using target WPM & pause budgeting; provide rehearsal feedback.  
-- Offer **transparent structure & sources** (quotes, stats) to build trust.
+- Generate **compelling, wellâ€‘structured** speeches aligned to audience and purpose.  
+- Keep **time accuracy** using target WPM and pause budgeting; provide rehearsal feedback.  
+- Offer **transparent structure and sources** (quotes, stats) to build trust.
 
 **Nonâ€‘Goals (v1)**
 - No live voice recording or realâ€‘time ASR feedback (v1.1 may add).  
@@ -59,7 +59,7 @@ Codexâ€‘ready specification for building the **Speech Writer** mini app.
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/speech` â€” Library with search/tags; recent projects and durations.  
@@ -73,18 +73,18 @@ Codexâ€‘ready specification for building the **Speech Writer** mini app.
   - `POST /speech/api/project/create` Â· `GET /speech/api/project?id=` Â· `POST /speech/api/project/update` Â· `POST /speech/api/project/archive`
 - Authoring:
   - `POST /speech/api/outline/generate` (brief â†’ outline)  
-  - `POST /speech/api/draft/generate` (outline â†’ draft; target WPM & pause budget)  
+  - `POST /speech/api/draft/generate` (outline â†’ draft; target WPM and pause budget)  
   - `POST /speech/api/draft/rewrite` (tone/length/rhetorical toggles)  
   - `POST /speech/api/section/edit` (id, operations)  
-- Quotes & sources:
+- Quotes and sources:
   - `GET /speech/api/quotes/suggest?topic=&tone=&era=`  
   - `POST /speech/api/quote/attach` (variant â†’ section)  
   - `POST /speech/api/source/add` (citation metadata)  
-- Practice & teleprompter:
+- Practice and teleprompter:
   - `POST /speech/api/cues/insert` (applause, pause, emphasis, slideâ€‘change)  
   - `POST /speech/api/teleprompter/prepare` (split into scroll chunks; font/lines/contrast)  
   - `POST /speech/api/practice/log` (time, pace, filler counts, notes)
-- Export & integration:
+- Export and integration:
   - `POST /speech/api/export` (md|docx|pdf|txt) Â· `GET /speech/api/export/status?id=`  
   - `POST /speech/api/presentation/push` (deck outline to Presentation Designer)
 
@@ -95,7 +95,7 @@ Optional WebSocket `/speech/ws` for countdown timers and rehearsal progress.
 ### 3) Generation Controls
 
 **Occasion templates**: keynote, investor pitch, wedding toast, award acceptance, eulogy, graduation, panel intro, debate opening, rebuttal, lightning talk, TEDâ€‘style.  
-**Audience**: size (small/med/large), familiarity (cold/warm), expertise (layperson/intermediate/expert), culture/region (for examples & idioms).  
+**Audience**: size (small/med/large), familiarity (cold/warm), expertise (layperson/intermediate/expert), culture/region (for examples and idioms).  
 **Purpose**: inform, persuade, inspire, entertain, commemorate.  
 **Length targeting**: time (min) or words; **WPM** presets (slow 110, medium 140, fast 170); **pause budget** (intro, transitions, applause).  
 **Rhetoric toggles**: ruleâ€‘ofâ€‘three, parallelism, contrast pairs, rhetorical questions, callbacks, metaphors, story arc, evidence mix (stats/anecdotes/examples/quotes).  
@@ -105,11 +105,11 @@ Optional WebSocket `/speech/ws` for countdown timers and rehearsal progress.
 
 ---
 
-### 4) Timing & Structure Logic
+### 4) Timing and Structure Logic
 
 - **Outline**: Hook â†’ Context â†’ Thesis â†’ 2â€“5 Points (each: leadâ€‘in, evidence, story, bridge) â†’ Objections/risks â†’ CTA â†’ Close/echo of hook.  
 - **Timing model**: `estimated_minutes = (words / WPM) + pause_seconds/60`.  
-- Autoâ€‘insert **[PAUSE n sec]**, **[APPLAUSE]**, **[SLIDE âŒ¥]** cues based on density & climax points.  
+- Autoâ€‘insert **[PAUSE n sec]**, **[APPLAUSE]**, **[SLIDE âŒ¥]** cues based on density and climax points.  
 - Live **trim/expand** suggestions to hit target Â±5%.
 
 ---
@@ -156,7 +156,7 @@ Indexes: `SpeechProject.userId`, `Draft.projectId`, `Cue.projectId`, `PracticeLo
 ### 6) UX / UI
 
 - **Workspace**: Leftâ€”outline tree; Centerâ€”editor with cue chips; Rightâ€”properties (timing, tone, rhetoric toggles, quotes).  
-- **Teleprompter**: large text, autoâ€‘scroll (WPM), dark mode, margins & line height, **mirror mode**, **tapâ€‘toâ€‘pause**.  
+- **Teleprompter**: large text, autoâ€‘scroll (WPM), dark mode, margins and line height, **mirror mode**, **tapâ€‘toâ€‘pause**.  
 - **Practice**: timer, live WPM gauge, fillerâ€‘word counter (um/uh/like) via simple client mic heuristic (v1 shows manual input).  
 - **Quote picker**: search by topic/era; shows author/year/source; insert with citation stub.  
 - **Slide sync**: â€œSend bullets to Presentation Designerâ€ with oneâ€‘click mapping by section.  
@@ -211,11 +211,11 @@ Res: `{ "jobId":"e_55" }`
 - Banned phrases must not appear; provide alternates.  
 - Quotes require **author** and at least one of (year/source/url).  
 - Teleprompter prep: enforce min font size for readability; max line length ~80 chars.  
-- Exports must pass schema checks; TXT removes styling & keeps cue marks.
+- Exports must pass schema checks; TXT removes styling and keeps cue marks.
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

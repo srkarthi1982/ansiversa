@@ -96,7 +96,7 @@ export const formatPresets = [
 
 export const workflowStages = [
   {
-    name: "Library & templates",
+    name: "Library and templates",
     description:
       "Organize projects, select presets, and capture title page metadata before drafting in /script/new.",
     actions: [
@@ -116,7 +116,7 @@ export const workflowStages = [
     ],
   },
   {
-    name: "Analysis & validation",
+    name: "Analysis and validation",
     description:
       "Lint for format violations, runtime targets, and orphan lines in /script/[id]/analyze.",
     actions: [
@@ -190,7 +190,7 @@ export const timingReports = [
     ],
   },
   {
-    title: "Exports & sharing",
+    title: "Exports and sharing",
     bullets: [
       "CSV exports for scenes, characters, locations, props, and shots (Pro).",
       "PDF and DOCX include watermarks, revision color legends, and locked page indicators.",
@@ -209,7 +209,7 @@ export const planMatrix = {
         "2 active projects",
         "Fountain + watermarked PDF exports",
         "Basic revision colors",
-        "Scene & character reports",
+        "Scene and character reports",
         "20 AI passes per day",
         "History retention 60 days",
       ],
@@ -289,7 +289,7 @@ export const integrations = [
     ],
   },
   {
-    name: "Poem Studio & Song Lyric Maker",
+    name: "Poem Studio and Song Lyric Maker",
     icon: "fas fa-music",
     description:
       "Craft lyrical sections or musical callouts without breaking pagination alignment.",
@@ -321,7 +321,7 @@ export const apiEndpoints = [
     ],
   },
   {
-    group: "Import & Export",
+    group: "Import and Export",
     endpoints: [
       "POST /script/api/import (fountain|fdx|txt|md)",
       "POST /script/api/export (fountain|fdx|pdf|docx|csv)",
@@ -329,7 +329,7 @@ export const apiEndpoints = [
     ],
   },
   {
-    group: "Parse & Analyze",
+    group: "Parse and Analyze",
     endpoints: [
       "POST /script/api/parse",
       "POST /script/api/analyze",
@@ -337,7 +337,7 @@ export const apiEndpoints = [
     ],
   },
   {
-    group: "Reformat & Passes",
+    group: "Reformat and Passes",
     endpoints: [
       "POST /script/api/reformat",
       "POST /script/api/pass/dialogue",
@@ -347,14 +347,14 @@ export const apiEndpoints = [
     ],
   },
   {
-    group: "Beats & Sync",
+    group: "Beats and Sync",
     endpoints: [
       "POST /script/api/beat/link",
       "POST /script/api/beat/sync",
     ],
   },
   {
-    group: "Settings & Revisions",
+    group: "Settings and Revisions",
     endpoints: [
       "POST /script/api/settings/save",
       "POST /script/api/revision/apply",

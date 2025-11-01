@@ -12,7 +12,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
     description:
       'Guess the Emoji is a family-friendly word game that challenges players to translate emoji strings into phrases, films, food, and more. Pick a mode, earn streak multipliers, and see how your solves stack up on the daily board.',
     metrics: [
-      { label: 'Community puzzles', value: '2,450+', helper: 'Moderated & language tagged' },
+      { label: 'Community puzzles', value: '2,450+', helper: 'Moderated and language tagged' },
       { label: 'Daily streak best', value: '28 days', helper: 'Across 3 languages' },
       { label: 'Fastest solve', value: '06.2s', helper: 'Time Attack — pro tier' },
     ],
@@ -23,7 +23,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
     emojis: '🍔🏠',
     answer: 'burger house',
     aliases: ['burgerhouse', 'burger home'],
-    category: 'Food & Places',
+    category: 'Food and Places',
     difficulty: 'easy',
     explanation: '🍔 = burger, 🏠 = house. Compound them for burger house.',
     keyboardBank: 'BURGERHOUSEALN',
@@ -66,7 +66,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
         { label: 'Time bonus', value: '+1 pt per second saved vs. median' },
         { label: 'Retry', value: 'One replay for Pro users with penalty' }
       ],
-      recommendedFor: ['Morning rituals', 'Clubs & classrooms', 'Lightweight competitions']
+      recommendedFor: ['Morning rituals', 'Clubs and classrooms', 'Lightweight competitions']
     },
     {
       id: 'timeattack',
@@ -83,7 +83,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
       scoring: [
         { label: 'Combo bonus', value: '+8% after 5 streak solves' },
         { label: 'Speed bonus', value: '+2 pts per second left' },
-        { label: 'Miss penalty', value: '−40 pts & streak reset' }
+        { label: 'Miss penalty', value: '−40 pts and streak reset' }
       ],
       recommendedFor: ['Speedrunners', 'Esports watch parties', 'Class icebreakers']
     },
@@ -149,7 +149,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
       id: 'community-world',
       title: 'World Foods Drop',
       language: 'en',
-      category: 'Food & Culture',
+      category: 'Food and Culture',
       size: 80,
       visibility: 'community',
       difficultyMix: ['40% easy', '45% medium', '15% hard'],
@@ -191,7 +191,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
     puzzlesSolved: 286,
     hintsUsed: 21,
     preferredLanguage: 'English (US)',
-    topCategory: 'Movies & TV'
+    topCategory: 'Movies and TV'
   },
   planTiers: [
     {
@@ -199,7 +199,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
       name: 'Starter',
       price: '$0',
       highlight: 'Classic + Daily mode access with family-friendly packs.',
-      includes: ['Classic Solo & Daily Emoji', 'Base hints (Reveal Letter)', 'Built-in packs & streak tracking'],
+      includes: ['Classic Solo and Daily Emoji', 'Base hints (Reveal Letter)', 'Built-in packs and streak tracking'],
       inviteLimit: '3 active friend invites/mo'
     },
     {
@@ -208,7 +208,7 @@ export const getGuessTheEmojiSampleData = (): GuessTheEmojiSampleData => ({
       price: '$12/mo',
       highlight: 'Unlock Time Attack, Versus, imports, analytics, and moderation tools.',
       includes: [
-        'All modes including Time Attack & Versus',
+        'All modes including Time Attack and Versus',
         'CSV/JSON imports + community publishing',
         'Advanced analytics, anti-cheat controls, and pro leaderboards'
       ],

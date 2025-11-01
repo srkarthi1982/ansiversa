@@ -7,12 +7,12 @@ type BaseFilter = {
   attributes?: Record<string, string>;
 };
 
-type TextFilter = BaseFilter & {
+type TextFilter = BaseFilter and {
   type: "text";
   key: string;
 };
 
-type NumberFilter = BaseFilter & {
+type NumberFilter = BaseFilter and {
   type: "number";
   key: string;
   min?: number;
@@ -30,7 +30,7 @@ type NumberRangeFilter = {
   debounceMs?: number;
 };
 
-type SelectFilter = BaseFilter & {
+type SelectFilter = BaseFilter and {
   type: "select";
   key: string;
   options?: { label: string; value: string }[];

@@ -7,13 +7,13 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 ## âš¡ PART 1 â€” SUMMARY (for Codex Onboarding)
 
 ### Overview
-**Poem Studio** is an AIâ€‘assisted poetry workshop. It helps users **draft, revise, and analyze poems** across forms (free verse, sonnet, haiku, ghazal, villanelle, limerick, blank verse, acrostic, spoken word). The studio includes **form validators**, **meter & rhyme helpers**, **imagery/figurativeâ€‘language detectors**, **tone/style controls**, and a **revision assistant** with craftâ€‘focused passes (concreteness, music, enjambment, line breaks). Users can compile chapbooks and export to **MD/PDF/DOCX** with layout presets.
+**Poem Studio** is an AIâ€‘assisted poetry workshop. It helps users **draft, revise, and analyze poems** across forms (free verse, sonnet, haiku, ghazal, villanelle, limerick, blank verse, acrostic, spoken word). The studio includes **form validators**, **meter and rhyme helpers**, **imagery/figurativeâ€‘language detectors**, **tone/style controls**, and a **revision assistant** with craftâ€‘focused passes (concreteness, music, enjambment, line breaks). Users can compile chapbooks and export to **MD/PDF/DOCX** with layout presets.
 
 ### Core Features
 - **Form presets** with constraints (syllable counts, rhyme schemes, stanza structures).  
-- **Meter & rhyme tools**: stress detection (heuristic), IPA display, rhyme finder, nearâ€‘rhyme suggestions.  
+- **Meter and rhyme tools**: stress detection (heuristic), IPA display, rhyme finder, nearâ€‘rhyme suggestions.  
 - **Draft workspace** with splitâ€‘pane: **poem editor** and **craft panel** (imagery, verbs, clichÃ©s, abstractness).  
-- **Style & tone controls** (e.g., romantic, confessional, surreal, minimalist; diction level).  
+- **Style and tone controls** (e.g., romantic, confessional, surreal, minimalist; diction level).  
 - **Targeted revision passes**: sharpen imagery, reduce adverbs, vary line length, strengthen verbs, adjust enjambment, compress language.  
 - **Form validator**: live checks for sonnet/haiku/villanelle/ghazal/etc., with guidance.  
 - **Prompt seeds**: theme, scene, or constraintâ€‘driven starters.  
@@ -48,7 +48,7 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ## ðŸ§  PART 2 â€” DETAILED REQUIREMENTS
 
-### 1) Objectives & Nonâ€‘Goals
+### 1) Objectives and Nonâ€‘Goals
 **Objectives**
 - Provide a craftâ€‘aware poetry workspace with realâ€‘time **form validation** and **analysis**.  
 - Support **English** first; allow multilingual with reduced meter accuracy for nonâ€‘stress languages.  
@@ -60,12 +60,12 @@ This document contains a **Codexâ€‘friendly summary** and a **full technica
 
 ---
 
-### 2) Information Architecture & Routes
+### 2) Information Architecture and Routes
 
 **Pages**
 - `/poem-studio` â€” Library; quick actions; recent analyses; collection progress.  
 - `/poem-studio/new` â€” Choose form, theme, tone, constraints (syllables/rhyme), language.  
-- `/poem-studio/[id]/edit` â€” Main editor with craft panel: analysis chips; inline warnings; generator & pass toolbar.  
+- `/poem-studio/[id]/edit` â€” Main editor with craft panel: analysis chips; inline warnings; generator and pass toolbar.  
 - `/poem-studio/[id]/analyze` â€” Full report: meter scan, rhyme map, imagery density, abstractness index, clichÃ©s, repeated words, line length histogram.  
 - `/poem-studio/chapbook` â€” Collection builder; order poems; section titles; dedication/acknowledgments.  
 - `/poem-studio/settings` â€” Defaults: font family/size, line spacing, language, tone, privacy.
@@ -86,7 +86,7 @@ Optional WebSocket `/poem-studio/ws` for live meter feedback and diff previews.
 
 ---
 
-### 3) Forms & Constraints (Reference)
+### 3) Forms and Constraints (Reference)
 
 **Builtâ€‘in forms** (v1)
 - **Free verse** (no constraints).  
@@ -95,7 +95,7 @@ Optional WebSocket `/poem-studio/ws` for live meter feedback and diff previews.
 - **Limerick** (AABBA; anapestic tendency; line length rules).  
 - **Sonnet** (Shakespearean ABAB CDCD EFEF GG; 10 syllables guideline; iambic bent).  
 - **Villanelle** (ABA Ã—5 + ABA; refrains at lines 1, 6, 12, 18, 19).  
-- **Ghazal** (AA bA cA â€¦; radif & qaafiya; couplets semantically selfâ€‘contained).  
+- **Ghazal** (AA bA cA â€¦; radif and qaafiya; couplets semantically selfâ€‘contained).  
 - **Acrostic** (line initials spell a word/phrase).  
 - **Blank verse** (unrhymed iambic pentameter).  
 - **Spoken word** (performance timing, repetition emphasis).
@@ -107,11 +107,11 @@ Optional WebSocket `/poem-studio/ws` for live meter feedback and diff previews.
 
 ### 4) Craft Analysis (Heuristics + LLM Hints)
 
-- **Meter scan**: syllable count & stress pattern (CMUdictâ€‘style heuristics for English; tolerance score).  
+- **Meter scan**: syllable count and stress pattern (CMUdictâ€‘style heuristics for English; tolerance score).  
 - **Rhyme map**: endâ€‘rhyme letters; nearâ€‘rhyme suggestions with IPA distance.  
-- **Imagery & concreteness**: nouns vs abstractions ratio; verb strength index.  
+- **Imagery and concreteness**: nouns vs abstractions ratio; verb strength index.  
 - **Sound devices**: alliteration/assonance/consonance (approximate nâ€‘gram match).  
-- **ClichÃ© & redundancy**: simple nâ€‘gram hits + LLM heuristic flags.  
+- **ClichÃ© and redundancy**: simple nâ€‘gram hits + LLM heuristic flags.  
 - **Line length**: histogram; outlier markers; enjambment opportunities.  
 - **Form compliance**: pass/fail per line/stanza with corrective tips.
 
@@ -219,7 +219,7 @@ Res: `{ "jobId":"e9" }`
 
 ---
 
-### 9) Plans & Limits
+### 9) Plans and Limits
 
 | Feature | Free | Pro |
 |---|---|---|

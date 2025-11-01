@@ -30,14 +30,14 @@ export async function seedProposal() {
   data.scope.push('Visual design refresh across 15 core templates');
   data.deliverables.push('Design system tokens and components', 'Interactive Figma prototypes');
   data.timeline = [
-    { milestone: 'Discovery & UX research', start: '2025-02-03', end: '2025-02-14', description: '' },
+    { milestone: 'Discovery and UX research', start: '2025-02-03', end: '2025-02-14', description: '' },
     { milestone: 'Design system foundations', start: '2025-02-17', end: '2025-03-07', description: '' },
     { milestone: 'Template design sprints', start: '2025-03-10', end: '2025-04-11', description: '' },
   ];
   data.budget.items = [
-    { label: 'Discovery & research', qty: 1, unitPrice: 3200, total: 3200, notes: '' },
+    { label: 'Discovery and research', qty: 1, unitPrice: 3200, total: 3200, notes: '' },
     { label: 'Design production', qty: 1, unitPrice: 6800, total: 6800, notes: '' },
-    { label: 'Handoff & training', qty: 1, unitPrice: 2400, total: 2400, notes: '' },
+    { label: 'Handoff and training', qty: 1, unitPrice: 2400, total: 2400, notes: '' },
   ];
   data.budget.subtotal = 12400;
   data.budget.tax = 0;
@@ -45,7 +45,7 @@ export async function seedProposal() {
   data.budget.total = 12000;
   data.team = [
     { name: 'Karthik S', role: 'Engagement Lead', bio: 'Over 12 years in SaaS UX and delivery.', email: 'karthik@ansiversa.com', phone: '' },
-    { name: 'Priya Raman', role: 'Product Designer', bio: 'Figma & systems design specialist.', email: 'priya@ansiversa.com', phone: '' },
+    { name: 'Priya Raman', role: 'Product Designer', bio: 'Figma and systems design specialist.', email: 'priya@ansiversa.com', phone: '' },
   ];
   data.caseStudies = [
     {

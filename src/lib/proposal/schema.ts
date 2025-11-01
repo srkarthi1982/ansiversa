@@ -191,7 +191,7 @@ export const createEmptyProposalData = (): ProposalData => ({
   budget: {
     currency: 'USD',
     items: [
-      { label: 'Discovery & research', qty: 1, unitPrice: 1200, total: 1200, notes: '' },
+      { label: 'Discovery and research', qty: 1, unitPrice: 1200, total: 1200, notes: '' },
       { label: 'Design sprint', qty: 1, unitPrice: 1800, total: 1800, notes: '' },
     ],
     subtotal: 3000,

@@ -2,18 +2,18 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/trivia-arena`  
-**Category:** Fun & Engagement  
+**Category:** Fun and Engagement  
 **Stack:** Astro + Tailwind (islands where needed), Astro SSR API routes, Astro DB / Supabase, WebSockets (optional for live rooms)  
 **Goal:** Deliver a fast, addictive trivia experience with **solo drills**, **daily challenge**, and **headâ€‘toâ€‘head arena** play. Includes question packs, streaks, powerâ€‘ups, and rich stats. Integrates with **Quiz Institute** for authoring and imports.
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Multiple modes: **Solo**, **Daily Challenge**, **Headâ€‘toâ€‘Head (async)**, **Live Room (realtime, v2)**, and **Tournaments (v2)**.  
 - Question types: **Multiple Choice (single/multi)**, **True/False**, **Fillâ€‘in (short text with fuzzy match)**, **Image prompt** (URL).  
-- Categories & difficulty: General, Science, Tech, History, Sports, Movies, Music, Geography, Mixed; **Easy/Medium/Hard**.  
+- Categories and difficulty: General, Science, Tech, History, Sports, Movies, Music, Geography, Mixed; **Easy/Medium/Hard**.  
 - **Powerâ€‘ups**: 50/50, Add Time, Double Points, Hint (excludes fillâ€‘in).  
 - **Scoring**: base points + **time bonus**; streak multipliers; antiâ€‘cheat timers.  
 - **Question Banks**: builtâ€‘in packs + import from CSV/JSON or **Quiz Institute**.  
@@ -54,7 +54,7 @@
    - *As a user*, I import a CSV/JSON of questions.  
    - **AC:** `/trivia-arena/api/bank/import` validates schema, dedupes by hash, and reports results.
 
-7. **Stats & Leaderboards**
+7. **Stats and Leaderboards**
    - *As a user*, I view my accuracy, avg answer time, streaks, best categories; compare on leaderboards.  
    - **AC:** `/trivia-arena/api/stats` aggregates; `/trivia-arena/api/leaderboard` paginates rankings.
 
@@ -64,7 +64,7 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/trivia-arena` â€” Hub: start Solo, Daily Challenge card, Headâ€‘toâ€‘Head invite, stats.  
 - `/trivia-arena/play` â€” Solo game UI (question panel, options, timer, powerâ€‘ups).  
@@ -77,7 +77,7 @@
 **API (SSR):**  
 - `POST /trivia-arena/api/game/create` (create solo session)  
 - `POST /trivia-arena/api/game/next` (next question)  
-- `POST /trivia-arena/api/game/answer` (validate & score)  
+- `POST /trivia-arena/api/game/answer` (validate and score)  
 - `POST /trivia-arena/api/game/powerup`  
 - `POST /trivia-arena/api/daily/today` Â· `POST /trivia-arena/api/daily/submit`  
 - `POST /trivia-arena/api/arena/create` Â· `POST /trivia-arena/api/arena/join` Â· `POST /trivia-arena/api/arena/submit`  
@@ -124,7 +124,7 @@
 
 ---
 
-## 5) Game Rules & Scoring
+## 5) Game Rules and Scoring
 
 - **Timer:** default 20s/question (min 10s, max 45s).  
 - **Base Points:** Easy=100, Medium=150, Hard=200.  
@@ -239,11 +239,11 @@ Res: `{ "ok":true, "imported":340, "duplicates":12, "errors":0 }`
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
-| Solo & Daily | Yes | Yes |
+| Solo and Daily | Yes | Yes |
 | Headâ€‘toâ€‘Head (async) | â€” | Yes |
 | Powerâ€‘ups per game | 1 | 3 |
 | Imports | â€” | CSV/JSON, 10k cap |
@@ -258,12 +258,12 @@ Rate limits: `userId`+day for plays; `userId`+month for imports.
 ## 11) Security, Privacy, Fair Play
 
 - No PII in questions; sanitize rich text; proxy external images.  
-- Serverâ€‘validated timers & nonces; prevent replay; cap perâ€‘IP for daily challenge.  
+- Serverâ€‘validated timers and nonces; prevent replay; cap perâ€‘IP for daily challenge.  
 - Reports: flag bad questions; moderation queue for public packs.
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Keyboard shortcuts (1â€“4 to answer; Space to submit/next).  
 - Highâ€‘contrast theme toggle; large text; screenâ€‘reader labels.  
@@ -312,7 +312,7 @@ src/components/trivia-arena/Stats/*.astro
 - **Live Rooms** with WebSockets (buzzâ€‘in, fastestâ€‘finger, host controls).  
 - **Seasonal Tournaments** with brackets and prizes (nonâ€‘monetary).  
 - **AI Question Generator** with templated validation and difficulty calibration.  
-- **Tagging & Adaptive Difficulty** per user category strength.  
+- **Tagging and Adaptive Difficulty** per user category strength.  
 - **Team Mode** (2v2) and **Coâ€‘op** marathon.
 
 ---

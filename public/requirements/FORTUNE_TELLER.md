@@ -2,7 +2,7 @@
 
 **Owner:** Ansiversa (Karthik)  
 **Module Path:** `/fortune-teller`  
-**Category:** Fun & Engagement  
+**Category:** Fun and Engagement  
 **Stack:** Astro + Tailwind (islands), Astro SSR API routes, Astro DB / Supabase  
 **Goal:** Provide playful, optâ€‘in entertainment readings (tarotâ€‘style spreads, zodiacâ€‘style horoscopes, numerologyâ€‘like summaries, â€œyes/no coin,â€ crystal ball prompts) with strict **disclaimers** that results are for **fun** and **not advice**. Personalize with user mood/intents and keep things fresh via seeds and daily rotations.
 
@@ -10,7 +10,7 @@
 
 ---
 
-## 1) Objectives & Nonâ€‘Goals
+## 1) Objectives and Nonâ€‘Goals
 
 ### Objectives
 - Offer **quick fortunes** and **richer readings**:  
@@ -21,7 +21,7 @@
   - **Zodiacâ€‘style daily/weekly** (fun, generalized),  
   - **Birthâ€‘date Numerologyâ€‘like** summary (playful).  
 - **Personalization inputs**: name/nickname, (optional) birth date, mood, areas (love, career, study, health, money, creativity).  
-- **Seeds & history** to avoid repetition; allow â€œrerollâ€ with reason.  
+- **Seeds and history** to avoid repetition; allow â€œrerollâ€ with reason.  
 - **Collections** of decks/themes (classic, sciâ€‘fi, mythology, minimal).  
 - **Shareable cards** (PNG), **journal** logging, **streaks**, and **optâ€‘in reminders**.  
 - **Localization** (English + local languages).
@@ -43,7 +43,7 @@
    - *As a user*, I ask a question and tap **Yes/No**.  
    - **AC:** `/fortune-teller/api/yesno` returns yes/no/maybe with a oneâ€‘liner; cooldown enforces 10s minimum between asks.
 
-3. **3â€‘Card & 5â€‘Card**
+3. **3â€‘Card and 5â€‘Card**
    - *As a user*, I choose spread and domain (e.g., career).  
    - **AC:** `/fortune-teller/api/spread` returns positions with meanings and guidance paragraphs.
 
@@ -65,15 +65,15 @@
 
 ---
 
-## 3) Routes & Information Architecture
+## 3) Routes and Information Architecture
 
 - `/fortune-teller` â€” Hub: Daily Fortune, Yes/No, Spreads, Zodiac, â€œMy Journalâ€.  
 - `/fortune-teller/daily` â€” Todayâ€™s fortune; reroll (once) with reason.  
 - `/fortune-teller/yesno` â€” Ask a question â†’ yes/no/maybe with cooldown.  
-- `/fortune-teller/spreads` â€” Choose 3â€‘card or 5â€‘card; pick domain & theme.  
+- `/fortune-teller/spreads` â€” Choose 3â€‘card or 5â€‘card; pick domain and theme.  
 - `/fortune-teller/zodiac` â€” Pick a sign; switch daily/weekly tabs.  
 - `/fortune-teller/journal` â€” Saved readings + notes; calendar view.  
-- `/fortune-teller/settings` â€” Themes, reminders, language; disclaimer & safety links.
+- `/fortune-teller/settings` â€” Themes, reminders, language; disclaimer and safety links.
 
 **API (SSR):**  
 - `POST /fortune-teller/api/daily`  
@@ -156,7 +156,7 @@
 
 ---
 
-## 6) Personalization, Seeding & Cooldowns
+## 6) Personalization, Seeding and Cooldowns
 
 - **Seed =** hash(userId + date + type + intent + theme).  
 - **Reroll:** 1 free reroll on Daily with â€œwhy reroll?â€ (e.g., â€œtoo vagueâ€); store reason.  
@@ -208,7 +208,7 @@ Res: `{ "cards":[...], "actions":[...], "readingId":"<uuid>" }`
 
 ### `POST /fortune-teller/api/zodiac`
 Req: `{ "sign":"leo","period":"daily","date":"2025-10-28" }`  
-Res: `{ "title":"Fire & Focus","text":"â€¦","theme":"classic" }`
+Res: `{ "title":"Fire and Focus","text":"â€¦","theme":"classic" }`
 
 ### `POST /fortune-teller/api/numsum`
 Req: `{ "birthdate":"2004-03-09" }`  
@@ -220,7 +220,7 @@ Res: `{ "url":"/exports/Fortune_2025-10-28.png" }`
 
 ---
 
-## 9) Validation & Limits
+## 9) Validation and Limits
 
 - Nickname 2â€“24 chars; birth date optional; language ISO code.  
 - Yes/No question 3â€“240 chars; profanity filter (light).  
@@ -230,13 +230,13 @@ Res: `{ "url":"/exports/Fortune_2025-10-28.png" }`
 
 ---
 
-## 10) Plans & Limits
+## 10) Plans and Limits
 
 | Feature | Free | Pro |
 |--------|------|-----|
 | Daily Fortune | Yes | Yes |
 | Yes/No | Yes (rate limited) | Yes (higher limits) |
-| Spreads | 3â€‘card | 3â€‘ & 5â€‘card + custom domains |
+| Spreads | 3â€‘card | 3â€‘ and 5â€‘card + custom domains |
 | Zodiac | Today only | Weekly + archive |
 | Saves/Exports | 20 saves, 5 PNG/month | Unlimited, no watermark |
 | Themes | Classic only | All themes + custom |
@@ -245,7 +245,7 @@ Rate limits: `userId`+minute for yes/no; `userId`+day for daily/spreads/export.
 
 ---
 
-## 11) Ethics, Safety & Privacy
+## 11) Ethics, Safety and Privacy
 
 - **Prominent disclaimers**; â€œGet real helpâ€ links for sensitive topics.  
 - Filter questions that request medical/legal/financial predictions; return gentle redirect.  
@@ -255,7 +255,7 @@ Rate limits: `userId`+minute for yes/no; `userId`+day for daily/spreads/export.
 
 ---
 
-## 12) Accessibility & UX
+## 12) Accessibility and UX
 
 - Large text options, high contrast, reduced motion toggles.  
 - Screenâ€‘reader labels for cards and results; keyboard shortcuts (R to reroll).  

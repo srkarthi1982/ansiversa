@@ -251,7 +251,7 @@ const studySubjects: StudySubject[] = [
     weeklyHours: 3.3,
     upcomingAssessment: 'Project viva on 11 Oct',
     topics: [
-      { name: 'Stacks & queues', status: 'in-progress', nextSession: 'Fri · 60m', priority: 'Medium' },
+      { name: 'Stacks and queues', status: 'in-progress', nextSession: 'Fri · 60m', priority: 'Medium' },
       { name: 'SQL joins', status: 'scheduled', nextSession: 'Sat · 45m', priority: 'High' },
       { name: 'Cyber ethics', status: 'mastered', nextSession: 'Review Mon', priority: 'Low' },
     ],
@@ -407,7 +407,7 @@ const studyPlanSlots: StudyPlanSlot[] = [
     taskId: 'buffer-weekly-review',
     type: 'buffer',
     subjectId: 'mathematics',
-    focus: 'Weekly buffer & catch-up',
+    focus: 'Weekly buffer and catch-up',
     day: 'Sun',
     start: '09:30',
     end: '10:30',
@@ -445,7 +445,7 @@ const availabilityTemplate: AvailabilityDay[] = [
     label: 'Wednesday',
     enabled: true,
     dailyCapHours: 2.5,
-    focusTheme: 'Clubs & light review',
+    focusTheme: 'Clubs and light review',
     blocks: [
       { start: '20:00', end: '21:00', tag: 'Revision only' },
     ],
@@ -477,7 +477,7 @@ const availabilityTemplate: AvailabilityDay[] = [
     dailyCapHours: 4,
     focusTheme: 'Deep work + reflections',
     blocks: [
-      { start: '10:00', end: '12:00', tag: 'Labs & projects' },
+      { start: '10:00', end: '12:00', tag: 'Labs and projects' },
       { start: '17:00', end: '18:30', tag: 'Language arts' },
     ],
   },
@@ -657,13 +657,13 @@ const analyticsSnapshot: StudyAnalytics = {
 };
 
 const planComparison: PlanComparisonRow[] = [
-  { capability: 'Tasks & subtasks', free: 'Up to 200 active tasks', pro: 'Unlimited subjects, tasks, and templates' },
+  { capability: 'Tasks and subtasks', free: 'Up to 200 active tasks', pro: 'Unlimited subjects, tasks, and templates' },
   { capability: 'Auto-scheduler', free: 'Basic: deadlines + daily caps', pro: 'Advanced: energy, labs, commute, blockers' },
   { capability: 'Pomodoro timer', free: 'Timer + streak tracking', pro: 'Timer + CSV export + focus heatmaps' },
   { capability: 'Spaced repetition', free: 'Link up to 2 FlashNote decks', pro: 'Unlimited decks + adaptive SM-2 tuning' },
-  { capability: 'Analytics', free: 'Daily brief & weekly digest', pro: 'Full analytics, CSV export, counselor view' },
+  { capability: 'Analytics', free: 'Daily brief and weekly digest', pro: 'Full analytics, CSV export, counselor view' },
   { capability: 'Calendar export', free: '—', pro: 'ICS export + Google Classroom sync' },
-  { capability: 'Integrations', free: 'View-only from FlashNote & Quiz', pro: 'Two-way sync with FlashNote, Homework Helper, Course Tracker' },
+  { capability: 'Integrations', free: 'View-only from FlashNote and Quiz', pro: 'Two-way sync with FlashNote, Homework Helper, Course Tracker' },
 ];
 
 const integrationCards: IntegrationCard[] = [

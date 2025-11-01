@@ -120,10 +120,10 @@ export const blogTemplates: BlogTemplate[] = [
     audience: 'Learners or practitioners new to the topic',
     defaultTags: ['guide', 'how-to'],
     outline: [
-      { id: newId(), title: 'Introduction & prerequisites', depth: 2, summary: '', wordGoal: 180 },
+      { id: newId(), title: 'Introduction and prerequisites', depth: 2, summary: '', wordGoal: 180 },
       { id: newId(), title: 'Step-by-step walkthrough', depth: 2, summary: '', wordGoal: 400 },
       { id: newId(), title: 'Troubleshooting tips', depth: 2, summary: '', wordGoal: 160 },
-      { id: newId(), title: 'Wrap-up & next steps', depth: 2, summary: '', wordGoal: 150 },
+      { id: newId(), title: 'Wrap-up and next steps', depth: 2, summary: '', wordGoal: 150 },
     ],
     voice: 'Supportive and instructive',
     difficulty: 'beginner',
@@ -152,9 +152,9 @@ export const blogTemplates: BlogTemplate[] = [
     defaultTags: ['case-study', 'results'],
     outline: createOutline([
       'Client background and challenge',
-      'Approach & timeline',
+      'Approach and timeline',
       'Key results and metrics',
-      'Lessons learned & next steps',
+      'Lessons learned and next steps',
     ]),
     voice: 'Authoritative and data-backed',
     difficulty: 'advanced',
@@ -183,7 +183,7 @@ export const blogTemplates: BlogTemplate[] = [
     outline: createOutline([
       'What shipped this cycle',
       'Why these updates matter',
-      'Improvements & fixes',
+      'Improvements and fixes',
       'Next up on the roadmap',
     ]),
     voice: 'Clear and customer-centric',
