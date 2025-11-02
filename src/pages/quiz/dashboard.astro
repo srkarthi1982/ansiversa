@@ -1,0 +1,308 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Button from "../../components/Button.astro";
+import { getSessionWithUser } from "../../utils/session.server";
+import { db, Result, Platform, Subject, Topic, Roadmap, eq, desc } from "astro:db";
+
+const session = await getSessionWithUser(Astro.cookies);
+if (!session?.user) {
+  const target = `${Astro.url.pathname}${Astro.url.search}`;
+  return Astro.redirect(`/app/login?redirect=${encodeURIComponent(target)}`);
+}
+
+const user = session.user;
+
+const rows = await db
+  .select({
+    id: Result.id,
+    mark: Result.mark,
+    responses: Result.responses,
+    level: Result.level,
+    createdAt: Result.createdAt,
+    platformName: Platform.name,
+    subjectName: Subject.name,
+    topicName: Topic.name,
+    roadmapName: Roadmap.name,
+  })
+  .from(Result)
+  .leftJoin(Platform, eq(Result.platformId, Platform.id))
+  .leftJoin(Subject, eq(Result.subjectId, Subject.id))
+  .leftJoin(Topic, eq(Result.topicId, Topic.id))
+  .leftJoin(Roadmap, eq(Result.roadmapId, Roadmap.id))
+  .where(eq(Result.userId, user.id))
+  .orderBy(desc(Result.createdAt));
+
+type RawResponse = { id?: unknown; a?: unknown; s?: unknown };
+
+const dateFormatter = new Intl.DateTimeFormat("en-US", { dateStyle: "medium", timeStyle: "short" });
+const dayFormatter = new Intl.DateTimeFormat("en-US", { dateStyle: "medium" });
+
+const activity = rows.map((row) => {
+  const responses: RawResponse[] = Array.isArray(row.responses) ? (row.responses as RawResponse[]) : [];
+  const createdAtRaw = row.createdAt instanceof Date ? row.createdAt : new Date(row.createdAt ?? Date.now());
+  return {
+    id: Number(row.id),
+    mark: typeof row.mark === "number" ? row.mark : Number(row.mark ?? 0),
+    totalQuestions: responses.length,
+    level: typeof row.level === "string" ? row.level : null,
+    platformName: row.platformName ?? "—",
+    subjectName: row.subjectName ?? "—",
+    topicName: row.topicName ?? "—",
+    roadmapName: row.roadmapName ?? "—",
+    createdAtISO: createdAtRaw.toISOString(),
+    createdAtLabel: dateFormatter.format(createdAtRaw),
+  };
+});
+
+const totals = activity.reduce(
+  (acc, entry) => {
+    acc.attempts += 1;
+    acc.correct += entry.mark;
+    acc.questions += entry.totalQuestions;
+    if (!acc.lastActive) {
+      acc.lastActive = entry.createdAtLabel;
+    }
+    if (entry.totalQuestions > 0) {
+      const accuracy = Math.round((entry.mark / entry.totalQuestions) * 100);
+      if (accuracy > acc.bestAccuracy) {
+        acc.bestAccuracy = accuracy;
+      }
+    }
+    if (entry.platformName && entry.platformName !== "—") {
+      acc.platforms.add(entry.platformName);
+    }
+    if (entry.subjectName && entry.subjectName !== "—") {
+      const current = acc.subjects.get(entry.subjectName) ?? 0;
+      acc.subjects.set(entry.subjectName, current + 1);
+    }
+    return acc;
+  },
+  {
+    attempts: 0,
+    correct: 0,
+    questions: 0,
+    lastActive: "",
+    bestAccuracy: 0,
+    platforms: new Set<string>(),
+    subjects: new Map<string, number>(),
+  },
+);
+
+const averageAccuracy = totals.questions > 0 ? Math.round((totals.correct / totals.questions) * 100) : null;
+const topSubjects = Array.from(totals.subjects.entries())
+  .sort((a, b) => b[1] - a[1])
+  .slice(0, 3);
+
+const recentActivity = activity.slice(0, 6);
+const hasActivity = recentActivity.length > 0;
+
+const streakDays = (() => {
+  if (activity.length === 0) return 0;
+  const uniqueDays = new Set(activity.map((entry) => dayFormatter.format(new Date(entry.createdAtISO))));
+  return uniqueDays.size;
+})();
+
+const lastActiveLabel = totals.lastActive || "—";
+const lastActiveISO = activity[0]?.createdAtISO ?? null;
+---
+<Layout>
+  <main class="bg-slate-50 min-h-screen">
+    <section class="border-b border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-12">
+        <div class="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+          <div class="space-y-3">
+            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Quiz dashboard</p>
+            <h1 class="text-3xl font-bold text-slate-900 sm:text-4xl">Welcome back, {user.username}!</h1>
+            <p class="max-w-2xl text-sm text-slate-600 sm:text-base">
+              Track your quiz performance, revisit recent attempts, and discover where to focus next. Everything you need to stay on top of your learning lives here.
+            </p>
+            <p class="text-xs font-medium text-slate-500">
+              {lastActiveISO ? (
+                <>
+                  Last active on <time datetime={lastActiveISO}>{lastActiveLabel}</time>
+                </>
+              ) : (
+                "No quiz activity yet — take your first quiz to get started."
+              )}
+            </p>
+          </div>
+          <div class="flex flex-col gap-3 sm:flex-row">
+            <Button href="/quiz/test" variant="primary">
+              <i class="fas fa-play text-xs"></i>
+              Start a new quiz
+            </Button>
+            <Button href="/quiz/results" variant="outline">
+              <i class="fas fa-list-check text-xs"></i>
+              View all results
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-slate-200 bg-slate-50">
+      <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm font-semibold text-slate-500">Total attempts</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900">{totals.attempts}</p>
+            <p class="mt-2 text-xs text-slate-400">Across every quiz you have taken.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm font-semibold text-slate-500">Average accuracy</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900">
+              {typeof averageAccuracy === "number" ? `${averageAccuracy}%` : "—"}
+            </p>
+            <p class="mt-2 text-xs text-slate-400">Based on all recorded answers.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm font-semibold text-slate-500">Active days</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900">{streakDays}</p>
+            <p class="mt-2 text-xs text-slate-400">Unique days with quiz activity.</p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <p class="text-sm font-semibold text-slate-500">Platforms explored</p>
+            <p class="mt-3 text-3xl font-bold text-slate-900">{totals.platforms.size}</p>
+            <p class="mt-2 text-xs text-slate-400">Different quiz platforms you've visited.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-b border-slate-200 bg-white">
+      <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h2 class="text-2xl font-semibold text-slate-900">Recent attempts</h2>
+            <p class="text-sm text-slate-500">
+              {hasActivity
+                ? "Review your latest quiz runs and see how you performed."
+                : "Once you complete a quiz, it will appear here automatically."}
+            </p>
+          </div>
+          <Button href="/quiz/results" variant="ghost">
+            <i class="fas fa-arrow-right text-xs"></i>
+            Go to detailed results
+          </Button>
+        </div>
+
+        {hasActivity ? (
+          <div class="mt-6 grid gap-4 lg:grid-cols-2">
+            {recentActivity.map((attempt) => (
+              <article class="flex flex-col justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-5 shadow-sm">
+                <div class="flex flex-wrap items-center justify-between gap-3">
+                  <div class="space-y-1">
+                    <p class="text-xs font-semibold uppercase tracking-wide text-slate-400">Attempt #{attempt.id}</p>
+                    <h3 class="text-lg font-semibold text-slate-900">
+                      <span class="text-indigo-600" aria-hidden="true">{attempt.mark}</span>
+                      <span class="text-slate-500"> / {attempt.totalQuestions || 0}</span>
+                    </h3>
+                    <p class="text-xs text-slate-500">
+                      Taken on <time datetime={attempt.createdAtISO}>{attempt.createdAtLabel}</time>
+                    </p>
+                  </div>
+                  <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-600">
+                    <i class="fas fa-signal text-[10px]"></i>
+                    <span>{attempt.level ?? "—"}</span>
+                  </span>
+                </div>
+
+                <dl class="grid gap-3 text-sm text-slate-600 sm:grid-cols-2">
+                  <div class="flex flex-col">
+                    <dt class="font-semibold text-slate-500">Platform</dt>
+                    <dd class="mt-0.5">{attempt.platformName}</dd>
+                  </div>
+                  <div class="flex flex-col">
+                    <dt class="font-semibold text-slate-500">Subject</dt>
+                    <dd class="mt-0.5">{attempt.subjectName}</dd>
+                  </div>
+                  <div class="flex flex-col">
+                    <dt class="font-semibold text-slate-500">Topic</dt>
+                    <dd class="mt-0.5">{attempt.topicName}</dd>
+                  </div>
+                  <div class="flex flex-col">
+                    <dt class="font-semibold text-slate-500">Roadmap</dt>
+                    <dd class="mt-0.5">{attempt.roadmapName}</dd>
+                  </div>
+                </dl>
+
+                <div class="flex items-center justify-end">
+                  <Button href="/quiz/results" variant="ghost" size="sm">
+                    Review attempt
+                    <i class="fas fa-arrow-right text-xs"></i>
+                  </Button>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div class="mt-6 rounded-2xl border border-dashed border-slate-200 bg-slate-50 p-10 text-center text-sm text-slate-500">
+            No quiz attempts yet. Start your first quiz to see detailed insights.
+          </div>
+        )}
+      </div>
+    </section>
+
+    <section class="bg-slate-50">
+      <div class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[1fr_0.9fr]">
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-xl font-semibold text-slate-900">Where you shine</h2>
+            <p class="mt-2 text-sm text-slate-600">
+              These subjects have seen the most activity from you recently. Keep the momentum going or branch out to new areas.
+            </p>
+            {topSubjects.length > 0 ? (
+              <ul class="mt-5 space-y-3">
+                {topSubjects.map(([subject, count]) => (
+                  <li class="flex items-center justify-between rounded-xl bg-slate-50 px-4 py-3 text-sm font-semibold text-slate-700">
+                    <span>{subject}</span>
+                    <span class="flex items-center gap-2 text-xs font-medium text-slate-500">
+                      <i class="fas fa-repeat text-[10px]"></i>
+                      {count} attempt{count === 1 ? "" : "s"}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <div class="mt-5 rounded-xl border border-dashed border-slate-200 bg-slate-50 px-4 py-6 text-center text-sm text-slate-500">
+                Complete a quiz to unlock personalised subject insights.
+              </div>
+            )}
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+            <h2 class="text-xl font-semibold text-slate-900">Next steps</h2>
+            <p class="mt-2 text-sm text-slate-600">
+              Ready to push further? Use these quick actions to dive back into the experience.
+            </p>
+            <div class="mt-5 grid gap-4">
+              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-sm font-semibold text-slate-700">Pick up from your last session</p>
+                <p class="mt-1 text-xs text-slate-500">Return to the quiz platform you visited most recently.</p>
+                <Button href="/quiz/results" variant="ghost" size="sm" class="mt-3">
+                  View recent platforms
+                  <i class="fas fa-clock-rotate-left text-xs"></i>
+                </Button>
+              </div>
+              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-sm font-semibold text-slate-700">Explore new quizzes</p>
+                <p class="mt-1 text-xs text-slate-500">Browse all available quiz platforms tailored for different journeys.</p>
+                <Button href="/quiz" variant="ghost" size="sm" class="mt-3">
+                  Visit quiz hub
+                  <i class="fas fa-compass text-xs"></i>
+                </Button>
+              </div>
+              <div class="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-sm font-semibold text-slate-700">Analyse detailed answers</p>
+                <p class="mt-1 text-xs text-slate-500">Drill into explanations to understand every decision you made.</p>
+                <Button href="/quiz/results" variant="ghost" size="sm" class="mt-3">
+                  Review answer breakdowns
+                  <i class="fas fa-magnifying-glass-chart text-xs"></i>
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
