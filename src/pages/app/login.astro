@@ -2,6 +2,7 @@
 import Layout from "../../layouts/Layout.astro";
 import { actions } from 'astro:actions';
 import { getSessionWithUser } from '../../utils/session.server';
+import { getSafeRedirect } from '../../utils/safe-redirect';
 import Textbox from "../../components/Textbox.astro";
 import Password from "../../components/Password.astro";
 import Button from "../../components/Button.astro";
@@ -10,14 +11,18 @@ import Button from "../../components/Button.astro";
 export const prerender = false;
 
 // If the user is already logged in, skip login
+const requestedRedirect = Astro.url.searchParams.get('redirect');
+const initialRedirect = getSafeRedirect(requestedRedirect);
+
 const existingSession = await getSessionWithUser(Astro.cookies);
 if (existingSession) {
-  return Astro.redirect('/'); // or '/dashboard'
+  return Astro.redirect(initialRedirect);
 }
 
 // Read the result when the action POST happens
 const loginAction = actions.auth.login;
 const loginResult = await Astro.getActionResult(loginAction);
+const redirectTarget = getSafeRedirect(loginResult?.data?.redirectTo, initialRedirect);
 const loginError =
   loginResult?.error?.message ||
   (loginResult?.error && 'Login failed. Please try again.');
@@ -34,6 +39,7 @@ const loginError =
     )}
 
     <form class="mt-6 space-y-4" method="POST" action={loginAction}>
+      <input type="hidden" name="redirect" value={redirectTarget} />
       <Textbox
         id="identifier"
         name="identifier"
@@ -72,7 +78,7 @@ const loginError =
     </p>
   </section>
 
-  {loginResult?.data?.ok && Astro.redirect('/')} 
+  {loginResult?.data?.ok && Astro.redirect(redirectTarget)}
   <!-- If you prefer redirecting in the action page instead of here, remove this line
        and do a redirect from /pages after reading the result. -->
 </Layout>
