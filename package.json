@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.59",
     "@astrojs/alpinejs": "^0.4.9",
     "@astrojs/vercel": "^8.2.9",
     "@fortawesome/fontawesome-free": "^6.7.2",

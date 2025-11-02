@@ -398,6 +398,10 @@ class QuizTestStore extends BaseStore {
       this.selection.platformId = platformId;
       this.step = 2;
       this.search = '';
+      this.list.subjects = [];
+      this.list.topics = [];
+      this.list.roadmaps = [];
+      this.list.questions = [];
       this.list.subjects = await this.loadSubjects(platformId);
     } catch (err) {
       console.error('Failed to load subjects', err);
@@ -417,6 +421,9 @@ class QuizTestStore extends BaseStore {
       this.selection.subjectId = subjectId;
       this.step = 3;
       this.search = '';
+      this.list.topics = [];
+      this.list.roadmaps = [];
+      this.list.questions = [];
       this.list.topics = await this.loadTopics(this.selection.platformId, subjectId);
     } catch (err) {
       console.error('Failed to load topics', err);
@@ -436,6 +443,8 @@ class QuizTestStore extends BaseStore {
       this.selection.topicId = topicId;
       this.step = 4;
       this.search = '';
+      this.list.roadmaps = [];
+      this.list.questions = [];
       this.list.roadmaps = await this.loadRoadmaps(this.selection.platformId, this.selection.subjectId, topicId);
     } catch (err) {
       console.error('Failed to load roadmaps', err);
