@@ -1,0 +1,200 @@
+[
+  {
+    "id": 5001,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which HTML tag defines the main heading of a page?",
+    "o": [
+      "<h1>",
+      "<title>",
+      "<header>",
+      "<head>"
+    ],
+    "a": "0",
+    "e": "The <h1> tag represents the primary heading of a document.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5002,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which attribute provides alternative text for an image?",
+    "o": [
+      "src",
+      "alt",
+      "title",
+      "aria-label"
+    ],
+    "a": "1",
+    "e": "The alt attribute supplies text shown when an image cannot load.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5003,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which HTML element creates a hyperlink?",
+    "o": [
+      "<link>",
+      "<a>",
+      "<href>",
+      "<button>"
+    ],
+    "a": "1",
+    "e": "The <a> element anchors a link to another resource.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5004,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which element groups block-level content semantically?",
+    "o": [
+      "<span>",
+      "<div>",
+      "<section>",
+      "<em>"
+    ],
+    "a": "2",
+    "e": "<section> denotes a standalone thematic grouping of content.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5005,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which tag is best suited for marking navigation links?",
+    "o": [
+      "<nav>",
+      "<aside>",
+      "<menu>",
+      "<footer>"
+    ],
+    "a": "0",
+    "e": "The <nav> element defines a section of navigation links.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5006,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which meta tag sets the character encoding to UTF-8?",
+    "o": [
+      "<meta charset=\"UTF-8\">",
+      "<meta name=\"charset\" value=\"UTF-8\">",
+      "<meta encoding=\"UTF-8\">",
+      "<meta http-equiv=\"UTF-8\">"
+    ],
+    "a": "0",
+    "e": "The charset attribute specifies the document character encoding.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5007,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which element introduces a line break without creating a new paragraph?",
+    "o": [
+      "<hr>",
+      "<br>",
+      "<p>",
+      "<break>"
+    ],
+    "a": "1",
+    "e": "<br> inserts a line break within text flow.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5008,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which attribute ensures form inputs are associated with a label?",
+    "o": [
+      "for",
+      "name",
+      "id",
+      "value"
+    ],
+    "a": "0",
+    "e": "The for attribute on a <label> should match the id of the input.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5009,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which element provides the document's main landmark for screen readers?",
+    "o": [
+      "<main>",
+      "<body>",
+      "<article>",
+      "<section>"
+    ],
+    "a": "0",
+    "e": "The <main> element identifies primary page content.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5010,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which tag should wrap a blog post title to emphasize document structure?",
+    "o": [
+      "<h3>",
+      "<h2>",
+      "<strong>",
+      "<p>"
+    ],
+    "a": "1",
+    "e": "<h2> is typically used for titles directly under the page heading.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 5011,
+    "platform_id": 12,
+    "subject_id": 1,
+    "topic_id": 1,
+    "roadmap_id": 1001,
+    "q": "Which attribute is required on the <img> element for valid HTML?",
+    "o": [
+      "width",
+      "height",
+      "alt",
+      "loading"
+    ],
+    "a": "2",
+    "e": "The alt attribute is required to provide alternative text.",
+    "l": "E",
+    "is_active": true
+  }
+]
