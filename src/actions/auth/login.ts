@@ -1,6 +1,7 @@
 import { defineAction, ActionError } from 'astro:actions';
 import { z } from 'astro:schema';
 import { createSession, findUserByIdentifier, toBool, verifyPassword } from './helpers';
+import { getSafeRedirect } from '../../utils/safe-redirect';
 import type { SessionUser } from '../../types/session-user';
 
 export const login = defineAction({
@@ -9,8 +10,9 @@ export const login = defineAction({
     identifier: z.string().min(1, 'Enter username or email'),
     password: z.string().min(6, 'Password must be at least 6 characters'),
     remember: z.preprocess(toBool, z.boolean()).optional().default(false),
+    redirect: z.string().optional(),
   }),
-  async handler({ identifier, password, remember }, ctx) {
+  async handler({ identifier, password, remember, redirect }, ctx) {
     const user = await findUserByIdentifier(identifier);
     if (!user || !verifyPassword(password, user.passwordHash)) {
       throw new ActionError({ code: 'UNAUTHORIZED', message: 'Invalid credentials' });
@@ -26,8 +28,11 @@ export const login = defineAction({
 
     await createSession(sessionUser, remember, ctx);
 
+    const redirectTo = getSafeRedirect(redirect);
+
     return {
       ok: true,
+      redirectTo,
       user: {
         id: sessionUser.id,
         username: sessionUser.username,
