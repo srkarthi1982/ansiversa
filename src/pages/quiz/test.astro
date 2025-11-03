@@ -7,7 +7,6 @@ import ResultView from "./components/ResultView.astro";
 <Layout>
   <main class="bg-slate-50 min-h-screen">
     <section
-      
       x-data={`(() => {
         const formatter = new Intl.DateTimeFormat('en-US', { dateStyle: 'medium', timeStyle: 'short' });
         const parseSelectedIndex = (value, optionsLength) => {

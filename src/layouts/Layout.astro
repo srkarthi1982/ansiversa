@@ -263,13 +263,10 @@ const isAdmin = sessionData?.user?.roleId === 1;
       </div>
     </div>
   </header>
-                <main
-                  transition:name="page"
-                  class="[&>nav+*]:mt-0 [&>nav+*]:pt-6 md:[&>nav+*]:pt-8"
-                >
-                  {shouldShowBreadcrumb && <Breadcrumb />}
-                  <slot />
-                </main>
+  <main transition:name="page">
+    {shouldShowBreadcrumb && <Breadcrumb />}
+    <slot />
+  </main>
 
 		<!-- CTA -->
   <section id="cta" class="py-14">
