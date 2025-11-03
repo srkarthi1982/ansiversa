@@ -1,0 +1,68 @@
+---
+import Button from "../Button.astro";
+---
+<section class="bg-white py-16" x-data="() => ({ novel: $store['novel-outliner'] })">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <div class="space-y-6">
+        <span class="inline-flex items-center gap-2 rounded-full bg-indigo-100 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.3em] text-indigo-700">
+          Ecosystem
+        </span>
+        <h2 class="text-3xl font-bold tracking-tight text-slate-900 sm:text-4xl">Exports, diagnostics, and companion hand-offs</h2>
+        <p class="text-base text-slate-600">
+          Ship polished outlines, diagnose pacing risks, and send your story bible to other Ansiversa apps. Novel Outliner keeps metadata structured so downstream tools stay in sync.
+        </p>
+        <div class="grid gap-3 sm:grid-cols-2">
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
+            <p class="text-sm font-semibold text-slate-900">Export formats</p>
+            <ul class="mt-2 space-y-1 text-xs">
+              <template x-for="preset in novel.state.exportPresets" :key="preset.format">
+                <li class="flex items-center gap-2">
+                  <i class="fa-solid fa-file-lines text-indigo-500"></i>
+                  <span x-text="`${preset.label} — ${preset.plan === 'pro' ? 'Pro' : 'Free'}`"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm text-slate-600">
+            <p class="text-sm font-semibold text-slate-900">Diagnostics API</p>
+            <p class="mt-2 text-xs text-slate-500">`GET /novel/api/diagnostics/run` returns pacing, POV, thread, and continuity signals. Automate sweeps or embed alerts in dashboards.</p>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-indigo-200 bg-indigo-50 px-5 py-4 text-sm text-indigo-700">
+          <p class="font-semibold">Presentation-ready handoff</p>
+          <p class="mt-2 text-xs">Send beats, chapter summaries, and comps directly to <a class="font-semibold text-indigo-600 hover:text-indigo-500" href="/presentation-designer">Presentation Designer</a> for pitch decks, query slides, or investor briefs.</p>
+        </div>
+        <div class="flex flex-wrap gap-3">
+          <Button type="button" class="shadow-sm" @click.prevent="novel.queueExport()">
+            <i class="fa-solid fa-file-export text-xs"></i>
+            Queue export now
+          </Button>
+          <Button type="button" variant="outline" class="border-indigo-200 text-indigo-600 hover:bg-indigo-50" @click.prevent="novel.markExportComplete()">
+            <i class="fa-solid fa-circle-check text-xs"></i>
+            Mark last export complete
+          </Button>
+        </div>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-gradient-to-br from-indigo-100 via-slate-50 to-white p-6 shadow-sm">
+        <h3 class="text-lg font-semibold text-slate-900">API endpoints</h3>
+        <p class="mt-1 text-sm text-slate-600">Orchestrate projects, beats, scenes, diagnostics, and exports with clean REST endpoints.</p>
+        <ul class="mt-4 space-y-3 text-xs text-slate-600">
+          <template x-for="endpoint in novel.state.apiEndpoints" :key="endpoint.id">
+            <li class="rounded-2xl border border-slate-200 bg-white px-4 py-3">
+              <div class="flex items-center justify-between gap-3">
+                <span class="rounded-full bg-slate-900 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-white" x-text="endpoint.method"></span>
+                <span class="font-semibold text-slate-900" x-text="endpoint.path"></span>
+              </div>
+              <p class="mt-1" x-text="endpoint.summary"></p>
+            </li>
+          </template>
+        </ul>
+        <div class="mt-4 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-xs">
+          <p class="font-semibold text-slate-900">Sample response</p>
+          <pre class="mt-2 overflow-x-auto rounded-xl bg-slate-900 px-4 py-3 text-[11px] text-slate-200" x-text="JSON.stringify(novel.state.apiEndpoints[0]?.sampleResponse ?? { message: 'Preview coming soon' }, null, 2)"></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
