@@ -1,0 +1,114 @@
+---
+import SectionHeading from "../../components/SectionHeading.astro";
+---
+<section class="bg-slate-100 py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <div class="grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <div>
+        <SectionHeading
+          eyebrow="Drawing tools"
+          title="Layered workspace built for iterations"
+          description="Sketch roughs, ink final lines, drop tones, and manage overlays without opening another app. The toolset mirrors what illustrators expect while keeping assets synced to each panel."
+          containerClass="max-w-xl"
+        />
+        <div class="mt-8 space-y-4 text-sm text-slate-600">
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 class="text-base font-semibold text-slate-900">Brush & transform essentials</h3>
+            <p class="mt-2">
+              Adjustable brush size, opacity, and smoothing paired with eraser, shape tools, bucket fill, and lasso transform.
+              Flip canvases or panels to check balance.
+            </p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 class="text-base font-semibold text-slate-900">Layer stack control</h3>
+            <p class="mt-2">
+              Lock, hide, reorder, and rename per-panel layers. Store overlays for guides or watermarking, and set opacity with a
+              single scrub.
+            </p>
+          </div>
+          <div class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 class="text-base font-semibold text-slate-900">Asset-driven storytelling</h3>
+            <p class="mt-2">
+              Drag imported props, stickers, and backgrounds straight into panels. Assets remain clipped to panel masks and can
+              be tinted or flipped without destructive edits.
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="relative">
+        <div class="absolute -left-10 top-10 h-20 w-20 rounded-full bg-indigo-200/60 blur-xl"></div>
+        <div class="absolute -right-10 bottom-0 h-28 w-28 rounded-full bg-purple-200/60 blur-2xl"></div>
+        <div class="relative overflow-hidden rounded-[2.5rem] border border-slate-200 bg-white shadow-2xl">
+          <div class="border-b border-slate-200 bg-slate-50 px-6 py-4 text-sm font-semibold uppercase tracking-[0.25em] text-slate-500">
+            Layer stack · Panel 12
+          </div>
+          <div class="divide-y divide-slate-200 text-sm text-slate-700">
+            <div class="flex items-center justify-between px-6 py-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                  FX
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900">Overlay</p>
+                  <p class="text-xs text-slate-500">Glow | 72% opacity</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-lock text-slate-400"></i>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                  CL
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900">Color flats</p>
+                  <p class="text-xs text-slate-500">Group · Multiply 100%</p>
+                </div>
+              </div>
+              <button class="text-xs font-semibold text-indigo-500">Hide</button>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                  TN
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900">Tones</p>
+                  <p class="text-xs text-slate-500">Halftone overlay · 65%</p>
+                </div>
+              </div>
+              <span class="text-xs uppercase tracking-[0.3em] text-slate-400">Solo</span>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                  IN
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900">Inks</p>
+                  <p class="text-xs text-slate-500">Stabilizer 12%</p>
+                </div>
+              </div>
+              <i class="fa-solid fa-grip-lines text-slate-300"></i>
+            </div>
+            <div class="flex items-center justify-between px-6 py-4">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-8 w-8 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                  RF
+                </span>
+                <div>
+                  <p class="font-semibold text-slate-900">Roughs</p>
+                  <p class="text-xs text-slate-500">Pencil | 40% opacity</p>
+                </div>
+              </div>
+              <button class="text-xs font-semibold text-indigo-500">Rename</button>
+            </div>
+          </div>
+          <div class="bg-slate-50 px-6 py-4 text-xs text-slate-500">
+            Asset drop: "Neo City rooftop" background pinned to Panel 12 · Favorite ⭐
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

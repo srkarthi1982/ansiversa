@@ -1,0 +1,29 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Hero from "../../components/comic-storyboarder/Hero.astro";
+import WorkspaceOverview from "../../components/comic-storyboarder/WorkspaceOverview.astro";
+import LayoutAndGuides from "../../components/comic-storyboarder/LayoutAndGuides.astro";
+import ShotAndScript from "../../components/comic-storyboarder/ShotAndScript.astro";
+import DrawingAndLayers from "../../components/comic-storyboarder/DrawingAndLayers.astro";
+import AnimaticAndExports from "../../components/comic-storyboarder/AnimaticAndExports.astro";
+import PlanComparison from "../../components/comic-storyboarder/PlanComparison.astro";
+import Integrations from "../../components/comic-storyboarder/Integrations.astro";
+---
+<Layout>
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#storyboard-workspace"
+  >
+    Skip to Comic Storyboarder workspace
+  </a>
+  <main id="comic-storyboarder-app" class="min-h-screen bg-slate-50 text-slate-900">
+    <Hero />
+    <WorkspaceOverview />
+    <LayoutAndGuides />
+    <ShotAndScript />
+    <DrawingAndLayers />
+    <AnimaticAndExports />
+    <PlanComparison />
+    <Integrations />
+  </main>
+</Layout>
