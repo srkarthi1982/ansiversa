@@ -61,3 +61,4 @@ import '../pages/ai-meme-creator/stores';
 import '../pages/smart-textbook-scanner/stores/smartTextbookScanner';
 import '../pages/speech-writer/stores';
 import '../pages/novel-outliner/stores';
+import '../pages/fanfic-generator/stores';
