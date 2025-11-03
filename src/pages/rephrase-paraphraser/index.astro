@@ -1,0 +1,406 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+
+const heroHighlights = [
+  {
+    label: "Modes",
+    value:
+      "Quick Rewrite · Guided Rewrite · Academic-safe Paraphrase · SEO Rewrite · Social Caption Shrink · Email Polisher hand-off",
+    icon: "fas fa-sliders",
+  },
+  {
+    label: "Controls",
+    value:
+      "Tone, style, length, reading level, passive→active, jargon→plain, emoji allowance, bulletize, sentence caps",
+    icon: "fas fa-sliders-h",
+  },
+  {
+    label: "Integrity",
+    value:
+      "Similarity scoring, plagiarism guard, citation helper, locked quotes/code, keyword & entity preservation",
+    icon: "fas fa-shield-check",
+  },
+];
+
+const planGating = [
+  {
+    tier: "Free",
+    perks: [
+      "10 projects with 2,000 character snippets",
+      "Similarity preview, Markdown/HTML exports, 30 day history",
+      "Batch CSV disabled, basic readability targets",
+    ],
+  },
+  {
+    tier: "Pro",
+    perks: [
+      "Unlimited projects with 50,000 character snippets",
+      "Batch CSV up to 1,000 rows, DOCX & JSON exports, advanced readability",
+      "Unlimited history retention and higher API limits",
+    ],
+  },
+];
+
+const workspaceRoutes = [
+  {
+    title: "Workspace",
+    description:
+      "Split panes for input/output with live diff overlays, constraint chips, and rewrite triggers.",
+    icon: "fas fa-columns",
+    eyebrow: "Route: /rephrase-paraphraser",
+  },
+  {
+    title: "Quick presets",
+    description:
+      "Guided wizard for Email Formalize, Grade 6 Simplify, SEO keep-keywords, and Academic neutral presets.",
+    icon: "fas fa-wand-magic-sparkles",
+    eyebrow: "Route: /rephrase-paraphraser/new",
+  },
+  {
+    title: "History",
+    description:
+      "Filter previous jobs by preset, delta length, or date, and restore snapshots for new rewrites.",
+    icon: "fas fa-clock-rotate-left",
+    eyebrow: "Route: /rephrase-paraphraser/history",
+  },
+  {
+    title: "Settings",
+    description:
+      "Manage default tone, style, emoji policy, presets, and legal notices for teams.",
+    icon: "fas fa-gear",
+    eyebrow: "Route: /rephrase-paraphraser/settings",
+  },
+];
+
+const controlHighlights = [
+  {
+    title: "Multi-dimensional controls",
+    description:
+      "Set tone, style (concise, narrative, bulletized), length (-70%…+150%), grade level, passive→active, and jargon→plain toggles in one panel.",
+    icon: "fas fa-sliders",
+  },
+  {
+    title: "Constraint management",
+    description:
+      "Lock keywords, named entities, numbers, units, links, quotes, code blocks, and Markdown headings with instant warnings if violated.",
+    icon: "fas fa-lock",
+  },
+  {
+    title: "SEO & academic helpers",
+    description:
+      "Keep keywords and add synonyms, draft meta descriptions, suggest slugs, and enforce citation-safe phrasing when needed.",
+    icon: "fas fa-magnifying-glass-chart",
+  },
+  {
+    title: "Preset library",
+    description:
+      "Ship with Email Formalize, Explain Like I’m 12, SEO Keep Keywords, Academic Paraphrase, and Social Caption Shrink presets.",
+    icon: "fas fa-layer-group",
+  },
+];
+
+const qaFeatures = [
+  {
+    title: "Similarity analysis",
+    description:
+      "Cosine and Jaccard overlap with per-sentence scoring, thresholds, and warnings for high duplication.",
+    icon: "fas fa-wave-square",
+  },
+  {
+    title: "Readability + style",
+    description:
+      "Flesch-Kincaid grade, sentence length, passive voice counts, and tone adherence summaries.",
+    icon: "fas fa-chart-line",
+  },
+  {
+    title: "Diff visualisation",
+    description:
+      "Word and sentence-level colour diff with reason tags like grammar fix, clarify, shorten, or restructure.",
+    icon: "fas fa-grip-lines",
+  },
+  {
+    title: "Guardrails",
+    description:
+      "Alerts for changed numbers, dropped citations, or altered locked segments before export.",
+    icon: "fas fa-triangle-exclamation",
+  },
+];
+
+const batchAndExport = [
+  {
+    title: "Batch CSV",
+    description:
+      "Upload CSVs of snippets, apply presets in bulk, and export results with status tracking.",
+    icon: "fas fa-table",
+  },
+  {
+    title: "Exports",
+    description:
+      "Download Markdown, HTML, DOCX, or JSON packages with settings, QA scores, and diffs included.",
+    icon: "fas fa-file-export",
+  },
+  {
+    title: "Automation hooks",
+    description:
+      "REST endpoints for project lifecycle, snippet rewrite, QA checks, exports, and optional WebSocket streaming.",
+    icon: "fas fa-code-branch",
+  },
+];
+
+const dataModel = [
+  {
+    name: "RephraseProject",
+    fields:
+      "id, userId, title, presetId, status, createdAt, updatedAt",
+  },
+  {
+    name: "Snippet",
+    fields:
+      "id, projectId, index, input, output, controls JSON, constraints JSON, scores JSON, diff JSON, flags JSON",
+  },
+  {
+    name: "Constraint",
+    fields:
+      "id, projectId, keepKeywords JSON, keepEntities JSON, preserveNumbers, preserveLinks, lockQuotes, lockCode",
+  },
+  {
+    name: "Preset",
+    fields: "id, projectId, name, controls JSON, constraints JSON",
+  },
+  {
+    name: "QAResult",
+    fields: "id, projectId, snippetId, kind, result JSON, createdAt",
+  },
+  {
+    name: "ExportJob",
+    fields: "id, projectId, format, status, url, createdAt",
+  },
+  {
+    name: "Tag",
+    fields: "id, name, color",
+  },
+];
+
+const planLimits = [
+  { feature: "Jobs per day", free: "50", pro: "500" },
+  { feature: "Snippet length", free: "≤ 2k chars", pro: "≤ 50k chars" },
+  { feature: "CSV rows per job", free: "—", pro: "1,000" },
+  { feature: "Exports per day", free: "10", pro: "100" },
+  { feature: "History retention", free: "30 days", pro: "Unlimited" },
+  { feature: "Similarity API limit", free: "200/day", pro: "2,000/day" },
+  { feature: "QA similarity checks", free: "100/day", pro: "800/day" },
+];
+
+const futureIdeas = [
+  "Fact guardrails when user supplies cited sources",
+  "Custom rewrite macros and regex pipelines",
+  "Team review workflows with suggestions and approvals",
+  "IDE, docs, and browser extension integrations",
+  "On-device quick rewrite mode for mobile",
+];
+---
+
+<Layout title="Rephrase & Paraphraser">
+  <a
+    class="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:rounded-md focus:bg-white focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-slate-900 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    href="#rephrase-paraphraser"
+  >
+    Skip to Rephrase & Paraphraser content
+  </a>
+
+  <HeroSection
+    eyebrow="Writing and creativity suite"
+    title="Rephrase & Paraphraser workspace"
+    description="Rewrite sentences, paragraphs, or full documents with precise tone, length, readability, and originality controls—complete with QA, diffing, and export pipelines."
+    background="bg-slate-950 text-white"
+    padding="py-16 sm:py-24"
+  >
+    <div slot="actions" class="flex flex-wrap justify-center gap-3">
+      <a
+        class="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/20"
+        href="#workspace"
+      >
+        <i class="fas fa-gauge text-xs"></i>
+        Explore workspace
+      </a>
+      <a
+        class="inline-flex items-center gap-2 rounded-full border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+        href="#plans"
+      >
+        View plans & limits
+      </a>
+    </div>
+  </HeroSection>
+
+  <section class="bg-slate-950 text-white">
+    <div class="mx-auto max-w-6xl px-4 pb-12 sm:px-6 lg:px-8">
+      <dl class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {heroHighlights.map((highlight) => (
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft" role="presentation">
+            <dt class="flex items-center gap-3 text-sm font-semibold uppercase tracking-wide text-white/70">
+              <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white/10">
+                <i class={`${highlight.icon} text-base`} aria-hidden="true"></i>
+              </span>
+              {highlight.label}
+            </dt>
+            <dd class="mt-4 text-sm leading-6 text-white/80">{highlight.value}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  </section>
+
+  <main id="rephrase-paraphraser" class="bg-slate-50">
+    <section class="py-16" id="workspace">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Information architecture"
+          title="Routes that power the rephrase studio"
+          description="A cohesive set of pages and APIs orchestrate multi-mode rewriting, QA, history, and settings for writers and teams."
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {workspaceRoutes.map((item) => (
+            <FeatureCard title={item.title} description={item.description} icon={item.icon} eyebrow={item.eyebrow} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Controls & presets"
+          title="Dial in the perfect rewrite"
+          description="Whether simplifying for Grade 6 readers or preserving SEO keywords, every control is surfaced in a responsive drawer with preset support."
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {controlHighlights.map((item) => (
+            <FeatureCard title={item.title} description={item.description} icon={item.icon} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 bg-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Quality & guardrails"
+          title="QA keeps paraphrases trustworthy"
+          description="Similarity, readability, and diff tooling run alongside guardrails so outputs stay faithful to the source text."
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {qaFeatures.map((item) => (
+            <FeatureCard title={item.title} description={item.description} icon={item.icon} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Batch & exports"
+          title="Scale rewriting projects"
+          description="Bulk CSV handling, export automation, and developer endpoints make the paraphraser production-ready."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {batchAndExport.map((item) => (
+            <FeatureCard title={item.title} description={item.description} icon={item.icon} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 bg-white" id="plans">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plan gating"
+          title="Free vs Pro capabilities"
+          description="Ansiversa offers a generous free tier and a Pro upgrade that unlocks higher capacity, batch workflows, and export automation."
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {planGating.map((plan) => (
+            <FeatureCard title={plan.tier} icon="fas fa-star" iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-amber-500/10 text-amber-600">
+              <ul class="list-disc space-y-2 pl-5">
+                {plan.perks.map((perk) => (
+                  <li>{perk}</li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+        <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
+          <table class="min-w-full divide-y divide-slate-100 text-sm">
+            <thead class="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-slate-500">
+              <tr>
+                <th scope="col" class="px-6 py-3">Feature</th>
+                <th scope="col" class="px-6 py-3">Free</th>
+                <th scope="col" class="px-6 py-3">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-slate-100">
+              {planLimits.map((row) => (
+                <tr class="text-slate-700">
+                  <th scope="row" class="px-6 py-4 text-left text-sm font-semibold text-slate-900">{row.feature}</th>
+                  <td class="px-6 py-4 text-sm">{row.free}</td>
+                  <td class="px-6 py-4 text-sm">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Data model"
+          title="Entities for Astro DB or SQL"
+          description="Normalized tables capture projects, snippets, QA reports, and export jobs for a scalable paraphrasing backend."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {dataModel.map((entity) => (
+            <FeatureCard title={entity.name} description={entity.fields} icon="fas fa-database" />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 bg-white">
+      <div class="mx-auto max-w-6xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Roadmap"
+          title="Future enhancements"
+          description="A glimpse into upcoming capabilities that keep rewrites accurate, collaborative, and omnipresent."
+          align="center"
+        />
+        <ul class="mx-auto max-w-3xl list-disc space-y-3 pl-5 text-sm text-slate-600">
+          {futureIdeas.map((idea) => (
+            <li>{idea}</li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-4xl space-y-6 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Legal & ethical"
+          title="Responsible paraphrasing guidance"
+          description="Surface this notice within the workspace to remind users of academic integrity and copyright obligations."
+        />
+        <div class="rounded-3xl border border-amber-200 bg-amber-50 p-8 text-sm text-amber-900 shadow-soft">
+          <ul class="list-disc space-y-3 pl-5">
+            <li>Do not use paraphrasing to evade plagiarism detection or violate academic policies.</li>
+            <li>Add citations for sourced content—the tool can help convert sentences into citation-friendly phrasing.</li>
+            <li>Respect third-party copyrights and avoid pasting confidential or personal data without permission.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
