@@ -4,6 +4,7 @@ public/questions
 public/questions-sql
 # generated types
 .astro/
+.astro-vite-cache/
 .vercel/
 .vscode/
 
