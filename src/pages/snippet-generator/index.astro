@@ -1,0 +1,516 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+
+const heroHighlights = [
+  {
+    label: "Snippet types",
+    value: "Code, email, UI, legal, macros",
+    icon: "fa-code",
+  },
+  {
+    label: "Instant actions",
+    value: "Copy · Download · Insert",
+    icon: "fa-bolt",
+  },
+  {
+    label: "Workspace routes",
+    value: "/snippets · /snippets/new · /snippets/[id]",
+    icon: "fa-map-location-dot",
+  },
+];
+
+const coreCapabilities = [
+  {
+    title: "Dynamic templating engine",
+    description:
+      "Detects variables like {name}, {date:YYYY-MM-DD}, or {custom:/regex/} and builds adaptive forms with validation, defaults, and required flags per field.",
+    icon: "fa-brackets-curly",
+  },
+  {
+    title: "Collections and tagging",
+    description:
+      "Organise snippets across personal and shared collections with favourites, language filters, pinned presets, and fuzzy search that respects tags and last-used metadata.",
+    icon: "fa-folder-tree",
+  },
+  {
+    title: "Versioning with diff view",
+    description:
+      "Every edit creates a new version that you can diff side-by-side, comment on, or roll back. Retains macro pipelines and AI usage logs per revision.",
+    icon: "fa-code-branch",
+  },
+  {
+    title: "Clipboard-safe output",
+    description:
+      "Secret and PII scanners flag risky content, enforce license headers, and let you auto-insert disclaimers before copying or exporting snippets.",
+    icon: "fa-shield-check",
+  },
+  {
+    title: "Preset parameter packs",
+    description:
+      "Save frequently used variable combinations as presets, schedule refresh reminders, and quickly apply them in the editor or from the Library quick actions.",
+    icon: "fa-sliders",
+  },
+  {
+    title: "Multi-format export centre",
+    description:
+      "Export JSON schema bundles, Markdown catalogs, or ZIP archives with compiled files. Track export jobs with progress indicators and retry controls.",
+    icon: "fa-file-export",
+  },
+];
+
+const workspaceFlows = [
+  {
+    title: "Library dashboard",
+    description:
+      "Route: /snippets — Browse favourites, run filtered searches, preview snippet metadata, and trigger quick copy or preset swaps without leaving the grid view.",
+    icon: "fa-table-cells-large",
+  },
+  {
+    title: "Creation wizard",
+    description:
+      "Route: /snippets/new — Choose snippet type, preferred language, auto-detect variables, and seed drafts using AI briefs or manual scaffolds.",
+    icon: "fa-wand-magic-sparkles",
+  },
+  {
+    title: "Editor hub",
+    description:
+      "Route: /snippets/[id] — Tabs for Content, Variables, Preview, Versions, and Meta. Supports macros, preset selection, and integration routing.",
+    icon: "fa-table-columns",
+  },
+  {
+    title: "Import centre",
+    description:
+      "Route: /snippets/import — Upload JSON, Markdown, or ZIP packs, map to collections, validate schema, and receive conflict suggestions.",
+    icon: "fa-file-import",
+  },
+  {
+    title: "Settings and governance",
+    description:
+      "Route: /snippets/settings — Configure formatting defaults, default licenses, secret scanning depth, and automation hooks for exports or insertions.",
+    icon: "fa-gear",
+  },
+];
+
+const variableControls = [
+  {
+    title: "Variable designer",
+    description:
+      "Auto-detect variables, set types (text, number, date, choice), enforce regex validation, attach helper text, and mark fields as required.",
+    icon: "fa-pen-ruler",
+  },
+  {
+    title: "Live preview",
+    description:
+      "Two-pane workspace keeps input form and rendered snippet side-by-side with syntax highlighting for code, Markdown, or plaintext output.",
+    icon: "fa-columns",
+  },
+  {
+    title: "Macro pipelines",
+    description:
+      "Stack pre/post transforms such as prettify(language), wrapTryCatch, addSignature, minify, or custom scripts that run before export or copy.",
+    icon: "fa-diagram-project",
+  },
+];
+
+const aiAssist = [
+  {
+    title: "Prompt-to-snippet",
+    description:
+      "Send a short brief and choose target tone or language. AI drafts maintain detected variables and highlight suggested macros.",
+    icon: "fa-robot",
+    endpoints: ["POST /snippets/api/ai/generate"],
+  },
+  {
+    title: "Refactor and translate",
+    description:
+      "Convert between languages (JS→TS, Python→Go), rewrite tone for support or legal teams, and preserve placeholders while modernising the code style.",
+    icon: "fa-language",
+    endpoints: ["POST /snippets/api/ai/refactor"],
+  },
+  {
+    title: "Guided rewrites",
+    description:
+      "Apply persona-driven rewrites, brand voice enforcement, or compliance phrasing. Logs AI usage and attaches rollback snapshots.",
+    icon: "fa-arrows-rotate",
+    endpoints: ["POST /snippets/api/ai/rewrite"],
+  },
+];
+
+const integrations = [
+  {
+    title: "Email Polisher",
+    description: "Send canned replies with variables pre-filled, log usage, and keep history in Email Polisher threads.",
+  },
+  {
+    title: "Prompt Builder",
+    description: "Import macros as reusable prompt blocks and push refined prompts back into the Snippet Generator library.",
+  },
+  {
+    title: "Research Assistant",
+    description: "Clip factual references and citations that auto-attach to legal or support snippets for defensible responses.",
+  },
+  {
+    title: "Presentation Designer",
+    description: "Drop UI snippet exports into deck slides with styling presets maintained.",
+  },
+  {
+    title: "Resume Builder",
+    description: "Maintain accomplishment bullets with variable placeholders for role, metric, and outcome, ready for reuse.",
+  },
+];
+
+const governance = [
+  {
+    title: "Security checks",
+    description:
+      "Secret detectors flag API keys, OAuth tokens, and credential patterns. PII scanners catch emails, phone numbers, and IDs before sharing.",
+    icon: "fa-user-shield",
+  },
+  {
+    title: "Plan limits",
+    description:
+      "Free plans store 100 snippets with 10 versions each and JSON exports. Pro unlocks unlimited libraries, Markdown/ZIP exports, and advanced scanning.",
+    icon: "fa-layer-group",
+  },
+  {
+    title: "Audit history",
+    description:
+      "Usage logs capture copy, download, and insert actions with timestamp, macro stack, and destination app for compliance reviews.",
+    icon: "fa-clipboard-list",
+  },
+];
+
+const dataModel = [
+  {
+    name: "Snippet",
+    details: [
+      "UUID id, owner, collection linkage, type, language, tags, favourite, lastUsedAt",
+      "Stores current content, variable schema, macro pipeline, AI usage summaries",
+    ],
+  },
+  {
+    name: "SnippetVersion",
+    details: [
+      "Foreign key to Snippet, diff metadata, createdBy, AI operation log, macro snapshots",
+      "Holds rendered output preview, security scan results, and rollback flags",
+    ],
+  },
+  {
+    name: "Variable",
+    details: [
+      "name, label, type, defaultValue, validationRegex, required, helperText",
+      "Linked to Snippet with ordering and grouping for complex forms",
+    ],
+  },
+  {
+    name: "Preset",
+    details: [
+      "Named sets of variable values, persona hints, macro toggles, and lastAppliedAt timestamps",
+      "Supports organisation-scoped presets with permissioning",
+    ],
+  },
+  {
+    name: "Collection",
+    details: [
+      "Folder metadata, sharing scope, colour accents, default macros, pinned filters",
+      "Aggregates snippet counts, usage stats, and export policies",
+    ],
+  },
+  {
+    name: "ExportJob / ImportJob",
+    details: [
+      "Queue status, payload metadata, checksum, error details, retry counters",
+      "References destination (download, Email Polisher, Prompt Builder, etc.)",
+    ],
+  },
+  {
+    name: "UsageLog",
+    details: [
+      "Tracks copy/download/insert events, macro stack executed, destination app, user, timestamp",
+      "Feeds analytics dashboards and plan limit enforcement",
+    ],
+  },
+];
+
+const lifecycle = [
+  {
+    title: "Onboarding",
+    description:
+      "Interactive tutorial seeds starter collections, imports sample snippets, and explains variable editing directly inside the library grid.",
+  },
+  {
+    title: "Collaboration",
+    description:
+      "Generate share links with scoped expiry, read-only previews, and optional comment threads for approvals.",
+  },
+  {
+    title: "Automation",
+    description:
+      "Schedule exports, push snippets into other Ansiversa apps, and trigger webhooks when presets change or snippets hit copy thresholds.",
+  },
+];
+---
+<Layout>
+  <main class="bg-slate-50 text-slate-900" x-data="() => ({ app: $store['snippet-generator'] ?? {} })">
+    <HeroSection
+      eyebrow="Mini app"
+      title="Snippet Generator"
+      description="Design reusable text and code templates with variables, macros, AI assists, and compliant exports — all orchestrated for fast reuse across the Ansiversa suite."
+      background="relative isolate overflow-hidden bg-slate-950 text-white"
+      padding="py-20"
+      containerClass="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      titleClass="mt-4 text-4xl font-black tracking-tight sm:text-6xl"
+      descriptionClass="mt-6 text-lg text-white/80"
+    >
+      <div slot="actions" class="flex flex-wrap gap-4 text-sm">
+        <a
+          class="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 font-semibold text-slate-900 shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-100"
+          href="#core-capabilities"
+        >
+          <i class="fas fa-play text-xs" aria-hidden="true"></i>
+          Explore features
+        </a>
+        <a
+          class="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2 font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10"
+          href="#workspace"
+        >
+          View workspace
+        </a>
+      </div>
+    </HeroSection>
+
+    <section class="bg-slate-900 text-white">
+      <div class="mx-auto grid max-w-5xl gap-6 px-4 pb-16 pt-10 sm:grid-cols-3 sm:px-6 lg:px-8">
+        {heroHighlights.map((item) => (
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft backdrop-blur">
+            <div class="flex items-center gap-3 text-sm font-semibold uppercase tracking-[0.25em] text-white/60">
+              <i class={`fa-solid ${item.icon} text-base`} aria-hidden="true"></i>
+              <span>{item.label}</span>
+            </div>
+            <p class="mt-4 text-lg font-semibold text-white" innerHTML={item.value}></p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="core-capabilities" class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Core system"
+          title="Built for durable snippet ops"
+          description="Everything in Snippet Generator centres on building a trustworthy library of reusable content."
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {coreCapabilities.map((feature) => (
+            <FeatureCard
+              title={feature.title}
+              description={feature.description}
+              icon={`fa-solid ${feature.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-soft backdrop-blur"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="workspace" class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workflow"
+          title="Opinionated workspace routes"
+          description="From discovery to governance, every touchpoint keeps variables, macros, and compliance in sync."
+          containerClass=""
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {workspaceFlows.map((flow) => (
+            <FeatureCard
+              title={flow.title}
+              description={flow.description}
+              icon={`fa-solid ${flow.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Variables & macros"
+          title="Precision controls for every placeholder"
+          description="Variable forms, macro pipelines, and previews stay in lockstep so every output is trustworthy before it leaves the app."
+        />
+        <div class="grid gap-6 md:grid-cols-3">
+          {variableControls.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon={`fa-solid ${item.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-500"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-gradient-to-br from-slate-900 via-indigo-900 to-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="AI assists"
+          title="Guided automation without losing control"
+          description="AI keeps your templates on-brand while preserving placeholders, macros, and compliance policies."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 md:grid-cols-3">
+          {aiAssist.map((assist) => (
+            <FeatureCard
+              title={assist.title}
+              description={assist.description}
+              icon={`fa-solid ${assist.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            >
+              <ul class="mt-4 space-y-2 text-xs text-white/60">
+                {assist.endpoints.map((endpoint) => (
+                  <li class="flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-[10px]" aria-hidden="true"></i>
+                    <span>{endpoint}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Ansiversa integrations"
+          title="Snippets that move across the suite"
+          description="Push snippets directly into other apps, preserving variables and macros while adding destination-specific context."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {integrations.map((integration) => (
+            <FeatureCard
+              title={integration.title}
+              description={integration.description}
+              icon="fa-solid fa-arrows-turn-right"
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-500"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Governance"
+          title="Compliance, limits, and audit trails"
+          description="Stay within plan limits while keeping content safe and traceable."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 md:grid-cols-3">
+          {governance.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon={`fa-solid ${item.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Data model"
+          title="Entities that power the snippet ecosystem"
+          description="Structured tables keep snippets, versions, variables, and automation jobs organised for auditability."
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {dataModel.map((entity) => (
+            <article class="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-500">
+                  <i class="fa-solid fa-database" aria-hidden="true"></i>
+                </span>
+                <h3 class="text-lg font-semibold text-slate-900">{entity.name}</h3>
+              </div>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {entity.details.map((detail) => (
+                  <li class="flex gap-2">
+                    <i class="fa-solid fa-circle text-[6px] text-indigo-400 pt-2" aria-hidden="true"></i>
+                    <span>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Lifecycle"
+          title="Beyond individual snippets"
+          description="Support onboarding, collaboration, and automation so teams can evolve their libraries responsibly."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 md:grid-cols-3">
+          {lifecycle.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon="fa-solid fa-compass"
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
