@@ -1,0 +1,594 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+
+const heroHighlights = [
+  {
+    label: "Modes",
+    value: "Translate · Tone Fix · Translate+Tone · Summarize+Translate · Back-translation QA",
+    icon: "fas fa-sliders",
+  },
+  {
+    label: "Languages",
+    value: "English, Tamil, Arabic, Spanish, Hindi with locale variants & transliteration",
+    icon: "fas fa-language",
+  },
+  {
+    label: "Formats",
+    value: "Markdown, HTML, DOCX, TXT, SRT/VTT subtitles, JSON exports",
+    icon: "fas fa-file-export",
+  },
+];
+
+const planGating = [
+  {
+    tier: "Free",
+    details: [
+      "Create up to 5 projects with 3-file batch processing",
+      "Translate core languages with basic QA and one glossary",
+      "PII redaction previews with manual export gating",
+    ],
+  },
+  {
+    tier: "Pro",
+    details: [
+      "Unlimited projects, 50-file batches, and 80+ language locales",
+      "Advanced QA with back-translation diffing and automation rules",
+      "Up to 10 glossaries, 10 voice profiles, and priority export queues",
+    ],
+  },
+];
+
+const coreCapabilities = [
+  {
+    title: "Formatting-safe translation",
+    description:
+      "Preserve Markdown, HTML, tables, inline code, and emoji while respecting placeholders and URLs during model calls.",
+    icon: "fas fa-code",
+  },
+  {
+    title: "Adaptive tone engine",
+    description:
+      "Blend presets like formal, friendly, or persuasive with sliders for warmth, enthusiasm, directness, and concision.",
+    icon: "fas fa-wave-square",
+  },
+  {
+    title: "Brand voice governance",
+    description:
+      "Attach reusable voice profiles with copy rules, banned phrases, sentence-length caps, and positivity or politeness toggles.",
+    icon: "fas fa-bullhorn",
+  },
+  {
+    title: "Terminology management",
+    description:
+      "Upload CSV or JSON glossaries, lock translations for key terms, and surface inline tooltips with part-of-speech notes.",
+    icon: "fas fa-spell-check",
+  },
+  {
+    title: "CAT-style segment editor",
+    description:
+      "Side-by-side source/target panes track statuses, comments, and keyboard shortcuts for translate, retone, or approve flows.",
+    icon: "fas fa-columns",
+  },
+  {
+    title: "Unit and locale helpers",
+    description:
+      "Toggle date, currency, and numbering styles per locale, with Oxford comma and honorific settings baked into each project.",
+    icon: "fas fa-earth-asia",
+  },
+];
+
+const toneControls = [
+  {
+    title: "Tone presets + sliders",
+    description:
+      "Set baseline presets then fine-tune formality, directness, warmth, and playfulness with guard rails for passive voice or bulletisation.",
+    icon: "fas fa-sliders-h",
+  },
+  {
+    title: "Audience-aware phrasing",
+    description:
+      "Define personas like customer support, legal, academic, or marketing to adjust vocabulary density, politeness, and structure.",
+    icon: "fas fa-user-group",
+  },
+  {
+    title: "Inclusive language guidance",
+    description:
+      "Prefer gender-neutral phrasing, configure honorifics, and receive inline suggestions for person-first wording in sensitive contexts.",
+    icon: "fas fa-hand-holding-heart",
+  },
+];
+
+const workspaceWorkflows = [
+  {
+    title: "Workspace hub",
+    description:
+      "Route projects, drafts, and automation logs from /ai-translator-tone-fixer with quick filters for language pair, tone, and status.",
+    icon: "fas fa-gauge",
+    eyebrow: "Route: /ai-translator-tone-fixer",
+  },
+  {
+    title: "Quick start wizard",
+    description:
+      "Collect source/target locales, tone preset, glossary attachments, and PII settings before ingesting text or files.",
+    icon: "fas fa-wand-magic-sparkles",
+    eyebrow: "Route: /ai-translator-tone-fixer/new",
+  },
+  {
+    title: "Segment editor",
+    description:
+      "Lock, approve, or reopen segments while tracking inline comments, issue tags, and version history snapshots.",
+    icon: "fas fa-table-cells",
+    eyebrow: "Route: /ai-translator-tone-fixer/editor/[id]",
+  },
+  {
+    title: "QA dashboard",
+    description:
+      "Queue terminology, number, punctuation, inclusive language, and back-translation checks with export blockers when critical.",
+    icon: "fas fa-shield-check",
+    eyebrow: "Route: /ai-translator-tone-fixer/qa/[id]",
+  },
+  {
+    title: "History and exports",
+    description:
+      "Browse previous runs, regenerate outputs, and download Markdown, DOCX, or subtitle bundles with retention policies per plan.",
+    icon: "fas fa-clock-rotate-left",
+    eyebrow: "Route: /ai-translator-tone-fixer/history",
+  },
+  {
+    title: "Settings",
+    description:
+      "Manage default tone, locale packs, voice profiles, glossaries, and privacy options including auto-redaction.",
+    icon: "fas fa-gear",
+    eyebrow: "Route: /ai-translator-tone-fixer/settings",
+  },
+];
+
+const qaChecks = [
+  {
+    title: "Back-translation diffing",
+    description:
+      "Round-trip translated segments and highlight divergences or omissions with colour-coded diff overlays.",
+    icon: "fas fa-arrows-rotate",
+  },
+  {
+    title: "Terminology adherence",
+    description:
+      "Flag inconsistent term usage, casing mismatches, and synonyms outside approved glossary entries.",
+    icon: "fas fa-book-bookmark",
+  },
+  {
+    title: "Numerical integrity",
+    description:
+      "Detect mismatched digits, currency conversions, and unit shifts with suggestions to convert or retain original values.",
+    icon: "fas fa-hashtag",
+  },
+  {
+    title: "Structure and punctuation",
+    description:
+      "Ensure sentence counts, punctuation, and paragraph spacing mirror the source, especially for subtitles and legal copy.",
+    icon: "fas fa-text-height",
+  },
+  {
+    title: "PII redaction",
+    description:
+      "Scan for emails, phone numbers, IDs, and addresses before sending to the model; optionally mask or confirm inline.",
+    icon: "fas fa-user-shield",
+  },
+  {
+    title: "Bias and inclusivity",
+    description:
+      "Surface gendered language, cultural sensitivities, and politeness mismatches with guided rewrites per locale.",
+    icon: "fas fa-scale-balanced",
+  },
+];
+
+const documentPipelines = [
+  {
+    title: "Multi-format ingest",
+    description:
+      "Handle DOCX, Markdown, HTML, TXT, and SRT/VTT with checksum tracking, segment grouping, and optional WebSocket progress updates.",
+    icon: "fas fa-file-import",
+  },
+  {
+    title: "Batch automation",
+    description:
+      "Queue translate, tone, or combined runs across up to 50 files with dependency-aware retries and notifications.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Export orchestration",
+    description:
+      "Deliver Markdown, HTML, DOCX, subtitle, or JSON exports plus ZIP archives, with history and webhook callbacks.",
+    icon: "fas fa-box-archive",
+  },
+];
+
+const integrationHighlights = [
+  {
+    title: "Email Polisher",
+    description:
+      "Send polished translations directly into the Email Polisher workspace to reuse tone instructions for outreach.",
+    icon: "fas fa-envelope-open-text",
+  },
+  {
+    title: "Blog Writer",
+    description:
+      "Publish localized blog drafts with preserved structure and metadata, ready for storytelling workflows.",
+    icon: "fas fa-blog",
+  },
+  {
+    title: "Presentation Designer",
+    description:
+      "Transform approved translations into slide-ready outlines with brand voice and glossary consistency intact.",
+    icon: "fas fa-display",
+  },
+];
+
+const dataModel = [
+  {
+    name: "TransProject",
+    details: [
+      "UUID, user linkage, source/target locales, tone profile, plan limits",
+      "Stores automation preferences, glossary bindings, and compliance toggles",
+    ],
+  },
+  {
+    name: "Segment",
+    details: [
+      "Index-aligned source/target text, status (todo|done|locked|flagged), and inline issue tags",
+      "Metadata for subtitles, timeline cues, and diff snapshots",
+    ],
+  },
+  {
+    name: "Glossary",
+    details: [
+      "Term, part of speech, mandatory translation, casing rules, and example usage",
+      "Linked to projects with import job provenance for auditing",
+    ],
+  },
+  {
+    name: "VoiceProfile",
+    details: [
+      "Named slider settings for warmth, authority, enthusiasm, and playfulness",
+      "Copy rules enforcing sentence caps, ban lists, and CTA language",
+    ],
+  },
+  {
+    name: "QAResult",
+    details: [
+      "Kind (terminology|numbers|punct|links|length|inclusive|profanity|backtranslate)",
+      "JSON payload containing findings, severity, and resolution timestamps",
+    ],
+  },
+  {
+    name: "ImportJob & ExportJob",
+    details: [
+      "Format, status lifecycle, artifact URLs, and failure diagnostics",
+      "Optional WebSocket channel identifiers for streaming progress",
+    ],
+  },
+  {
+    name: "Attachment & Tag",
+    details: [
+      "Stored assets for brand guides, reference docs, or style sheets",
+      "Color-coded tagging system for filtering projects and QA queues",
+    ],
+  },
+];
+
+const apiSurface = [
+  {
+    label: "Projects",
+    endpoints: [
+      "POST /ai-translator-tone-fixer/api/project/create",
+      "GET /ai-translator-tone-fixer/api/project?id=",
+      "POST /ai-translator-tone-fixer/api/project/update",
+      "POST /ai-translator-tone-fixer/api/project/archive",
+    ],
+  },
+  {
+    label: "Import & segments",
+    endpoints: [
+      "POST /ai-translator-tone-fixer/api/import",
+      "GET /ai-translator-tone-fixer/api/import/status?id=",
+      "POST /ai-translator-tone-fixer/api/segment/translate",
+      "POST /ai-translator-tone-fixer/api/segment/tone",
+      "POST /ai-translator-tone-fixer/api/segment/update",
+      "POST /ai-translator-tone-fixer/api/segment/status",
+    ],
+  },
+  {
+    label: "Batch & automation",
+    endpoints: [
+      "POST /ai-translator-tone-fixer/api/batch/run",
+      "POST /ai-translator-tone-fixer/api/glossary/upload",
+      "POST /ai-translator-tone-fixer/api/glossary/delete",
+      "POST /ai-translator-tone-fixer/api/styleguide/set",
+      "POST /ai-translator-tone-fixer/api/voice/set",
+    ],
+  },
+  {
+    label: "QA & privacy",
+    endpoints: [
+      "GET /ai-translator-tone-fixer/api/qa/run",
+      "POST /ai-translator-tone-fixer/api/pii/scan",
+      "POST /ai-translator-tone-fixer/api/pii/redact",
+    ],
+  },
+  {
+    label: "Exports",
+    endpoints: [
+      "POST /ai-translator-tone-fixer/api/export",
+      "GET /ai-translator-tone-fixer/api/export/status?id=",
+    ],
+  },
+];
+
+const reliabilityNotes = [
+  "Protected token handling keeps code spans, URLs, and placeholders unchanged through translation and tone operations.",
+  "Deterministic batching, retries, and audit logs prevent duplication when processing large subtitle or document sets.",
+  "Access controls segregate glossary and voice profile ownership per workspace, with plan-aware retention policies.",
+  "All QA failures surface inline with resolution history to track reviewer decisions and sign-off timestamps.",
+];
+---
+
+<Layout title="AI Translator & Tone Fixer">
+  <main class="bg-white">
+    <HeroSection
+      eyebrow="WRITING and LOCALISATION"
+      title="AI Translator & Tone Fixer"
+      description="Translate, retone, and quality-check documents without losing formatting or brand voice. Configure glossaries, inclusive language controls, and automated QA in a unified Ansiversa workspace."
+      background="bg-gradient-to-br from-slate-950 via-indigo-900 to-slate-900 text-white"
+      padding="py-16"
+    >
+      <div slot="actions" class="flex flex-wrap items-center justify-center gap-3">
+        <a
+          href="#capabilities"
+          class="inline-flex items-center gap-2 rounded-full bg-white/10 px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-white/20"
+        >
+          <i class="fas fa-compass text-xs" aria-hidden="true"></i>
+          Explore capabilities
+        </a>
+        <a
+          href="#api"
+          class="inline-flex items-center gap-2 rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-slate-900 shadow-sm transition hover:bg-slate-100"
+        >
+          <i class="fas fa-code text-xs" aria-hidden="true"></i>
+          Review API surface
+        </a>
+      </div>
+    </HeroSection>
+
+    <section class="-mt-12 pb-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
+          <div class="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-soft backdrop-blur">
+            <h2 class="text-sm font-semibold uppercase tracking-[0.35em] text-indigo-500">At a glance</h2>
+            <div class="mt-5 grid gap-4 sm:grid-cols-3">
+              {heroHighlights.map((item) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4 text-left">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class={`${item.icon} text-sm`} aria-hidden="true"></i>
+                    <span class="text-xs font-semibold uppercase tracking-wide text-slate-500">{item.label}</span>
+                  </div>
+                  <p class="mt-3 text-sm font-medium text-slate-900">{item.value}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-6 shadow-soft">
+            <p class="text-sm font-semibold uppercase tracking-wide text-indigo-600">Plan gating</p>
+            <div class="mt-4 grid gap-4 sm:grid-cols-2">
+              {planGating.map((tier) => (
+                <div class="rounded-2xl border border-white/60 bg-white/70 p-4">
+                  <p class="text-sm font-semibold text-slate-900">{tier.tier}</p>
+                  <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                    {tier.details.map((detail) => (
+                      <li class="flex gap-2">
+                        <i class="fas fa-check text-xs text-emerald-500 mt-1"></i>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="capabilities" class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="CORE CAPABILITIES"
+          title="Translation, tone, and localisation safeguards in one place"
+          description="Balance brand voice and linguistic accuracy with structured tooling across the entire workflow."
+        />
+        <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {coreCapabilities.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="TONE and STYLE CONTROL"
+          title="Dial in voice while respecting regional nuance"
+          description="Fine-grained presets combine with audience and inclusion safeguards so every translation feels intentional."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {toneControls.map((item) => (
+            <FeatureCard
+              {...item}
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+              titleClass="mt-3 text-lg font-semibold text-slate-900"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 space-y-12">
+        <SectionHeading
+          align="center"
+          eyebrow="WORKSPACE FLOWS"
+          title="Guided routes from intake to QA sign-off"
+          description="Each route keeps formatting intact and shares tone, glossary, and privacy settings across the workspace."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {workspaceWorkflows.map((flow) => (
+            <FeatureCard
+              {...flow}
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600"
+              eyebrowClass="text-xs font-semibold uppercase tracking-wide text-indigo-500"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="DOCUMENT PIPELINES"
+          title="Reliable ingestion, batching, and export orchestration"
+          description="Stay confident translating large documents, subtitle files, or brand packs with progress visibility and retries."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {documentPipelines.map((item) => (
+            <FeatureCard {...item} />
+          ))}
+        </div>
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/60 p-8">
+          <div class="grid gap-6 lg:grid-cols-2 lg:items-center">
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-600">Integrations</p>
+              <h3 class="mt-3 text-2xl font-semibold text-slate-900">Hand off to the Ansiversa creation suite</h3>
+              <p class="mt-4 text-sm text-slate-600">
+                Share approved translations with downstream apps to keep messaging aligned. Voice profiles and glossaries remain attached so teams can move from localisation to copywriting or presentation design without reconfiguring controls.
+              </p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-3">
+              {integrationHighlights.map((integration) => (
+                <div class="rounded-2xl border border-white/60 bg-white/80 p-4 text-center">
+                  <div class="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 text-indigo-600">
+                    <i class={`${integration.icon} text-lg`} aria-hidden="true"></i>
+                  </div>
+                  <p class="mt-3 text-sm font-semibold text-slate-900">{integration.title}</p>
+                  <p class="mt-2 text-xs text-slate-600">{integration.description}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-50 py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="QUALITY and PRIVACY"
+          title="QA automation and safety rails"
+          description="Run layered checks before shipping translations. Critical blockers prevent exports until reviewers resolve issues."
+        />
+        <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          {qaChecks.map((item) => (
+            <FeatureCard
+              {...item}
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-slate-900/5 text-slate-900"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="api" class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          align="center"
+          eyebrow="DATA and API"
+          title="Programmable surface for integrations and automations"
+          description="Use structured endpoints and Astro DB entities to orchestrate localisation pipelines, QA, and exports."
+        />
+        <div class="grid gap-6 lg:grid-cols-3">
+          {apiSurface.map((group) => (
+            <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <p class="text-sm font-semibold uppercase tracking-wide text-indigo-500">{group.label}</p>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {group.endpoints.map((endpoint) => (
+                  <li class="flex gap-2">
+                    <i class="fas fa-terminal text-xs text-slate-500 mt-1"></i>
+                    <span>{endpoint}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <div class="grid gap-8 lg:grid-cols-[1fr_1.2fr] lg:items-start">
+            <div class="space-y-3">
+              <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Data model snapshot</p>
+              <h3 class="text-2xl font-semibold text-slate-900">Entities and relationships</h3>
+              <p class="text-sm text-slate-600">
+                Projects, segments, QA results, and jobs provide a clear audit trail across translations, tone adjustments, and exports. Indexed lookups keep the editor responsive even with thousands of segments.
+              </p>
+            </div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              {dataModel.map((entity) => (
+                <div class="rounded-2xl border border-slate-100 bg-slate-50 p-4">
+                  <div class="flex items-center gap-2 text-indigo-600">
+                    <i class="fas fa-database text-sm" aria-hidden="true"></i>
+                    <p class="text-sm font-semibold uppercase tracking-wide text-slate-600">{entity.name}</p>
+                  </div>
+                  <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                    {entity.details.map((detail) => (
+                      <li class="flex gap-2">
+                        <i class="fas fa-circle text-[0.4rem] text-indigo-400 mt-1.5"></i>
+                        <span>{detail}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <div class="rounded-3xl border border-slate-200 bg-white p-8 shadow-soft">
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500">Reliability and trust</p>
+          <h3 class="mt-3 text-2xl font-semibold text-slate-900">Safeguards for professional localisation teams</h3>
+          <ul class="mt-6 space-y-3 text-sm text-slate-600">
+            {reliabilityNotes.map((note) => (
+              <li class="flex gap-3">
+                <i class="fas fa-shield-check text-sm text-indigo-500 mt-1" aria-hidden="true"></i>
+                <span>{note}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
