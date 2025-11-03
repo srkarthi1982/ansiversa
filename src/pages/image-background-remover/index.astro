@@ -1,0 +1,572 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import Button from "../../components/Button.astro";
+
+const heroHighlights = [
+  {
+    title: "Precision AI matting",
+    description:
+      "Switch between general, portrait, product, and document segmentation models to keep edges crisp on every subject.",
+    icon: "fas fa-user-ninja",
+  },
+  {
+    title: "Pro-grade refinements",
+    description:
+      "Trimap brushing, feathering, smart dehalo, and hair detail boosting let artists clean edges without leaving the browser.",
+    icon: "fas fa-paint-brush",
+  },
+  {
+    title: "Batch-ready workspace",
+    description:
+      "Queue multi-file jobs, reuse presets, monitor progress, and export transparent assets or ZIP bundles in one flow.",
+    icon: "fas fa-layer-group",
+  },
+];
+
+const segmentationModels = [
+  {
+    title: "General subject",
+    description:
+      "Balanced for people, pets, and everyday objects with adaptive edge detection for tricky outlines.",
+    icon: "fas fa-camera",
+    items: [
+      "Auto-detect foreground with saliency hints and boundary refinement.",
+      "Checkerboard preview to validate transparency before export.",
+      "Subject centering with safe padding recommendations.",
+    ],
+  },
+  {
+    title: "Portrait & hair",
+    description:
+      "Specialised matting that preserves flyaway hair, fur, and semi-transparent fabrics.",
+    icon: "fas fa-user",
+    items: [
+      "Hair boost toggle for wispy strands and soft focus lighting.",
+      "Color decontamination to neutralise background spill.",
+      "Face privacy tools with blur-on-export options.",
+    ],
+  },
+  {
+    title: "Product & marketplace",
+    description:
+      "Clean product shots for Amazon, Etsy, Shopify, and catalogue-ready listings.",
+    icon: "fas fa-box",
+    items: [
+      "Marketplace templates with auto fit, padding, and margin guides.",
+      "Perspective floor and drop shadow presets for studio looks.",
+      "Outline and stroke controls for marketplace compliance.",
+    ],
+  },
+  {
+    title: "Document cleanup",
+    description:
+      "Remove grey backgrounds, fix folds, and flatten scans for receipts, IDs, or forms.",
+    icon: "fas fa-file-lines",
+    items: [
+      "Adaptive thresholding with halo removal for crisp edges.",
+      "Noise reduction tuned for high DPI print exports.",
+      "Batch rename patterns with auto-detected fields.",
+    ],
+  },
+];
+
+const editingPanels = [
+  {
+    title: "Background studio",
+    description:
+      "Swap in transparent, solid, gradient, blur, or custom image backdrops with quick toggles.",
+    icon: "fas fa-image",
+    eyebrow: "Panel: Background",
+  },
+  {
+    title: "Mask & matting",
+    description:
+      "Fine-tune thresholds, feather, dehalo, and radius with brush-based keep/remove/unknown tools.",
+    icon: "fas fa-scissors",
+    eyebrow: "Panel: Mask",
+  },
+  {
+    title: "Canvas controls",
+    description:
+      "Crop ratios, snap-to-center, padding %, and rotation tools keep subjects marketplace-ready.",
+    icon: "fas fa-crop",
+    eyebrow: "Panel: Canvas",
+  },
+  {
+    title: "Effects & polish",
+    description:
+      "Drop shadows, long shadows, outlines, ambient occlusion fakes, and perspective floors add depth instantly.",
+    icon: "fas fa-wand-magic-sparkles",
+    eyebrow: "Panel: Effects",
+  },
+];
+
+const refinementHighlights = [
+  {
+    title: "Trimap brushing",
+    description:
+      "Paint keep/remove/unknown regions with adjustable size and hardness plus undo/redo history.",
+    icon: "fas fa-brush",
+  },
+  {
+    title: "Edge intelligence",
+    description:
+      "Smart dehalo, defringe, and color decontamination prevent unwanted halos on high-contrast edges.",
+    icon: "fas fa-microchip",
+  },
+  {
+    title: "Subject transforms",
+    description:
+      "Move, scale, rotate, or flip the cut-out with numeric precision and snapping guides.",
+    icon: "fas fa-arrows-alt",
+  },
+  {
+    title: "Export recipes",
+    description:
+      "Preset export formats with DPI, ICC profile, naming patterns, and transparent or subject-only outputs.",
+    icon: "fas fa-file-export",
+  },
+];
+
+const workspaceFlow = [
+  {
+    eyebrow: "Route: /bgremove",
+    title: "Workspace queue",
+    description:
+      "Drag-and-drop uploads, view batch progress, and open the editor with keyboard shortcuts for pro speed.",
+    icon: "fas fa-table-columns",
+  },
+  {
+    eyebrow: "Route: /bgremove/new",
+    title: "Preset builder",
+    description:
+      "Capture segmentation model, background, effects, and export recipes for teams to reuse.",
+    icon: "fas fa-wand-magic-sparkles",
+  },
+  {
+    eyebrow: "Route: /bgremove/history",
+    title: "Job history",
+    description:
+      "Search past jobs, reopen downloads, inspect masks, and duplicate a run with updated assets.",
+    icon: "fas fa-clock-rotate-left",
+  },
+  {
+    eyebrow: "Route: /bgremove/settings",
+    title: "Defaults & safety",
+    description:
+      "Configure plan limits, retention windows, ICC handling, and NSFW/PII scanning policies.",
+    icon: "fas fa-shield-halved",
+  },
+];
+
+const automationHighlights = [
+  {
+    title: "Preset governance",
+    description:
+      "Version presets with owners, change logs, and plan-based quotas so teams can trust automation.",
+    icon: "fas fa-clipboard-check",
+  },
+  {
+    title: "Batch overrides",
+    description:
+      "Adjust crop, background, or export format per item without rebuilding the entire preset recipe.",
+    icon: "fas fa-sliders",
+  },
+  {
+    title: "Smart routing",
+    description:
+      "Mime sniffing and resolution gates ensure heavy assets respect plan caps before processing.",
+    icon: "fas fa-route",
+  },
+  {
+    title: "Shadow synthesis",
+    description:
+      "Generate soft, long, or directional shadows with ambient occlusion blending for realistic composites.",
+    icon: "fas fa-lightbulb",
+  },
+];
+
+const planMatrix = [
+  { feature: "Max input resolution", free: "4 MP", pro: "36 MP" },
+  { feature: "Batch items per job", free: "5", pro: "200" },
+  { feature: "Preset slots", free: "3", pro: "Unlimited" },
+  { feature: "HEIC & TIFF support", free: "—", pro: "Included" },
+  { feature: "SVG mask export", free: "—", pro: "Included" },
+  { feature: "Advanced shadows", free: "Basic drop shadow", pro: "AO + directional" },
+  { feature: "History retention", free: "30 days", pro: "Unlimited" },
+  { feature: "NSFW blocking", free: "Basic", pro: "Enhanced with audit logs" },
+];
+
+const safetyHighlights = [
+  {
+    title: "Plan-aware safety",
+    description:
+      "Resolution caps, quota tracking, and retention windows enforce compliance for every workspace.",
+    icon: "fas fa-scale-balanced",
+  },
+  {
+    title: "Privacy controls",
+    description:
+      "Strip EXIF and GPS by default, toggle ICC and metadata retention, and blur faces when needed.",
+    icon: "fas fa-user-shield",
+  },
+  {
+    title: "Realtime observability",
+    description:
+      "Progress indicators, job logs, and WebSocket updates keep batch runs transparent for operators.",
+    icon: "fas fa-eye",
+  },
+];
+
+const apiGroups = [
+  {
+    title: "Jobs & queue",
+    endpoints: [
+      "POST /bgremove/api/job/create",
+      "GET /bgremove/api/job?id=",
+      "POST /bgremove/api/job/cancel",
+      "GET /bgremove/api/job/list",
+      "POST /bgremove/api/item/add",
+      "POST /bgremove/api/item/remove",
+      "POST /bgremove/api/item/override",
+    ],
+  },
+  {
+    title: "Mask & refinement",
+    endpoints: [
+      "POST /bgremove/api/mask/generate",
+      "POST /bgremove/api/mask/refine",
+      "GET /bgremove/api/mask/get?id=",
+      "POST /bgremove/api/preset/save",
+      "GET /bgremove/api/preset/list",
+    ],
+  },
+  {
+    title: "Runtime & export",
+    endpoints: [
+      "POST /bgremove/api/run",
+      "GET /bgremove/api/progress?id=",
+      "POST /bgremove/api/export",
+      "GET /bgremove/api/export/status?id=",
+      "GET /bgremove/api/history?id=",
+    ],
+  },
+  {
+    title: "Safety & settings",
+    endpoints: [
+      "POST /bgremove/api/settings/save",
+      "POST /bgremove/api/safety/scan",
+      "WebSocket /bgremove/ws",
+    ],
+  },
+];
+
+const integrationHighlights = [
+  {
+    title: "File Converter",
+    description:
+      "Pipe HEIC or RAW uploads through File Converter before background removal for universal compatibility.",
+    icon: "fas fa-repeat",
+  },
+  {
+    title: "Visiting Card Maker",
+    description:
+      "Send masked portraits straight into visiting card layouts with consistent sizing and padding.",
+    icon: "fas fa-id-card",
+  },
+  {
+    title: "Presentation Designer",
+    description:
+      "Drop transparent assets into slide decks and storyboards with a single click from the export drawer.",
+    icon: "fas fa-chalkboard",
+  },
+  {
+    title: "Snippet Generator",
+    description:
+      "Expose subject-only URLs for marketing snippets, newsletters, or automated catalogues.",
+    icon: "fas fa-link",
+  },
+];
+---
+
+<Layout>
+  <main class="min-h-screen bg-slate-50">
+    <HeroSection
+      eyebrow="Image Background Remover"
+      title="Studio-grade cut-outs with AI matting and batch automation"
+      description="Remove or replace backgrounds, refine edges with trimap tools, and export transparent assets for every marketplace."
+      background="bg-gradient-to-br from-slate-950 via-indigo-900 to-slate-900 text-white"
+      padding="py-16"
+      containerClass="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      align="left"
+      titleClass="mt-6 text-4xl font-black tracking-tight sm:text-5xl"
+      descriptionClass="mt-6 max-w-2xl text-base text-white/80"
+    >
+      <Fragment slot="actions">
+        <Button href="/image-background-remover" variant="secondary">
+          <i class="fas fa-rocket text-sm" aria-hidden="true"></i>
+          Open workspace
+        </Button>
+        <Button href="/image-background-remover/presets" variant="outline" class="text-white border-white/40 text-sm">
+          <i class="fas fa-magic text-sm" aria-hidden="true"></i>
+          Build a preset
+        </Button>
+        <Button href="/image-background-remover/history" variant="ghost" class="text-white/80">
+          <i class="fas fa-clock text-sm" aria-hidden="true"></i>
+          View history
+        </Button>
+      </Fragment>
+    </HeroSection>
+
+    <section class="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
+      <div class="grid gap-6 md:grid-cols-3">
+        {heroHighlights.map((highlight) => (
+          <FeatureCard
+            title={highlight.title}
+            description={highlight.description}
+            icon={highlight.icon}
+            class="bg-white/70 backdrop-blur"
+            iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-600"
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Segmentation models"
+          title="Choose the right model for every subject"
+          description="Swap between model families optimised for portraits, products, documents, and general scenes without leaving the workspace."
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          {segmentationModels.map((model) => (
+            <FeatureCard title={model.title} description={model.description} icon={model.icon}>
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {model.items.map((item) => (
+                  <li class="flex items-start gap-2">
+                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workspace routes"
+          title="Purpose-built pages for upload, edit, and export"
+          description="Dedicated routes keep uploads flowing, presets versioned, historical jobs searchable, and defaults governed."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/80"
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-4">
+          {workspaceFlow.map((flow) => (
+            <FeatureCard
+              title={flow.title}
+              description={flow.description}
+              icon={flow.icon}
+              eyebrow={flow.eyebrow}
+              baseClass="rounded-3xl border border-white/20 bg-white/5 p-6 backdrop-blur"
+              eyebrowClass="text-xs font-semibold uppercase tracking-wide text-indigo-200"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/80"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-indigo-200"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Editor panels"
+          title="A three-panel layout tuned for rapid clean-up"
+          description="Keep uploads, canvas, and controls in view at all times. Background, mask, canvas, and effects panels deliver focused tools for every task."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {editingPanels.map((panel) => (
+            <FeatureCard
+              title={panel.title}
+              description={panel.description}
+              icon={panel.icon}
+              eyebrow={panel.eyebrow}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Refinement toolkit"
+          title="Dial in edges, details, and exports"
+          description="Brush-based trimaps, smart dehalo, subject transforms, and export recipes let you polish every pixel before download."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {refinementHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8 text-white">
+        <SectionHeading
+          eyebrow="Automation"
+          title="Scale from single edits to production batches"
+          description="Govern presets, orchestrate queue routing, and synthesise shadows for hundreds of assets per run."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/80"
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {automationHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+              baseClass="rounded-3xl border border-white/20 bg-white/5 p-6 backdrop-blur"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/80"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-indigo-200"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plans"
+          title="Flexible tiers for hobbyists and production teams"
+          description="Start free for quick cut-outs or upgrade to Pro for massive batches, premium exports, and extended retention."
+        />
+        <div class="mt-12 overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
+          <table class="min-w-full divide-y divide-slate-200 text-sm text-slate-700">
+            <thead class="bg-slate-100 text-slate-900">
+              <tr>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">Feature</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">Free</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {planMatrix.map((row, index) => (
+                <tr class={index % 2 === 0 ? "bg-white" : "bg-slate-50"}>
+                  <td class="px-6 py-4 font-medium text-slate-900">{row.feature}</td>
+                  <td class="px-6 py-4">{row.free}</td>
+                  <td class="px-6 py-4">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Security"
+          title="Safety, privacy, and observability by default"
+          description="Enforce plan limits, strip metadata, and stream progress updates so every team can trust the pipeline."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          {safetyHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Developer surface"
+          title="APIs and events for orchestration"
+          description="Control jobs, refine masks, monitor progress, and trigger exports via REST or WebSocket endpoints."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {apiGroups.map((group) => (
+            <FeatureCard
+              title={group.title}
+              description={`${group.endpoints.length} endpoints`}
+              icon="fas fa-terminal"
+            >
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {group.endpoints.map((endpoint) => (
+                  <li class="rounded-xl bg-slate-100 px-3 py-2 font-mono text-xs text-slate-700">{endpoint}</li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Integrations"
+          title="Works with the rest of Ansiversa"
+          description="Send background-free assets into neighbouring mini apps or external pipelines without manual downloads."
+          align="center"
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {integrationHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Get started"
+          title="Launch your first batch in minutes"
+          description="Upload sample assets, test hair-refine brushes, and export transparent PNGs or WebPs to feel the full workflow."
+          align="center"
+        />
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+          <Button href="/image-background-remover" variant="primary">
+            <i class="fas fa-play text-sm" aria-hidden="true"></i>
+            Start removing backgrounds
+          </Button>
+          <Button href="/image-background-remover/settings" variant="outline">
+            <i class="fas fa-gear text-sm" aria-hidden="true"></i>
+            Configure defaults
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
