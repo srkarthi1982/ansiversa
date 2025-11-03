@@ -1,0 +1,480 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import HeroSection from "../../components/HeroSection.astro";
+import SectionHeading from "../../components/SectionHeading.astro";
+import FeatureCard from "../../components/FeatureCard.astro";
+import Button from "../../components/Button.astro";
+
+const heroHighlights = [
+  {
+    title: "All-in-one pipeline",
+    description:
+      "Convert, compress, and optimise documents, media, archives, and data formats without leaving the workspace.",
+    icon: "fas fa-wave-square",
+  },
+  {
+    title: "Batch-first design",
+    description:
+      "Queue hundreds of items per job with preset recipes, per-file overrides, and ZIP export bundles.",
+    icon: "fas fa-layer-group",
+  },
+  {
+    title: "Transparent telemetry",
+    description:
+      "Live progress, detailed job reports, and downloadable logs keep every conversion auditable.",
+    icon: "fas fa-chart-line",
+  },
+];
+
+const formatFamilies = [
+  {
+    title: "Documents",
+    description:
+      "DOCX, PDF, PPTX, XLSX, Markdown, HTML, ODT/ODS/ODP with page ranges, accessibility tags, and form flattening.",
+    icon: "fas fa-file-word",
+    items: [
+      "Round-tripping DOCX ↔ PDF with optional watermark and password protection.",
+      "Slide decks to PDF handouts with margin controls and speaker notes stripping.",
+      "Spreadsheet exports to CSV/JSON Lines with delimiter, encoding, and schema checks.",
+    ],
+  },
+  {
+    title: "Images",
+    description:
+      "PNG, JPEG, WebP, AVIF, SVG, ICO, BMP, and TIFF with resizing, background controls, and watermarking.",
+    icon: "fas fa-image",
+    items: [
+      "Preset dimensions with fit/cover/contain plus DPI and ICC profile toggles.",
+      "Sprite sheet splitting, favicon packs, and background removal (optional).",
+      "Metadata stripping with privacy-safe exports and before/after previews.",
+    ],
+  },
+  {
+    title: "Audio + Video",
+    description:
+      "MP3, WAV, FLAC, AAC, MP4, MOV, MKV, WebM, and GIF with trim, normalise, and bitrate controls.",
+    icon: "fas fa-photo-film",
+    items: [
+      "Timeline trimming with waveform and storyboard previews.",
+      "Codec presets (H.264/H.265/VP9/AV1) with CRF/bitrate selectors and thumbnails.",
+      "Subtitle mux/demux, burn-in (Pro), and channel mapping with loudness normalisation.",
+    ],
+  },
+  {
+    title: "Archives & Data",
+    description:
+      "ZIP, TAR, TAR.GZ, 7Z plus JSON, YAML, TOML, XML, CSV conversions with validation and policies.",
+    icon: "fas fa-database",
+    items: [
+      "Selective archive extraction with include/exclude masks and password prompts.",
+      "Data transformers with minify/pretty-print, schema validation, and key sorting.",
+      "Automated dedupe for tabular datasets with anomaly flags and reports.",
+    ],
+  },
+];
+
+const workspaceFlow = [
+  {
+    eyebrow: "Route: /convert",
+    title: "Workspace queue",
+    description:
+      "Drag-and-drop uploads, clipboard paste, preset selector, queue table, and per-item progress with retry handling.",
+    icon: "fas fa-table-columns",
+  },
+  {
+    eyebrow: "Route: /convert/new",
+    title: "Recipe builder",
+    description:
+      "Start from a blank slate or template to stitch operations, set automation, and publish reusable presets.",
+    icon: "fas fa-wand-magic-sparkles",
+  },
+  {
+    eyebrow: "Route: /convert/history",
+    title: "Job history",
+    description:
+      "Filter by status, preset, type, or date to reopen downloads, review telemetry, and duplicate jobs.",
+    icon: "fas fa-clock-rotate-left",
+  },
+  {
+    eyebrow: "Route: /convert/settings",
+    title: "Defaults & packs",
+    description:
+      "Manage OCR languages, watermark templates, storage retention, and rate limits from a central console.",
+    icon: "fas fa-sliders",
+  },
+];
+
+const automationHighlights = [
+  {
+    title: "Preset governance",
+    description:
+      "Versioned presets with change logs, ownership, and plan-based quotas keep automation predictable.",
+    icon: "fas fa-clipboard-check",
+  },
+  {
+    title: "Per-file overrides",
+    description:
+      "Adjust ranges, quality, or destinations per item without breaking the batch plan.",
+    icon: "fas fa-sliders-up",
+  },
+  {
+    title: "Smart routing",
+    description:
+      "MIME sniffing with extension cross-checks automatically routes files to the right converter.",
+    icon: "fas fa-route",
+  },
+  {
+    title: "Job orchestration",
+    description:
+      "Sandboxed workers with parallel lanes, retry logic, and throttle awareness maintain reliability.",
+    icon: "fas fa-diagram-project",
+  },
+  {
+    title: "Reports & exports",
+    description:
+      "Generate JSON job reports, bundle results into ZIPs, and hand off to other Ansiversa apps.",
+    icon: "fas fa-file-export",
+  },
+  {
+    title: "Shortcut power",
+    description:
+      "Keyboard-first controls — upload (⌘/Ctrl+U), run (⌘/Ctrl+Enter), download ZIP (⌘/Ctrl+J).",
+    icon: "fas fa-keyboard",
+  },
+];
+
+const safetyHighlights = [
+  {
+    title: "Safety gates",
+    description:
+      "Block DRM-protected media, enforce size and quota limits, and quarantine suspicious archives.",
+    icon: "fas fa-shield-halved",
+  },
+  {
+    title: "Privacy aware",
+    description:
+      "Configurable retention windows, manual purge controls, and redaction that strips residual metadata.",
+    icon: "fas fa-user-shield",
+  },
+  {
+    title: "Observability",
+    description:
+      "Audit trails for every job, per-item progress, and webhook-friendly status updates.",
+    icon: "fas fa-eye",
+  },
+];
+
+const planMatrix = [
+  { feature: "Max file size", free: "25 MB", pro: "5 GB" },
+  { feature: "Batch items per job", free: "5", pro: "200" },
+  { feature: "Video duration", free: "10 min/item", pro: "2 hr/item" },
+  { feature: "OCR languages", free: "English", pro: "+ Tamil, Arabic, Hindi, Spanish" },
+  { feature: "Archive 7Z", free: "—", pro: "Included" },
+  { feature: "Subtitle burn-in", free: "—", pro: "Included" },
+  { feature: "Preset slots", free: "3", pro: "Unlimited" },
+  { feature: "History retention", free: "30 days", pro: "Unlimited" },
+];
+
+const apiGroups = [
+  {
+    title: "Jobs & items",
+    endpoints: [
+      "POST /convert/api/job/create",
+      "GET /convert/api/job?id=",
+      "POST /convert/api/job/cancel",
+      "GET /convert/api/job/list",
+      "POST /convert/api/item/add",
+      "POST /convert/api/item/remove",
+      "POST /convert/api/item/override",
+    ],
+  },
+  {
+    title: "Presets & ops",
+    endpoints: [
+      "POST /convert/api/preset/save",
+      "POST /convert/api/preset/delete",
+      "GET /convert/api/preset/list",
+      "POST /convert/api/ops/plan",
+    ],
+  },
+  {
+    title: "Runtime",
+    endpoints: [
+      "POST /convert/api/run",
+      "GET /convert/api/progress?id=",
+      "GET /convert/api/download?assetId=",
+      "GET /convert/api/zip?id=",
+      "GET /convert/api/report?id=",
+    ],
+  },
+  {
+    title: "Safety & settings",
+    endpoints: [
+      "POST /convert/api/scan",
+      "POST /convert/api/settings/save",
+      "WebSocket /convert/ws",
+    ],
+  },
+];
+
+const integrationHighlights = [
+  {
+    title: "Ansiversa orchestration",
+    description:
+      "Hand off parsed transcripts to Meeting Minutes AI, export CSVs to Course Tracker, or push ZIP bundles to Study Planner.",
+    icon: "fas fa-sitemap",
+  },
+  {
+    title: "Webhooks & automations",
+    description:
+      "Emit structured job events for internal tools or Zapier-style bridges to notify teams when conversions finish.",
+    icon: "fas fa-plug",
+  },
+  {
+    title: "Developer ready",
+    description:
+      "Full JSON reports, deterministic presets, and consistent file naming make downstream automation simple.",
+    icon: "fas fa-code",
+  },
+];
+---
+
+<Layout>
+  <main class="min-h-screen bg-slate-50">
+    <HeroSection
+      eyebrow="File Converter"
+      title="Universal conversions with audit-ready controls"
+      description="Batch convert documents, media, archives, and structured data with presets, sandboxed workers, and downloadable job reports."
+      background="bg-gradient-to-br from-slate-950 via-indigo-900 to-slate-900 text-white"
+      padding="py-16"
+      containerClass="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      align="left"
+      titleClass="mt-6 text-4xl font-black tracking-tight sm:text-5xl"
+      descriptionClass="mt-6 max-w-2xl text-base text-white/80"
+    >
+      <Fragment slot="actions">
+        <Button href="/convert" variant="secondary">
+          <i class="fas fa-rocket text-sm" aria-hidden="true"></i>
+          Open workspace
+        </Button>
+        <Button href="/convert/new" variant="outline" class="text-white border-white/40 text-sm">
+          <i class="fas fa-magic text-sm" aria-hidden="true"></i>
+          Build a preset
+        </Button>
+        <Button href="/convert/history" variant="ghost" class="text-white/80">
+          <i class="fas fa-clock text-sm" aria-hidden="true"></i>
+          View history
+        </Button>
+      </Fragment>
+    </HeroSection>
+
+    <section class="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
+      <div class="grid gap-6 md:grid-cols-3">
+        {heroHighlights.map((highlight) => (
+          <FeatureCard
+            title={highlight.title}
+            description={highlight.description}
+            icon={highlight.icon}
+            class="bg-white/70 backdrop-blur"
+            iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-600"
+          />
+        ))}
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Format coverage"
+          title="One toolkit for every file type"
+          description="Stop juggling separate converters. File Converter keeps document, media, archive, and data transformations side-by-side with consistent controls."
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          {formatFamilies.map((family) => (
+            <FeatureCard
+              title={family.title}
+              description={family.description}
+              icon={family.icon}
+            >
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {family.items.map((item) => (
+                  <li class="flex items-start gap-2">
+                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workspace routes"
+          title="Purpose-built pages for every step"
+          description="Dedicated routes cover recipe authoring, live queue management, historical auditing, and global settings."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/80"
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-4">
+          {workspaceFlow.map((flow) => (
+            <FeatureCard
+              title={flow.title}
+              description={flow.description}
+              icon={flow.icon}
+              eyebrow={flow.eyebrow}
+              baseClass="rounded-3xl border border-white/20 bg-white/5 p-6 backdrop-blur"
+              eyebrowClass="text-xs font-semibold uppercase tracking-wide text-indigo-200"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/80"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 text-indigo-200"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Automation"
+          title="Built for operational scale"
+          description="Versioned presets, override controls, and sandboxed workers deliver predictable conversions even on high-volume jobs."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {automationHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Security"
+          title="Safety, privacy, and observability baked in"
+          description="File Converter enforces plan limits, blocks risky files, and provides the audit detail compliance teams expect."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          {safetyHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plans"
+          title="Scale from solo workflows to production teams"
+          description="Choose the plan that matches your throughput. Upgrade to Pro for heavier media workloads, extended history, and premium operations."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/80"
+        />
+        <div class="mt-12 overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl backdrop-blur">
+          <table class="min-w-full divide-y divide-white/10 text-sm text-white/80">
+            <thead class="bg-white/10 text-white">
+              <tr>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">Feature</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">Free</th>
+                <th scope="col" class="px-6 py-4 text-left text-xs font-semibold uppercase tracking-wide">Pro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {planMatrix.map((row, index) => (
+                <tr class={index % 2 === 0 ? "bg-white/0" : "bg-white/5"}>
+                  <td class="px-6 py-4 text-white">{row.feature}</td>
+                  <td class="px-6 py-4">{row.free}</td>
+                  <td class="px-6 py-4">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Developer surface"
+          title="APIs and events to extend the workspace"
+          description="Use REST and WebSocket endpoints to orchestrate conversions, monitor progress, and embed results in your own flows."
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-2">
+          {apiGroups.map((group) => (
+            <FeatureCard
+              title={group.title}
+              description={`${group.endpoints.length} endpoints`}
+              icon="fas fa-terminal"
+            >
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {group.endpoints.map((endpoint) => (
+                  <li class="rounded-xl bg-slate-100 px-3 py-2 font-mono text-xs text-slate-700">{endpoint}</li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Integrations"
+          title="Works with the rest of Ansiversa"
+          description="Send outputs to neighbouring mini apps or pipe job events into your automation stack."
+          align="center"
+        />
+        <div class="mt-12 grid gap-6 md:grid-cols-3">
+          {integrationHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-white py-16">
+      <div class="mx-auto max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Get started"
+          title="Launch your first conversion job in minutes"
+          description="Import sample files, tweak a preset, and export a full job report to experience the end-to-end pipeline."
+          align="center"
+        />
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+          <Button href="/convert" variant="primary">
+            <i class="fas fa-play text-sm" aria-hidden="true"></i>
+            Start a new job
+          </Button>
+          <Button href="/convert/settings" variant="outline">
+            <i class="fas fa-gear text-sm" aria-hidden="true"></i>
+            Configure defaults
+          </Button>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
