@@ -1,0 +1,43 @@
+---
+import SectionHeading from "../../components/SectionHeading.astro";
+---
+<section id="api" class="bg-white py-16 sm:py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="API surface"
+      title="Consistent contracts across the workspace"
+      description="Build custom pipelines or integrate with your existing stack using authenticated REST endpoints."
+    />
+    <div class="mt-8 overflow-hidden rounded-3xl border border-slate-200 bg-slate-900 text-slate-100 shadow-xl" x-cloak>
+      <table class="min-w-full divide-y divide-slate-800 text-sm">
+        <thead class="bg-slate-800 text-xs font-semibold uppercase tracking-wide text-slate-300">
+          <tr>
+            <th class="px-6 py-4 text-left">Method</th>
+            <th class="px-6 py-4 text-left">Path</th>
+            <th class="px-6 py-4 text-left">Description</th>
+            <th class="px-6 py-4 text-left">Auth</th>
+            <th class="px-6 py-4 text-left">Rate limit</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-800">
+          <template x-for="contract in emailNewsletter.state.apiContracts" :key="contract.path">
+            <tr>
+              <td class="px-6 py-4 font-semibold">
+                <span class="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold"
+                  :class="contract.method === 'POST' ? 'bg-indigo-500/20 text-indigo-200' : contract.method === 'PUT' ? 'bg-amber-500/20 text-amber-100' : 'bg-slate-500/20 text-slate-100'"
+                >
+                  <i class="fas fa-terminal text-[10px]"></i>
+                  <span x-text="contract.method"></span>
+                </span>
+              </td>
+              <td class="px-6 py-4 font-mono text-xs" x-text="contract.path"></td>
+              <td class="px-6 py-4 text-sm" x-text="contract.description"></td>
+              <td class="px-6 py-4 text-xs font-semibold" x-text="contract.requiresAuth ? 'Required' : 'Optional'"></td>
+              <td class="px-6 py-4 text-xs" x-text="contract.rateLimit"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>

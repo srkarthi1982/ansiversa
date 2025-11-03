@@ -1,0 +1,382 @@
+---
+import SectionHeading from "../../components/SectionHeading.astro";
+import Button from "../../components/Button.astro";
+---
+<section id="workspace" class="relative overflow-hidden bg-white py-16 sm:py-20">
+  <div class="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-indigo-50/80 to-white"></div>
+  <div class="relative mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Workspace"
+      title="Plan, compose, QA, and ship in one responsive studio"
+      description="Outline blocks, preview desktop and mobile layouts, tune theme tokens, and run deliverability or accessibility checks without leaving the canvas."
+    />
+    <div class="mt-10 grid gap-6 lg:grid-cols-[0.85fr_1.1fr_0.95fr]" x-cloak>
+      <template x-if="emailNewsletter.issue">
+        <div class="space-y-6">
+          <div class="rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-sm backdrop-blur">
+            <header class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Outline</p>
+                <h3 class="mt-1 text-lg font-semibold text-slate-900" x-text="emailNewsletter.issue.title"></h3>
+                <p class="text-xs text-slate-500" x-text="emailNewsletter.issue.audience"></p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full border border-indigo-200 bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-700">
+                <i class="fas fa-clock text-[11px]"></i>
+                <span x-text="emailNewsletter.issue.sendWindow.timezone"></span>
+              </span>
+            </header>
+            <ul class="mt-6 space-y-3">
+              <template x-for="block in emailNewsletter.issue.blocks" :key="block.id">
+                <li>
+                  <button
+                    type="button"
+                    class="flex w-full items-start justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition"
+                    :class="
+                      emailNewsletter.state.selectedBlockId === block.id
+                        ? 'border-indigo-300 bg-indigo-50/80 shadow-sm'
+                        : 'border-slate-200 bg-white hover:border-indigo-200'
+                    "
+                    @click.prevent="emailNewsletter.selectBlock(block.id)"
+                  >
+                    <div>
+                      <p class="text-sm font-semibold text-slate-900" x-text="block.label"></p>
+                      <p class="mt-1 text-xs text-slate-500" x-text="block.summary"></p>
+                    </div>
+                    <div class="flex flex-col items-end text-xs text-slate-500">
+                      <span>
+                        <i class="fas fa-pen mr-1 text-[10px]"></i>
+                        <span x-text="`${block.metrics.wordCount} words`"></span>
+                      </span>
+                      <span class="mt-1">
+                        <i class="fas fa-link mr-1 text-[10px]"></i>
+                        <span x-text="`${block.metrics.links} links`"></span>
+                      </span>
+                    </div>
+                  </button>
+                </li>
+              </template>
+            </ul>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-slate-900 p-6 text-slate-100 shadow-sm">
+            <div class="flex items-center justify-between gap-4">
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-emerald-300">Timeline</p>
+                <p class="mt-2 text-base font-semibold" x-text="emailNewsletter.issue.goal"></p>
+              </div>
+              <span class="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-200">
+                <i class="fas fa-chart-line text-[11px]"></i>
+                KPI focus
+              </span>
+            </div>
+            <ol class="mt-5 space-y-3 text-sm">
+              <template x-for="stage in emailNewsletter.issue.timeline" :key="stage.step">
+                <li class="flex items-start gap-3">
+                  <span class="mt-1 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] font-semibold"
+                    :class="stage.completed ? 'border-emerald-400 bg-emerald-500/20 text-emerald-100' : 'border-slate-600 bg-slate-800 text-slate-300'"
+                  >
+                    <i :class="stage.completed ? 'fas fa-check' : 'fas fa-hourglass-half'"></i>
+                  </span>
+                  <div>
+                    <p class="font-semibold" x-text="stage.step"></p>
+                    <p class="text-xs text-slate-400" x-text="stage.description"></p>
+                  </div>
+                </li>
+              </template>
+            </ol>
+          </div>
+        </div>
+      </template>
+      <div class="relative space-y-6 rounded-3xl border border-slate-200 bg-white/95 p-6 shadow-xl backdrop-blur">
+        <div class="flex items-center justify-between gap-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500">Live preview</p>
+            <p class="mt-2 text-base font-semibold text-slate-900">Desktop & mobile responsive canvas</p>
+          </div>
+          <div class="flex items-center gap-2">
+            <button
+              type="button"
+              class="flex h-10 w-10 items-center justify-center rounded-xl border text-slate-500 transition"
+              :class="emailNewsletter.state.previewMode === 'desktop' ? 'border-indigo-300 bg-indigo-50 text-indigo-700' : 'border-slate-200 hover:border-indigo-200 hover:text-indigo-600'"
+              @click.prevent="emailNewsletter.setPreviewMode('desktop')"
+              aria-label="Preview desktop"
+            >
+              <i class="fas fa-display"></i>
+            </button>
+            <button
+              type="button"
+              class="flex h-10 w-10 items-center justify-center rounded-xl border text-slate-500 transition"
+              :class="emailNewsletter.state.previewMode === 'mobile' ? 'border-indigo-300 bg-indigo-50 text-indigo-700' : 'border-slate-200 hover:border-indigo-200 hover:text-indigo-600'"
+              @click.prevent="emailNewsletter.setPreviewMode('mobile')"
+              aria-label="Preview mobile"
+            >
+              <i class="fas fa-mobile-screen-button"></i>
+            </button>
+          </div>
+        </div>
+        <div class="relative overflow-hidden rounded-3xl border border-slate-200 bg-slate-900/95 p-6 text-slate-100">
+          <div class="absolute right-4 top-4 inline-flex items-center gap-2 rounded-full bg-slate-800/60 px-3 py-1 text-xs font-semibold">
+            <i class="fas" :class="emailNewsletter.state.previewMode === 'desktop' ? 'fa-display' : 'fa-mobile-screen-button'"></i>
+            <span x-text="emailNewsletter.state.previewMode === 'desktop' ? 'Desktop 600px' : 'Mobile 375px'"></span>
+          </div>
+          <div class="space-y-4">
+            <template x-if="emailNewsletter.selectedBlock">
+              <div class="rounded-2xl border border-indigo-400/40 bg-indigo-500/10 p-5">
+                <p class="text-sm font-semibold uppercase tracking-wide text-indigo-200" x-text="emailNewsletter.selectedBlock.label"></p>
+                <p class="mt-2 text-base font-semibold text-white" x-text="emailNewsletter.selectedBlock.summary"></p>
+                <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                  <template x-for="field in emailNewsletter.selectedBlock.fields" :key="field.label">
+                    <div class="rounded-xl border border-indigo-400/30 bg-white/5 p-3">
+                      <p class="text-[11px] font-semibold uppercase tracking-wide text-indigo-200" x-text="field.label"></p>
+                      <p class="mt-1 text-sm text-slate-100" x-text="field.value"></p>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </template>
+            <template x-if="!emailNewsletter.selectedBlock">
+              <div class="rounded-2xl border border-slate-700 bg-slate-800/80 p-5 text-sm text-slate-300">
+                Select a block from the outline to preview copy, tone, and CTA structure.
+              </div>
+            </template>
+            <div class="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+              <div class="flex flex-wrap items-center justify-between gap-3 text-xs text-slate-400">
+                <span>
+                  <i class="fas fa-gauge-high mr-1 text-[10px]"></i>
+                  Reading time
+                  <span class="font-semibold text-slate-200" x-text="emailNewsletter.issue?.metrics.readingTime"></span>
+                </span>
+                <span>
+                  <i class="fas fa-image mr-1 text-[10px]"></i>
+                  <span x-text="emailNewsletter.issue?.metrics.imageTextRatio"></span>
+                </span>
+                <span>
+                  <i class="fas fa-link mr-1 text-[10px]"></i>
+                  <span x-text="`${emailNewsletter.issue?.metrics.totalLinks ?? 0} links`"></span>
+                </span>
+                <span>
+                  <i class="fas fa-font mr-1 text-[10px]"></i>
+                  <span x-text="`${emailNewsletter.issue?.metrics.totalWords ?? 0} words`"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="rounded-3xl border border-indigo-100 bg-indigo-50/70 p-5">
+          <div class="flex items-center justify-between">
+            <p class="text-sm font-semibold text-indigo-900">Subject & preview experiments</p>
+            <Button type="button" size="sm" variant="outline" class="text-indigo-700" @click.prevent="emailNewsletter.queueExport('html')">
+              <i class="fas fa-file-export text-[11px]"></i>
+              Quick HTML export
+            </Button>
+          </div>
+          <div class="mt-4 grid gap-4 md:grid-cols-2">
+            <template x-for="test in emailNewsletter.issue?.subjectTests" :key="test.id">
+              <div class="rounded-2xl border border-indigo-200 bg-white px-4 py-3">
+                <p class="text-xs font-semibold uppercase tracking-wide text-indigo-500" x-text="test.target"></p>
+                <p class="mt-1 text-sm font-semibold text-slate-900" x-text="test.hypothesis"></p>
+                <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                  <template x-for="variant in test.variants" :key="variant.id">
+                    <li>
+                      <label class="flex cursor-pointer items-start gap-2 rounded-xl border px-3 py-2 text-left transition"
+                        :class="test.chosen === variant.id ? 'border-indigo-300 bg-indigo-50' : 'border-slate-200 hover:border-indigo-200'"
+                      >
+                        <input
+                          class="mt-1"
+                          type="radio"
+                          :name="`ab-${test.id}`"
+                          :value="variant.id"
+                          :checked="test.chosen === variant.id"
+                          @change="emailNewsletter.chooseVariant(test.id, variant.id)"
+                        />
+                        <div>
+                          <p class="font-semibold text-slate-900" x-text="variant.value"></p>
+                          <p class="text-xs text-slate-500" x-text="variant.uplift ? `+${variant.uplift}% projected uplift` : 'Variant ready'"></p>
+                        </div>
+                      </label>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+      <div class="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="grid grid-cols-3 gap-2 rounded-2xl bg-slate-100 p-1 text-xs font-semibold text-slate-600">
+          <button
+            type="button"
+            class="rounded-xl px-3 py-2 transition"
+            :class="emailNewsletter.state.activePanel === 'properties' ? 'bg-white text-slate-900 shadow-sm' : 'hover:bg-white/70'"
+            @click.prevent="emailNewsletter.setActivePanel('properties')"
+          >
+            Properties
+          </button>
+          <button
+            type="button"
+            class="rounded-xl px-3 py-2 transition"
+            :class="emailNewsletter.state.activePanel === 'qa' ? 'bg-white text-slate-900 shadow-sm' : 'hover:bg-white/70'"
+            @click.prevent="emailNewsletter.setActivePanel('qa')"
+          >
+            QA & Compliance
+          </button>
+          <button
+            type="button"
+            class="rounded-xl px-3 py-2 transition"
+            :class="emailNewsletter.state.activePanel === 'export' ? 'bg-white text-slate-900 shadow-sm' : 'hover:bg-white/70'"
+            @click.prevent="emailNewsletter.setActivePanel('export')"
+          >
+            Export
+          </button>
+        </div>
+        <div class="mt-5 space-y-5">
+          <template x-if="emailNewsletter.state.activePanel === 'properties'">
+            <div class="space-y-5">
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Brand theme</p>
+                <ul class="mt-3 space-y-2 text-sm text-slate-700">
+                  <li>
+                    <span class="font-semibold text-slate-900">Palette:</span>
+                    <span x-text="`${emailNewsletter.issue?.theme.palette.primary} / ${emailNewsletter.issue?.theme.palette.accent}`"></span>
+                  </li>
+                  <li>
+                    <span class="font-semibold text-slate-900">Typography:</span>
+                    <span x-text="`${emailNewsletter.issue?.theme.typography.headings} · ${emailNewsletter.issue?.theme.typography.body}`"></span>
+                  </li>
+                  <li>
+                    <span class="font-semibold text-slate-900">Buttons:</span>
+                    <span x-text="`Shape: ${emailNewsletter.issue?.theme.buttonShape}`"></span>
+                  </li>
+                  <li>
+                    <span class="font-semibold text-slate-900">Spacing:</span>
+                    <span x-text="emailNewsletter.issue?.theme.spacing"></span>
+                  </li>
+                </ul>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">UTM preset</p>
+                <p class="mt-1 text-sm font-semibold text-slate-900" x-text="emailNewsletter.issue?.utmPreset.name"></p>
+                <dl class="mt-3 grid grid-cols-2 gap-3 text-xs text-slate-600">
+                  <template x-for="(value, key) in emailNewsletter.issue?.utmPreset.parameters" :key="key">
+                    <div class="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                      <dt class="font-semibold uppercase tracking-wide" x-text="key"></dt>
+                      <dd class="mt-1 break-all text-slate-700" x-text="value"></dd>
+                    </div>
+                  </template>
+                </dl>
+                <div class="mt-3 flex items-center justify-between text-xs text-slate-500">
+                  <span>
+                    <i class="fas fa-toggle-on mr-1 text-[11px]"></i>
+                    <span x-text="emailNewsletter.issue?.utmPreset.enabled ? 'Preset active across links' : 'Preset disabled'"></span>
+                  </span>
+                  <button type="button" class="font-semibold text-indigo-600 hover:underline">Manage presets</button>
+                </div>
+              </div>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">KPI snapshot</p>
+                <ul class="mt-3 grid gap-3 text-sm text-slate-700">
+                  <template x-for="kpi in emailNewsletter.issue?.kpis" :key="kpi.label">
+                    <li class="flex items-start justify-between gap-3 rounded-xl border border-slate-200 bg-white px-3 py-2">
+                      <div>
+                        <p class="font-semibold text-slate-900" x-text="kpi.label"></p>
+                        <p class="text-xs text-slate-500" x-text="`Target · ${kpi.target}`"></p>
+                      </div>
+                      <span class="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold"
+                        :class="kpi.trend === 'up' ? 'bg-emerald-100 text-emerald-700' : kpi.trend === 'down' ? 'bg-rose-100 text-rose-700' : 'bg-slate-100 text-slate-600'"
+                      >
+                        <i class="fas" :class="kpi.trend === 'up' ? 'fa-arrow-trend-up' : kpi.trend === 'down' ? 'fa-arrow-trend-down' : 'fa-chart-line'"></i>
+                        <span x-text="kpi.label === 'New trials' ? kpi.progress : `${kpi.progress}%`"></span>
+                      </span>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+          </template>
+          <template x-if="emailNewsletter.state.activePanel === 'qa'">
+            <div class="space-y-4">
+              <div class="rounded-2xl border border-amber-200 bg-amber-50/70 p-4 text-sm text-amber-800">
+                <p class="text-xs font-semibold uppercase tracking-wide">QA summary</p>
+                <p class="mt-1 font-semibold" x-text="`Spam score ${emailNewsletter.issue?.qa.spamScore ?? 0} / 5 · Accessibility ${emailNewsletter.issue?.qa.accessibilityScore ?? 0}%`"></p>
+                <p class="text-xs text-amber-700" x-text="emailNewsletter.issue?.qa.deliverabilityStatus === 'warn' ? 'Warnings detected — resolve blockers before scheduling.' : 'QA passed'"></p>
+              </div>
+              <ul class="space-y-3 text-sm">
+                <template x-for="warning in emailNewsletter.issue?.qa.warnings" :key="warning.id">
+                  <li class="rounded-2xl border px-4 py-3"
+                    :class="warning.severity === 'high' ? 'border-rose-200 bg-rose-50 text-rose-700' : warning.severity === 'medium' ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-slate-200 bg-slate-50 text-slate-700'"
+                  >
+                    <p class="font-semibold" x-text="warning.message"></p>
+                    <p class="mt-1 text-xs" x-text="warning.suggestion"></p>
+                  </li>
+                </template>
+              </ul>
+              <div class="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Checklist</p>
+                <ul class="mt-3 space-y-2 text-sm">
+                  <template x-for="item in emailNewsletter.issue?.qa.checklist" :key="item.id">
+                    <li class="flex items-start gap-2 rounded-xl border px-3 py-2"
+                      :class="item.status === 'pass' ? 'border-emerald-200 bg-emerald-50/80 text-emerald-700' : item.status === 'warn' ? 'border-amber-200 bg-amber-50/80 text-amber-800' : 'border-slate-200 bg-white text-slate-600'"
+                    >
+                      <i class="mt-1 text-[12px]"
+                        :class="item.status === 'pass' ? 'fas fa-circle-check' : item.status === 'warn' ? 'fas fa-triangle-exclamation' : 'fas fa-circle-dot'"
+                      ></i>
+                      <div>
+                        <p class="font-semibold" x-text="item.label"></p>
+                        <p class="text-xs" x-text="item.note ?? ''"></p>
+                      </div>
+                    </li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+          </template>
+          <template x-if="emailNewsletter.state.activePanel === 'export'">
+            <div class="space-y-4 text-sm text-slate-700">
+              <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Recent exports</p>
+              <ul class="space-y-3">
+                <template x-for="job in emailNewsletter.state.exportHistory" :key="job.id">
+                  <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div class="flex items-center justify-between gap-3">
+                      <span class="text-sm font-semibold text-slate-900" x-text="job.format.toUpperCase()"></span>
+                      <span class="inline-flex items-center gap-2 rounded-full px-2 py-1 text-xs font-semibold"
+                        :class="job.status === 'done' ? 'bg-emerald-100 text-emerald-700' : job.status === 'queued' ? 'bg-indigo-100 text-indigo-700' : job.status === 'running' ? 'bg-slate-200 text-slate-700' : 'bg-rose-100 text-rose-700'"
+                      >
+                        <i class="fas" :class="job.status === 'done' ? 'fa-circle-check' : job.status === 'queued' ? 'fa-clock' : job.status === 'running' ? 'fa-spinner' : 'fa-circle-exclamation'"></i>
+                        <span x-text="job.status"></span>
+                      </span>
+                    </div>
+                    <p class="mt-1 text-xs text-slate-500" x-text="new Date(job.startedAt).toLocaleString()"></p>
+                    <p class="mt-2 text-sm" x-text="job.notes"></p>
+                    <template x-if="job.link">
+                      <a class="mt-2 inline-flex items-center gap-2 text-xs font-semibold text-indigo-600 hover:underline" :href="job.link" target="_blank">
+                        <i class="fas fa-arrow-up-right-from-square text-[10px]"></i>
+                        Open export
+                      </a>
+                    </template>
+                  </li>
+                </template>
+              </ul>
+              <div class="flex flex-wrap gap-3">
+                <Button type="button" variant="outline" size="sm" @click.prevent="emailNewsletter.queueExport('html')">
+                  <i class="fas fa-code text-[11px]"></i>
+                  HTML
+                </Button>
+                <Button type="button" variant="outline" size="sm" @click.prevent="emailNewsletter.queueExport('md')">
+                  <i class="fas fa-file-lines text-[11px]"></i>
+                  Markdown
+                </Button>
+                <Button type="button" variant="outline" size="sm" @click.prevent="emailNewsletter.queueExport('json')">
+                  <i class="fas fa-brackets-curly text-[11px]"></i>
+                  JSON
+                </Button>
+                <Button type="button" variant="outline" size="sm" @click.prevent="emailNewsletter.queueExport('zip')">
+                  <i class="fas fa-file-zipper text-[11px]"></i>
+                  ZIP bundle
+                </Button>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
