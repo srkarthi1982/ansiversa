@@ -11,6 +11,7 @@ import './features';
 import './faq';
 import './contact';
 import '../pages/quiz/stores/platform';
+import '../pages/quiz/stores/platforms';
 import '../pages/quiz/stores/subjects';
 import '../pages/quiz/stores/topics';
 import '../pages/quiz/stores/roadmaps';

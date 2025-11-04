@@ -12,6 +12,7 @@ import type { FaqStore } from '../alpineStores/faq';
 import type { ContactStore } from '../alpineStores/contact';
 import type { ResumeStore } from '../pages/resume-builder/stores';
 import type { PlatformStore } from '../pages/quiz/stores/platform';
+import type { PlatformsStore } from '../pages/quiz/stores/platforms';
 import type { SubjectsStore } from '../pages/quiz/stores/subjects';
 import type { TopicsStore } from '../pages/quiz/stores/topics';
 import type { RoadmapsStore } from '../pages/quiz/stores/roadmaps';
@@ -37,6 +38,7 @@ declare module 'alpinejs' {
       contact: ContactStore;
       resume: ResumeStore;
       platform: PlatformStore;
+      platforms: PlatformsStore;
       subjects: SubjectsStore;
       topics: TopicsStore;
       roadmaps: RoadmapsStore;
