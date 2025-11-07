@@ -7,7 +7,7 @@ public/questions-sql
 .astro-vite-cache/
 .vercel/
 .vscode/
-
+.astro-vite-cache/
 # dependencies
 node_modules/
 .npm-cache/
