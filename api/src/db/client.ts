@@ -1,6 +1,6 @@
 // @ts-ignore: module '@libsql/client' has no type declarations
 import { createClient } from '@libsql/client';
-import { ENV } from '../utils/env';
+import { ENV } from '../utils/env.js';
 
 export const db = createClient({
   url: ENV.DATABASE_URL,

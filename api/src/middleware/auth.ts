@@ -1,6 +1,6 @@
 import type { MiddlewareHandler } from 'hono';
 import { jwtVerify } from 'jose';
-import { ENV } from '../utils/env';
+import { ENV } from '../utils/env.js';
 
 export const requireAuth = (): MiddlewareHandler => {
   return async (c, next) => {
