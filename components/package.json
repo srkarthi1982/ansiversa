@@ -1,7 +1,11 @@
 {
-  "name": "components.ansiversa.com",
+  "name": "@ansiversa/components",
   "type": "module",
   "version": "0.0.1",
+  "exports": {
+    ".": "./src/index.ts",
+    "./components/*": "./src/components/*"
+  },
   "scripts": {
     "dev": "astro dev --port 4000",
     "build": "astro build",
