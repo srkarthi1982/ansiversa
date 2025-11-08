@@ -1,7 +1,6 @@
 {
-  "name": "api.ansiversa",
-  "version": "0.1.0",
-  "private": true,
+  "name": "api.ansiversa.com",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "tsx src/server.ts",
