@@ -10,7 +10,7 @@ To make **Ansiversa** the most popular and useful website in history — a singl
 
 ---
 
-## 🧠 Categories and Apps
+## 🧠 Apps
 
 ### 🎓 Learning and Knowledge
 1. Quiz Institute
