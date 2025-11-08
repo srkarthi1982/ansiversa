@@ -1,0 +1,34 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  description?: string;
+  align?: 'left' | 'center';
+  containerClass?: string;
+  eyebrowClass?: string;
+  titleClass?: string;
+  descriptionClass?: string;
+  as?: 'h1' | 'h2' | 'h3' | 'h4';
+}
+
+const {
+  eyebrow,
+  title,
+  description,
+  align = 'left',
+  containerClass = '',
+  eyebrowClass = 'text-xs font-semibold uppercase tracking-[0.35em] text-indigo-500',
+  titleClass = 'mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-slate-900',
+  descriptionClass = 'mt-4 text-base text-slate-600',
+  as = 'h2',
+} = Astro.props as Props;
+
+const alignmentClass = align === 'center' ? 'mx-auto text-center' : '';
+const HeadingTag = as;
+---
+<div class={`${alignmentClass} ${containerClass}`.trim()}>
+  {eyebrow && <p class={eyebrowClass}>{eyebrow}</p>}
+  <HeadingTag class={titleClass}>{title}</HeadingTag>
+  {description && <p class={descriptionClass}>{description}</p>}
+  <slot />
+</div>

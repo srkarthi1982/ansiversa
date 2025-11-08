@@ -1,0 +1,5 @@
+{
+  "name": "ansiversa",
+  "private": true,
+  "workspaces": ["web", "core", "admin", "components"]
+}

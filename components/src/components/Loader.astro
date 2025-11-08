@@ -1,0 +1,42 @@
+<div
+  style="display: none;"
+  x-cloak
+  x-show="$store.loader.visible"
+  x-transition.opacity.duration.300ms
+  class="fixed top-4 inset-x-0 mx-auto w-fit rounded-xl bg-white px-5 py-3 text-slate-900 shadow-soft ring-1 ring-slate-900/10 backdrop-blur flex gap-3 items-center justify-center z-60"
+>
+     <svg class="w-5 text-slate-900" viewBox="0 0 135 140" xmlns="http://www.w3.org/2000/svg">
+        <rect y="10" width="15" height="120" rx="6">
+            <animate attributeName="height" begin="0.5s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
+            <animate attributeName="y" begin="0.5s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
+        </rect>
+        <rect x="30" y="10" width="15" height="120" rx="6">
+            <animate attributeName="height" begin="0.25s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
+            <animate attributeName="y" begin="0.25s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
+        </rect>
+        <rect x="60" width="15" height="140" rx="6">
+            <animate attributeName="height" begin="0s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
+            <animate attributeName="y" begin="0s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
+        </rect>
+        <rect x="90" y="10" width="15" height="120" rx="6">
+            <animate attributeName="height" begin="0.25s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
+            <animate attributeName="y" begin="0.25s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
+        </rect>
+        <rect x="120" y="10" width="15" height="120" rx="6">
+            <animate attributeName="height" begin="0.5s" dur="1s" values="120;110;100;90;80;70;60;50;40;140;120" calcMode="linear" repeatCount="indefinite" />
+            <animate attributeName="y" begin="0.5s" dur="1s" values="10;15;20;25;30;35;40;45;50;0;10" calcMode="linear" repeatCount="indefinite" />
+        </rect>
+    </svg>
+    <div class="text-sm font-medium tracking-wide text-slate-900">Loading...</div>
+</div>
+<div
+  x-show="$store.loader.visible"
+  x-cloak
+  class="fixed inset-0 bg-slate-900/20 z-50"
+  x-transition:enter="transition ease-out duration-300"
+  x-transition:enter-start="opacity-0"
+  x-transition:enter-end="opacity-100"
+  x-transition:leave="transition ease-in duration-300"
+  x-transition:leave-start="opacity-100"
+  x-transition:leave-end="opacity-0"
+></div>

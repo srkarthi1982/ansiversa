@@ -1,5 +1,5 @@
 {
-  "name": "admin.ansiversa.com",
+  "name": "@ansiversa/admin",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -9,6 +9,7 @@
     "astro": "astro"
   },
   "dependencies": {
+    "@ansiversa/components": "file:../components",
     "astro": "^5.15.3"
   }
 }

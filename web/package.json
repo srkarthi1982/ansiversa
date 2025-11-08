@@ -1,5 +1,5 @@
 {
-  "name": "ansiversa.com",
+  "name": "@ansiversa/web",
   "type": "module",
   "version": "0.0.1",
   "scripts": {
@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^2.0.59",
+    "@ansiversa/components": "file:../components",
     "@astrojs/alpinejs": "^0.4.9",
     "@astrojs/vercel": "^8.2.9",
     "@fortawesome/fontawesome-free": "^6.7.2",

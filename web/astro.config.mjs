@@ -11,7 +11,12 @@ export default defineConfig({
   vite: {
     logLevel: 'error', // hides Vite warnings
     cacheDir: '.astro-vite-cache',
-    plugins: [tailwindcss()]
+    plugins: [tailwindcss()],
+    resolve: {
+      alias: {
+        '@ansiversa/components': new URL('../components/src', import.meta.url).pathname,
+      },
+    },
   },
   output: "server",
   adapter: vercel()
