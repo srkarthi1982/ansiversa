@@ -7,7 +7,7 @@ type QuestionDatasetConfig = {
   load: () => Promise<unknown[]>;
 };
 
-const questionFileModules = import.meta.glob('../../db/quiz/questions/*.json');
+const questionFileModules = import.meta.glob('@ansiversa/core/db/quiz/questions/*.json');
 
 const toDatasetId = (value: string) =>
   value

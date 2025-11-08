@@ -3,7 +3,9 @@
   "compilerOptions": {
     "paths": {
       "@ansiversa/components": ["../components/src/index.ts"],
-      "@ansiversa/components/*": ["../components/src/*"]
+      "@ansiversa/components/*": ["../components/src/*"],
+      "@ansiversa/core/*": ["../core/src/*"],
+      "@ansiversa/core/db/*": ["../core/db/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],
