@@ -1,70 +1,43 @@
-# api.ansiversa (Phase 1)
+# Astro Starter Kit: Minimal
 
-Production-ready REST API for Ansiversa (Quiz Institute module) using **Node.js + TypeScript + Hono**.
-
-## ✨ Features
-- Hono router (fast, tiny) with TypeScript
-- Secure headers, CORS, and simple IP rate limiting
-- JWT auth (register/login) via `jose` + `@hono/jwt`
-- Zod validation middleware
-- Turso / libSQL via `@libsql/client`
-- Modular structure: routes → controllers → services → db
-- Migrations & seed scripts
-- Dockerfile
-
-## 🗂️ Structure
-```
-src/
-  app.ts
-  server.ts
-  middleware/
-  routes/
-  controllers/
-  services/
-  schemas/
-  db/
-  utils/
+```sh
+npm create astro@latest -- --template minimal
 ```
 
-## 🚀 Quick Start
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-```bash
-pnpm i   # or npm i / yarn
-cp .env.example .env
-pnpm migrate
-pnpm seed
-pnpm dev
+## 🚀 Project Structure
+
+Inside of your Astro project, you'll see the following folders and files:
+
+```text
+/
+├── public/
+├── src/
+│   └── pages/
+│       └── index.astro
+└── package.json
 ```
 
-Server: http://localhost:8787
+Astro looks for `.astro` or `.md` files in the `src/pages/` directory. Each page is exposed as a route based on its file name.
 
-## 🔐 Security
-- Secure headers via custom middleware
-- CORS allowed from `CORS_ORIGIN`
-- Simple IP rate limiting (60 rpm default)
-- JWT Bearer tokens for protected routes
+There's nothing special about `src/components/`, but that's where we like to put any Astro/React/Vue/Svelte/Preact components.
 
-## 🧪 Health
-`GET /health` → { status: "ok", env: NODE_ENV }
+Any static assets, like images, can be placed in the `public/` directory.
 
-## 📚 Quiz Endpoints (Phase 1)
-- `GET /platforms`
-- `GET /platforms/:id`
-- `POST /platforms`
-- `PUT /platforms/:id`
-- `DELETE /platforms/:id`
+## 🧞 Commands
 
-- `GET /subjects?platformId=...`
-- `POST /subjects`
+All commands are run from the root of the project, from a terminal:
 
-- `GET /topics?subjectId=...`
-- `POST /topics`
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-- `GET /questions/random?topicId=...&limit=10`
-- `POST /questions` (bulk supported)
+## 👀 Want to learn more?
 
-Protected write operations require `Authorization: Bearer <token>`.
-
-## 👤 Auth
-- `POST /auth/register` { email, password }
-- `POST /auth/login` { email, password } → { token }
+Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
