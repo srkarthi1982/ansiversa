@@ -1,0 +1,11 @@
+[
+  {
+    "id": 46,
+    "name": "Healthcare Mastery",
+    "description": "Evidence-based practice and patient care scenarios.",
+    "icon": "ph-stethoscope",
+    "isActive": true,
+    "type": "professional",
+    "qCount": 2000
+  }
+]

@@ -1,0 +1,218 @@
+[
+  {
+    "id": 1001,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which lifestyle change most effectively reduces cardiovascular risk in adults with hypertension?",
+    "o": [
+      "Eliminating dairy products",
+      "Increasing daily fiber intake",
+      "Adding herbal supplements",
+      "Reducing total protein consumption"
+    ],
+    "a": "1",
+    "e": "High-fiber diets lower LDL cholesterol and support weight management.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1002,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "A community screening identifies prediabetes. Which intervention has the strongest evidence for preventing progression?",
+    "o": [
+      "Monthly fasting cleanses",
+      "Daily multivitamin supplementation",
+      "Structured exercise and nutrition program",
+      "Routine antibiotic prophylaxis"
+    ],
+    "a": "2",
+    "e": "Combined lifestyle programs cut conversion to diabetes by more than 50%.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1003,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which vaccine is recommended for adults over 50 to prevent shingles-related complications?",
+    "o": [
+      "Live attenuated varicella vaccine",
+      "Recombinant zoster vaccine",
+      "Seasonal intranasal influenza vaccine",
+      "High-dose hepatitis B vaccine"
+    ],
+    "a": "1",
+    "e": "The recombinant zoster vaccine provides >90% efficacy for adults 50+.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1004,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "For adults beginning strength training, what initial frequency supports safe progress?",
+    "o": [
+      "Once weekly full-body sessions",
+      "Two to three nonconsecutive sessions per week",
+      "Daily high-intensity sessions",
+      "Twice-daily targeted workouts"
+    ],
+    "a": "1",
+    "e": "ACSM guidelines recommend 2-3 days/week with rest between sessions.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1005,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which screening should be prioritized for a 55-year-old with long-term tobacco use?",
+    "o": [
+      "Annual low-dose CT for lung cancer",
+      "Yearly abdominal ultrasound",
+      "Quarterly PSA testing",
+      "Monthly blood cultures"
+    ],
+    "a": "0",
+    "e": "USPSTF recommends annual low-dose CT for adults 50-80 with 20 pack-year history.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1006,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "What is the first-line counseling message for patients with elevated BMI and joint pain?",
+    "o": [
+      "Adopt severe calorie restriction",
+      "Incorporate low-impact aerobic activity and gradual weight loss",
+      "Start high-intensity plyometric training",
+      "Use daily NSAIDs indefinitely"
+    ],
+    "a": "1",
+    "e": "Low-impact exercise paired with modest weight loss improves function and pain.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1007,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which dietary component most effectively lowers LDL cholesterol?",
+    "o": [
+      "Trans fats",
+      "Soluble fiber",
+      "Refined sugars",
+      "High-sodium foods"
+    ],
+    "a": "1",
+    "e": "Soluble fiber binds bile acids and reduces LDL levels.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1008,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "A patient seeks guidance on sleep hygiene. Which recommendation has the strongest evidence?",
+    "o": [
+      "Drink caffeine after dinner",
+      "Maintain a consistent bedtime routine",
+      "Perform intense exercise right before bed",
+      "Use bright screens until falling asleep"
+    ],
+    "a": "1",
+    "e": "Regular schedules reinforce circadian rhythms and sleep quality.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1009,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "For colorectal cancer screening, which modality is recommended every 10 years for average-risk adults?",
+    "o": [
+      "Flexible sigmoidoscopy",
+      "High-resolution anoscopy",
+      "Colonoscopy",
+      "Stool DNA test"
+    ],
+    "a": "2",
+    "e": "Colonoscopy every 10 years is standard for average-risk adults starting at 45.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1010,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which hydration strategy supports endurance events lasting over an hour?",
+    "o": [
+      "Avoid fluids until thirst is intense",
+      "Sip water regularly and include electrolytes",
+      "Use caffeinated beverages exclusively",
+      "Rely on carbonated sodas"
+    ],
+    "a": "1",
+    "e": "Regular fluid intake with electrolytes maintains performance and prevents hyponatremia.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1011,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which counseling point best supports smoking cessation during pregnancy?",
+    "o": [
+      "Gradually reduce cigarettes after delivery",
+      "Emphasize immediate quitting with behavioral support",
+      "Switch to unfiltered cigarettes",
+      "Increase nicotine intake to avoid cravings"
+    ],
+    "a": "1",
+    "e": "Immediate cessation with counseling and pharmacotherapy when appropriate improves outcomes.",
+    "l": "E",
+    "is_active": true
+  },
+  {
+    "id": 1012,
+    "platform_id": 46,
+    "subject_id": 673,
+    "topic_id": 2111,
+    "roadmap_id": 5001,
+    "q": "Which measure most effectively prevents falls in older adults living independently?",
+    "o": [
+      "Thick throw rugs in hallways",
+      "Vision screening, balance training, and home safety review",
+      "Daily fasting",
+      "Restricting all outdoor activity"
+    ],
+    "a": "1",
+    "e": "Multi-component fall prevention programs reduce injury risk significantly.",
+    "l": "E",
+    "is_active": true
+  }
+]

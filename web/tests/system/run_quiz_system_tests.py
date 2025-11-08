@@ -17,7 +17,8 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Sequence
 
 ROOT = Path(__file__).resolve().parents[2]
-DATA_DIR = ROOT / "db" / "quiz"
+CORE_ROOT = ROOT.parent / "core"
+DATA_DIR = CORE_ROOT / "db" / "quiz"
 
 
 @dataclass

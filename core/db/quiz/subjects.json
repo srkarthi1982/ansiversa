@@ -1,0 +1,16 @@
+[
+  {
+    "id": 673,
+    "platformId": 46,
+    "name": "Preventive Care",
+    "isActive": true,
+    "qCount": 850
+  },
+  {
+    "id": 674,
+    "platformId": 46,
+    "name": "Clinical Decision Making",
+    "isActive": true,
+    "qCount": 920
+  }
+]
