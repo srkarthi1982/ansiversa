@@ -9,6 +9,7 @@ import db from '@astrojs/db';
 export default defineConfig({
   integrations: [alpinejs(), db()],
   vite: {
+    logLevel: 'error', // hides Vite warnings
     cacheDir: '.astro-vite-cache',
     plugins: [tailwindcss()]
   },
