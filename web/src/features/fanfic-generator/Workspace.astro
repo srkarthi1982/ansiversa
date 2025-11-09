@@ -1,0 +1,376 @@
+---
+import { Button, SectionHeading } from '@ansiversa/components';
+---
+<section
+  id="fanfic-workspace"
+  class="bg-slate-900 py-16 text-white sm:py-20"
+  x-data="() => ({ fanfic: $store['fanfic-generator'] })"
+>
+  <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Workspace"
+      title="Plan beats, threads, and exports in one canon-friendly hub"
+      description="Switch panels to manage AU rules, scene drafts, safety gates, and export jobs without losing continuity."
+      titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+      descriptionClass="mt-4 text-base text-slate-300"
+    />
+    <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-2xl shadow-indigo-500/20">
+      <div class="flex flex-wrap items-center justify-between gap-4">
+        <div>
+          <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300">Selected project</p>
+          <h3 class="mt-2 text-2xl font-semibold" x-text="fanfic.selectedProject?.title ?? 'No project selected'"></h3>
+          <p class="mt-1 text-xs text-indigo-200">
+            <span x-text="fanfic.selectedProject?.fandom ?? 'Choose a project from the library'"></span>
+            <template x-if="fanfic.selectedProject">
+              <span>
+                · Rating <span class="font-semibold" x-text="fanfic.selectedProject.rating"></span>
+                · Last edited <span x-text="fanfic.formatRelative(fanfic.selectedProject.lastEdited)"></span>
+              </span>
+            </template>
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2">
+          <Button type="button" size="sm" variant="ghost" class="text-indigo-200 hover:text-white" @click.prevent="fanfic.requestExport('md')">
+            <i class="fa-solid fa-file-lines text-xs"></i>
+            Markdown export
+          </Button>
+          <Button type="button" size="sm" variant="ghost" class="text-indigo-200 hover:text-white" @click.prevent="fanfic.requestExport('epub')">
+            <i class="fa-solid fa-book text-xs"></i>
+            EPUB export
+          </Button>
+          <Button type="button" size="sm" class="bg-indigo-500 text-white hover:bg-indigo-400" @click.prevent="fanfic.queueGenerationTask({ id: `task-${Date.now()}`, type: 'scene', label: 'Scene expansion', status: 'queued', eta: '3m', note: 'Pulled from active panel' })">
+            <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+            Queue AI pass
+          </Button>
+        </div>
+      </div>
+      <div class="mt-6 flex flex-wrap gap-2">
+        <template x-for="tab in fanfic.workspaceTabs" :key="tab.id">
+          <button
+            type="button"
+            class="flex items-center gap-2 rounded-full border border-white/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.3em] transition"
+            :class="fanfic.view.activePanel === tab.id ? 'bg-indigo-500/30 text-white border-indigo-300' : 'bg-white/10 text-indigo-100 hover:bg-white/20'"
+            @click="fanfic.setPanel(tab.id)"
+          >
+            <i class="fa-solid" :class="`${tab.icon} text-[11px]`"></i>
+            <span x-text="tab.label"></span>
+          </button>
+        </template>
+      </div>
+      <div class="mt-8 space-y-8">
+        <template x-if="!fanfic.selectedProject">
+          <div class="rounded-2xl border border-dashed border-white/20 bg-white/5 px-6 py-10 text-center text-sm text-indigo-100">
+            Select a project from the library to view workspace panels.
+          </div>
+        </template>
+        <template x-if="fanfic.selectedProject">
+          <div>
+            <div x-show="fanfic.view.activePanel === 'overview'" class="space-y-6">
+              <div class="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
+                <div class="rounded-2xl border border-white/10 bg-white/10 p-5">
+                  <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Style & tone</p>
+                  <div class="mt-3 grid gap-3 text-sm text-indigo-100 sm:grid-cols-2">
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">POV</p>
+                      <p class="text-base font-semibold" x-text="fanfic.selectedProject.style.pov"></p>
+                    </div>
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">Tense</p>
+                      <p class="text-base font-semibold" x-text="fanfic.selectedProject.style.tense"></p>
+                    </div>
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">Pacing</p>
+                      <p class="text-base font-semibold capitalize" x-text="fanfic.selectedProject.style.pacing"></p>
+                    </div>
+                    <div>
+                      <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">Tone sliders</p>
+                      <p class="text-base font-semibold">
+                        <span class="mr-2">Fluff <span x-text="fanfic.selectedProject.style.tone.fluff"></span></span>
+                        <span class="mr-2">Angst <span x-text="fanfic.selectedProject.style.tone.angst"></span></span>
+                        <span class="mr-2">Humor <span x-text="fanfic.selectedProject.style.tone.humor"></span></span>
+                        <span>Suspense <span x-text="fanfic.selectedProject.style.tone.suspense"></span></span>
+                      </p>
+                    </div>
+                  </div>
+                  <div class="mt-4 rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3 text-xs text-indigo-200">
+                    <p class="font-semibold text-indigo-100">Timeline highlights</p>
+                    <ul class="mt-2 space-y-2">
+                      <template x-for="event in fanfic.selectedProject.timeline" :key="event.id">
+                        <li>
+                          <p class="text-sm font-semibold text-white" x-text="event.label"></p>
+                          <p class="text-[11px] text-indigo-200/80" x-text="event.when"></p>
+                          <p class="text-xs text-indigo-200/80" x-text="event.summary"></p>
+                        </li>
+                      </template>
+                      <template x-if="!fanfic.selectedProject.timeline.length">
+                        <li class="text-xs text-indigo-200/70">Add timeline beats from the planner to track canon continuity.</li>
+                      </template>
+                    </ul>
+                  </div>
+                </div>
+                <div class="rounded-2xl border border-white/10 bg-white/10 p-5">
+                  <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Continuity metrics</p>
+                  <dl class="mt-4 grid gap-3 text-sm text-indigo-100">
+                    <div class="rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3">
+                      <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Chapters drafted</dt>
+                      <dd class="mt-1 text-lg font-semibold" x-text="`${fanfic.selectedProject.chapters.filter((chapter) => chapter.status !== 'outline').length}/${fanfic.selectedProject.chapters.length}`"></dd>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3">
+                      <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Words written</dt>
+                      <dd class="mt-1 text-lg font-semibold" x-text="fanfic.formatNumber(fanfic.selectedProject.wordsWritten)"></dd>
+                    </div>
+                    <div class="rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3">
+                      <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Warnings tracked</dt>
+                      <dd class="mt-1 text-lg font-semibold" x-text="fanfic.selectedProject.warnings.join(', ') || 'None'"></dd>
+                    </div>
+                  </dl>
+                  <div class="mt-4 rounded-xl border border-white/10 bg-slate-900/60 px-4 py-3 text-xs text-indigo-200">
+                    <p class="font-semibold text-indigo-100">Active threads</p>
+                    <template x-for="thread in fanfic.selectedProject.threads" :key="thread.id">
+                      <div class="mt-2 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                        <p class="text-sm font-semibold" x-text="thread.name"></p>
+                        <p class="text-[11px] text-indigo-200/80" x-text="`Chapters: ${thread.chapterCoverage.map((entry) => entry.chapterId).join(', ') || '—'}`"></p>
+                      </div>
+                    </template>
+                    <template x-if="!fanfic.selectedProject.threads.length">
+                      <p class="mt-2 text-xs text-indigo-200/70">Create ship, motif, and clue threads to visualize coverage.</p>
+                    </template>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'beats'" class="space-y-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Beat planner</p>
+                <div class="mt-4 grid gap-3 md:grid-cols-3">
+                  <template x-for="beat in fanfic.selectedProject.beats" :key="beat.id">
+                    <div class="rounded-2xl border border-white/10 bg-slate-900/60 p-4">
+                      <div class="flex items-start justify-between">
+                        <h4 class="text-sm font-semibold text-white" x-text="beat.label"></h4>
+                        <span class="rounded-full bg-white/10 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.3em] text-indigo-200" x-text="beat.status"></span>
+                      </div>
+                      <p class="mt-2 text-xs text-indigo-200/80" x-text="beat.summary"></p>
+                      <div class="mt-3 text-[11px] text-indigo-200/80">
+                        Target <span class="font-semibold" x-text="fanfic.formatNumber(beat.wordTarget)"></span> words · Progress <span class="font-semibold" x-text="`${beat.progress}%`"></span>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'chapters'" class="space-y-4">
+              <div class="overflow-hidden rounded-2xl border border-white/10 bg-white/5">
+                <table class="min-w-full divide-y divide-white/10 text-left text-xs text-indigo-100">
+                  <thead class="bg-white/10 text-[11px] uppercase tracking-[0.3em] text-indigo-200">
+                    <tr>
+                      <th class="px-4 py-3">#</th>
+                      <th class="px-4 py-3">Title</th>
+                      <th class="px-4 py-3">Focus</th>
+                      <th class="px-4 py-3">Word target</th>
+                      <th class="px-4 py-3">Drafted</th>
+                      <th class="px-4 py-3">Tropes</th>
+                      <th class="px-4 py-3">Status</th>
+                    </tr>
+                  </thead>
+                  <tbody class="divide-y divide-white/5">
+                    <template x-for="chapter in fanfic.selectedProject.chapters" :key="chapter.id">
+                      <tr class="hover:bg-white/10">
+                        <td class="px-4 py-3 font-semibold" x-text="chapter.index"></td>
+                        <td class="px-4 py-3 font-semibold text-white" x-text="chapter.title"></td>
+                        <td class="px-4 py-3 text-indigo-100" x-text="chapter.focus"></td>
+                        <td class="px-4 py-3" x-text="fanfic.formatNumber(chapter.wordTarget)"></td>
+                        <td class="px-4 py-3" x-text="fanfic.formatNumber(chapter.draftedWords)"></td>
+                        <td class="px-4 py-3" x-text="chapter.tropes.join(', ') || '—'"></td>
+                        <td class="px-4 py-3 uppercase tracking-[0.3em]" x-text="chapter.status"></td>
+                      </tr>
+                    </template>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'characters'" class="grid gap-4 md:grid-cols-2">
+              <template x-for="character in fanfic.selectedProject.characters" :key="character.id">
+                <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                  <div class="flex items-start justify-between">
+                    <div>
+                      <h4 class="text-base font-semibold text-white" x-text="character.name"></h4>
+                      <p class="text-xs uppercase tracking-[0.3em] text-indigo-200" x-text="character.role"></p>
+                    </div>
+                    <span class="text-[11px] text-indigo-200/80" x-text="character.archetype"></span>
+                  </div>
+                  <p class="mt-2 text-xs text-indigo-200/80" x-text="character.voice"></p>
+                  <div class="mt-3 text-[11px] text-indigo-200/70">
+                    <p class="font-semibold text-indigo-100">Motivations</p>
+                    <ul class="mt-1 list-disc space-y-1 pl-4">
+                      <template x-for="motivation in character.motivations" :key="motivation">
+                        <li x-text="motivation"></li>
+                      </template>
+                    </ul>
+                  </div>
+                  <div class="mt-3 text-[11px] text-indigo-200/70">
+                    <p class="font-semibold text-indigo-100">Relationships</p>
+                    <ul class="mt-1 space-y-1">
+                      <template x-for="relation in character.relationships" :key="relation.targetId">
+                        <li x-text="`${relation.label} — ${relation.dynamic}`"></li>
+                      </template>
+                    </ul>
+                  </div>
+                </div>
+              </template>
+              <template x-if="!fanfic.selectedProject.characters.length">
+                <div class="rounded-2xl border border-dashed border-white/20 bg-white/5 p-6 text-sm text-indigo-100">
+                  Add character bios to capture voice, goals, and canon promises.
+                </div>
+              </template>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'au'" class="grid gap-4 md:grid-cols-2">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">AU preset</p>
+                <p class="mt-2 text-sm font-semibold text-white" x-text="fanfic.selectedProject.auPreset"></p>
+                <p class="mt-2 text-xs text-indigo-200/80">Use AU presets to adjust social rules, tech, and lore constraints.</p>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-4">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Lore notebook</p>
+                <ul class="mt-3 space-y-2 text-xs text-indigo-200/80">
+                  <template x-for="entry in fanfic.selectedProject.lore" :key="entry.id">
+                    <li class="rounded-xl border border-white/10 bg-slate-900/60 px-3 py-2">
+                      <p class="text-sm font-semibold text-white" x-text="entry.title"></p>
+                      <p class="text-[11px] uppercase tracking-[0.3em] text-indigo-300" x-text="entry.type"></p>
+                      <p class="mt-1" x-text="entry.summary"></p>
+                    </li>
+                  </template>
+                  <template x-if="!fanfic.selectedProject.lore.length">
+                    <li class="text-xs text-indigo-200/70">Log factions, items, and rule tweaks to avoid canon drift.</li>
+                  </template>
+                </ul>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'threads'" class="space-y-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Thread heatmap</p>
+                <div class="mt-4 overflow-x-auto">
+                  <table class="min-w-full divide-y divide-white/10 text-left text-xs text-indigo-100">
+                    <thead class="bg-white/10 text-[11px] uppercase tracking-[0.3em] text-indigo-200">
+                      <tr>
+                        <th class="px-4 py-3">Thread</th>
+                        <th class="px-4 py-3">Type</th>
+                        <th class="px-4 py-3">Coverage</th>
+                      </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                      <template x-for="thread in fanfic.selectedProject.threads" :key="thread.id">
+                        <tr class="hover:bg-white/10">
+                          <td class="px-4 py-3 font-semibold text-white" x-text="thread.name"></td>
+                          <td class="px-4 py-3 uppercase tracking-[0.3em]" x-text="thread.type"></td>
+                          <td class="px-4 py-3">
+                            <div class="flex flex-wrap gap-2">
+                              <template x-for="entry in thread.chapterCoverage" :key="entry.chapterId">
+                                <span class="inline-flex items-center gap-1 rounded-full px-3 py-1 text-[11px] font-semibold" :style="`background-color: ${thread.color}1a; color: ${thread.color}`">
+                                  <i class="fa-solid fa-circle text-[8px]"></i>
+                                  <span x-text="`${entry.chapterId} · ${entry.intensity}`"></span>
+                                </span>
+                              </template>
+                            </div>
+                          </td>
+                        </tr>
+                      </template>
+                      <template x-if="!fanfic.selectedProject.threads.length">
+                        <tr>
+                          <td colspan="3" class="px-4 py-3 text-center text-xs text-indigo-200/70">Add ship, motif, and clue threads to visualize chapter coverage.</td>
+                        </tr>
+                      </template>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'safety'" class="space-y-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Safety checklist</p>
+                <div class="mt-4 space-y-3">
+                  <template x-for="check in fanfic.selectedProject.safetyChecks" :key="check.id">
+                    <div class="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p class="text-sm font-semibold text-white" x-text="check.label"></p>
+                          <p class="text-xs text-indigo-200/80" x-text="check.detail"></p>
+                        </div>
+                        <span class="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em]" :class="check.status === 'pass' ? 'bg-emerald-500/20 text-emerald-200' : check.status === 'warn' ? 'bg-amber-500/20 text-amber-200' : 'bg-rose-500/20 text-rose-200'" x-text="check.status"></span>
+                      </div>
+                      <div class="mt-3 flex flex-wrap items-center justify-between gap-3 text-[11px] text-indigo-200/80">
+                        <p x-text="check.recommendation"></p>
+                        <Button
+                          type="button"
+                          size="sm"
+                          variant="ghost"
+                          class="text-indigo-200 hover:text-white"
+                          @click.prevent="fanfic.markSafetyReviewed(check.id)"
+                        >
+                          <i class="fa-solid fa-shield-heart text-xs"></i>
+                          Mark reviewed
+                        </Button>
+                      </div>
+                    </div>
+                  </template>
+                  <template x-if="!fanfic.selectedProject.safetyChecks.length">
+                    <div class="rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-xs text-indigo-200/70">
+                      Run safety validation to enforce ratings, consent checks, and trigger coverage.
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'beta'" class="space-y-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Beta feedback</p>
+                <div class="mt-3 space-y-3">
+                  <template x-for="note in fanfic.selectedProject.betaNotes" :key="note.id">
+                    <div class="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p class="text-sm font-semibold text-white" x-text="note.text"></p>
+                          <p class="text-[11px] text-indigo-200/70" x-text="note.sceneId ? `Scene: ${note.sceneId}` : 'Global note'"></p>
+                        </div>
+                        <span class="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em]" :class="note.status === 'resolved' ? 'bg-emerald-500/20 text-emerald-200' : 'bg-amber-500/20 text-amber-200'" x-text="note.status"></span>
+                      </div>
+                      <p class="mt-2 text-[11px] text-indigo-200/70" x-text="`Assigned to ${note.assignedTo}`"></p>
+                    </div>
+                  </template>
+                  <template x-if="!fanfic.selectedProject.betaNotes.length">
+                    <div class="rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-xs text-indigo-200/70">
+                      Run beta critique to receive pacing, voice, and safety suggestions.
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+            <div x-show="fanfic.view.activePanel === 'exports'" class="space-y-4">
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5">
+                <p class="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-200">Export jobs</p>
+                <div class="mt-3 space-y-3">
+                  <template x-for="job in fanfic.selectedProject.exportJobs" :key="job.id">
+                    <div class="rounded-2xl border border-white/10 bg-slate-900/60 px-4 py-3">
+                      <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div>
+                          <p class="text-sm font-semibold text-white" x-text="job.format.toUpperCase()"></p>
+                          <p class="text-[11px] text-indigo-200/70" x-text="fanfic.formatRelative(job.createdAt)"></p>
+                        </div>
+                        <span class="rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.3em]" :class="job.status === 'ready' ? 'bg-emerald-500/20 text-emerald-200' : job.status === 'rendering' ? 'bg-amber-500/20 text-amber-200' : 'bg-slate-500/20 text-slate-200'" x-text="job.status"></span>
+                      </div>
+                      <p class="mt-2 text-xs text-indigo-200/80" x-text="job.note"></p>
+                    </div>
+                  </template>
+                  <template x-if="!fanfic.selectedProject.exportJobs.length">
+                    <div class="rounded-2xl border border-dashed border-white/20 bg-white/5 px-4 py-3 text-xs text-indigo-200/70">
+                      Queue an export to compile Markdown, DOCX, EPUB, or AO3-friendly HTML bundles.
+                    </div>
+                  </template>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>

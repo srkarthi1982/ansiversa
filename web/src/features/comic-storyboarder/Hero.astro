@@ -1,0 +1,92 @@
+---
+import { Button, SectionHeading } from '@ansiversa/components';
+---
+<section class="relative overflow-hidden bg-slate-950 text-white">
+  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,_#6366f120,_transparent_55%)]"></div>
+  <div class="relative mx-auto max-w-6xl px-4 pb-24 pt-20 sm:px-6 lg:px-8 lg:pt-24">
+    <div class="grid gap-12 lg:grid-cols-[1.15fr_0.85fr] lg:items-center">
+      <div class="space-y-8">
+        <SectionHeading
+          eyebrow="Storyboard in seconds"
+          title="Comic Storyboarder"
+          description="Turn scripts and loose ideas into production-ready comic pages, webtoon scrolls, and animatics. Dial in panels, balloons, SFX, and timing without leaving the browser."
+          as="h1"
+          titleClass="mt-3 text-4xl font-bold tracking-tight sm:text-5xl text-white"
+          descriptionClass="mt-6 text-lg text-white/75"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-400"
+        />
+        <div class="flex flex-wrap gap-3">
+          <Button href="#storyboard-workspace" variant="primary" size="lg" class="bg-indigo-500 hover:bg-indigo-400">
+            Start a storyboard
+          </Button>
+          <Button
+            href="#storyboard-exports"
+            variant="tinted"
+            size="lg"
+            class="bg-white/10 text-white hover:bg-white/20"
+          >
+            Explore exports
+          </Button>
+        </div>
+        <dl class="grid gap-4 sm:grid-cols-2 text-sm text-white/80">
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Panel engines</dt>
+            <dd class="mt-1 text-lg font-semibold text-white">Grid, splash, manga diagonals</dd>
+            <p class="mt-2 text-xs text-white/60">Blend presets with freeform shapes and locked gutters.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Lettering suite</dt>
+            <dd class="mt-1 text-lg font-semibold text-white">Speech, SFX, narration</dd>
+            <p class="mt-2 text-xs text-white/60">Auto-fit text, anchor tails, and reuse style presets.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Animatic tools</dt>
+            <dd class="mt-1 text-lg font-semibold text-white">Per-panel timing</dd>
+            <p class="mt-2 text-xs text-white/60">Preview pans, cuts, and dissolves before export.</p>
+          </div>
+          <div class="rounded-2xl border border-white/10 bg-white/5 px-4 py-3">
+            <dt class="text-xs uppercase tracking-[0.3em] text-indigo-300">Asset library</dt>
+            <dd class="mt-1 text-lg font-semibold text-white">Props, backgrounds, refs</dd>
+            <p class="mt-2 text-xs text-white/60">Import PNG/SVG and favorite per project.</p>
+          </div>
+        </dl>
+      </div>
+      <div class="relative">
+        <div class="absolute -left-16 top-12 hidden h-40 w-40 rounded-full bg-indigo-500/40 blur-3xl lg:block"></div>
+        <div class="absolute -right-16 -top-10 hidden h-32 w-32 rounded-full bg-purple-500/30 blur-3xl lg:block"></div>
+        <div class="relative overflow-hidden rounded-[2.25rem] border border-white/10 bg-white/5 shadow-[0_40px_120px_-60px_rgba(99,102,241,0.6)]">
+          <div class="flex items-center justify-between border-b border-white/10 px-6 py-4 text-sm text-white/60">
+            <span class="inline-flex items-center gap-2">
+              <i class="fa-solid fa-clapperboard text-indigo-300"></i>
+              Project wizard
+            </span>
+            <span>Print comic · Webtoon · Strip</span>
+          </div>
+          <div class="space-y-6 px-6 py-6 text-sm text-white/80">
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">Step 1</p>
+              <h3 class="mt-2 text-lg font-semibold text-white">Choose format &amp; safe areas</h3>
+              <p class="mt-2 text-sm text-white/70">
+                Select preset sizes (US comic, A4, vertical scroll) or dial custom trim, bleed, and live areas.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">Step 2</p>
+              <h3 class="mt-2 text-lg font-semibold text-white">Import beats or script scenes</h3>
+              <p class="mt-2 text-sm text-white/70">
+                Paste text, sync with Script Formatter, or generate AI beats to seed panel suggestions and shot types.
+              </p>
+            </div>
+            <div class="rounded-2xl border border-white/10 bg-white/10 p-4">
+              <p class="text-xs uppercase tracking-[0.3em] text-indigo-300">Step 3</p>
+              <h3 class="mt-2 text-lg font-semibold text-white">Generate page plan</h3>
+              <p class="mt-2 text-sm text-white/70">
+                Approve panel grids, reading order, and balloon passes before jumping into drawing and timing.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

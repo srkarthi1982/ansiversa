@@ -1,0 +1,88 @@
+---
+interface StepperStepObject {
+  label?: string;
+}
+
+interface StepperProps {
+  steps: Array<string | StepperStepObject>;
+  currentStep: string;
+  onStepClick?: string;
+  canNavigate?: string;
+  listClass?: string;
+  listStyle?: string;
+  itemClass?: string;
+  buttonClass?: string;
+  activeButtonClass?: string;
+  completedButtonClass?: string;
+  upcomingButtonClass?: string;
+  labelClass?: string;
+  showLabels?: boolean;
+}
+
+const {
+  steps = [],
+  currentStep = 'currentStep',
+  onStepClick,
+  canNavigate,
+  listClass: listClassProp,
+  itemClass: itemClassProp,
+  listStyle,
+  buttonClass: buttonClassProp,
+  activeButtonClass = 'border-indigo-400 bg-indigo-100 text-indigo-700',
+  completedButtonClass = 'border-emerald-300 bg-emerald-50 text-emerald-600',
+  upcomingButtonClass = 'border-slate-200 bg-slate-50 text-slate-400',
+  labelClass: labelClassProp,
+  showLabels = true,
+} = Astro.props as StepperProps;
+
+const normalizedSteps = steps.length
+  ? steps.map((step, index) => {
+      if (typeof step === 'string') return step;
+      if (step && typeof step.label === 'string') return step.label;
+      return `Step ${index + 1}`;
+    })
+  : [];
+
+const stepsExpression = `[${normalizedSteps
+  .map((label, index) => {
+    const safeLabel = label.replace(/"/g, '\\"').replace(/'/g, "\\'");
+    return `'${safeLabel || `Step ${index + 1}`}'`;
+  })
+  .join(', ')}]`;
+
+const baseListClass = 'grid items-start justify-items-center gap-4 text-xs font-semibold text-slate-400';
+const hasCustomListClass = typeof listClassProp === 'string' && listClassProp.trim().length > 0;
+const listClass = `${baseListClass} ${hasCustomListClass ? listClassProp : 'grid-cols-6'}`.trim();
+const autoColumnStyle =
+  normalizedSteps.length && !hasCustomListClass
+    ? `grid-template-columns: repeat(${normalizedSteps.length}, minmax(0, 1fr));`
+    : undefined;
+const listStyleValue = listStyle ?? autoColumnStyle;
+
+const baseItemClass = 'flex flex-col items-center justify-center gap-1 text-center';
+const itemClass = `${baseItemClass} ${itemClassProp ?? ''}`.trim();
+
+const baseButtonClass = 'inline-flex h-9 w-9 items-center justify-center rounded-full border-2 border-current font-semibold transition';
+const buttonClass = `${baseButtonClass} ${buttonClassProp ?? ''}`.trim();
+
+const labelClass = labelClassProp ?? 'text-[11px] uppercase tracking-wide hidden sm:block';
+
+const classExpression = `${currentStep} === index + 1 ? '${activeButtonClass}' : ${currentStep} > index + 1 ? '${completedButtonClass}' : '${upcomingButtonClass}'`;
+const clickExpression = onStepClick ? `${onStepClick}(index + 1)` : undefined;
+const disabledExpression = canNavigate ? `!${canNavigate}(index + 1)` : undefined;
+---
+<ol class={listClass} style={listStyleValue}>
+  <template x-for={`(label, index) in ${stepsExpression}`} :key="`step-${index}`">
+    <li class={itemClass}>
+      <button
+        type="button"
+        class={buttonClass}
+        :class={classExpression}
+        x-text="index + 1"
+        @click.prevent={clickExpression}
+        :disabled={disabledExpression}
+      ></button>
+      {showLabels && <span class={labelClass} x-text="label"></span>}
+    </li>
+  </template>
+</ol>

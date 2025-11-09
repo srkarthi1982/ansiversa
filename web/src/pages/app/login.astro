@@ -3,9 +3,7 @@ import Layout from "../../layouts/Layout.astro";
 import { actions } from 'astro:actions';
 import { getSessionWithUser } from '../../utils/session.server';
 import { getSafeRedirect } from '../../utils/safe-redirect';
-import Textbox from "../../components/Textbox.astro";
-import Password from "../../components/Password.astro";
-import Button from "../../components/Button.astro";
+import { Textbox, Password, Button } from "@ansiversa/components";
 
 // Ensure this page is rendered on-demand (required for form actions)
 export const prerender = false;
@@ -45,7 +43,7 @@ const loginError =
         name="identifier"
         label="Username or email"
         placeholder="you@example.com"
-        required
+        {...({ required: true } as any)}
         autocomplete="username"
       />
 
@@ -55,7 +53,7 @@ const loginError =
         label="Password"
         placeholder="••••••••"
         minlength={6}
-        required
+        {...({ required: true } as any)}
         autocomplete="current-password"
       />
 

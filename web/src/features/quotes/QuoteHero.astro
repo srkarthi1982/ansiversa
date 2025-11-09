@@ -1,0 +1,77 @@
+---
+import { Button } from '@ansiversa/components';
+---
+<section
+  class="relative overflow-hidden bg-gradient-to-br from-emerald-500 via-sky-600 to-slate-900 text-white"
+  x-data="{ quote: $store['quote-forge'] }"
+>
+  <div class="absolute inset-0 opacity-40">
+    <div class="absolute -left-24 top-10 h-72 w-72 rounded-full bg-white/30 blur-3xl"></div>
+    <div class="absolute bottom-0 right-0 h-80 w-80 rounded-full bg-violet-400/30 blur-3xl"></div>
+  </div>
+  <div class="relative mx-auto flex max-w-6xl flex-col gap-12 px-4 py-16 sm:px-6 lg:flex-row lg:items-center lg:px-8">
+    <div class="flex-1 space-y-6">
+      <span class="inline-flex items-center gap-2 rounded-full bg-white/20 px-4 py-1 text-xs font-semibold tracking-[0.3em] uppercase">
+        Quote Forge
+      </span>
+      <h1 class="text-4xl font-black leading-tight sm:text-5xl lg:text-6xl">
+        Generate original quotes with tone controls, safety guards, and export-ready packs
+      </h1>
+      <p class="max-w-2xl text-base text-white/80 sm:text-lg">
+        Brief by topic, persona, and rhetorical devices to spin out multi-language quote variants.
+        Track originality, attribution preferences, pack composition, and scheduling from a single workspace.
+      </p>
+      <div class="flex flex-wrap gap-3">
+        <Button type="button" size="lg" @click="quote.queueGeneration()">
+          <i class="fa-solid fa-wand-magic-sparkles text-sm"></i>
+          Queue generator
+        </Button>
+        <Button type="button" size="lg" variant="outline" @click="quote.togglePlan()">
+          <i class="fa-solid fa-repeat text-sm"></i>
+          <span x-text="quote.plan === 'free' ? 'Preview Pro plan' : 'View Free limits'"></span>
+        </Button>
+        <Button
+          type="button"
+          size="lg"
+          variant="ghost"
+          class="hidden border-white/40 text-white hover:border-white/80 hover:text-white lg:inline-flex"
+          @click="quote.setWorkspaceTab('refine')"
+        >
+          <i class="fa-solid fa-wand-magic text-sm"></i>
+          Jump to refinements
+        </Button>
+      </div>
+    </div>
+    <div class="w-full max-w-sm space-y-4 rounded-3xl border border-white/10 bg-white/10 p-6 shadow-2xl backdrop-blur">
+      <header class="flex items-center justify-between text-xs uppercase tracking-[0.3em] text-white/70">
+        <span class="inline-flex items-center gap-2">
+          <span class="h-2 w-2 animate-pulse rounded-full bg-emerald-300"></span>
+          Workspace metrics
+        </span>
+        <span x-text="quote.plan === 'free' ? 'Free preview' : 'Pro plan'"></span>
+      </header>
+      <dl class="grid gap-3 text-sm">
+        <div class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/60">Active projects</dt>
+          <dd class="mt-1 text-2xl font-semibold" x-text="quote.state.metrics.activeProjects"></dd>
+          <dd class="text-[11px] text-white/60">Mix of discipline, wellness, and launch storytelling briefs.</dd>
+        </div>
+        <div class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/60">Quotes generated</dt>
+          <dd class="mt-1 text-2xl font-semibold" x-text="quote.state.metrics.quotesGenerated"></dd>
+          <dd class="text-[11px] text-white/60">Variants scored across clarity, punch, originality, and cliché risk.</dd>
+        </div>
+        <div class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/60">Avg originality</dt>
+          <dd class="mt-1 text-2xl font-semibold" x-text="`${Math.round(quote.state.metrics.avgOriginality * 100)}%`"></dd>
+          <dd class="text-[11px] text-white/60">Uniqueness scoring guards against overlap and clichés.</dd>
+        </div>
+        <div class="rounded-2xl border border-white/15 bg-white/10 px-4 py-3">
+          <dt class="text-xs font-semibold uppercase tracking-wide text-white/60">Queued exports</dt>
+          <dd class="mt-1 text-2xl font-semibold" x-text="quote.state.aiUsage.exports"></dd>
+          <dd class="text-[11px] text-white/60">CSV, JSON, and Presentation Designer handoffs.</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>

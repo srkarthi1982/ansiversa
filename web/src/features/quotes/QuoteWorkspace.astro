@@ -1,0 +1,480 @@
+---
+import { SectionHeading, Button } from '@ansiversa/components';
+---
+<section
+  id="quote-workspace"
+  class="border-t border-white/10 bg-slate-950 py-20 text-white"
+  x-data="{ quote: $store['quote-forge'] }"
+>
+  <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Workspace"
+      title="Review variants, run refinement passes, organise packs, and schedule releases"
+      description="Stay in a split-pane environment that keeps active quotes, packs, schedules, and quality scores within reach."
+    />
+
+    <div class="grid gap-8 lg:grid-cols-[1.15fr_0.85fr]">
+      <div class="space-y-6 rounded-3xl border border-white/10 bg-white/5 p-6" x-data>
+        <header class="flex flex-wrap items-start justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <p class="text-xs font-semibold uppercase tracking-[0.3em] text-white/60">Active project</p>
+            <h2 class="mt-1 text-2xl font-semibold" x-text="quote.selectedProject?.name ?? 'Select a project'"></h2>
+            <p class="mt-1 text-xs uppercase tracking-[0.3em] text-white/50">
+              <span x-text="quote.selectedProject?.language ?? '—'"></span>
+              · Default tone <span x-text="quote.selectedProject?.defaultTone ?? '—'"></span>
+              · Persona <span x-text="quote.selectedProject?.defaultPersona ?? '—'"></span>
+            </p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3 text-xs text-white/60">
+            <span class="rounded-full bg-white/10 px-3 py-1">
+              Variants logged: <span x-text="quote.selectedProject?.quotes.length ?? 0"></span>
+            </span>
+            <span class="rounded-full bg-white/10 px-3 py-1">
+              Approved: <span x-text="quote.selectedProject?.quotes.filter((q) => q.status === 'approved').length ?? 0"></span>
+            </span>
+            <span class="rounded-full bg-white/10 px-3 py-1">
+              Exports: <span x-text="quote.selectedProject?.exports.length ?? 0"></span>
+            </span>
+          </div>
+        </header>
+
+        <nav class="flex flex-wrap gap-3 text-sm font-semibold">
+          <button
+            type="button"
+            class="rounded-full px-4 py-1.5 transition"
+            :class="quote.view.activeTab === 'variants'
+              ? 'bg-emerald-400/30 text-white'
+              : 'bg-white/5 text-white/60 hover:text-white'"
+            @click="quote.setWorkspaceTab('variants')"
+          >
+            Variants
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-4 py-1.5 transition"
+            :class="quote.view.activeTab === 'refine'
+              ? 'bg-emerald-400/30 text-white'
+              : 'bg-white/5 text-white/60 hover:text-white'"
+            @click="quote.setWorkspaceTab('refine')"
+          >
+            Refine
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-4 py-1.5 transition"
+            :class="quote.view.activeTab === 'bundles'
+              ? 'bg-emerald-400/30 text-white'
+              : 'bg-white/5 text-white/60 hover:text-white'"
+            @click="quote.setWorkspaceTab('bundles')"
+          >
+            Packs
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-4 py-1.5 transition"
+            :class="quote.view.activeTab === 'schedule'
+              ? 'bg-emerald-400/30 text-white'
+              : 'bg-white/5 text-white/60 hover:text-white'"
+            @click="quote.setWorkspaceTab('schedule')"
+          >
+            Schedule
+          </button>
+          <button
+            type="button"
+            class="rounded-full px-4 py-1.5 transition"
+            :class="quote.view.activeTab === 'quality'
+              ? 'bg-emerald-400/30 text-white'
+              : 'bg-white/5 text-white/60 hover:text-white'"
+            @click="quote.setWorkspaceTab('quality')"
+          >
+            Quality and safety
+          </button>
+        </nav>
+
+        <div class="rounded-3xl border border-white/10 bg-slate-950/60 p-5">
+          <div x-cloak x-show="quote.view.activeTab === 'variants'" class="space-y-5">
+            <div class="grid gap-4 lg:grid-cols-[0.95fr_1.05fr]">
+              <div class="space-y-3">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Quote variants</p>
+                <template x-if="!(quote.selectedQuotes.length)">
+                  <p class="text-sm text-white/60">Generate variants to populate this project.</p>
+                </template>
+                <template x-for="variant in quote.selectedQuotes" :key="variant.id">
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl border px-4 py-3 text-left transition"
+                    :class="[
+                      quote.view.activeQuoteId === variant.id
+                        ? 'border-emerald-400/60 bg-emerald-500/20 text-white'
+                        : 'border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:text-white',
+                    ]"
+                    @click="quote.selectQuote(variant.id)"
+                  >
+                    <div class="flex items-start justify-between gap-3">
+                      <p class="text-sm font-medium" x-text="variant.text"></p>
+                      <span class="text-[10px] uppercase tracking-[0.3em] text-white/50" x-text="variant.status"></span>
+                    </div>
+                    <div class="mt-2 flex flex-wrap items-center gap-2 text-[11px] text-white/60">
+                      <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5">
+                        <i class="fa-solid fa-language text-[9px]"></i>
+                        <span x-text="variant.language"></span>
+                      </span>
+                      <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5">
+                        <i class="fa-solid fa-user text-[9px]"></i>
+                        <span x-text="variant.persona"></span>
+                      </span>
+                      <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2 py-0.5">
+                        <i class="fa-solid fa-wand-magic-sparkles text-[9px]"></i>
+                        <span x-text="variant.deviceHints.join(', ')"></span>
+                      </span>
+                    </div>
+                  </button>
+                </template>
+              </div>
+              <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Selected variant</p>
+                <template x-if="quote.selectedQuote">
+                  <div class="mt-3 space-y-4">
+                    <p class="text-lg font-semibold text-white" x-text="quote.selectedQuote?.text"></p>
+                    <p class="text-xs text-white/60">
+                      Attribution: <span x-text="quote.selectedQuote?.attribution.mode"></span>
+                      · Caption: <span x-text="quote.selectedQuote?.caption"></span>
+                    </p>
+                    <div class="grid gap-3 sm:grid-cols-2">
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Clarity</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.clarity ?? 0) * 100) + '%' "></p>
+                      </div>
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Punch</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.punch ?? 0) * 100) + '%' "></p>
+                      </div>
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Originality</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.originality ?? 0) * 100) + '%' "></p>
+                      </div>
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Cliché risk</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.clicheRisk ?? 0) * 100) + '%' "></p>
+                      </div>
+                    </div>
+                    <div>
+                      <p class="text-[11px] uppercase tracking-[0.3em] text-white/50">Hashtags</p>
+                      <div class="mt-2 flex flex-wrap gap-2 text-[11px] text-white/60">
+                        <template x-for="tag in quote.selectedQuote?.hashtags ?? []" :key="tag">
+                          <span class="inline-flex items-center gap-1 rounded-full bg-white/10 px-2.5 py-1">
+                            <i class="fa-solid fa-hashtag text-[9px]"></i>
+                            <span x-text="tag"></span>
+                          </span>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <div x-cloak x-show="quote.view.activeTab === 'refine'" class="space-y-5">
+            <div class="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+              <div class="space-y-3">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Refinement passes</p>
+                <template x-for="pass in quote.refinementPasses" :key="pass.key">
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl border px-4 py-3 text-left transition"
+                    :class="[
+                      quote.view.activeRefinementType === pass.key
+                        ? 'border-emerald-400/60 bg-emerald-500/20 text-white'
+                        : 'border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:text-white',
+                      pass.gating === 'pro' && quote.planIsFree ? 'opacity-60' : '',
+                    ]"
+                    :disabled="pass.gating === 'pro' && quote.planIsFree"
+                    @click="quote.setActiveRefinement(pass.key)"
+                  >
+                    <div class="flex items-center justify-between gap-3 text-xs uppercase tracking-[0.3em] text-white/50">
+                      <span x-text="pass.label"></span>
+                      <span x-text="pass.gating === 'pro' ? 'PRO' : 'FREE'"></span>
+                    </div>
+                    <p class="mt-2 text-sm text-white/80" x-text="pass.description"></p>
+                    <p class="mt-1 text-xs text-white/60" x-text="`Focus: ${pass.focus}`"></p>
+                  </button>
+                </template>
+              </div>
+              <div class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.3em] text-white/50">Pass details</p>
+                  <template x-if="quote.activeRefinementPass">
+                    <div class="mt-3 space-y-2">
+                      <h3 class="text-lg font-semibold text-white" x-text="quote.activeRefinementPass?.label"></h3>
+                      <p class="text-sm text-white/80" x-text="quote.activeRefinementPass?.prompt"></p>
+                      <Button
+                        type="button"
+                        class="mt-3 bg-white text-slate-950 hover:bg-slate-100"
+                        :class="quote.isRefinementLocked(quote.view.activeRefinementType) ? 'pointer-events-none opacity-60' : ''"
+                        @click="quote.runRefinement(quote.view.activeRefinementType)"
+                      >
+                        <i class="fa-solid fa-wand-magic-sparkles text-xs"></i>
+                        Run selected pass
+                      </Button>
+                      <template x-if="quote.isRefinementLocked(quote.view.activeRefinementType)">
+                        <p class="text-xs text-white/60">Upgrade to Pro to unlock this refinement.</p>
+                      </template>
+                    </div>
+                  </template>
+                </div>
+                <div>
+                  <p class="text-xs uppercase tracking-[0.3em] text-white/50">History</p>
+                  <ul class="mt-2 space-y-2 text-xs text-white/60">
+                    <template x-for="refine in quote.selectedQuoteRefinements" :key="refine.id">
+                      <li class="rounded-2xl border border-white/10 bg-slate-950/50 px-4 py-3">
+                        <div class="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.25em] text-white/50">
+                          <span x-text="refine.type"></span>
+                          <span x-text="quote.formatRelative(refine.createdAt)"></span>
+                        </div>
+                        <p class="mt-1 text-sm text-white/80" x-text="refine.after"></p>
+                        <p class="mt-1 text-[11px] text-white/50" x-text="refine.summary"></p>
+                      </li>
+                    </template>
+                    <template x-if="!(quote.selectedQuoteRefinements.length)">
+                      <li class="text-sm text-white/60">No refinements logged yet.</li>
+                    </template>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div x-cloak x-show="quote.view.activeTab === 'bundles'" class="space-y-5">
+            <div class="grid gap-5 lg:grid-cols-[0.85fr_1.15fr]">
+              <div class="space-y-3">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Packs</p>
+                <template x-if="!(quote.selectedProject?.packs?.length)">
+                  <p class="text-sm text-white/60">Create themed packs to stage social sequences.</p>
+                </template>
+                <template x-for="pack in quote.selectedProject?.packs ?? []" :key="pack.id">
+                  <button
+                    type="button"
+                    class="w-full rounded-2xl border px-4 py-3 text-left transition"
+                    :class="[
+                      quote.view.selectedPackId === pack.id
+                        ? 'border-emerald-400/60 bg-emerald-500/20 text-white'
+                        : 'border-white/10 bg-white/5 text-white/70 hover:border-white/30 hover:text-white',
+                      pack.plan === 'pro' && quote.planIsFree ? 'opacity-60' : '',
+                    ]"
+                    :disabled="pack.plan === 'pro' && quote.planIsFree"
+                    @click="quote.selectPack(pack.id)"
+                  >
+                    <div class="flex items-center justify-between gap-3">
+                      <div>
+                        <p class="text-sm font-semibold" x-text="pack.title"></p>
+                        <p class="text-xs text-white/60" x-text="pack.description"></p>
+                      </div>
+                      <span class="text-[10px] uppercase tracking-[0.3em] text-white/50" x-text="pack.plan === 'pro' ? 'PRO' : 'FREE'"></span>
+                    </div>
+                    <p class="mt-2 text-xs text-white/60">Items ready: <span x-text="pack.metrics.ready"></span> · Scheduled: <span x-text="pack.metrics.scheduled"></span></p>
+                  </button>
+                </template>
+              </div>
+              <div class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Pack detail</p>
+                <template x-if="quote.selectedPack">
+                  <div class="space-y-3">
+                    <h3 class="text-lg font-semibold text-white" x-text="quote.selectedPack?.title"></h3>
+                    <p class="text-xs text-white/60" x-text="quote.selectedPack?.description"></p>
+                    <div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-xs text-white/70">
+                      <p class="font-semibold uppercase tracking-[0.3em] text-white/50">Items</p>
+                      <ul class="mt-3 space-y-2">
+                        <template x-for="item in quote.selectedPack?.items ?? []" :key="item.quoteId + item.channel">
+                          <li class="rounded-2xl border border-white/10 bg-white/5 px-3 py-2">
+                            <p class="text-xs text-white/60">
+                              <i class="fa-solid fa-quote-left text-[10px]"></i>
+                              <span x-text="quote.selectedProject?.quotes.find((q) => q.id === item.quoteId)?.text ?? 'Quote removed'"></span>
+                            </p>
+                            <p class="mt-1 text-[11px] text-white/50">
+                              Channel: <span x-text="item.channel"></span>
+                              · Scheduled: <span x-text="item.scheduledAt ? quote.formatDate(item.scheduledAt) : 'Draft'"></span>
+                            </p>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="!quote.selectedPack">
+                  <p class="text-sm text-white/60">Select or create a pack to view details.</p>
+                </template>
+              </div>
+            </div>
+          </div>
+
+          <div x-cloak x-show="quote.view.activeTab === 'schedule'" class="space-y-5">
+            <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+              <p class="text-xs uppercase tracking-[0.3em] text-white/50">Schedule overview</p>
+              <template x-if="quote.selectedSchedule">
+                <div class="mt-3 space-y-3">
+                  <div class="flex flex-wrap items-center gap-3 text-xs text-white/60">
+                    <span>Cadence: <span x-text="quote.selectedSchedule?.cadence"></span></span>
+                    <span>Timezone: <span x-text="quote.selectedSchedule?.timezone"></span></span>
+                    <span>Start date: <span x-text="quote.formatDate(quote.selectedSchedule?.startDate)"></span></span>
+                  </div>
+                  <div class="overflow-hidden rounded-2xl border border-white/10">
+                    <table class="min-w-full divide-y divide-white/10 text-left text-sm">
+                      <thead class="bg-slate-950/60 text-xs uppercase tracking-[0.3em] text-white/50">
+                        <tr>
+                          <th class="px-4 py-3">Date</th>
+                          <th class="px-4 py-3">Channel</th>
+                          <th class="px-4 py-3">Quote</th>
+                          <th class="px-4 py-3">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-white/10">
+                        <template x-for="item in quote.selectedSchedule?.items ?? []" :key="item.id">
+                          <tr class="bg-white/5">
+                            <td class="px-4 py-3 text-xs text-white/70" x-text="quote.formatDate(item.date)"></td>
+                            <td class="px-4 py-3 text-xs text-white/70" x-text="item.channel"></td>
+                            <td class="px-4 py-3 text-xs text-white/70" x-text="quote.selectedProject?.quotes.find((q) => q.id === item.quoteId)?.text ?? 'Quote removed'"></td>
+                            <td class="px-4 py-3 text-xs text-white/70" x-text="item.status"></td>
+                          </tr>
+                        </template>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </template>
+              <template x-if="!quote.selectedSchedule">
+                <p class="mt-3 text-sm text-white/60">Set a cadence to populate the scheduler grid.</p>
+              </template>
+            </div>
+          </div>
+
+          <div x-cloak x-show="quote.view.activeTab === 'quality'" class="space-y-5">
+            <div class="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+              <div class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Scoreboard</p>
+                <template x-if="quote.selectedQuote">
+                  <div class="space-y-3">
+                    <div class="grid gap-3 sm:grid-cols-2">
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Clarity</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.clarity ?? 0) * 100) + '%' "></p>
+                        <p class="text-[11px] text-white/60" x-text="quote.selectedQuote?.score.reasons[0]"></p>
+                      </div>
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Punch</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.punch ?? 0) * 100) + '%' "></p>
+                        <p class="text-[11px] text-white/60" x-text="quote.selectedQuote?.score.reasons[1] ?? 'Cadence in check.'"></p>
+                      </div>
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Originality</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.originality ?? 0) * 100) + '%' "></p>
+                        <p class="text-[11px] text-white/60" x-text="quote.selectedQuote?.score.reasons[0]"></p>
+                      </div>
+                      <div class="rounded-2xl border border-white/10 bg-slate-950/60 px-3 py-2">
+                        <p class="text-[10px] uppercase tracking-[0.3em] text-white/50">Cliché risk</p>
+                        <p class="text-lg font-semibold" x-text="Math.round((quote.selectedQuote?.score.clicheRisk ?? 0) * 100) + '%' "></p>
+                        <p class="text-[11px] text-white/60" x-text="quote.selectedQuote?.score.suggestions[0]"></p>
+                      </div>
+                    </div>
+                    <div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-sm text-white/80">
+                      <p class="text-xs uppercase tracking-[0.3em] text-white/50">Uniqueness</p>
+                      <div class="mt-2 flex items-center justify-between text-lg font-semibold" :class="quote.uniquenessSummary.accentClass">
+                        <span x-text="Math.round(quote.uniquenessSummary.score * 100) + '%' "></span>
+                        <span x-text="quote.uniquenessSummary.badge"></span>
+                      </div>
+                      <p class="mt-1 text-xs text-white/60" x-text="quote.uniquenessSummary.description"></p>
+                      <ul class="mt-2 space-y-1 text-[11px] text-white/50">
+                        <template x-for="overlap in quote.uniquenessSummary.overlaps" :key="overlap.phrase">
+                          <li>
+                            <span x-text="overlap.phrase"></span>
+                            · <span x-text="Math.round(overlap.similarity * 100) + '%' "></span>
+                          </li>
+                        </template>
+                      </ul>
+                    </div>
+                  </div>
+                </template>
+                <template x-if="!quote.selectedQuote">
+                  <p class="text-sm text-white/60">Select a quote to inspect scores and uniqueness.</p>
+                </template>
+              </div>
+              <div class="space-y-4 rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+                <p class="text-xs uppercase tracking-[0.3em] text-white/50">Alerts and suggestions</p>
+                <ul class="space-y-2 text-xs text-white/60">
+                  <template x-for="flag in quote.qualityAlerts" :key="flag.id">
+                    <li
+                      class="rounded-2xl border px-4 py-3"
+                      :class="[
+                        flag.severity === 'critical'
+                          ? 'border-rose-500/60 bg-rose-500/10'
+                          : flag.severity === 'warning'
+                            ? 'border-amber-400/60 bg-amber-500/10'
+                            : 'border-white/10 bg-white/5',
+                      ]"
+                    >
+                      <p class="text-[10px] uppercase tracking-[0.3em] text-white/50" x-text="flag.kind"></p>
+                      <p class="mt-1 text-sm text-white/80" x-text="flag.message"></p>
+                    </li>
+                  </template>
+                  <template x-if="!(quote.qualityAlerts.length)">
+                    <li class="text-sm text-white/60">No alerts triggered — ready to publish.</li>
+                  </template>
+                </ul>
+                <div class="rounded-2xl border border-white/10 bg-slate-950/60 p-4 text-xs text-white/60">
+                  <p class="font-semibold uppercase tracking-[0.3em] text-white/50">Next steps</p>
+                  <ul class="mt-2 space-y-1">
+                    <li>1. Run punch pass if you need stronger cadence.</li>
+                    <li>2. Queue paraphrase for alternate channel copy.</li>
+                    <li>3. Export CSV with captions for scheduler upload.</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <aside class="space-y-6 rounded-3xl border border-white/10 bg-slate-900/70 p-6">
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+          <p class="text-xs uppercase tracking-[0.3em] text-white/60">Project exports</p>
+          <ul class="mt-3 space-y-2">
+            <template x-for="exportJob in quote.selectedProject?.exports ?? []" :key="exportJob.id">
+              <li class="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+                <div class="flex items-center justify-between text-xs text-white/50">
+                  <span><i class="fa-solid fa-file-export"></i> <span x-text="exportJob.format"></span></span>
+                  <span x-text="quote.formatRelative(exportJob.createdAt)"></span>
+                </div>
+                <p class="mt-1 text-xs text-white/60">
+                  Captions: <span x-text="exportJob.includeCaptions ? 'Yes' : 'No'"></span>
+                  · Packs: <span x-text="exportJob.includePacks ? 'Yes' : 'No'"></span>
+                  · Status: <span x-text="exportJob.status"></span>
+                </p>
+              </li>
+            </template>
+            <template x-if="!(quote.selectedProject?.exports?.length)">
+              <li class="text-sm text-white/60">No exports queued yet.</li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-2xl border border-white/10 bg-white/5 p-5 text-sm text-white/80">
+          <p class="text-xs uppercase tracking-[0.3em] text-white/60">Briefs</p>
+          <ul class="mt-3 space-y-2">
+            <template x-for="brief in quote.selectedProject?.briefs ?? []" :key="brief.id">
+              <li class="rounded-2xl border border-white/10 bg-slate-950/60 px-4 py-3">
+                <div class="flex items-center justify-between text-xs text-white/50">
+                  <span x-text="brief.topics.join(', ')"></span>
+                  <span x-text="quote.formatRelative(brief.createdAt)"></span>
+                </div>
+                <p class="mt-1 text-xs text-white/60">Tone: <span x-text="brief.tone"></span> · Persona: <span x-text="brief.persona"></span></p>
+                <p class="mt-1 text-xs text-white/50">Devices: <span x-text="brief.devices.join(', ')"></span></p>
+              </li>
+            </template>
+            <template x-if="!(quote.selectedProject?.briefs?.length)">
+              <li class="text-sm text-white/60">No briefs recorded for this project.</li>
+            </template>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

@@ -1,16 +1,312 @@
 ---
+import Layout from "../layouts/Layout.astro";
+const mission =
+  "Ansiversa is an AI-powered universe of 100 web-based mini-apps engineered for learning, creativity, productivity, and everyday life — all unified under one subscription.";
 
+const pageFiles = Object.keys(
+  import.meta.glob("../pages/**/*.{astro,md,mdx}", { eager: false })
+);
+
+const availableRoutes = new Set(
+  pageFiles.map((filePath) => {
+    const routePath = filePath
+      .replace("../pages", "")
+      .replace(/\/index\.(astro|mdx?|md)$/, "/")
+      .replace(/\.(astro|mdx?|md)$/, "");
+
+    if (!routePath || routePath === "/") {
+      return "/";
+    }
+
+    return routePath.endsWith("/") ? routePath.slice(0, -1) : routePath;
+  })
+);
+
+const normalizeRoute = (href: string | undefined) => {
+  if (!href) return undefined;
+  const withLeadingSlash = href.startsWith("/") ? href : `/${href}`;
+  if (withLeadingSlash === "/") return "/";
+  return withLeadingSlash.replace(/\/+$/, "");
+};
+
+const miniAppRouteAliases = new Map<string, readonly string[]>([]);
+
+const resolveMiniAppHref = (href?: string | undefined) => {
+  const normalized = normalizeRoute(href);
+  if (!normalized) return undefined;
+
+  const candidateRoutes: string[] = [];
+  const seenCandidates = new Set<string>();
+
+  const addCandidate = (value: string | undefined) => {
+    const candidate = normalizeRoute(value);
+    if (!candidate || seenCandidates.has(candidate)) return;
+    seenCandidates.add(candidate);
+    candidateRoutes.push(candidate);
+
+    const aliasValues = miniAppRouteAliases.get(candidate);
+    if (aliasValues) {
+      for (const alias of aliasValues) {
+        addCandidate(alias);
+      }
+    }
+  };
+
+  addCandidate(normalized);
+
+  for (const candidate of [...candidateRoutes]) {
+    if (candidate !== "/") {
+      addCandidate(`${candidate}/pages`);
+    }
+  }
+
+  for (const candidate of candidateRoutes) {
+    if (availableRoutes.has(candidate)) {
+      return candidate;
+    }
+  }
+
+  return candidateRoutes[0];
+};
+
+const miniAppCategories = [
+  {
+    name: "Learning and Knowledge",
+    blurb: "Adaptive study tools for students, teachers, and lifelong learners.",
+    accent: "from-indigo-500 via-sky-500 to-purple-500",
+    apps: [
+      { name: "Quiz", href: "/quiz" },
+      { name: "FlashNote", href: "" },
+      { name: "Research Assistant", href: "/research-assistant" },
+      { name: "AI Notes Summarizer", href: '/ai-notes-summarizer' },
+      { name: "Concept Explainer", href: '/concept-explainer' },
+      { name: "Study Planner", href: 'study-planner' },
+      { name: "Course Tracker", href: 'course-tracker' },
+      { name: "Dictionary+", href: 'dictionary-plus' },
+      { name: "Knowledge Duel", href: '/knowledge-duel' },
+      { name: "Fact Generator", href: "/fact-generator" },
+      { name: "Formula Finder", href: '/formula-finder' },
+      { name: "Language Flashcards", href: '/language-flashcards' },
+      { name: "Exam Simulator", href: '/exam' },
+      { name: "EduPrompt", href: 'eduprompt' },
+      { name: "Lesson Builder", href: 'lesson-builder' },
+      { name: "Study Timer", href: 'study-timer' },
+      { name: "Memory Trainer", href: 'memory-trainer' },
+      { name: "Daily Word Challenge", href: '/daily-word-challenge' },
+      { name: "Smart Textbook Scanner", href: 'smart-textbook-scanner' },
+      { name: "Homework Helper", href: '/homework-helper' },
+    ],
+  },
+  {
+    name: "Career and Professional",
+    blurb: "Polish portfolios, communications, and meetings in minutes.",
+    accent: "from-purple-500 via-indigo-500 to-sky-500",
+    apps: [
+      { name: "Resume Builder", href: "/resume-builder" },
+      { name: "Cover Letter Writer", href: '/cover-letter-writer' },
+      { name: "Visiting Card Maker", href: '/visiting-card-maker' },
+      { name: "Interview Coach", href: '/interview-coach' },
+      { name: "Job Description Analyzer", href: "/job-analyzer" },
+      { name: "Portfolio Creator", href: "/portfolio-creator" },
+      { name: "Meeting Minutes AI", href: "/meeting-minutes-ai" },
+      { name: "Email Polisher", href: "/email-polisher" },
+      { name: "Proposal Writer", href: "/proposal-writer" },
+      { name: "Invoice and Receipt Maker", href: "/invoice-and-receipt-maker" },
+      { name: "Contract Generator", href: "/contract-generator" },
+      { name: "Presentation Designer", href: '/presentation-designer' },
+      { name: "Career Planner", href: "/career-planner" },
+      { name: "LinkedIn Bio Optimizer", href: 'linkedin-bio' },
+      { name: "Client Feedback Analyzer", href: 'client-feedback-analyzer' },
+    ],
+  },
+  {
+    name: "Writing and Creativity",
+    blurb: "Unlock storytelling, marketing copy, and artistic expression.",
+    accent: "from-sky-500 via-purple-500 to-indigo-500",
+    apps: [
+      { name: "StoryCrafter", href: '/storycrafter' },
+      { name: "Poem Studio", href: '/poem-studio' },
+      { name: "Song Lyric Maker", href: 'song-lyric-maker' },
+      { name: "Ad Copy Assistant", href: '/ad-copy-assistant' },
+      { name: "Book Summary Generator", href: '/book-summary-generator' },
+      { name: "Blog Writer", href: "/blog-writer" },
+      { name: "Social Caption Generator", href: 'social-caption-generator' },
+      { name: "Script Formatter", href: "/script-formatter" },
+      { name: "Creative Title Maker", href: '/creative-title-maker' },
+      { name: "Quote Forge", href: '/quote-forge' },
+      { name: "AI Meme Creator", href: '/ai-meme-creator' },
+      { name: "Prompt Builder", href: "/prompt-builder" },
+      { name: "Speech Writer", href: 'speech-writer' },
+      { name: "Novel Outliner", href: '/novel-outliner' },
+      { name: "Comic Storyboarder", href: '/comic-storyboarder' },
+      { name: "Fanfic Generator", href: '/fanfic-generator' },
+      { name: "Email Newsletter Writer", href: '/email-newsletter-writer' },
+      { name: "AI Translator and Tone Fixer", href: '/ai-translator-tone-fixer' },
+      { name: "Rephrase and Paraphraser", href: '/rephrase-paraphraser' },
+      { name: "Grammar Fixer", href: '/grammer-fixer' },
+    ],
+  },
+  {
+    name: "Utility and Productivity",
+    blurb: "Snappy helpers that automate workflows for makers and teams.",
+    accent: "from-indigo-500 via-slate-500 to-purple-500",
+    apps: [
+      { name: "Snippet Generator", href: '/snippet-generator' },
+      { name: "File Converter", href: '/file-converter' },
+      { name: "Image Background Remover", href: 'image-background-remover' },
+      { name: "Unit and Currency Converter", href: undefined },
+      { name: "Price Checker", href: undefined },
+      { name: "QR Code Creator", href: undefined },
+      { name: "Clipboard Manager", href: undefined },
+      { name: "File Compressor", href: undefined },
+      { name: "Text-to-Speech Converter", href: undefined },
+      { name: "Speech-to-Text Converter", href: undefined },
+      { name: "Screenshot Editor", href: undefined },
+      { name: "Color Palette Generator", href: undefined },
+      { name: "Password Generator", href: undefined },
+      { name: "API Tester", href: undefined },
+      { name: "JSON Formatter", href: undefined },
+      { name: "Markdown Editor", href: undefined },
+      { name: "Time Zone Scheduler", href: undefined },
+      { name: "Browser PDF Reader", href: undefined },
+      { name: "Clipboard Translator", href: undefined },
+      { name: "Quick Notepad", href: undefined },
+    ],
+  },
+  {
+    name: "Lifestyle and Well-Being",
+    blurb: "Plan habits, health, travel, and personal growth with gentle insights.",
+    accent: "from-emerald-500 via-sky-500 to-indigo-500",
+    apps: [
+      { name: "Wellness and Goal Planner", href: null },
+      { name: "Event Planner", href: '/event-planner' },
+      { name: "Meal Planner", href: '/meal-planner' },
+      { name: "Fitness Tracker", href: null },
+      { name: "Mood Journal", href: null },
+      { name: "Meditation Script Maker", href: null },
+      { name: "Sleep Routine Designer", href: null },
+      { name: "Affirmation Generator", href: null },
+      { name: "Expense Tracker", href: null},
+      { name: "Shopping List AI", href: null },
+      { name: "Travel Itinerary Builder", href: null },
+      { name: "Recipe Generator", href: null },
+      { name: "Pet Care Planner", href: null },
+      { name: "Language Learning Buddy", href: null },
+      { name: "Eco Habit Tracker", href: null },
+    ],
+  },
+  {
+    name: "Fun and Engagement",
+    blurb: "Bring playful experiences to every break, classroom, or meetup.",
+    accent: "from-purple-500 via-fuchsia-500 to-sky-500",
+    apps: [
+      { name: "Trivia Arena", href: '/trivia-arena' },
+      { name: "Riddle Maker", href: null },
+      { name: "Puzzle Zone", href: '/puzzle-zone' },
+      { name: "Would You Rather", href: null },
+      { name: "Guess the Emoji", href: '/guess-the-emoji' },
+      { name: "AI Character Chat", href: null},
+      { name: "Personality Quiz", href: null },
+      { name: "Fortune Teller", href: '/fortune-teller'},
+      { name: "Horoscope AI", href: null },
+      { name: "Daily Challenge", href: null },
+    ],
+  },
+];
+
+const categorizedMiniApps = miniAppCategories
+  .map((category) => {
+    const apps = category.apps
+      .map((app) => {
+        const resolvedHref = resolveMiniAppHref(app?.href || undefined);
+
+        return {
+          ...app,
+          href: resolvedHref,
+          available: Boolean(resolvedHref),
+        };
+      })
+      .filter((app) => app.available);
+
+    return {
+      ...category,
+      apps,
+    };
+  })
+  .filter((category) => category.apps.length > 0);
+
+const plans = [
+  {
+    name: "Free",
+    price: "$0",
+    description: "Limited usage with access to essential templates.",
+  },
+  {
+    name: "Pro",
+    price: "$10 / month",
+    description: "Full access to every mini-app with priority updates.",
+  },
+  {
+    name: "Elite",
+    price: "$50 / year",
+    description: "All features, annual savings, and early access to launches.",
+  },
+];
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Ansiversa Admin</title>
-	</head>
-	<body>
-		<h1>Ansiversa Admin</h1>
-	</body>
-</html>
+<Layout>
+  <main class="bg-slate-950 text-white">
+    <section id="mini-apps" class="bg-slate-100 py-16 text-slate-950">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div class="grid gap-6">
+          {categorizedMiniApps.map((category) => (
+            <article class="group relative overflow-hidden rounded-3xl border border-slate-200 bg-white/90 p-6 shadow-soft transition hover:-translate-y-1 hover:shadow-xl">
+              <div class={`absolute inset-x-6 top-0 h-1.5 bg-gradient-to-r ${category.accent} opacity-90`}></div>
+              <div class="mt-5 flex flex-col gap-3">
+                <h3 class="text-xl font-semibold text-slate-900">{category.name}</h3>
+                <p class="text-sm text-slate-600">{category.blurb}</p>
+              </div>
+              <ul class="mt-6 grid gap-2 text-sm font-medium text-slate-700 sm:grid-cols-2 lg:grid-cols-3">
+                {category.apps.map((app) => (
+                  <li
+                    class={`flex items-center gap-3 rounded-2xl px-3 py-2 transition ${
+                      app.available
+                        ? 'bg-slate-50/80 text-slate-700 group-hover:bg-slate-100'
+                        : 'bg-slate-100 text-slate-400'
+                    }`}
+                  >
+                    <span class={`inline-flex h-2 w-2 flex-shrink-0 rounded-full bg-gradient-to-r ${category.accent}`}></span>
+                    {app.available && app.href ? (
+                      <a
+                        href={app.href}
+                        class="inline-flex items-center gap-2 text-slate-700 hover:text-indigo-600"
+                      >
+                        <span>{app.name}</span>
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          class="h-3.5 w-3.5"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.5"
+                          aria-hidden="true"
+                          focusable="false"
+                        >
+                          <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                        </svg>
+                      </a>
+                    ) : (
+                      <span class="inline-flex items-center gap-2 text-slate-400">
+                        <span>{app.name}</span>
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

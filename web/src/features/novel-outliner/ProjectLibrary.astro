@@ -1,0 +1,168 @@
+---
+import { SectionHeading } from '@ansiversa/components';
+---
+<section class="bg-white py-16" x-data="() => ({ novel: $store['novel-outliner'] })">
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Library overview"
+      title="Command central for every outline"
+      description="Filter projects by status, plan tier, or structure. Drill into beats, chapters, diagnostics, and exports without leaving the dashboard."
+    />
+    <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+      <div class="rounded-3xl border border-slate-200 bg-slate-50/60 p-6 shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div class="flex flex-wrap items-center gap-2 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+            <span>Status</span>
+            <button
+              type="button"
+              class="rounded-full px-3 py-1 text-[11px]"
+              :class="novel.state.filters.status === 'all' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'"
+              @click="novel.setFilter('status', 'all')"
+            >All</button>
+            <button
+              type="button"
+              class="rounded-full px-3 py-1 text-[11px]"
+              :class="novel.state.filters.status === 'active' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'"
+              @click="novel.setFilter('status', 'active')"
+            >Active</button>
+            <button
+              type="button"
+              class="rounded-full px-3 py-1 text-[11px]"
+              :class="novel.state.filters.status === 'draft' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'"
+              @click="novel.setFilter('status', 'draft')"
+            >Draft</button>
+            <button
+              type="button"
+              class="rounded-full px-3 py-1 text-[11px]"
+              :class="novel.state.filters.status === 'archived' ? 'bg-slate-900 text-white' : 'bg-white text-slate-600'"
+              @click="novel.setFilter('status', 'archived')"
+            >Archived</button>
+          </div>
+          <div class="flex items-center gap-2">
+            <label class="relative">
+              <span class="sr-only">Search projects</span>
+              <input
+                type="search"
+                placeholder="Search loglines, tags, genres"
+                class="w-64 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                x-model="novel.state.filters.search"
+              />
+            </label>
+            <button
+              type="button"
+              class="text-xs font-semibold text-indigo-600 hover:text-indigo-500"
+              @click="novel.resetFilters()"
+            >Reset</button>
+          </div>
+        </div>
+        <div class="mt-6 flex flex-wrap items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <span>Plan</span>
+          <button
+            type="button"
+            class="rounded-full px-3 py-1"
+            :class="novel.state.filters.plan === 'all' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'"
+            @click="novel.setFilter('plan', 'all')"
+          >All</button>
+          <button
+            type="button"
+            class="rounded-full px-3 py-1"
+            :class="novel.state.filters.plan === 'free' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'"
+            @click="novel.setFilter('plan', 'free')"
+          >Free</button>
+          <button
+            type="button"
+            class="rounded-full px-3 py-1"
+            :class="novel.state.filters.plan === 'pro' ? 'bg-indigo-600 text-white' : 'bg-white text-indigo-600'"
+            @click="novel.setFilter('plan', 'pro')"
+          >Pro</button>
+        </div>
+        <div class="mt-6 space-y-3">
+          <template x-for="project in novel.filteredProjects" :key="project.id">
+            <article
+              class="rounded-3xl border border-white/80 bg-white px-5 py-4 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg"
+              :class="project.id === novel.state.selectedProjectId ? 'ring-2 ring-indigo-200' : ''"
+            >
+              <button type="button" class="w-full text-left" @click="novel.selectProject(project.id)">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p class="text-base font-semibold text-slate-900" x-text="project.title"></p>
+                    <p class="mt-1 text-xs text-slate-500" x-text="project.logline"></p>
+                  </div>
+                  <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.3em] text-indigo-500">
+                    <span class="inline-flex items-center gap-2 rounded-full bg-indigo-50 px-3 py-1 text-indigo-700">
+                      <i class="fa-solid fa-layer-group text-[9px]"></i>
+                      <span x-text="project.structureKey"></span>
+                    </span>
+                    <span class="inline-flex items-center gap-2 rounded-full bg-slate-900 px-3 py-1 text-white">
+                      <i class="fa-solid fa-bolt text-[9px]"></i>
+                      <span x-text="`${Math.round((project.draftedWords / project.targetWords) * 100)}% drafted`"></span>
+                    </span>
+                  </div>
+                </div>
+                <div class="mt-4 grid gap-4 sm:grid-cols-4">
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">Target words</p>
+                    <p class="mt-1 text-sm font-semibold text-slate-900" x-text="project.targetWords.toLocaleString()"></p>
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">Drafted</p>
+                    <p class="mt-1 text-sm text-slate-700" x-text="project.draftedWords.toLocaleString()"></p>
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">Heat-map coverage</p>
+                    <p class="mt-1 text-sm text-slate-700" x-text="`${project.heatmapCoverage}%`"></p>
+                  </div>
+                  <div>
+                    <p class="text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-400">Timeline confidence</p>
+                    <p class="mt-1 text-sm text-slate-700" x-text="`${project.timelineConfidence}%`"></p>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <div class="flex items-center justify-between text-xs text-slate-500">
+                    <p>Beat coverage</p>
+                    <p><span x-text="Math.min(100, Math.round((project.acts.flatMap(act => act.beats).filter(beat => beat.status !== 'idea').length / (project.acts.flatMap(act => act.beats).length || 1)) * 100))"></span>% outlined</p>
+                  </div>
+                  <div class="mt-2 h-2 rounded-full bg-slate-200">
+                    <div
+                      class="h-full rounded-full bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500"
+                      :style="`width: ${Math.min(100, Math.round((project.acts.flatMap(act => act.beats).filter(beat => beat.status !== 'idea').length / (project.acts.flatMap(act => act.beats).length || 1)) * 100))}%`"
+                    ></div>
+                  </div>
+                </div>
+              </button>
+            </article>
+          </template>
+          <p class="text-sm text-slate-500" x-show="!novel.filteredProjects.length">No projects match the current filters.</p>
+        </div>
+      </div>
+      <aside class="space-y-5 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div>
+          <h3 class="text-lg font-semibold text-slate-900">Plan breakdown</h3>
+          <p class="mt-1 text-sm text-slate-600">Compare free vs. pro capabilities before inviting collaborators.</p>
+          <ul class="mt-4 space-y-2 text-xs text-slate-600">
+            <template x-for="limit in novel.state.planLimits" :key="limit.feature">
+              <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                <p class="text-sm font-semibold text-slate-900" x-text="limit.feature"></p>
+                <div class="mt-2 grid gap-2 sm:grid-cols-2">
+                  <div class="rounded-xl border border-indigo-100 bg-indigo-50 px-3 py-2">
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.3em] text-indigo-500">Free</p>
+                    <p class="mt-1 text-xs text-slate-700" x-text="limit.free"></p>
+                  </div>
+                  <div class="rounded-xl border border-slate-200 bg-white px-3 py-2">
+                    <p class="text-[10px] font-semibold uppercase tracking-[0.3em] text-slate-500">Pro</p>
+                    <p class="mt-1 text-xs text-slate-700" x-text="limit.pro"></p>
+                  </div>
+                </div>
+              </li>
+            </template>
+          </ul>
+        </div>
+        <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-xs text-slate-600">
+          <p class="font-semibold text-slate-900">API spotlight</p>
+          <p class="mt-1">Sample endpoint: <span class="font-semibold text-indigo-600">/novel/api/project/create</span></p>
+          <p class="mt-2">Use POST requests to spin up projects with structure presets, target words, and snowflake progress baked in.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>

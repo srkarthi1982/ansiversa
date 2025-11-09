@@ -1,0 +1,205 @@
+---
+import { Dropdown, Button, Breadcrumb, Loader } from '@ansiversa/components';
+import '../styles/global.css';
+import '@fortawesome/fontawesome-free/css/all.min.css';
+import { ClientRouter } from 'astro:transitions';
+
+const shouldShowBreadcrumb = Astro.url.pathname !== '/';
+const primaryNavLinks = [
+  { label: 'Admin overview', href: '/' },
+  { label: 'Login', href: '/login' },
+  { label: 'Logout', href: '/logout' },
+];
+const isLoggedIn = false;
+const navbarActions = isLoggedIn
+  ? [{ label: 'Log out', href: '/logout', variant: 'outline' }]
+  : [{ label: 'Log in', href: '/login', variant: 'solid' }];
+const navbarUserMenu = null;
+const navbarVariant = 'light';
+const isDarkNavbar = navbarVariant === 'dark';
+const baseBg = isDarkNavbar ? 'bg-slate-900/80 text-white' : 'bg-white/80 text-slate-900';
+const borderColor = isDarkNavbar ? 'border-slate-700/60' : 'border-slate-200';
+const actionBaseClass =
+  'inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2';
+const outlineClass = isDarkNavbar
+  ? 'border-white/30 text-white hover:bg-white/10 focus:ring-indigo-300 focus:ring-offset-slate-900'
+  : 'border text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-200 focus:ring-offset-white';
+const solidClass = isDarkNavbar
+  ? 'border-transparent bg-indigo-500 text-white hover:bg-indigo-400 focus:ring-indigo-300 focus:ring-offset-slate-900'
+  : 'border-transparent bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-200 focus:ring-offset-white';
+const ghostClass = isDarkNavbar
+  ? 'border-transparent text-white hover:text-indigo-300 focus:ring-indigo-300 focus:ring-offset-slate-900'
+  : 'border-transparent text-slate-900 hover:text-indigo-600 focus:ring-indigo-200 focus:ring-offset-white';
+const getActionClass = (variant = 'outline') => {
+  if (variant === 'solid') return `${actionBaseClass} ${solidClass}`;
+  if (variant === 'ghost') return `${actionBaseClass} ${ghostClass}`;
+  return `${actionBaseClass} ${outlineClass}`;
+};
+const getInitial = (menu) => menu?.initial?.charAt(0)?.toUpperCase() ?? menu?.name?.charAt(0)?.toUpperCase() ?? 'U';
+const resolvedLinks = primaryNavLinks;
+const resolvedActions = navbarActions;
+const resolvedMobileLinks = resolvedLinks;
+const resolvedMobileActions = resolvedActions;
+---
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="generator" content={Astro.generator} />
+		<title>Ansiversa — Advanced Next‑Gen Software Innovation</title>
+		<meta name="description" content="Ansiversa builds versatile, next‑gen software products and platforms." />
+		<ClientRouter />
+		<link rel="icon" href="/favicon/favicon.ico" />
+	</head>
+	<body class="antialiased bg-white text-slate-900">
+    <div id="loading" class="fixed top-0 left-0 w-full h-0.5 bg-primary-600 scale-x-1 origin-left transition-transform duration-400 ease-out z-50"></div>
+		<!-- NAVBAR -->
+    <header x-data="{ open:false }" class={`sticky top-0 z-40 border-b backdrop-blur ${baseBg} ${borderColor}`}>
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <a href="/" class="flex flex-col leading-tight transition-colors">
+            <span class="text-xl md:text-2xl font-semibold tracking-wide">ANSIVERSA</span>
+            <span class="text-[0.625rem] uppercase opacity-70">Curated App Suite</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-8 text-sm">
+            {resolvedLinks.map((link) => (
+              <a href={link.href} class={isDarkNavbar ? 'hover:text-indigo-300' : 'hover:text-indigo-600'}>
+                {link.label}
+              </a>
+            ))}
+          </nav>
+          <div class="hidden md:flex items-center gap-3">
+            {resolvedActions.map((action) => (
+              <a
+                href={action.href}
+                target={action.external ? '_blank' : undefined}
+                rel={action.external ? 'noreferrer' : undefined}
+                class={getActionClass(action.variant)}
+              >
+                {action.label}
+              </a>
+            ))}
+            {navbarUserMenu && (
+              <Dropdown
+                align="right"
+                triggerClass="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500"
+                triggerAriaLabel="User menu"
+              >
+                <span slot="trigger">{getInitial(navbarUserMenu)}</span>
+                <div class="border-b border-slate-200 px-4 py-2">
+                  <p class="text-sm font-semibold text-slate-900">{navbarUserMenu.name}</p>
+                </div>
+                {navbarUserMenu.items.map((item) => (
+                  <a href={item.href} class="block px-4 py-2 text-slate-700 hover:bg-slate-100">
+                    {item.label}
+                  </a>
+                ))}
+                {navbarUserMenu.logout &&
+                  (navbarUserMenu.logout.method === 'GET' ? (
+                    <a href={navbarUserMenu.logout.action} class="block px-4 py-2 text-left text-red-600 hover:bg-slate-100">
+                      {navbarUserMenu.logout.label ?? 'Log out'}
+                    </a>
+                  ) : (
+                    <form method="POST" action={navbarUserMenu.logout.action}>
+                      <button
+                        type="submit"
+                        class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100"
+                      >
+                        {navbarUserMenu.logout.label ?? 'Log out'}
+                      </button>
+                    </form>
+                  ))}
+              </Dropdown>
+            )}
+          </div>
+          <button
+            x-on:click="open = !open"
+            class={`md:hidden inline-flex items-center justify-center rounded-lg border p-2 ${borderColor}`}
+            aria-label="Toggle navigation menu"
+          >
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+        <div x-show="open" x-transition.duration.200ms x-cloak class="md:hidden pb-4">
+          <div class="flex flex-col gap-2 text-sm">
+            {resolvedMobileLinks.map((link) => (
+              <a x-on:click="open=false" href={link.href} class="px-3 py-2 rounded-lg hover:bg-indigo-50/20">
+                {link.label}
+              </a>
+            ))}
+            {navbarUserMenu && (
+              <div class="mt-4 rounded-xl border px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                    {getInitial(navbarUserMenu)}
+                  </span>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">{navbarUserMenu.name}</p>
+                    <p class="text-xs text-slate-500">Account</p>
+                  </div>
+                </div>
+                <div class="mt-3 flex flex-col">
+                  {navbarUserMenu.items.map((item) => (
+                    <a href={item.href} class="px-2 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-md">
+                      {item.label}
+                    </a>
+                  ))}
+                  {navbarUserMenu.logout &&
+                    (navbarUserMenu.logout.method === 'GET' ? (
+                      <a
+                        href={navbarUserMenu.logout.action}
+                        class="px-2 py-2 text-sm font-semibold text-red-600 hover:bg-slate-100 rounded-md"
+                      >
+                        {navbarUserMenu.logout.label ?? 'Log out'}
+                      </a>
+                    ) : (
+                      <form method="POST" action={navbarUserMenu.logout.action}>
+                        <button
+                          type="submit"
+                          class="w-full px-2 py-2 text-left text-sm font-semibold text-red-600 hover:bg-slate-100 rounded-md"
+                        >
+                          {navbarUserMenu.logout.label ?? 'Log out'}
+                        </button>
+                      </form>
+                    ))}
+                </div>
+              </div>
+            )}
+            {resolvedMobileActions.length > 0 && (
+              <div class="mt-3 flex flex-col gap-2">
+                {resolvedMobileActions.map((action) => (
+                  <a
+                    href={action.href}
+                    target={action.external ? '_blank' : undefined}
+                    rel={action.external ? 'noreferrer' : undefined}
+                    class={`${getActionClass(action.variant)} w-full text-center`}
+                  >
+                    {action.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </header>
+  <main transition:name="page">
+    {shouldShowBreadcrumb && <Breadcrumb />}
+    <slot />
+  </main>
+
+  		<Loader />
+	</body>
+</html>
+
+<style>
+	html,
+	body {
+		margin: 0;
+		width: 100%;
+		height: 100%;
+	}
+</style>

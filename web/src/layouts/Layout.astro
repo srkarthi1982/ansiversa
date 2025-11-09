@@ -1,20 +1,71 @@
 ---
+import { Dropdown, Button, Breadcrumb, Loader } from '@ansiversa/components';
 import '../styles/global.css';
 import '@fortawesome/fontawesome-free/css/all.min.css';
 import { actions } from 'astro:actions';
 import { ClientRouter } from 'astro:transitions';
-import Dropdown from '../components/Dropdown.astro';
-import Button from '../components/Button.astro';
-import Breadcrumb from '../components/Breadcrumb.astro';
 import { getSessionWithUser } from '../utils/session.server';
-import Loader from '../components/Loader.astro';
 const sessionData = await getSessionWithUser(Astro.cookies);
 const isLoggedIn = Boolean(sessionData);
 const userInitial = sessionData?.user?.username?.charAt(0)?.toUpperCase() ?? 'U';
 const logoutAction = actions.auth.logout;
 const username = (sessionData?.user?.username ?? 'Account').toUpperCase();
 const shouldShowBreadcrumb = Astro.url.pathname !== '/';
+const primaryNavLinks = [
+  { label: 'Features', href: '/app/features' },
+  { label: 'Pricing', href: '/app/pricing' },
+  { label: 'Docs', href: '/app/documentation' },
+  { label: 'FAQ', href: '/app/faq' },
+  { label: 'Contact', href: '/app/contact' },
+];
+const navbarActions = [
+  { label: 'Docs', href: '/app/documentation', variant: 'ghost' },
+  ...(isLoggedIn ? [] : [{ label: 'Log in', href: '/app/login', variant: 'outline' }]),
+];
+const navbarUserMenu = isLoggedIn
+  ? {
+      name: username,
+      initial: userInitial,
+      items: [
+        { label: 'Dashboard', href: '/app/dashboard' },
+        { label: 'Settings', href: '/app/settings' },
+        { label: 'Billing', href: '/app/billing' },
+        { label: 'Change password', href: '/app/change-password' },
+      ],
+      logout: { action: logoutAction, method: 'POST', label: 'Log out' },
+  }
+  : null;
 const isAdmin = sessionData?.user?.roleId === 1;
+const navbarVariant = 'light';
+const isDarkNavbar = navbarVariant === 'dark';
+const baseBg = isDarkNavbar ? 'bg-slate-900/80 text-white' : 'bg-white/80 text-slate-900';
+const borderColor = isDarkNavbar ? 'border-slate-700/60' : 'border-slate-200';
+const actionBaseClass =
+  'inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold transition focus:outline-none focus:ring-2 focus:ring-offset-2';
+const outlineClass = isDarkNavbar
+  ? 'border-white/30 text-white hover:bg-white/10 focus:ring-indigo-300 focus:ring-offset-slate-900'
+  : 'border text-indigo-600 hover:bg-indigo-50 focus:ring-indigo-200 focus:ring-offset-white';
+const solidClass = isDarkNavbar
+  ? 'border-transparent bg-indigo-500 text-white hover:bg-indigo-400 focus:ring-indigo-300 focus:ring-offset-slate-900'
+  : 'border-transparent bg-indigo-600 text-white hover:bg-indigo-500 focus:ring-indigo-200 focus:ring-offset-white';
+const ghostClass = isDarkNavbar
+  ? 'border-transparent text-white hover:text-indigo-300 focus:ring-indigo-300 focus:ring-offset-slate-900'
+  : 'border-transparent text-slate-900 hover:text-indigo-600 focus:ring-indigo-200 focus:ring-offset-white';
+const getActionClass = (variant = 'outline') => {
+  if (variant === 'solid') return `${actionBaseClass} ${solidClass}`;
+  if (variant === 'ghost') return `${actionBaseClass} ${ghostClass}`;
+  return `${actionBaseClass} ${outlineClass}`;
+};
+interface UserMenu {
+  initial?: string;
+  name?: string;
+}
+
+const getInitial = (menu: UserMenu | null) => menu?.initial?.charAt(0)?.toUpperCase() ?? menu?.name?.charAt(0)?.toUpperCase() ?? 'U';
+const resolvedLinks = primaryNavLinks;
+const resolvedActions = navbarActions;
+const resolvedMobileLinks = resolvedLinks;
+const resolvedMobileActions = resolvedActions;
 ---
 <!doctype html>
 <html lang="en">
@@ -60,209 +111,137 @@ const isAdmin = sessionData?.user?.roleId === 1;
 	<body class="antialiased bg-white text-slate-900">
     <div id="loading" class="fixed top-0 left-0 w-full h-0.5 bg-primary-600 scale-x-1 origin-left transition-transform duration-400 ease-out z-50"></div>
 		<!-- NAVBAR -->
-  <header
-    x-data="{ open:false }"
-    x-on:close-nav.window="open=false"
-    class="sticky top-0 z-40 border-b bg-white/80 backdrop-blur"
-  >
-    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-      <div class="flex h-16 items-center justify-between">
-        <a
-          href="/"
-          class="flex flex-col leading-tight transition-colors"
-        >
-          <span class="text-xl md:text-2xl font-semibold tracking-wide">ANSIVERSA</span>
-          <span class="text-[0.625rem] uppercase">Curated App Suite</span>
-        </a>
-        <nav class="hidden md:flex items-center gap-8 text-sm">
-          <a href="/app/features" class="hover:text-indigo-600">Features</a>
-          <a href="/app/pricing" class="hover:text-indigo-600">Pricing</a>
-          <a href="/app/documentation" class="hover:text-indigo-600">Docs</a>
-          <a href="/app/faq" class="hover:text-indigo-600">FAQ</a>
-          <a href="/app/contact" class="hover:text-indigo-600">Contact</a>
-        </nav>
-        <div class="hidden md:flex items-center gap-3">
-          {isLoggedIn ? (
-            <Dropdown
-              align="right"
-              triggerClass="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500"
-              triggerAriaLabel="User menu"
-            >
-              <span slot="trigger">{userInitial}</span>
-              <div class="border-b border-slate-200 px-4 py-2">
-                <p class="text-sm font-semibold text-slate-900">{username}</p>
-              </div>
-              <a
-                href="/app/dashboard"
-                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                x-on:click="$dispatch('dropdown-close')"
-              >
-                Dashboard
+    <header x-data="{ open:false }" class={`sticky top-0 z-40 border-b backdrop-blur ${baseBg} ${borderColor}`}>
+      <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div class="flex h-16 items-center justify-between">
+          <a href="/" class="flex flex-col leading-tight transition-colors">
+            <span class="text-xl md:text-2xl font-semibold tracking-wide">ANSIVERSA</span>
+            <span class="text-[0.625rem] uppercase opacity-70">Curated App Suite</span>
+          </a>
+          <nav class="hidden md:flex items-center gap-8 text-sm">
+            {resolvedLinks.map((link) => (
+              <a href={link.href} class={isDarkNavbar ? 'hover:text-indigo-300' : 'hover:text-indigo-600'}>
+                {link.label}
               </a>
+            ))}
+          </nav>
+          <div class="hidden md:flex items-center gap-3">
+            {resolvedActions.map((action) => (
               <a
-                href="/app/settings"
-                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                x-on:click="$dispatch('dropdown-close')"
+                href={action.href}
+                target={action.external ? '_blank' : undefined}
+                rel={action.external ? 'noreferrer' : undefined}
+                class={getActionClass(action.variant)}
               >
-                Settings
+                {action.label}
               </a>
-              <a
-                href="/app/billing"
-                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                x-on:click="$dispatch('dropdown-close')"
-              >
-                Billing
-              </a>
-              {isAdmin && (
-                <a
-                  href="/app/admin"
-                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                  x-on:click="$dispatch('dropdown-close')"
-                >
-                  Administration
-                </a>
-              )}
-              <a
-                href="/app/change-password"
-                class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                x-on:click="$dispatch('dropdown-close')"
-              >
-                Change password
-              </a>
-              <form method="POST" action={logoutAction}>
-                <button
-                  type="submit"
-                  class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100"
-                  x-on:click="$dispatch('dropdown-close')"
-                >
-                  Log out
-                </button>
-              </form>
-            </Dropdown>
-          ) : (
-            <a
-              href="/app/login"
-              class="inline-flex items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
-            >
-              Log in
-            </a>
-          )}
-        </div>
-        <button
-          x-on:click="
-            open = !open;
-            if (!open) { $dispatch('dropdown-close'); }
-          "
-          class="md:hidden inline-flex items-center justify-center rounded-lg border p-2"
-          aria-label="Toggle navigation menu"
-        >
-          <svg
-            class="h-5 w-5"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke-width="1.5"
-            stroke="currentColor"
-          >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-      <div x-show="open" x-transition.duration.200ms x-cloak class="md:hidden pb-4">
-        <div class="flex flex-col gap-2 text-sm">
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/features" class="px-3 py-2 rounded-lg hover:bg-slate-100">Features</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/pricing" class="px-3 py-2 rounded-lg hover:bg-slate-100">Pricing</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/documentation" class="px-3 py-2 rounded-lg hover:bg-slate-100">Docs</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/faq" class="px-3 py-2 rounded-lg hover:bg-slate-100">FAQ</a>
-          <a x-on:click="open=false; $dispatch('dropdown-close')" href="/app/contact" class="px-3 py-2 rounded-lg hover:bg-slate-100">Contact</a>
-          <div class="mt-4">
-            {isLoggedIn ? (
+            ))}
+            {navbarUserMenu && (
               <Dropdown
-                align="stretch"
-                triggerClass="flex w-full items-center justify-between rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
-                panelClass="top-full"
-                triggerAriaLabel="Account menu"
+                align="right"
+                triggerClass="flex h-10 w-10 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white hover:bg-indigo-500"
+                triggerAriaLabel="User menu"
               >
-                <span slot="trigger" class="flex w-full items-center justify-between gap-3">
-                  <span class="flex items-center gap-3">
-                    <span class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
-                      {userInitial}
-                    </span>
-                    <span>{username}</span>
-                  </span>
-                  <svg
-                    class="h-4 w-4 transition-transform duration-200"
-                    x-on:class="open ? 'rotate-180' : ''"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                  >
-                    <path stroke-linecap="round" stroke-linejoin="round" d="m6 9 6 6 6-6" />
-                  </svg>
-                </span>
-                <a
-                  href="/app/dashboard"
-                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
-                >
-                  Dashboard
-                </a>
-                <a
-                  href="/app/settings"
-                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
-                >
-                  Settings
-                </a>
-                <a
-                  href="/app/billing"
-                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
-                >
-                  Billing
-                </a>
-                {isAdmin && (
-                  <a
-                    href="/app/admin"
-                    class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                    x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
-                  >
-                    Administration
+                <span slot="trigger">{getInitial(navbarUserMenu)}</span>
+                <div class="border-b border-slate-200 px-4 py-2">
+                  <p class="text-sm font-semibold text-slate-900">{navbarUserMenu.name}</p>
+                </div>
+                {navbarUserMenu.items.map((item) => (
+                  <a href={item.href} class="block px-4 py-2 text-slate-700 hover:bg-slate-100">
+                    {item.label}
                   </a>
-                )}
-                <a
-                  href="/app/change-password"
-                  class="block px-4 py-2 text-slate-700 hover:bg-slate-100"
-                  x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
-                >
-                  Change password
-                </a>
-                <form method="POST" action={logoutAction}>
-                  <button
-                    type="submit"
-                    class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100"
-                    x-on:click="$dispatch('dropdown-close'); $dispatch('close-nav')"
-                  >
-                    Log out
-                  </button>
-                </form>
+                ))}
+                {navbarUserMenu.logout &&
+                  (navbarUserMenu.logout.method === 'GET' ? (
+                    <a href={navbarUserMenu.logout.action} class="block px-4 py-2 text-left text-red-600 hover:bg-slate-100">
+                      {navbarUserMenu.logout.label ?? 'Log out'}
+                    </a>
+                  ) : (
+                    <form method="POST" action={navbarUserMenu.logout.action}>
+                      <button
+                        type="submit"
+                        class="flex w-full items-center gap-2 px-4 py-2 text-left text-red-600 hover:bg-slate-100"
+                      >
+                        {navbarUserMenu.logout.label ?? 'Log out'}
+                      </button>
+                    </form>
+                  ))}
               </Dropdown>
-            ) : (
-              <a
-                href="/app/login"
-                class="flex w-full items-center justify-center rounded-lg border px-4 py-2 text-sm font-semibold text-indigo-600 hover:bg-indigo-50"
-                x-on:click="open=false; $dispatch('dropdown-close')"
-              >
-                Log in
+            )}
+          </div>
+          <button
+            x-on:click="open = !open"
+            class={`md:hidden inline-flex items-center justify-center rounded-lg border p-2 ${borderColor}`}
+            aria-label="Toggle navigation menu"
+          >
+            <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          </button>
+        </div>
+        <div x-show="open" x-transition.duration.200ms x-cloak class="md:hidden pb-4">
+          <div class="flex flex-col gap-2 text-sm">
+            {resolvedMobileLinks.map((link) => (
+              <a x-on:click="open=false" href={link.href} class="px-3 py-2 rounded-lg hover:bg-indigo-50/20">
+                {link.label}
               </a>
+            ))}
+            {navbarUserMenu && (
+              <div class="mt-4 rounded-xl border px-4 py-3">
+                <div class="flex items-center gap-3">
+                  <span class="flex h-9 w-9 items-center justify-center rounded-full bg-indigo-600 text-xs font-bold text-white">
+                    {getInitial(navbarUserMenu)}
+                  </span>
+                  <div>
+                    <p class="text-sm font-semibold text-slate-900">{navbarUserMenu.name}</p>
+                    <p class="text-xs text-slate-500">Account</p>
+                  </div>
+                </div>
+                <div class="mt-3 flex flex-col">
+                  {navbarUserMenu.items.map((item) => (
+                    <a href={item.href} class="px-2 py-2 text-sm text-slate-700 hover:bg-slate-100 rounded-md">
+                      {item.label}
+                    </a>
+                  ))}
+                  {navbarUserMenu.logout &&
+                    (navbarUserMenu.logout.method === 'GET' ? (
+                      <a
+                        href={navbarUserMenu.logout.action}
+                        class="px-2 py-2 text-sm font-semibold text-red-600 hover:bg-slate-100 rounded-md"
+                      >
+                        {navbarUserMenu.logout.label ?? 'Log out'}
+                      </a>
+                    ) : (
+                      <form method="POST" action={navbarUserMenu.logout.action}>
+                        <button
+                          type="submit"
+                          class="w-full px-2 py-2 text-left text-sm font-semibold text-red-600 hover:bg-slate-100 rounded-md"
+                        >
+                          {navbarUserMenu.logout.label ?? 'Log out'}
+                        </button>
+                      </form>
+                    ))}
+                </div>
+              </div>
+            )}
+            {resolvedMobileActions.length > 0 && (
+              <div class="mt-3 flex flex-col gap-2">
+                {resolvedMobileActions.map((action) => (
+                  <a
+                    href={action.href}
+                    target={action.external ? '_blank' : undefined}
+                    rel={action.external ? 'noreferrer' : undefined}
+                    class={`${getActionClass(action.variant)} w-full text-center`}
+                  >
+                    {action.label}
+                  </a>
+                ))}
+              </div>
             )}
           </div>
         </div>
       </div>
-    </div>
-  </header>
+    </header>
   <main transition:name="page">
     {shouldShowBreadcrumb && <Breadcrumb />}
     <slot />

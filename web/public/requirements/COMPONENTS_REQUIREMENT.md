@@ -324,10 +324,10 @@ examples/
 3. **Global CSS imports**
    ```css
    /* src/styles/global.css */
-   @import "@ansiversa/components/tokens.css";
-   @import "@ansiversa/components/base.css";
-   /* optional */
-   @import "@ansiversa/components/components.css";
+  @import "@ansiversa/components/tokens.css";
+  @import "@ansiversa/components/base.css";
+  /* optional */
+  @import "@ansiversa/components/components.css";
    ```
 
 4. **Alpine init (once)**

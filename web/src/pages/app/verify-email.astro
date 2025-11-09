@@ -1,6 +1,6 @@
 ---
+import { Button } from '@ansiversa/components';
 import Layout from "../../layouts/Layout.astro";
-import Button from "../../components/Button.astro";
 import { consumeEmailVerificationToken } from '../../actions/auth/helpers';
 
 const token = Astro.url.searchParams.get('token');

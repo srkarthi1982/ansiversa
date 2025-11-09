@@ -1,0 +1,51 @@
+---
+import { Button, SectionHeading } from '@ansiversa/components';
+---
+<section
+  id="fanfic-plans"
+  class="bg-slate-100 py-16 text-slate-900 sm:py-20"
+  x-data="() => ({ fanfic: $store['fanfic-generator'] })"
+>
+  <div class="mx-auto max-w-6xl space-y-10 px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Plan guardrails"
+      title="Free vs Pro — choose your toolkit"
+      description="Free keeps two projects humming with safety essentials. Pro unlocks advanced AU templates, beta critique, and export formats for marathon sagas."
+    />
+    <div class="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-soft">
+      <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+        <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-[0.3em] text-slate-500">
+          <tr>
+            <th class="px-6 py-3">Feature</th>
+            <th class="px-6 py-3">Free</th>
+            <th class="px-6 py-3">Pro</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-sm text-slate-600">
+          <template x-for="row in fanfic.planMatrix" :key="row.feature">
+            <tr class="hover:bg-slate-50">
+              <td class="px-6 py-4 font-semibold text-slate-900" x-text="row.feature"></td>
+              <td class="px-6 py-4" x-text="row.free"></td>
+              <td class="px-6 py-4" x-text="row.pro"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+    <div class="flex flex-wrap items-center justify-between gap-4 rounded-3xl border border-indigo-200 bg-indigo-50 px-6 py-6">
+      <div class="max-w-2xl text-sm text-slate-700">
+        <p class="font-semibold text-slate-900">Stay compliant, stay creative</p>
+        <p class="mt-1">All plans enforce age & consent rules plus canon-friendly prompt shaping. Upgrade anytime for unlimited projects, exports, and beta line notes.</p>
+      </div>
+      <div class="flex flex-wrap items-center gap-2">
+        <Button type="button" variant="secondary" class="bg-indigo-600 text-white hover:bg-indigo-500" @click.prevent="fanfic.state.plan = 'pro'">
+          <i class="fa-solid fa-crown text-xs"></i>
+          Activate Pro view
+        </Button>
+        <Button type="button" variant="outline" class="border-indigo-200 text-indigo-600 hover:bg-indigo-100" @click.prevent="fanfic.state.plan = 'free'">
+          Preview Free toolkit
+        </Button>
+      </div>
+    </div>
+  </div>
+</section>

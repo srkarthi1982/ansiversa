@@ -1,0 +1,43 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+export const prerender = false;
+
+const coreApiBaseUrl = import.meta.env.PUBLIC_CORE_API_BASE_URL ?? 'http://localhost:2000';
+const redirectTarget = Astro.url.searchParams.get('redirect') ?? '/login';
+---
+<Layout>
+  <section class="mx-auto flex max-w-md flex-col items-center gap-3 px-4 py-24 text-center">
+    <div class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6A2.25 2.25 0 005.25 5.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l3-3m0 0l3 3m-3-3v12" />
+      </svg>
+    </div>
+    <h1 class="text-2xl font-semibold text-slate-900">Signing you out</h1>
+    <p class="text-sm text-slate-500">Please wait while we safely end your admin session.</p>
+  </section>
+</Layout>
+
+<script is:inline type="module">
+  const API_BASE = {JSON.stringify(coreApiBaseUrl)};
+  const redirectTo = {JSON.stringify(redirectTarget)};
+
+  (async () => {
+    try {
+      await fetch(`${API_BASE}/api/auth/logout`, {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        credentials: 'include',
+      });
+    } catch (error) {
+      console.warn('[admin/logout] core logout failed', error);
+    } finally {
+      try {
+        localStorage.removeItem('ansiversa_access_token');
+      } catch {
+        // ignore storage errors
+      }
+      window.location.href = redirectTo || '/login';
+    }
+  })();
+</script>

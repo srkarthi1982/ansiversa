@@ -3,13 +3,16 @@
   "type": "module",
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev --port 2000",
-    "build": "astro build",
+    "dev": "astro dev --remote --port 2000",
+    "build": "astro build --remote",
     "preview": "astro preview",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/db": "^0.18.0",
-    "astro": "^5.15.3"
+    "@astrojs/vercel": "^9.0.0",
+    "astro": "^5.15.3",
+    "jsonwebtoken": "^9.0.2",
+    "zod": "^3.23.8"
   }
 }

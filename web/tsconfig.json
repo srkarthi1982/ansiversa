@@ -5,7 +5,8 @@
       "@ansiversa/components": ["../components/src/index.ts"],
       "@ansiversa/components/*": ["../components/src/*"],
       "@ansiversa/core/*": ["../core/src/*"],
-      "@ansiversa/core/db/*": ["../core/db/*"]
+      "@ansiversa/core/db/*": ["../core/db/*"],
+      "@features/*": ["./src/features/*"]
     }
   },
   "include": [".astro/types.d.ts", "**/*"],

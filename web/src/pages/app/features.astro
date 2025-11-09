@@ -1,8 +1,6 @@
 ---
+import { HeroSection, SectionHeading, FeatureCard } from '@ansiversa/components';
 import Layout from "../../layouts/Layout.astro";
-import HeroSection from "../../components/HeroSection.astro";
-import SectionHeading from "../../components/SectionHeading.astro";
-import FeatureCard from "../../components/FeatureCard.astro";
 import { getSessionWithUser } from '../../utils/session.server';
 
 const sessionData = await getSessionWithUser(Astro.cookies);

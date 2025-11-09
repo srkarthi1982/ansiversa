@@ -1,0 +1,63 @@
+---
+import { FeatureCard, SectionHeading } from '@ansiversa/components';
+---
+<section id="storyboard-workspace" class="bg-slate-100 py-20">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    <SectionHeading
+      eyebrow="Workspace"
+      title="Everything your comic team needs in one dashboard"
+      description="Move from blank page to fully lettered storyboard with dedicated tabs for pages, panels, layers, assets, and timing. Each space keeps creative context without juggling files."
+      containerClass="max-w-3xl"
+    />
+    <div class="mt-12 grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      <FeatureCard
+        eyebrow="Pages"
+        title="Paginate and version quickly"
+        description="Create, reorder, and annotate multi-page projects with safe area overlays, scene notes, and review statuses."
+        icon="fa-solid fa-layer-group"
+      >
+        Drag entire spreads, lock splash pages, and snapshot revisions for comparison.
+      </FeatureCard>
+      <FeatureCard
+        eyebrow="Panels"
+        title="Blend presets with freeform"
+        description="Start with grids, manga diagonals, or splash layouts, then nudge polygons with magnetic gutters and guide overlays."
+        icon="fa-solid fa-border-all"
+      >
+        Add z-order insets, apply rule-of-thirds lines, and mirror panels for parallel storytelling.
+      </FeatureCard>
+      <FeatureCard
+        eyebrow="Lettering"
+        title="Speech, captions, and SFX"
+        description="Drop balloons with smart tails, narration boxes, and onomatopoeia styles. Auto-fit text warns on overflow."
+        icon="fa-solid fa-comment-dots"
+      >
+        Save presets per project, support RTL ordering, and color-code speakers for clarity.
+      </FeatureCard>
+      <FeatureCard
+        eyebrow="Layers"
+        title="Roughs through final ink"
+        description="Stack rough, ink, tone, color, and overlay layers per panel with lock, hide, opacity, and transform tools."
+        icon="fa-solid fa-pen-nib"
+      >
+        Flip canvases, adjust opacity scrubs, and assign reference assets that stay clipped to panel shapes.
+      </FeatureCard>
+      <FeatureCard
+        eyebrow="Assets"
+        title="Shared sticker & prop library"
+        description="Import PNG/SVG backgrounds, drag props onto panels, and favorite frequently used items per project."
+        icon="fa-solid fa-box-archive"
+      >
+        Tag assets for quick filtering and sync packs from other Ansiversa art tools.
+      </FeatureCard>
+      <FeatureCard
+        eyebrow="Timing"
+        title="Animatic-ready timelines"
+        description="Set per-panel durations, camera moves, and transitions, then preview the reel before rendering GIF or MP4."
+        icon="fa-solid fa-timeline"
+      >
+        Export shot lists and share contact sheets for review sign-off.
+      </FeatureCard>
+    </div>
+  </div>
+</section>

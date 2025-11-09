@@ -1,0 +1,474 @@
+---
+import { Button } from '@ansiversa/components';
+---
+<section id="story-workspace" class="bg-white py-16">
+  <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+    <header class="flex flex-wrap items-center justify-between gap-6">
+      <div class="space-y-2">
+        <h2 class="text-3xl font-semibold text-slate-900">Workspace</h2>
+        <p class="max-w-xl text-sm text-slate-600">
+          Switch between outline, characters, worldbuilding, scenes, and export prep. Everything pulls from the same canon so
+          continuity stays tight.
+        </p>
+      </div>
+      <div class="flex flex-wrap items-center gap-3 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
+        <span>Plan</span>
+        <span class="rounded-full bg-slate-900 px-3 py-1 text-white" x-text="story.state.plan"></span>
+      </div>
+    </header>
+    <div class="flex flex-wrap gap-3">
+      <template x-for="panel in ['overview','outline','characters','world','scenes','export']" :key="`panel-${panel}`">
+        <button
+          type="button"
+          class="rounded-full px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          :class="story.view.activePanel === panel ? 'bg-indigo-600 text-white shadow' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+          @click="story.setPanel(panel)"
+          x-text="panel === 'overview' ? 'Overview' : panel.charAt(0).toUpperCase() + panel.slice(1)"
+        ></button>
+      </template>
+    </div>
+
+    <template x-if="!story.selectedProject">
+      <div class="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-12 text-center text-slate-500">
+        <p class="text-sm font-semibold">Select or create a project to open the Story Crafter cockpit.</p>
+      </div>
+    </template>
+
+    <template x-if="story.selectedProject">
+      <div class="space-y-12" x-data="{ get project() { return story.selectedProject } }">
+        <section class="grid gap-6 lg:grid-cols-[1fr_0.8fr]" x-show="story.view.activePanel === 'overview'" x-cloak>
+          <div class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+              <header class="flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Active project</p>
+                  <h3 class="text-2xl font-semibold text-slate-900" x-text="project.title"></h3>
+                </div>
+                <Button type="button" variant="outline" size="sm" @click="story.generateBeatSheet(project.framework)">
+                  <i class="fas fa-sparkles text-xs"></i>
+                  Refresh beats
+                </Button>
+              </header>
+              <dl class="mt-6 grid gap-4 sm:grid-cols-2">
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Word progress</dt>
+                  <dd class="mt-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="story.formatNumber(project.wordsWritten)"></span>
+                    <span class="text-base font-normal text-slate-500">/ <span x-text="project.targetWords.toLocaleString()"></span></span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Outline confidence</dt>
+                  <dd class="mt-2 flex items-end gap-2 text-2xl font-semibold text-slate-900">
+                    <span x-text="Math.round(project.outlineConfidence * 100)"></span>%
+                    <span class="text-xs font-medium text-slate-500">coverage</span>
+                  </dd>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">Beat sheet version</dt>
+                  <dd class="mt-2 text-xl font-semibold text-slate-900" x-text="`v${project.beatSheetVersion}`"></dd>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-white p-4">
+                  <dt class="text-xs font-semibold uppercase tracking-wide text-slate-500">AI assists this week</dt>
+                  <dd class="mt-2 text-xl font-semibold text-slate-900" x-text="project.aiCallsThisWeek"></dd>
+                </div>
+              </dl>
+            </div>
+
+            <div class="rounded-3xl border border-slate-200 bg-white p-6">
+              <header class="flex items-center justify-between">
+                <h3 class="text-lg font-semibold text-slate-900">Canon and continuity</h3>
+                <Button type="button" size="sm" variant="ghost" @click="story.addCanonFact({ key: 'New detail', value: 'Describe here' })">
+                  <i class="fas fa-circle-plus text-xs"></i>
+                  Add fact
+                </Button>
+              </header>
+              <ul class="mt-4 grid gap-3 text-sm text-slate-600">
+                <template x-for="fact in project.canon" :key="fact.id">
+                  <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div class="flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-[0.2em] text-slate-400">
+                      <span x-text="fact.entityType"></span>
+                      <span>Confidence <span class="font-semibold text-slate-600" x-text="Math.round(fact.confidence * 100)"></span>%</span>
+                    </div>
+                    <p class="mt-2 font-semibold text-slate-900" x-text="fact.key"></p>
+                    <p class="text-sm" x-text="fact.value"></p>
+                    <p class="mt-1 text-xs text-slate-500">Sources · <span x-text="fact.sources.join(', ')"></span></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+          <aside class="space-y-6">
+            <div class="rounded-3xl border border-slate-200 bg-white p-6">
+              <h3 class="text-lg font-semibold text-slate-900">Story controls</h3>
+              <dl class="mt-4 grid gap-3 text-sm text-slate-600">
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-xs uppercase tracking-wide text-slate-500">Genre</dt>
+                  <select class="w-40 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm" :value="project.genre" @change="story.updateSetting('genre', $event.target.value)">
+                    <option value="Science Fiction">Science Fiction</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Thriller">Thriller</option>
+                    <option value="Romance">Romance</option>
+                  </select>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-xs uppercase tracking-wide text-slate-500">Tone</dt>
+                  <input
+                    type="text"
+                    class="w-40 rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+                    :value="project.tone"
+                    @change="story.updateSetting('tone', $event.target.value)"
+                  />
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-xs uppercase tracking-wide text-slate-500">POV</dt>
+                  <select class="w-40 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm" :value="project.pov" @change="story.updateSetting('pov', $event.target.value)">
+                    <option>1st person</option>
+                    <option>3rd limited</option>
+                    <option>3rd omniscient</option>
+                  </select>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-xs uppercase tracking-wide text-slate-500">Tense</dt>
+                  <select class="w-40 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm" :value="project.tense" @change="story.updateSetting('tense', $event.target.value)">
+                    <option>Past</option>
+                    <option>Present</option>
+                  </select>
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-xs uppercase tracking-wide text-slate-500">Target words</dt>
+                  <input
+                    type="number"
+                    min="1000"
+                    max="300000"
+                    class="w-40 rounded-lg border border-slate-200 px-3 py-1.5 text-sm"
+                    :value="project.targetWords"
+                    @input.debounce.400ms="story.updateSetting('targetWords', Number($event.target.value))"
+                  />
+                </div>
+                <div class="flex items-center justify-between gap-4">
+                  <dt class="text-xs uppercase tracking-wide text-slate-500">Audience</dt>
+                  <select class="w-40 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-sm" :value="project.audience" @change="story.updateSetting('audience', $event.target.value)">
+                    <option>Adult</option>
+                    <option>YA</option>
+                    <option>Middle Grade</option>
+                  </select>
+                </div>
+              </dl>
+            </div>
+            <div class="rounded-3xl border border-indigo-100 bg-indigo-50 p-6 text-indigo-900">
+              <h3 class="text-lg font-semibold">Shortcuts</h3>
+              <ul class="mt-3 space-y-2 text-sm">
+                <li><kbd class="rounded bg-white px-2 py-1 font-semibold text-indigo-600">⌘B</kbd> Add beat</li>
+                <li><kbd class="rounded bg-white px-2 py-1 font-semibold text-indigo-600">⌘⇧N</kbd> New scene</li>
+                <li><kbd class="rounded bg-white px-2 py-1 font-semibold text-indigo-600">⌘S</kbd> Snapshot</li>
+                <li><kbd class="rounded bg-white px-2 py-1 font-semibold text-indigo-600">⌘K</kbd> Command palette</li>
+              </ul>
+            </div>
+          </aside>
+        </section>
+
+        <section x-show="story.view.activePanel === 'outline'" x-cloak class="space-y-8">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900">Outline and beats</h3>
+              <p class="text-sm text-slate-600">Generate Save the Cat or 3-Act beats, then promote scenes directly from beats.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <Button type="button" variant="outline" size="sm" @click="story.generateBeatSheet('save-the-cat')">
+                Save the Cat
+              </Button>
+              <Button type="button" variant="outline" size="sm" @click="story.generateBeatSheet('three-act')">
+                3-Act refresh
+              </Button>
+            </div>
+          </header>
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6">
+              <h4 class="text-lg font-semibold text-slate-900">Beat sheet</h4>
+              <ul class="space-y-3 text-sm">
+                <template x-for="beat in project.beats" :key="beat.id">
+                  <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div class="flex items-center justify-between text-xs font-semibold uppercase tracking-[0.25em] text-slate-400">
+                      <span x-text="beat.title"></span>
+                      <span class="text-slate-500" x-text="beat.status"></span>
+                    </div>
+                    <p class="mt-2 text-slate-600" x-text="beat.summary"></p>
+                    <div class="mt-3 flex flex-wrap items-center justify-between gap-2 text-xs text-slate-500">
+                      <span>Word goal <span class="font-semibold text-slate-700" x-text="beat.wordGoal"></span></span>
+                      <div class="flex flex-wrap gap-2">
+                        <Button type="button" size="sm" variant="ghost" @click="story.addSceneFromBeat(beat.id)">
+                          Draft scene
+                        </Button>
+                        <span class="rounded-full bg-white px-2 py-1" x-text="`${beat.relatedSceneIds.length} linked`"></span>
+                      </div>
+                    </div>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6">
+              <h4 class="text-lg font-semibold text-slate-900">Chapters</h4>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <template x-for="chapter in project.chapters" :key="chapter.id">
+                  <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div class="flex items-center justify-between">
+                      <p class="font-semibold text-slate-900" x-text="chapter.title"></p>
+                      <span class="text-xs uppercase tracking-[0.25em] text-slate-400" x-text="`${Math.round(chapter.progress * 100)}% drafted`"></span>
+                    </div>
+                    <p class="mt-2" x-text="chapter.summary"></p>
+                    <div class="mt-3 h-2 rounded-full bg-slate-200">
+                      <div
+                        class="h-full rounded-full bg-gradient-to-r from-emerald-500 via-sky-500 to-indigo-500"
+                        :style="`width: ${Math.min(100, Math.round(chapter.progress * 100))}%`"
+                      ></div>
+                    </div>
+                  </li>
+                </template>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section x-show="story.view.activePanel === 'characters'" x-cloak class="space-y-8">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900">Character arcs</h3>
+              <p class="text-sm text-slate-600">Track goals, wounds, and truths to keep arcs consistent scene to scene.</p>
+            </div>
+            <Button type="button" variant="outline" size="sm">
+              <i class="fas fa-user-plus text-xs"></i>
+              Add character
+            </Button>
+          </header>
+          <div class="grid gap-6 lg:grid-cols-3">
+            <template x-for="character in project.characters" :key="character.id">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6">
+                <header class="flex items-start justify-between gap-3">
+                  <div>
+                    <h4 class="text-lg font-semibold text-slate-900" x-text="character.name"></h4>
+                    <p class="text-xs uppercase tracking-[0.25em] text-slate-400" x-text="character.role"></p>
+                  </div>
+                  <span class="rounded-full bg-indigo-100 px-3 py-1 text-xs font-semibold text-indigo-700" x-text="character.archetype"></span>
+                </header>
+                <p class="mt-3 text-sm text-slate-600" x-text="character.bio"></p>
+                <div class="mt-4 space-y-3 text-sm">
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Need</p>
+                    <p class="font-medium text-slate-700" x-text="character.arc.need"></p>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Wound</p>
+                    <p class="font-medium text-slate-700" x-text="character.arc.wound"></p>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Lie</p>
+                    <p class="font-medium text-slate-700" x-text="character.arc.lie"></p>
+                  </div>
+                  <div class="rounded-2xl border border-slate-200 bg-slate-50 px-3 py-2">
+                    <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Truth</p>
+                    <p class="font-medium text-slate-700" x-text="character.arc.truth"></p>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Relationships</p>
+                  <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                    <template x-for="relationship in character.relationships" :key="`${character.id}-${relationship.targetId}`">
+                      <li class="rounded-2xl bg-slate-100 px-3 py-2" x-text="`${relationship.label}`"></li>
+                    </template>
+                  </ul>
+                </div>
+              </article>
+            </template>
+          </div>
+        </section>
+
+        <section x-show="story.view.activePanel === 'world'" x-cloak class="space-y-8">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900">World bible</h3>
+              <p class="text-sm text-slate-600">Capture locations, factions, items, and rules. Filter to focus on the layer you are drafting.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+              <template x-for="filter in story.availableWorldFilters" :key="`world-filter-${filter}`">
+                <button
+                  type="button"
+                  class="rounded-full px-3 py-1.5 text-xs font-semibold transition"
+                  :class="story.view.worldFilter === filter ? 'bg-indigo-600 text-white' : 'bg-slate-200 text-slate-600 hover:bg-slate-300'"
+                  @click="story.setWorldFilter(filter)"
+                  x-text="filter === 'all' ? 'All' : filter"
+                ></button>
+              </template>
+            </div>
+          </header>
+          <div class="grid gap-4 md:grid-cols-2">
+            <template
+              x-for="entry in project.world.filter((entry) => story.view.worldFilter === 'all' ? true : entry.type === story.view.worldFilter)"
+              :key="entry.id"
+            >
+              <article class="rounded-3xl border border-slate-200 bg-white p-6">
+                <header class="flex items-center justify-between text-xs uppercase tracking-[0.25em] text-slate-400">
+                  <span x-text="entry.type"></span>
+                  <span class="rounded-full bg-slate-100 px-2 py-1 text-[11px] font-semibold text-slate-600" x-text="entry.tags.join(', ')"></span>
+                </header>
+                <h4 class="mt-3 text-lg font-semibold text-slate-900" x-text="entry.name"></h4>
+                <p class="mt-2 text-sm text-slate-600" x-text="entry.summary"></p>
+                <p class="mt-3 text-sm text-slate-500" x-text="entry.detail"></p>
+              </article>
+            </template>
+          </div>
+        </section>
+
+        <section x-show="story.view.activePanel === 'scenes'" x-cloak class="space-y-8">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900">Scene studio</h3>
+              <p class="text-sm text-slate-600">Split-pane editor keeps outline context on the left and drafting tools on the right.</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" @click="story.addSceneFromBeat(project.beats[0]?.id)">
+              <i class="fas fa-plus text-xs"></i>
+              New scene from beat
+            </Button>
+          </header>
+          <div class="space-y-4">
+            <template x-for="scene in project.scenes" :key="scene.id">
+              <article class="rounded-3xl border border-slate-200 bg-white p-6">
+                <header class="flex flex-wrap items-start justify-between gap-4">
+                  <div>
+                    <h4 class="text-lg font-semibold text-slate-900" x-text="scene.title"></h4>
+                    <p class="text-xs uppercase tracking-[0.25em] text-slate-400" x-text="scene.status"></p>
+                  </div>
+                  <div class="flex flex-wrap gap-2 text-xs text-slate-500">
+                    <span class="rounded-full bg-slate-100 px-3 py-1" x-text="`Goal ${scene.wordGoal}w`"></span>
+                    <span class="rounded-full bg-slate-100 px-3 py-1" x-text="`Drafted ${scene.wordCount}w`"></span>
+                    <span class="rounded-full bg-slate-100 px-3 py-1" x-text="scene.spotlight"></span>
+                  </div>
+                </header>
+                <p class="mt-3 text-sm text-slate-600" x-text="scene.summary"></p>
+                <div class="mt-4 flex flex-wrap items-center gap-2">
+                  <Button type="button" size="sm" variant="ghost" @click="story.runScenePass(scene.id, 'dialogue')">Dialogue</Button>
+                  <Button type="button" size="sm" variant="ghost" @click="story.runScenePass(scene.id, 'show-dont-tell')">Show, don’t tell</Button>
+                  <Button type="button" size="sm" variant="ghost" @click="story.runScenePass(scene.id, 'pacing')">Pacing</Button>
+                  <Button type="button" size="sm" variant="ghost" @click="story.runScenePass(scene.id, 'style')">Voice</Button>
+                  <Button type="button" size="sm" variant="ghost" @click="story.runScenePass(scene.id, 'consistency')">Canon</Button>
+                </div>
+                <div class="mt-4 grid gap-3 text-xs text-slate-500 sm:grid-cols-2">
+                  <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p class="font-semibold text-slate-700">POV and tense</p>
+                    <p>POV <span class="font-medium" x-text="scene.pov"></span> · <span class="font-medium" x-text="scene.tense"></span></p>
+                  </div>
+                  <div class="rounded-2xl bg-slate-50 px-4 py-3">
+                    <p class="font-semibold text-slate-700">Last edited</p>
+                    <p x-text="story.formatRelative(scene.lastEdited)"></p>
+                  </div>
+                </div>
+                <div class="mt-4">
+                  <p class="text-xs uppercase tracking-[0.25em] text-slate-400">Pass history</p>
+                  <ul class="mt-2 space-y-2 text-sm text-slate-600">
+                    <template x-for="entry in scene.passes" :key="`${scene.id}-${entry.timestamp}`">
+                      <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2">
+                        <div class="flex items-center justify-between text-xs text-slate-500">
+                          <span class="font-semibold text-slate-600" x-text="entry.type"></span>
+                          <span x-text="story.formatRelative(entry.timestamp)"></span>
+                        </div>
+                        <p class="mt-1" x-text="entry.note"></p>
+                      </li>
+                    </template>
+                  </ul>
+                </div>
+              </article>
+            </template>
+          </div>
+        </section>
+
+        <section x-show="story.view.activePanel === 'export'" x-cloak class="space-y-8">
+          <header class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-2xl font-semibold text-slate-900">Export and pitch</h3>
+              <p class="text-sm text-slate-600">Compile Markdown, DOCX, or EPUB packages with configurable front/back matter.</p>
+            </div>
+            <Button type="button" variant="outline" size="sm" @click="story.requestExport(story.exportPresets[0]?.id ?? 'export-draft')">
+              <i class="fas fa-cloud-arrow-down text-xs"></i>
+              Quick export
+            </Button>
+          </header>
+          <div class="grid gap-6 lg:grid-cols-2">
+            <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6">
+              <h4 class="text-lg font-semibold text-slate-900">Presets</h4>
+              <ul class="space-y-3 text-sm">
+                <template x-for="preset in story.exportPresets" :key="preset.id">
+                  <li class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                    <div class="flex items-center justify-between">
+                      <p class="font-semibold text-slate-900" x-text="preset.label"></p>
+                      <Button type="button" size="sm" variant="ghost" @click="story.requestExport(preset.id)">
+                        Queue export
+                      </Button>
+                    </div>
+                    <p class="mt-1 text-slate-600" x-text="preset.description"></p>
+                    <p class="mt-2 text-xs uppercase tracking-[0.25em] text-slate-400">
+                      Formats · <span class="font-semibold text-slate-600" x-text="preset.formats.join(', ')"></span>
+                    </p>
+                    <p class="text-xs text-slate-500">Includes · <span x-text="preset.includes.join(', ')"></span></p>
+                    <p class="mt-1 text-xs text-slate-500">Access · <span x-text="preset.gatedFor.join(', ')"></span></p>
+                  </li>
+                </template>
+              </ul>
+            </div>
+            <div class="space-y-4 rounded-3xl border border-slate-200 bg-white p-6">
+              <h4 class="text-lg font-semibold text-slate-900">Plan gating</h4>
+              <ul class="space-y-3 text-sm text-slate-600">
+                <li class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span>Projects</span>
+                  <span class="font-semibold">Free: 2 · Pro: Unlimited</span>
+                </li>
+                <li class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span>Compile length</span>
+                  <span class="font-semibold">Free: 20k · Pro: 200k words</span>
+                </li>
+                <li class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span>AI passes per day</span>
+                  <span class="font-semibold">Free: 20 · Pro: 500</span>
+                </li>
+                <li class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span>Exports</span>
+                  <span class="font-semibold">Free: Markdown · Pro: MD, DOCX, EPUB</span>
+                </li>
+                <li class="flex items-center justify-between rounded-2xl bg-slate-50 px-4 py-3">
+                  <span>Consistency checks</span>
+                  <span class="font-semibold">Free: Names · Pro: Names, timeline, places</span>
+                </li>
+              </ul>
+              <div class="rounded-2xl border border-dashed border-indigo-300 bg-indigo-50/70 px-4 py-3 text-xs text-indigo-700">
+                Upgrade to Pro to unlock advanced exports, extended canon checks, and full timeline audits. Story Crafter keeps a
+                rolling 60-day history on Free and unlimited on Pro.
+              </div>
+            </div>
+          </div>
+          <div class="rounded-3xl border border-slate-200 bg-slate-50 p-6">
+            <h4 class="text-lg font-semibold text-slate-900">Recent exports</h4>
+            <table class="mt-3 w-full text-left text-sm text-slate-600">
+              <thead class="text-xs uppercase tracking-[0.25em] text-slate-400">
+                <tr>
+                  <th class="py-2">Format</th>
+                  <th class="py-2">Created</th>
+                  <th class="py-2">Plan</th>
+                </tr>
+              </thead>
+              <tbody>
+                <template x-for="exportJob in project.exports" :key="exportJob.id">
+                  <tr class="border-t border-slate-200">
+                    <td class="py-2 font-semibold text-slate-700" x-text="exportJob.format.toUpperCase()"></td>
+                    <td class="py-2" x-text="story.formatDate(exportJob.createdAt)"></td>
+                    <td class="py-2">
+                      <span class="rounded-full bg-slate-900 px-3 py-1 text-xs font-semibold text-white" x-text="story.state.plan"></span>
+                    </td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    </template>
+  </div>
+</section>

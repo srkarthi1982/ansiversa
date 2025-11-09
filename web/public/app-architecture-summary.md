@@ -17,8 +17,8 @@ This document explains how the Ansiversa Astro application is organized across t
 - **Mini Apps:** Each app has its own page under `src/pages/` (e.g., `/quiz`, `/resume-builder`), which can import shared components and Alpine stores as needed.
 
 ### Reusable Components
-- Components live in `src/components/` (e.g., `Button.astro`, `Dropdown.astro`, `Modal.astro`).
-- Components accept typed props in the frontmatter script block and merge Tailwind class variants to produce consistent styling. For example, `Button.astro` builds variant and size class maps before rendering either an anchor or button element based on the presence of `href`.
+- Shared UI primitives live in the `@ansiversa/components` package (e.g., `Button`, `Dropdown`, `Modal`) and are imported directly from that workspace.
+- Feature-specific composites now live under `src/features/<feature>/` so each mini app can organize its own presentation layer without duplicating shared primitives. Components accept typed props in the frontmatter script block and merge Tailwind class variants to produce consistent styling. For example, `Button` builds variant and size class maps before rendering either an anchor or button element based on the presence of `href`.
 
 ## 3. Client State with Alpine Stores
 - **Bootstrap:** `src/alpineStores/index.ts` imports every store module once so they register globally with Alpine as soon as the bundle loads.
@@ -51,5 +51,4 @@ This document explains how the Ansiversa Astro application is organized across t
 - Add new features by creating a page under `src/pages/`, defining supporting Alpine stores in `src/alpineStores/feature/`, and registering the store in `src/alpineStores/index.ts`.
 - Implement server-side logic with a new action file in `src/actions/<feature>/` and export it via `src/actions/index.ts`.
 - Update the database schema in `db/config.ts` and rerun Astro DB migrations/seeds when persistent storage changes are required.
-- Reuse components in `src/components/` or add new ones to maintain consistent design across the 100 mini apps.
-
+- Reuse primitives from `@ansiversa/components` and place bespoke UI under `src/features/` to maintain consistent design across the 100 mini apps.
