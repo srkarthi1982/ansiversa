@@ -5,12 +5,8 @@ import '@fortawesome/fontawesome-free/css/all.min.css';
 import { ClientRouter } from 'astro:transitions';
 
 const shouldShowBreadcrumb = Astro.url.pathname !== '/';
-const primaryNavLinks = [
-  { label: 'Admin overview', href: '/' },
-  { label: 'Login', href: '/login' },
-  { label: 'Logout', href: '/logout' },
-];
-const isLoggedIn = false;
+const primaryNavLinks = [{ label: 'Admin overview', href: '/' }];
+const isLoggedIn = Boolean(Astro.cookies.get('session')?.value);
 const navbarActions = isLoggedIn
   ? [{ label: 'Log out', href: '/logout', variant: 'outline' }]
   : [{ label: 'Log in', href: '/login', variant: 'solid' }];
