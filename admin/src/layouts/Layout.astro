@@ -44,11 +44,11 @@ const resolvedMobileActions = resolvedActions;
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="generator" content={Astro.generator} />
 		<title>Ansiversa — Advanced Next‑Gen Software Innovation</title>
-		<meta name="description" content="Ansiversa builds versatile, next‑gen software products and platforms." />
-		<ClientRouter />
-		<link rel="icon" href="/favicon/favicon.ico" />
-	</head>
-	<body class="antialiased bg-white text-slate-900">
+                <meta name="description" content="Ansiversa builds versatile, next‑gen software products and platforms." />
+                <ClientRouter />
+                <link rel="icon" href="/favicon/favicon.ico" />
+        </head>
+        <body class="antialiased bg-white text-slate-900">
     <div id="loading" class="fixed top-0 left-0 w-full h-0.5 bg-primary-600 scale-x-1 origin-left transition-transform duration-400 ease-out z-50"></div>
 		<!-- NAVBAR -->
     <header x-data="{ open:false }" class={`sticky top-0 z-40 border-b backdrop-blur ${baseBg} ${borderColor}`}>
@@ -187,8 +187,9 @@ const resolvedMobileActions = resolvedActions;
     <slot />
   </main>
 
-  		<Loader />
-	</body>
+                <Loader />
+    <script>import '../alpineStores/index.ts';</script>
+        </body>
 </html>
 
 <style>
