@@ -11,13 +11,22 @@ const parseAllowedOrigins = () => {
 
 const allowedOrigins = parseAllowedOrigins();
 
+const isAnsiversaOrigin = (origin: string) => {
+  try {
+    const { hostname } = new URL(origin);
+    return hostname === 'ansiversa.com' || hostname.endsWith('.ansiversa.com');
+  } catch {
+    return false;
+  }
+};
+
 export const getCorsOrigin = (request: Request) => {
   const origin = request.headers.get('origin');
   if (!origin) {
     return allowedOrigins[0] ?? FALLBACK_ORIGIN;
   }
 
-  if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
+  if (allowedOrigins.includes('*') || allowedOrigins.includes(origin) || isAnsiversaOrigin(origin)) {
     return origin;
   }
 
