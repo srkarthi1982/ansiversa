@@ -1,12 +1,28 @@
 const FALLBACK_ORIGIN = process.env.CORS_DEFAULT_ORIGIN ?? 'http://localhost:3000';
 
+const DEFAULT_ALLOWED_ORIGINS = [
+  FALLBACK_ORIGIN,
+  'http://localhost:4321',
+  'https://ansiversa.com',
+  'https://www.ansiversa.com',
+  'https://admin.ansiversa.com',
+  'https://app.ansiversa.com',
+  'https://core.ansiversa.com',
+  'https://www.core.ansiversa.com',
+  'https://api.ansiversa.com',
+];
+
 const parseAllowedOrigins = () => {
   const raw = process.env.CORS_ALLOWED_ORIGINS;
-  if (!raw) return [FALLBACK_ORIGIN];
-  return raw
-    .split(',')
-    .map((origin) => origin.trim())
-    .filter(Boolean);
+  const values = raw
+    ? raw
+        .split(',')
+        .map((origin) => origin.trim())
+        .filter(Boolean)
+    : [];
+
+  const combined = [...DEFAULT_ALLOWED_ORIGINS, ...values];
+  return Array.from(new Set(combined));
 };
 
 const allowedOrigins = parseAllowedOrigins();
