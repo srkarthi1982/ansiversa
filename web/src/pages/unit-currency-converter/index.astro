@@ -1,0 +1,314 @@
+---
+import { Button, FeatureCard, HeroSection, SectionHeading } from '@ansiversa/components';
+import Layout from '../../layouts/Layout.astro';
+
+const heroHighlights = [
+  {
+    title: 'Smart parser',
+    description:
+      'Understand natural language inputs like “12.5 km to miles”, “70 °F → °C”, or “USD 129.99 in AED” with symbol disambiguation and SI prefixes.',
+    icon: 'fas fa-wand-magic-sparkles',
+  },
+  {
+    title: 'Dimensional intelligence',
+    description:
+      'Detect incompatible units, simplify composite expressions, and surface step-by-step derivations for every conversion.',
+    icon: 'fas fa-diagram-project',
+  },
+  {
+    title: 'Live FX context',
+    description:
+      'Fetch live and historical exchange rates with weekend handling, fee modelling, and locale-aware presentation.',
+    icon: 'fas fa-money-bill-trend-up',
+  },
+];
+
+const unitCoverage = [
+  {
+    title: 'Core physical systems',
+    description:
+      'Length, area, volume, mass, time, and speed conversions with base SI definitions and precise constants.',
+    icon: 'fas fa-ruler-combined',
+    bullets: [
+      'Automatic SI prefix handling from yocto to yotta.',
+      'Mixed-unit expressions like km/h ↔ m/s or ft·lb ↔ N·m.',
+      'Temperature conversions with affine transforms for °C, °F, K, and °R.',
+    ],
+  },
+  {
+    title: 'Engineering & science',
+    description:
+      'Support for energy, power, pressure, force, torque, viscosity, and radiation units used in labs and fieldwork.',
+    icon: 'fas fa-microscope',
+    bullets: [
+      'Exact constants for inch, pound, atm, nautical mile, liter, and more.',
+      'Delta vs absolute temperature awareness to avoid subtle mistakes.',
+      'Composite unit parsing such as kW·h, kg/m³, or L/100km.',
+    ],
+  },
+  {
+    title: 'Environmental flows',
+    description:
+      'Fluid dynamics, density, illumination, fuel economy, and flow rates for environmental and industrial teams.',
+    icon: 'fas fa-water',
+    bullets: [
+      'Volumetric and mass flow with numerator/denominator simplification.',
+      'Illumination and luminous intensity for lighting calculations.',
+      'Guard rails against ambiguous symbols (e.g., US vs Imperial gallons).',
+    ],
+  },
+  {
+    title: 'Digital & data',
+    description:
+      'Data size, data rate, frequency, and angle conversions for software, networking, and analytics workflows.',
+    icon: 'fas fa-database',
+    bullets: [
+      'Binary and decimal prefixes for bytes, bits, and transfer speeds.',
+      'Signal frequency and time period swaps with scientific notation.',
+      'Angle, rotation, and trigonometry helpers including radian ↔ degree.',
+    ],
+  },
+];
+
+const currencyCapabilities = [
+  {
+    title: 'Live FX engine',
+    description:
+      'Provider-agnostic rate fetching with caching, weekend rollovers, and as-of timestamps on every result.',
+    icon: 'fas fa-arrows-rotate',
+    bullets: [
+      'Hourly refresh on Free plans, five-minute cadence for Pro.',
+      'Historical lookup with date selectors and stale-rate warnings.',
+      'Inverse toggles and quick-pick favourites for frequent pairs.',
+    ],
+  },
+  {
+    title: 'Precision & rounding',
+    description:
+      'Currency-specific minor unit rules with banker’s rounding, configurable precision, and significance limits.',
+    icon: 'fas fa-scale-unbalanced',
+    bullets: [
+      'Automatic clamping to plan limits (6 vs 16 decimals).',
+      'Fee and margin modelling with effective-rate breakdown.',
+      'Accounting-style negatives, digit shaping, and locale layouts.',
+    ],
+  },
+  {
+    title: 'Alert-ready data',
+    description:
+      'Prepare for Pro-only FX alerts with server-signed results, webhook support, and streaming tick compatibility.',
+    icon: 'fas fa-bell-on',
+    bullets: [
+      'Secure server-side calculations keep provider keys private.',
+      'Audit trails with Conversion records for every request.',
+      'Future-ready WebSocket endpoint for live tick delivery.',
+    ],
+  },
+];
+
+const workspaceRoutes = [
+  {
+    eyebrow: 'Route: /convertor',
+    title: 'Quick converter',
+    description:
+      'Single-line input with intelligent suggestions, swap shortcuts, keypad controls, and instant answers.',
+    icon: 'fas fa-bolt',
+  },
+  {
+    eyebrow: 'Route: /convertor/advanced',
+    title: 'Advanced expressions',
+    description:
+      'Compose composite units, run batch tables, import CSV, and preview dimensional breakdowns.',
+    icon: 'fas fa-grid-2',
+  },
+  {
+    eyebrow: 'Route: /convertor/history',
+    title: 'History & favourites',
+    description:
+      'Group conversions by date, pin preferred pairs, and restore presets with a single click.',
+    icon: 'fas fa-clock-rotate-left',
+  },
+  {
+    eyebrow: 'Route: /convertor/settings',
+    title: 'Precision settings',
+    description:
+      'Control default precision, rounding mode, locale, custom units, and FX fees per workspace.',
+    icon: 'fas fa-sliders',
+  },
+];
+
+const assuranceHighlights = [
+  {
+    title: 'Precision policies',
+    description:
+      'Sig-fig propagation, decimal clamping, and unit-specific precision hints make results reproducible.',
+    icon: 'fas fa-bullseye-arrow',
+  },
+  {
+    title: 'Validation gates',
+    description:
+      'Detect mismatched dimensions, ambiguous unit symbols, and unrealistic magnitude spikes before they mislead.',
+    icon: 'fas fa-triangle-exclamation',
+  },
+  {
+    title: 'Batch governance',
+    description:
+      'Queue limits, per-row status tracking, and export jobs keep mass conversions auditable for every plan tier.',
+    icon: 'fas fa-table-list',
+  },
+  {
+    title: 'Developer-first API',
+    description:
+      'Server-side endpoints for unit, FX, batch, and preset management make integration with other mini apps seamless.',
+    icon: 'fas fa-code',
+  },
+];
+---
+<Layout>
+  <main class="min-h-screen bg-slate-50">
+    <HeroSection
+      eyebrow="Unit & Currency Converter"
+      title="Laboratory-accurate conversions for engineers, analysts, and travellers"
+      description="Transform units, currencies, and composite expressions with deterministic math, locale-aware formatting, and shareable history — all in one Ansiversa workspace."
+      background="bg-gradient-to-br from-slate-950 via-slate-900 to-indigo-950 text-white"
+      padding="py-16 sm:py-24"
+      containerClass="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      align="left"
+      titleClass="mt-6 text-4xl font-black tracking-tight sm:text-5xl"
+      descriptionClass="mt-6 max-w-2xl text-base text-white/80"
+    >
+      <Fragment slot="actions">
+        <Button href="#quick-conversion" variant="secondary">
+          <i class="fas fa-rocket text-sm" aria-hidden="true"></i>
+          Explore capabilities
+        </Button>
+        <Button href="#workspace" variant="outline" class="border-white/40 text-white">
+          <i class="fas fa-sitemap text-sm" aria-hidden="true"></i>
+          View workspace routes
+        </Button>
+        <Button href="#trust" variant="ghost" class="text-white/80">
+          <i class="fas fa-shield-check text-sm" aria-hidden="true"></i>
+          See precision safeguards
+        </Button>
+      </Fragment>
+    </HeroSection>
+
+    <section id="quick-conversion" class="mx-auto max-w-6xl px-4 pb-16 pt-12 sm:px-6 lg:px-8">
+      <div class="grid gap-6 md:grid-cols-3">
+        {heroHighlights.map((highlight) => (
+          <FeatureCard
+            title={highlight.title}
+            description={highlight.description}
+            icon={highlight.icon}
+            class="bg-white/80 backdrop-blur"
+            iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/15 text-indigo-600"
+          />
+        ))}
+      </div>
+    </section>
+
+    <section id="coverage" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Unit coverage"
+          title="From classroom basics to specialist instrumentation"
+          description="Build trust in every calculation with exact constants, composite parsing, and disambiguation prompts that keep tricky symbols under control."
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          {unitCoverage.map((category) => (
+            <FeatureCard
+              title={category.title}
+              description={category.description}
+              icon={category.icon}
+            >
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {category.bullets.map((item) => (
+                  <li class="flex items-start gap-2">
+                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-500"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="currency" class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Currency intelligence"
+          title="FX data with the same discipline as your ledgers"
+          description="Model live rates, historical lookups, and conversion fees while keeping every calculation server-signed and audit ready."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight text-white sm:text-4xl"
+          descriptionClass="mt-4 text-base text-white/80"
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-3">
+          {currencyCapabilities.map((feature) => (
+            <FeatureCard
+              title={feature.title}
+              description={feature.description}
+              icon={feature.icon}
+              baseClass="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              iconWrapperClass="flex h-10 w-10 items-center justify-center rounded-xl bg-indigo-500/20 text-indigo-200"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/80"
+            >
+              <ul class="mt-4 space-y-2 text-sm text-white/80">
+                {feature.bullets.map((item) => (
+                  <li class="flex items-start gap-2">
+                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-indigo-300"></span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="workspace" class="bg-gradient-to-br from-indigo-50 via-white to-slate-100 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workspace routes"
+          title="Dedicated flows for casual users and power operators"
+          description="Each route focuses on a different level of control, from quick conversions to organisation-wide defaults and automation."
+          align="center"
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-2">
+          {workspaceRoutes.map((route) => (
+            <FeatureCard
+              title={route.title}
+              description={route.description}
+              eyebrow={route.eyebrow}
+              icon={route.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="trust" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Precision & governance"
+          title="Safety rails for every conversion"
+          description="Policies, validation, and observability features help teams meet compliance standards without slowing down their workflows."
+        />
+        <div class="mt-12 grid gap-6 lg:grid-cols-4">
+          {assuranceHighlights.map((highlight) => (
+            <FeatureCard
+              title={highlight.title}
+              description={highlight.description}
+              icon={highlight.icon}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>

@@ -94,7 +94,7 @@ export const MINI_APP_DEFINITIONS = [
   { slug: 'time-zone-scheduler', name: 'Time Zone Scheduler' },
   { slug: 'travel-itinerary-builder', name: 'Travel Itinerary Builder' },
   { slug: 'trivia-arena', name: 'Trivia Arena' },
-  { slug: 'unit-and-currency-converter', name: 'Unit and Currency Converter' },
+  { slug: 'unit-currency-converter', name: 'Unit and Currency Converter' },
   { slug: 'visiting-card-maker', name: 'Visiting Card Maker' },
   { slug: 'wellness-and-goal-planner', name: 'Wellness and Goal Planner' },
   { slug: 'would-you-rather', name: 'Would You Rather' },
