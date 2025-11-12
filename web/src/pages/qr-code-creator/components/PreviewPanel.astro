@@ -1,0 +1,119 @@
+---
+import { Button } from '@ansiversa/components';
+---
+<section class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-xl font-semibold text-slate-900">Live preview</h2>
+      <p class="text-sm text-slate-600">QR preview updates instantly as you edit payload or styling options.</p>
+    </div>
+    <div class="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
+      <i class="fas fa-clock text-[10px]"></i>
+      Updated
+      <span x-text="new Intl.RelativeTimeFormat('en', { numeric: 'auto' }).format(Math.round(($store['qr-code-creator'].state.preview.updatedAt - Date.now()) / (60 * 1000)), 'minute')"></span>
+    </div>
+  </header>
+
+  <div class="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+    <div class="space-y-4">
+      <div class="relative overflow-hidden rounded-[22px] border border-slate-200 bg-gradient-to-br from-white via-slate-50 to-slate-100 p-6">
+        <div class="relative mx-auto flex h-[320px] w-[320px] items-center justify-center rounded-[20px] bg-white shadow-inner">
+          <template x-if="$store['qr-code-creator'].previewImageUrl">
+            <div class="relative h-full w-full rounded-[18px] bg-white">
+              <img
+                :src="$store['qr-code-creator'].previewImageUrl"
+                alt="QR code preview"
+                class="h-full w-full rounded-[18px] object-contain"
+              />
+              <div
+                :class="$store['qr-code-creator'].overlayClass"
+                :style="{ background: $store['qr-code-creator'].overlayStyle }"
+              ></div>
+              <template x-if="$store['qr-code-creator'].hasLogo">
+                <div class="absolute inset-0 flex items-center justify-center">
+                  <div class="flex h-20 w-20 items-center justify-center rounded-2xl border border-white bg-white/90 shadow-lg">
+                    <img
+                      class="max-h-14 max-w-14 object-contain"
+                      :src="$store['qr-code-creator'].state.style.logo?.dataUrl"
+                      alt="Embedded logo"
+                    />
+                  </div>
+                </div>
+              </template>
+            </div>
+          </template>
+          <template x-if="!$store['qr-code-creator'].previewImageUrl">
+            <div class="flex h-full w-full flex-col items-center justify-center gap-3 text-center text-slate-400">
+              <i class="fas fa-image text-3xl"></i>
+              <p class="text-sm">Fill the payload form to generate a QR preview.</p>
+            </div>
+          </template>
+        </div>
+        <div class="absolute inset-x-6 bottom-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl bg-white/90 px-4 py-3 text-xs text-slate-600 shadow-lg">
+          <div>
+            <span class="font-semibold text-slate-900">Payload</span>
+            <p class="mt-1 max-w-[260px] truncate text-[11px] text-slate-500" x-text="$store['qr-code-creator'].state.preview.payload || '—'"></p>
+          </div>
+          <div class="flex items-center gap-2 text-slate-500">
+            <i class="fas fa-shield text-[10px] text-emerald-500"></i>
+            ECC
+            <span class="font-semibold text-slate-900" x-text="$store['qr-code-creator'].state.style.ecc"></span>
+          </div>
+        </div>
+      </div>
+      <div class="flex flex-wrap gap-3">
+        <Button type="button" @click.prevent="$store['qr-code-creator'].download('svg')">
+          <i class="fas fa-file-code text-xs"></i>
+          Download SVG
+        </Button>
+        <Button type="button" variant="outline" @click.prevent="$store['qr-code-creator'].download('png')">
+          <i class="fas fa-image text-xs"></i>
+          Download PNG
+        </Button>
+        <Button type="button" variant="ghost" @click.prevent="$store['qr-code-creator'].simulateScanIncrement()">
+          <i class="fas fa-chart-line text-xs"></i>
+          Simulate scan
+        </Button>
+      </div>
+    </div>
+    <div class="space-y-4 rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+      <div class="flex items-start justify-between">
+        <div>
+          <h3 class="text-sm font-semibold text-slate-900">Validation</h3>
+          <p class="text-xs text-slate-600">Ensure the payload is scannable and accessible before publishing.</p>
+        </div>
+        <span class="inline-flex items-center gap-2 rounded-full bg-emerald-100 px-3 py-1 text-[10px] font-semibold text-emerald-600">
+          <i class="fas fa-circle-check text-[9px]"></i>
+          Ready
+        </span>
+      </div>
+      <ul class="space-y-3 text-sm text-slate-700">
+        <li class="flex items-start gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs">
+          <i class="fas fa-lock text-[10px] text-indigo-500 mt-0.5"></i>
+          <div>
+            <p class="font-semibold text-slate-900">HTTPS enforced</p>
+            <p class="text-[11px] text-slate-500">Targets automatically upgrade to HTTPS when possible.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs">
+          <i class="fas fa-expand text-[10px] text-indigo-500 mt-0.5"></i>
+          <div>
+            <p class="font-semibold text-slate-900">Quiet zone guidance</p>
+            <p class="text-[11px] text-slate-500">Use at least 6px for signage and packaging prints.</p>
+          </div>
+        </li>
+        <li class="flex items-start gap-2 rounded-2xl border border-slate-200 bg-white px-3 py-2 text-xs">
+          <i class="fas fa-eye text-[10px] text-indigo-500 mt-0.5"></i>
+          <div>
+            <p class="font-semibold text-slate-900">Finder eye styles</p>
+            <p class="text-[11px] text-slate-500" x-text="`Current: ${$store['qr-code-creator'].state.style.eyeStyle}`"></p>
+          </div>
+        </li>
+      </ul>
+      <div class="rounded-2xl border border-indigo-100 bg-white px-4 py-3 text-xs text-indigo-700">
+        <i class="fas fa-info-circle text-[11px]"></i>
+        <span class="ml-2">Dynamic QR payloads render the short link. Update the redirect in the panel below without changing this code.</span>
+      </div>
+    </div>
+  </div>
+</section>

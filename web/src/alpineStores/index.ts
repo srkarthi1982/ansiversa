@@ -65,3 +65,4 @@ import '../pages/novel-outliner/stores';
 import '../pages/fanfic-generator/stores';
 import '../pages/email-newsletter-writer/stores';
 import '../pages/grammer-fixer/stores';
+import '../pages/qr-code-creator/stores';

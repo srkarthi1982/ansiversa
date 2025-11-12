@@ -1,0 +1,205 @@
+---
+import { Button } from '@ansiversa/components';
+---
+<section class="space-y-6 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+  <header class="flex flex-wrap items-center justify-between gap-3">
+    <div>
+      <h2 class="text-xl font-semibold text-slate-900">Dynamic QR workspace</h2>
+      <p class="text-sm text-slate-600">
+        Retarget short links, add campaign notes, and review live analytics without replacing the printed QR code.
+      </p>
+    </div>
+    <span class="inline-flex items-center gap-2 rounded-full bg-purple-100 px-3 py-1 text-xs font-semibold text-purple-600">
+      <i class="fas fa-gem text-[9px]"></i>
+      Pro only
+    </span>
+  </header>
+
+  <div class="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+    <div class="space-y-6">
+      <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+        <div class="flex items-start justify-between">
+          <div>
+            <h3 class="text-sm font-semibold text-slate-900" x-text="$store['qr-code-creator'].selectedDynamic?.label ?? 'No dynamic QR selected'"></h3>
+            <p class="text-xs text-slate-500" x-text="$store['qr-code-creator'].selectedDynamic?.shortUrl ?? 'Create your first dynamic QR code to begin tracking analytics.'"></p>
+          </div>
+          <div class="flex gap-2">
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-300 px-3 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-slate-400"
+              @click="$store['qr-code-creator'].regenerateShortCode()"
+            >
+              <i class="fas fa-arrows-rotate text-[10px]"></i>
+              New code
+            </button>
+            <button
+              type="button"
+              class="inline-flex items-center gap-2 rounded-full border border-slate-300 px-3 py-1 text-[11px] font-semibold text-slate-600 transition hover:border-slate-400"
+              @click="$store['qr-code-creator'].toggleDynamicStatus()"
+            >
+              <i class="fas fa-power-off text-[10px]"></i>
+              <span x-text="$store['qr-code-creator'].selectedDynamic?.status === 'paused' ? 'Activate' : 'Pause'"></span>
+            </button>
+          </div>
+        </div>
+        <dl class="mt-4 grid gap-3 sm:grid-cols-3">
+          <div class="rounded-xl border border-white bg-white/80 px-3 py-2 text-xs text-slate-600">
+            <dt class="font-semibold uppercase tracking-wide text-slate-500">Total scans</dt>
+            <dd class="mt-1 text-lg font-semibold text-slate-900" x-text="$store['qr-code-creator'].selectedDynamic?.scanCount ?? 0"></dd>
+          </div>
+          <div class="rounded-xl border border-white bg-white/80 px-3 py-2 text-xs text-slate-600">
+            <dt class="font-semibold uppercase tracking-wide text-slate-500">Last scan</dt>
+            <dd class="mt-1 text-sm font-semibold text-slate-900" x-text="$store['qr-code-creator'].selectedDynamic ? $store['qr-code-creator'].selectedDynamic.lastScanAt.split('T')[0] : '—'"></dd>
+          </div>
+          <div class="rounded-xl border border-white bg-white/80 px-3 py-2 text-xs text-slate-600">
+            <dt class="font-semibold uppercase tracking-wide text-slate-500">Status</dt>
+            <dd class="mt-1 inline-flex items-center gap-2 text-sm font-semibold">
+              <span
+                class="h-2 w-2 rounded-full"
+                :class="$store['qr-code-creator'].selectedDynamic?.status === 'active' ? 'bg-emerald-500' : 'bg-amber-500'"
+              ></span>
+              <span x-text="$store['qr-code-creator'].selectedDynamic?.status ?? '—'"></span>
+            </dd>
+          </div>
+        </dl>
+        <div class="mt-4 grid gap-4 sm:grid-cols-2">
+          <label class="space-y-2 text-xs text-slate-600">
+            <span class="font-semibold uppercase tracking-wide">Target URL</span>
+            <input
+              type="text"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none"
+              :value="$store['qr-code-creator'].state.dynamic.form.targetUrl"
+              @input="$store['qr-code-creator'].updateDynamicField('targetUrl', $event.target.value)"
+              placeholder="https://example.com/landing"
+            />
+          </label>
+          <label class="space-y-2 text-xs text-slate-600">
+            <span class="font-semibold uppercase tracking-wide">Campaign</span>
+            <input
+              type="text"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none"
+              :value="$store['qr-code-creator'].state.dynamic.form.campaign"
+              @input="$store['qr-code-creator'].updateDynamicField('campaign', $event.target.value)"
+              placeholder="spring_launch"
+            />
+          </label>
+          <label class="space-y-2 text-xs text-slate-600">
+            <span class="font-semibold uppercase tracking-wide">Label</span>
+            <input
+              type="text"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none"
+              :value="$store['qr-code-creator'].state.dynamic.form.label"
+              @input="$store['qr-code-creator'].updateDynamicField('label', $event.target.value)"
+              placeholder="Expo booth QR"
+            />
+          </label>
+          <label class="space-y-2 text-xs text-slate-600">
+            <span class="font-semibold uppercase tracking-wide">Tags</span>
+            <input
+              type="text"
+              class="w-full rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm text-slate-700 shadow-sm focus:border-indigo-500 focus:outline-none"
+              :value="$store['qr-code-creator'].state.dynamic.form.tags"
+              @input="$store['qr-code-creator'].updateDynamicField('tags', $event.target.value)"
+              placeholder="promo,print"
+            />
+          </label>
+        </div>
+        <div class="mt-4 flex flex-wrap gap-3">
+          <Button type="button" @click.prevent="$store['qr-code-creator'].applyDynamicTarget()">
+            <i class="fas fa-floppy-disk text-xs"></i>
+            Save changes
+          </Button>
+          <Button type="button" variant="outline" @click.prevent="$store['qr-code-creator'].createDynamicRecord()">
+            <i class="fas fa-plus text-xs"></i>
+            New dynamic QR
+          </Button>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+        <h3 class="text-sm font-semibold text-slate-900">Analytics snapshot</h3>
+        <div class="mt-3 grid gap-4 sm:grid-cols-2">
+          <div class="rounded-xl bg-white/80 p-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">7-day scans</p>
+            <p class="mt-1 text-2xl font-bold text-slate-900" x-text="$store['qr-code-creator'].state.dynamic.analytics.rolling7Day.total"></p>
+            <p class="text-xs text-emerald-600">
+              <i class="fas fa-arrow-trend-up text-[10px]"></i>
+              <span x-text="$store['qr-code-creator'].state.dynamic.analytics.rolling7Day.change"></span>
+              more vs last week
+            </p>
+          </div>
+          <div class="rounded-xl bg-white/80 p-3">
+            <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Top countries</p>
+            <ul class="mt-2 space-y-1 text-xs text-slate-600">
+              <template x-for="country in $store['qr-code-creator'].state.dynamic.analytics.topCountries" :key="country.country">
+                <li class="flex items-center justify-between">
+                  <span x-text="country.country"></span>
+                  <span class="font-semibold text-slate-900" x-text="`${country.percent}%`"></span>
+                </li>
+              </template>
+            </ul>
+          </div>
+        </div>
+        <div class="mt-4">
+          <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Hourly engagement</p>
+          <div class="mt-2 grid grid-cols-12 gap-1 text-[10px] text-slate-500">
+            <template x-for="(value, index) in $store['qr-code-creator'].state.dynamic.analytics.hourDistribution" :key="index">
+              <div class="flex flex-col items-center gap-1">
+                <div class="h-16 w-2 rounded-full bg-indigo-200">
+                  <div class="w-full rounded-full bg-indigo-500" :style="{ height: `${Math.max(4, value)}px` }"></div>
+                </div>
+                <span x-text="index"></span>
+              </div>
+            </template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="space-y-6">
+      <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+        <h3 class="text-sm font-semibold text-slate-900">Active dynamic codes</h3>
+        <div class="mt-3 space-y-3">
+          <template x-for="record in $store['qr-code-creator'].state.dynamic.records" :key="record.id">
+            <button
+              type="button"
+              class="w-full rounded-2xl border px-4 py-3 text-left transition"
+              :class="$store['qr-code-creator'].state.dynamic.selectedId === record.id ? 'border-indigo-500 bg-indigo-50/70 shadow-sm' : 'border-slate-200 bg-white hover:border-slate-300'"
+              @click="$store['qr-code-creator'].selectDynamic(record.id)"
+            >
+              <div class="flex items-start justify-between gap-2">
+                <div>
+                  <p class="text-sm font-semibold text-slate-900" x-text="record.label"></p>
+                  <p class="text-[11px] text-slate-500" x-text="record.shortUrl"></p>
+                </div>
+                <span class="text-xs font-semibold text-slate-500" x-text="`${record.scanCount} scans`"></span>
+              </div>
+            </button>
+          </template>
+        </div>
+      </div>
+      <div class="rounded-2xl border border-slate-200 bg-slate-50/70 p-4">
+        <h3 class="text-sm font-semibold text-slate-900">Recent scans</h3>
+        <div class="mt-3 space-y-3 text-xs text-slate-600">
+          <template x-for="scan in ($store['qr-code-creator'].selectedDynamic?.recentScans ?? [])" :key="scan.id">
+            <div class="rounded-2xl border border-white bg-white/80 px-3 py-2">
+              <div class="flex items-center justify-between">
+                <span class="font-semibold text-slate-900" x-text="scan.location"></span>
+                <span class="text-[10px] text-slate-500" x-text="scan.scannedAt.split('T')[0]"></span>
+              </div>
+              <p class="mt-1 flex items-center gap-2 text-[11px]">
+                <i class="fas fa-mobile-screen text-[9px] text-indigo-500"></i>
+                <span x-text="`${scan.device} · ${scan.platform}`"></span>
+              </p>
+            </div>
+          </template>
+          <template x-if="!($store['qr-code-creator'].selectedDynamic?.recentScans ?? []).length">
+            <p class="rounded-2xl border border-dashed border-slate-300 bg-white/70 px-3 py-2 text-[11px] text-slate-500">
+              No scan events recorded yet. Use “Simulate scan” to see analytics in action.
+            </p>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
