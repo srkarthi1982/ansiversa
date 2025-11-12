@@ -254,6 +254,15 @@ export const NewPlatformSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+export const UpdatePlatformSchema = z.object({
+  name: z.string().min(1).optional(),
+  description: z.string().optional(),
+  icon: z.string().optional(),
+  type: z.string().nullable().optional(),
+  qCount: z.number().int().nonnegative().optional(),
+  isActive: z.boolean().optional(),
+});
+
 export const SubjectSchema = z.object({
   id: z.number().int(),
   platformId: z.number().int(),
@@ -268,6 +277,13 @@ export const NewSubjectSchema = z.object({
   name: z.string().min(1),
   isActive: z.boolean().default(true),
   qCount: z.number().int().nonnegative().default(0),
+});
+
+export const UpdateSubjectSchema = z.object({
+  platformId: z.number().int().nonnegative().optional(),
+  name: z.string().min(1).optional(),
+  isActive: z.boolean().optional(),
+  qCount: z.number().int().nonnegative().optional(),
 });
 
 export const TopicSchema = z.object({
@@ -288,6 +304,14 @@ export const NewTopicSchema = z.object({
   qCount: z.number().int().nonnegative().default(0),
 });
 
+export const UpdateTopicSchema = z.object({
+  platformId: z.number().int().nonnegative().optional(),
+  subjectId: z.number().int().nonnegative().optional(),
+  name: z.string().min(1).optional(),
+  isActive: z.boolean().optional(),
+  qCount: z.number().int().nonnegative().optional(),
+});
+
 export const RoadmapSchema = z.object({
   id: z.number().int(),
   platformId: z.number().int(),
@@ -306,6 +330,15 @@ export const NewRoadmapSchema = z.object({
   name: z.string().min(1),
   isActive: z.boolean().default(true),
   qCount: z.number().int().nonnegative().default(0),
+});
+
+export const UpdateRoadmapSchema = z.object({
+  platformId: z.number().int().nonnegative().optional(),
+  subjectId: z.number().int().nonnegative().optional(),
+  topicId: z.number().int().nonnegative().optional(),
+  name: z.string().min(1).optional(),
+  isActive: z.boolean().optional(),
+  qCount: z.number().int().nonnegative().optional(),
 });
 
 export const QuestionSchema = z.object({
@@ -335,6 +368,19 @@ export const NewQuestionSchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+export const UpdateQuestionSchema = z.object({
+  platformId: z.number().int().nonnegative().optional(),
+  subjectId: z.number().int().nonnegative().nullable().optional(),
+  topicId: z.number().int().nonnegative().nullable().optional(),
+  roadmapId: z.number().int().nonnegative().nullable().optional(),
+  question: z.string().min(1).optional(),
+  options: z.array(z.string()).optional(),
+  answer: z.string().min(1).optional(),
+  explanation: z.string().nullable().optional(),
+  level: LevelEnum.optional(),
+  isActive: z.boolean().optional(),
+});
+
 export const ResultSchema = z.object({
   id: z.number().int(),
   userId: z.string(),
@@ -359,18 +405,35 @@ export const NewResultSchema = z.object({
   mark: z.number().default(0),
 });
 
+export const UpdateResultSchema = z.object({
+  userId: z.string().min(1).optional(),
+  platformId: z.number().int().nonnegative().optional(),
+  subjectId: z.number().int().nonnegative().nullable().optional(),
+  topicId: z.number().int().nonnegative().nullable().optional(),
+  roadmapId: z.number().int().nonnegative().nullable().optional(),
+  level: LevelEnum.optional(),
+  responses: z.unknown().optional(),
+  mark: z.number().optional(),
+});
+
 export type Platform = z.infer<typeof PlatformSchema>;
 export type NewPlatform = z.infer<typeof NewPlatformSchema>;
+export type UpdatePlatform = z.infer<typeof UpdatePlatformSchema>;
 export type Subject = z.infer<typeof SubjectSchema>;
 export type NewSubject = z.infer<typeof NewSubjectSchema>;
+export type UpdateSubject = z.infer<typeof UpdateSubjectSchema>;
 export type Topic = z.infer<typeof TopicSchema>;
 export type NewTopic = z.infer<typeof NewTopicSchema>;
+export type UpdateTopic = z.infer<typeof UpdateTopicSchema>;
 export type Roadmap = z.infer<typeof RoadmapSchema>;
 export type NewRoadmap = z.infer<typeof NewRoadmapSchema>;
+export type UpdateRoadmap = z.infer<typeof UpdateRoadmapSchema>;
 export type Question = z.infer<typeof QuestionSchema>;
 export type NewQuestion = z.infer<typeof NewQuestionSchema>;
+export type UpdateQuestion = z.infer<typeof UpdateQuestionSchema>;
 export type Result = z.infer<typeof ResultSchema>;
 export type NewResult = z.infer<typeof NewResultSchema>;
+export type UpdateResult = z.infer<typeof UpdateResultSchema>;
 
 type PlatformRow = z.infer<typeof PlatformRowSchema>;
 type SubjectRow = z.infer<typeof SubjectRowSchema>;
