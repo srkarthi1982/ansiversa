@@ -1,0 +1,373 @@
+---
+import { Button, FeatureCard, HeroSection, SectionHeading } from '@ansiversa/components';
+import Layout from '../../layouts/Layout.astro';
+
+const heroHighlights = [
+  {
+    title: 'Retailer coverage',
+    description:
+      'Start with Carrefour UAE, Lulu Hypermarket, Noon, and Amazon.ae. Extend effortlessly with adapter contracts for more Gulf retailers.',
+    icon: 'fas fa-store',
+  },
+  {
+    title: 'Unit price clarity',
+    description:
+      'Normalize packs, bundles, and size labels into AED per kg, litre, or unit so shoppers compare like-for-like instantly.',
+    icon: 'fas fa-scale-balanced',
+  },
+  {
+    title: 'History and alerts',
+    description:
+      'Track 30/90/365-day price trails and trigger alerts when a product meets drop-percent or target-price rules.',
+    icon: 'fas fa-chart-line',
+  },
+];
+
+const capabilityCards = [
+  {
+    title: 'Pluggable store adapters',
+    description:
+      'One contract handles search, offers, and canonical hints per retailer while respecting rate limits and attribution.',
+    icon: 'fas fa-plug-circle-check',
+    bullets: [
+      'Official APIs and affiliate feeds preferred; scraping only when compliant with robots.txt.',
+      'Adapter metadata records throttle, TTL, and health so operations can monitor freshness.',
+      'Uniform payloads across adapters keep downstream normalization consistent.',
+    ],
+  },
+  {
+    title: 'Canonical product catalog',
+    description:
+      'Fingerprint brands, variants, and sizes into a deduplicated Astro DB graph with GTIN awareness.',
+    icon: 'fas fa-diagram-project',
+    bullets: [
+      'Generate stable `canonicalId` slugs for cross-store comparisons and alerts.',
+      'Persist raw store SKUs alongside normalized offers for audit and debugging.',
+      'Expose an offers API for clients and background workers to reuse the catalog.',
+    ],
+  },
+  {
+    title: 'Comparative results UI',
+    description:
+      'Surface price, unit price, promos, availability, and delivery fees in responsive tables or cards.',
+    icon: 'fas fa-table-cells-large',
+    bullets: [
+      'Sticky filters for store, delivery type, plan tier, and promotion badge awareness.',
+      'Sort by total cost, normalized unit price, freshness, or distance for in-store pickup.',
+      'Mobile-first cards inherit the same dataset to keep parity with the desktop table.',
+    ],
+  },
+  {
+    title: 'Alert lifecycle',
+    description:
+      'Evaluate background jobs against stored thresholds and notify when a deal hits.',
+    icon: 'fas fa-bell-on',
+    bullets: [
+      'Alert rules support absolute AED targets or percentage drops from recent averages.',
+      'Queue-aware workers throttle polling per store to avoid retailer overload.',
+      'Pause, resume, or delete alerts from a dedicated management screen.',
+    ],
+  },
+];
+
+const operationsHighlights = [
+  {
+    title: 'Normalization pipeline',
+    description:
+      'Translate messy pack strings into consistent units so every offer has a fair comparison.',
+    icon: 'fas fa-filter-circle-dollar',
+    bullets: [
+      'Detect multi-pack signals such as “×”, “pack”, “pcs”, or quantity multipliers.',
+      'Convert g/kg/ml/L/unit into shared bases with per-100g overrides for small goods.',
+      'Compute total cost including mandatory shipping minus automatic promo credits.',
+    ],
+  },
+  {
+    title: 'Caching and rate limits',
+    description:
+      'Keep freshness without breaking retailer rules through adaptive TTLs and traffic caps.',
+    icon: 'fas fa-gauge-high',
+    bullets: [
+      'Per-store cache windows (10–60 minutes) balance latency with politeness.',
+      'Adapter health endpoints surface current status, last sync, and error traces.',
+      'Exponential backoff on failures combined with queue metrics prevents retry storms.',
+    ],
+  },
+  {
+    title: 'Compliance & attribution',
+    description:
+      'Every search result honours store policies with traceable source links.',
+    icon: 'fas fa-shield-check',
+    bullets: [
+      'Robots.txt aware fetchers advertise purpose-built user agents.',
+      'Affiliate parameters and “as-of” timestamps are preserved in outbound links.',
+      'Data freshness banners alert users when cached data approaches TTL thresholds.',
+    ],
+  },
+];
+
+const workspaceRoutes = [
+  {
+    eyebrow: 'Route: /price-checker',
+    title: 'Search & compare',
+    description:
+      'Global search box with query suggestions, filters, and infinite scroll results that highlight best total and unit prices.',
+    icon: 'fas fa-magnifying-glass-chart',
+  },
+  {
+    eyebrow: 'Route: /price-checker/[canonicalId]',
+    title: 'Canonical product',
+    description:
+      'Gallery, detailed specs, offer history sparkline, and inline alert creation for a single normalized product.',
+    icon: 'fas fa-box-open-full',
+  },
+  {
+    eyebrow: 'Route: /price-checker/alerts',
+    title: 'Alert control centre',
+    description:
+      'List, pause, and delete active alerts with drop-percent insights and quick links to best current offers.',
+    icon: 'fas fa-bell',
+  },
+  {
+    eyebrow: 'Route: /price-checker/settings',
+    title: 'Region & currency',
+    description:
+      'Choose AED defaults, fallback currencies, preferred unit basis, and toggle store adapters per workspace.',
+    icon: 'fas fa-sliders',
+  },
+  {
+    eyebrow: 'Route: /price-checker/sources',
+    title: 'Adapter transparency',
+    description:
+      'Expose adapter uptime, throttle windows, and latest sync for every retailer connection.',
+    icon: 'fas fa-signal',
+  },
+];
+
+const normalizationSteps = [
+  'Parse quantity phrases such as “2 x 1L”, “500 g”, or “6-pack” into structured unit and count fields.',
+  'Map parsed quantities into grams, millilitres, or unit counts so conversions are lossless.',
+  'Calculate basis-adjusted unit prices (per kg, per L, per 100g, or per unit) alongside headline price.',
+  'Associate normalized offers with canonical products using brand, variant, size, and GTIN fingerprints.',
+  'Persist PricePoint history for each offer to chart 30/90/365-day trends and support alert calculations.',
+];
+
+const planComparisons = [
+  { feature: 'Stores enabled', free: '4 retailers', pro: '20+ retailers' },
+  { feature: 'Active alerts', free: 'Up to 3 rules', pro: 'Up to 50 rules' },
+  { feature: 'Price history window', free: '30 days', pro: '365 days' },
+  { feature: 'Data export', free: 'CSV snapshots', pro: 'CSV & JSON exports' },
+  { feature: 'Refresh on demand', free: 'Scheduled cadence', pro: 'Manual refresh & cron access' },
+  { feature: 'API access', free: 'In-app only', pro: 'Workspace API keys' },
+];
+
+const futureIdeas = [
+  'Store pickup locator with distance-aware availability heatmaps.',
+  'Coupon, loyalty, and credit card stacking hints for eligible retailers.',
+  'AI-powered substitution suggestions when a product goes out of stock.',
+  'Weekly basket tracker that totals saved lists across stores for holistic savings.',
+  'Browser companion to surface best offers directly on retailer product pages.',
+];
+---
+
+<Layout>
+  <main class="bg-slate-50">
+    <HeroSection
+      eyebrow="Utility mini app"
+      title="Price Checker"
+      description="Compare UAE retail prices in seconds with canonical matching, normalized unit costs, and alert-ready history."
+      align="left"
+      background="bg-gradient-to-br from-slate-950 via-indigo-900 to-sky-900 text-white"
+      padding="py-20"
+      containerClass="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+    >
+      <div slot="actions" class="flex flex-wrap gap-3">
+        <Button href="#capabilities" variant="secondary">Explore capabilities</Button>
+        <Button href="#plans" variant="outline" class="bg-white/10 text-white hover:bg-white/20 border-white/20">
+          View plan tiers
+        </Button>
+      </div>
+    </HeroSection>
+
+    <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
+      <SectionHeading
+        eyebrow="Why it matters"
+        title="One search, transparent answers"
+        description="Give shoppers a trusted snapshot of online and offline prices with normalized math and contextual metadata."
+        align="center"
+      />
+      <div class="mt-10 grid gap-6 md:grid-cols-3">
+        {heroHighlights.map((item) => (
+          <FeatureCard
+            title={item.title}
+            description={item.description}
+            icon={item.icon}
+            baseClass="rounded-3xl border border-white/0 bg-white/10 p-6 text-white shadow-lg backdrop-blur"
+            iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/15 text-white"
+            titleClass="text-xl font-semibold text-white"
+            descriptionClass="mt-3 text-sm text-white/80"
+            eyebrowClass="text-xs font-semibold uppercase tracking-wide text-white/70"
+            class="bg-gradient-to-br from-indigo-500/20 via-indigo-500/10 to-cyan-500/20"
+          />
+        ))}
+      </div>
+    </section>
+
+    <section id="capabilities" class="bg-white py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Core capabilities"
+          title="Built for reliable price intelligence"
+          description="Adapters, canonical data, and UI components collaborate to surface trustworthy comparisons every time."
+        />
+        <div class="mt-10 grid gap-6 lg:grid-cols-2">
+          {capabilityCards.map((card) => (
+            <FeatureCard title={card.title} description={card.description} icon={card.icon}>
+              <ul class="mt-3 space-y-2 text-sm text-slate-600">
+                {card.bullets.map((bullet) => (
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-check text-xs text-emerald-500 mt-1"></i>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Operations"
+          title="Normalization, compliance, and resilience"
+          description="Behind the UI sits a data pipeline that keeps conversions accurate, stores happy, and users informed."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-sky-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-slate-200"
+        />
+        <div class="mt-10 grid gap-6 lg:grid-cols-3">
+          {operationsHighlights.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon={item.icon}
+              baseClass="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-lg"
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              titleClass="text-xl font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-slate-200"
+            >
+              <ul class="mt-4 space-y-2 text-sm text-slate-200">
+                {item.bullets.map((bullet) => (
+                  <li class="flex items-start gap-2">
+                    <i class="fas fa-sparkles mt-1 text-xs text-sky-300"></i>
+                    <span>{bullet}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="workspace" class="bg-slate-50 py-16">
+      <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workspace"
+          title="Routes that keep teams productive"
+          description="Every page in the mini app has a clearly scoped job, from the comparison grid to alert management and adapter health."
+        />
+        <div class="mt-10 grid gap-6 lg:grid-cols-2">
+          {workspaceRoutes.map((route) => (
+            <FeatureCard
+              title={route.title}
+              description={route.description}
+              icon={route.icon}
+              eyebrow={route.eyebrow}
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="normalization" class="bg-white py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Data flow"
+          title="From messy product text to comparable offers"
+          description="Normalization steps guarantee that a promo bundle and a single unit can be compared without mental math."
+          align="center"
+        />
+        <div class="mt-10 rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-soft">
+          <ol class="space-y-4 text-left text-sm text-slate-700">
+            {normalizationSteps.map((step, index) => (
+              <li class="flex items-start gap-4">
+                <span class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-600 text-sm font-semibold text-white">
+                  {index + 1}
+                </span>
+                <span class="flex-1 leading-relaxed">{step}</span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans" class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plan gating"
+          title="Free vs. Pro"
+          description="Start with core coverage for four UAE retailers, then scale to enterprise-grade alerts, exports, and API controls."
+          align="center"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-sky-300"
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-slate-200"
+        />
+        <div class="mt-10 overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-xl">
+          <table class="min-w-full divide-y divide-white/10 text-left text-sm">
+            <thead class="bg-white/10 text-xs uppercase tracking-wide text-slate-200">
+              <tr>
+                <th scope="col" class="px-6 py-4 font-semibold text-white">Feature</th>
+                <th scope="col" class="px-6 py-4 font-semibold text-white">Free</th>
+                <th scope="col" class="px-6 py-4 font-semibold text-white">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5 text-slate-100">
+              {planComparisons.map((row) => (
+                <tr>
+                  <td class="px-6 py-4 font-medium text-white">{row.feature}</td>
+                  <td class="px-6 py-4">{row.free}</td>
+                  <td class="px-6 py-4">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap" class="bg-white py-16">
+      <div class="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Future enhancements"
+          title="Roadmap for upcoming releases"
+          description="Once the UAE launch stabilizes, these upgrades keep the Price Checker evolving alongside shopper expectations."
+        />
+        <div class="mt-8 rounded-3xl border border-slate-200 bg-slate-50 p-8 shadow-soft">
+          <ul class="space-y-3 text-sm text-slate-700">
+            {futureIdeas.map((idea) => (
+              <li class="flex items-start gap-3">
+                <i class="fas fa-arrow-trend-up mt-1 text-xs text-indigo-500"></i>
+                <span>{idea}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+</Layout>
