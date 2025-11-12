@@ -1,0 +1,506 @@
+---
+import { HeroSection, SectionHeading, FeatureCard } from '@ansiversa/components';
+import Layout from "../../layouts/Layout.astro";
+
+const heroHighlights = [
+  {
+    label: "Clip formats",
+    value: "Text · URLs · Code · Images · Files · Tables",
+    icon: "fa-layer-group",
+  },
+  {
+    label: "Capture methods",
+    value: "Paste · Upload · Drag-drop · Extension · API",
+    icon: "fa-cloud-arrow-down",
+  },
+  {
+    label: "Search modes",
+    value: "Full-text · Filters · Semantic (Pro)",
+    icon: "fa-magnifying-glass",
+  },
+  {
+    label: "Workspace routes",
+    value: "/clipboard · /clipboard/board/[id] · /clipboard/clip/[id]",
+    icon: "fa-map-location-dot",
+  },
+];
+
+const coreSystem = [
+  {
+    title: "Universal capture engine",
+    description:
+      "Detects clip type, sanitises payloads, hashes duplicates, and stores source context from apps, devices, and URLs.",
+    icon: "fa-inbox",
+  },
+  {
+    title: "Boards, tags, and collections",
+    description:
+      "Organise clips into boards, tag them with colour-coded labels, and surface Today or This device views automatically.",
+    icon: "fa-folder-tree",
+  },
+  {
+    title: "Precision search",
+    description:
+      "Combine full-text search with filters for type, board, language, device, and time. Pro unlocks semantic ranking.",
+    icon: "fa-magnifying-glass-chart",
+  },
+  {
+    title: "Cross-device sync",
+    description:
+      "Register devices, push clips instantly, and generate one-time copy links that expire the moment they are used.",
+    icon: "fa-arrows-rotate",
+  },
+];
+
+const workspaceViews = [
+  {
+    title: "Command centre",
+    description:
+      "Route: /clipboard — home base with global search, quick capture, recents, pinned boards, and hotkey overlays.",
+    icon: "fa-table-cells-large",
+  },
+  {
+    title: "Board workspace",
+    description:
+      "Route: /clipboard/board/[id] — switch between grid and list, apply filters, drag clips, and run bulk actions.",
+    icon: "fa-grip",
+  },
+  {
+    title: "Clip detail studio",
+    description:
+      "Route: /clipboard/clip/[id] — preview Markdown, code, links, or media, inspect versions, and trigger quick actions.",
+    icon: "fa-rectangle-list",
+  },
+  {
+    title: "Settings & privacy",
+    description:
+      "Route: /clipboard/settings — define default board, retention, device names, hotkeys, and privacy safeguards.",
+    icon: "fa-sliders",
+  },
+];
+
+const capturePipeline = [
+  {
+    title: "Frictionless inputs",
+    description:
+      "Capture via paste, uploads, drag-drop, browser extension, bookmarklet, or REST API without breaking focus.",
+    icon: "fa-cloud-arrow-up",
+  },
+  {
+    title: "Clipboard awareness",
+    description:
+      "Respect clipboard permissions, offer auto-save prompts after paste, and fall back gracefully when denied.",
+    icon: "fa-clipboard-check",
+  },
+  {
+    title: "Smart renderers",
+    description:
+      "Render Markdown, syntax-highlighted code, link unfurls, image lightboxes, colour swatches, and table previews.",
+    icon: "fa-eye",
+  },
+  {
+    title: "Hotkeys everywhere",
+    description:
+      "Command bar (⌘/Ctrl+K) plus N, V, C, E, Del shortcuts keep power users in flow across every workspace.",
+    icon: "fa-keyboard",
+  },
+];
+
+const quickActions = [
+  {
+    title: "Hover quick actions",
+    description:
+      "Copy, edit, favorite, share, and delete clips inline with instant feedback and safe undo states.",
+    icon: "fa-bolt",
+  },
+  {
+    title: "Bulk orchestration",
+    description:
+      "Merge, move, retag, export, or batch transform selected clips while keeping hierarchy intact.",
+    icon: "fa-object-group",
+  },
+  {
+    title: "Clipboard sync",
+    description:
+      "Push clips to registered devices, queue pulls, and log each delivery for audit trails.",
+    icon: "fa-paper-plane",
+  },
+];
+
+const aiTransforms = [
+  {
+    title: "Text intelligence",
+    description:
+      "Summarise, rewrite, translate, extract highlights, and craft tweets or captions straight from saved snippets.",
+    icon: "fa-robot",
+    endpoints: ["POST /clipboard/api/ai/transform"],
+  },
+  {
+    title: "Code assistance",
+    description:
+      "Format, explain, convert languages (JS⇄TS, Python⇄JS), and generate docstrings without altering placeholders.",
+    icon: "fa-code",
+    endpoints: ["POST /clipboard/api/ai/transform"],
+  },
+  {
+    title: "Bulk automation",
+    description:
+      "Apply templates to multiple clips, stash the AI output as new versions, and respect plan quotas automatically.",
+    icon: "fa-diagram-project",
+    endpoints: ["POST /clipboard/api/ai/transform"],
+  },
+];
+
+const security = [
+  {
+    title: "Sensitive clip protection",
+    description:
+      "Encrypt credential clips at rest, mask secrets in SSR output, and require re-authentication to reveal them.",
+    icon: "fa-shield-halved",
+  },
+  {
+    title: "Tokenised sharing",
+    description:
+      "Generate expiring, one-time share links that can be revoked instantly while keeping usage logs lightweight.",
+    icon: "fa-link-slash",
+  },
+  {
+    title: "Retention controls",
+    description:
+      "Soft-delete clips into trash, honour plan-based retention windows, and expose purge workflows for compliance.",
+    icon: "fa-trash-arrow-up",
+  },
+  {
+    title: "Platform safeguards",
+    description:
+      "Apply rate limits, payload size guards, CSRF protection, and CORS restrictions scoped to Ansiversa origins.",
+    icon: "fa-user-shield",
+  },
+];
+
+const dataModel = [
+  {
+    name: "Clip",
+    details: [
+      "UUID, board, type, language, pinned/favourite flags, and dedupe hash.",
+      "Stores content payload, size, source metadata, and soft-delete timestamps.",
+    ],
+  },
+  {
+    name: "Attachment",
+    details: [
+      "File metadata for images and uploads including mime type, bytes, and dimensions.",
+      "Linked to clips to power previews and download actions.",
+    ],
+  },
+  {
+    name: "Version",
+    details: [
+      "Historical snapshots of clip content with createdAt tracking and diff support.",
+      "Supports undo/redo, AI outputs, and compliance audits.",
+    ],
+  },
+  {
+    name: "Board & Tag",
+    details: [
+      "Named workspaces with colour accents, ordering, and sharing scope.",
+      "Join tables map clips to tags for fast filtering and saved views.",
+    ],
+  },
+  {
+    name: "ShareLink",
+    details: [
+      "Tokenised URLs with expiry, one-time flags, and revocation state.",
+      "Feeds public copy endpoints without leaking private metadata.",
+    ],
+  },
+  {
+    name: "Device & Sync Jobs",
+    details: [
+      "Registered device keys plus import/export queues for bundles.",
+      "Track statuses, payload manifests, and result URLs for downloads.",
+    ],
+  },
+];
+
+const planLimits = [
+  { feature: "Storage", free: "200 MB", pro: "10 GB" },
+  { feature: "Max clip size", free: "1 MB", pro: "50 MB" },
+  { feature: "AI transforms", free: "20 / month", pro: "1,000 / month" },
+  { feature: "Share links", free: "10 active", pro: "200 active" },
+  { feature: "History per clip", free: "5 versions", pro: "100 versions" },
+  { feature: "Device connections", free: "2", pro: "10" },
+  { feature: "Trash retention", free: "15 days", pro: "90 days" },
+  { feature: "Semantic search & OCR", free: "—", pro: "Included" },
+];
+---
+<Layout>
+  <main class="bg-slate-50 text-slate-900" x-data="() => ({ app: $store['clipboard-manager'] ?? {} })">
+    <HeroSection
+      eyebrow="Mini app"
+      title="Clipboard Manager"
+      description="Capture, organise, and transform every snippet across Ansiversa with boards, device sync, and AI-powered quick actions."
+      background="relative isolate overflow-hidden bg-slate-950 text-white"
+      padding="py-20"
+      containerClass="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8"
+      titleClass="mt-4 text-4xl font-black tracking-tight sm:text-6xl"
+      descriptionClass="mt-6 text-lg text-white/80"
+    >
+      <div slot="actions" class="flex flex-wrap gap-4 text-sm">
+        <a
+          class="inline-flex items-center gap-2 rounded-full bg-white px-5 py-2 font-semibold text-slate-900 shadow-soft transition hover:-translate-y-0.5 hover:bg-slate-100"
+          href="#core-system"
+        >
+          <i class="fas fa-play text-xs" aria-hidden="true"></i>
+          Explore features
+        </a>
+        <a
+          class="inline-flex items-center gap-2 rounded-full border border-white/30 px-5 py-2 font-semibold text-white/90 transition hover:-translate-y-0.5 hover:bg-white/10"
+          href="#workspace"
+        >
+          <i class="fas fa-diagram-project text-xs" aria-hidden="true"></i>
+          View workspace
+        </a>
+      </div>
+    </HeroSection>
+
+    <section class="bg-slate-900 text-white">
+      <div class="mx-auto grid max-w-5xl gap-6 px-4 pb-16 pt-10 sm:grid-cols-2 lg:grid-cols-4 sm:px-6 lg:px-8">
+        {heroHighlights.map((item) => (
+          <div class="rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft backdrop-blur">
+            <div class="flex items-center gap-3 text-xs font-semibold uppercase tracking-[0.25em] text-white/60">
+              <i class={`fa-solid ${item.icon} text-base`} aria-hidden="true"></i>
+              <span>{item.label}</span>
+            </div>
+            <p class="mt-4 text-lg font-semibold text-white" innerHTML={item.value}></p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section id="core-system" class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Core system"
+          title="Clipboard infrastructure that scales with teams"
+          description="Capture engines, organisation layers, search, and sync form the backbone of the Clipboard Manager experience."
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {coreSystem.map((feature) => (
+            <FeatureCard
+              title={feature.title}
+              description={feature.description}
+              icon={`fa-solid ${feature.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-400"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white/80 p-6 shadow-soft backdrop-blur"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section id="workspace" class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Workflow"
+          title="Opinionated routes for every clipboard task"
+          description="Dedicated pages keep capture, organisation, review, and governance neatly separated yet always a shortcut away."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 lg:grid-cols-2">
+          {workspaceViews.map((flow) => (
+            <FeatureCard
+              title={flow.title}
+              description={flow.description}
+              icon={`fa-solid ${flow.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Capture & render"
+          title="Built to ingest anything you copy"
+          description="From raw text to code blocks and colour swatches, the pipeline normalises inputs, honours permissions, and renders previews."
+        />
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {capturePipeline.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon={`fa-solid ${item.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-sky-500/10 text-sky-500"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Operations"
+          title="Stay fast with quick actions and sync"
+          description="Speedy gestures, bulk tooling, and device-aware delivery keep your clipboard humming along."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 md:grid-cols-3">
+          {quickActions.map((action) => (
+            <FeatureCard
+              title={action.title}
+              description={action.description}
+              icon={`fa-solid ${action.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="AI assists"
+          title="Transform clips without losing trust"
+          description="Pro plans unlock guided AI tooling that respects quotas, keeps originals intact, and logs every change."
+        />
+        <div class="grid gap-6 md:grid-cols-3">
+          {aiTransforms.map((assist) => (
+            <FeatureCard
+              title={assist.title}
+              description={assist.description}
+              icon={`fa-solid ${assist.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-purple-500/10 text-purple-500"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft"
+              descriptionClass="mt-3 text-sm text-slate-600"
+            >
+              <ul class="mt-4 space-y-2 text-xs text-slate-500">
+                {assist.endpoints.map((endpoint) => (
+                  <li class="flex items-center gap-2">
+                    <i class="fa-solid fa-terminal text-[10px]" aria-hidden="true"></i>
+                    <span>{endpoint}</span>
+                  </li>
+                ))}
+              </ul>
+            </FeatureCard>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Security & compliance"
+          title="Privacy-first by design"
+          description="Encryption, tokenised sharing, retention controls, and platform hardening keep sensitive clips protected."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+          {security.map((item) => (
+            <FeatureCard
+              title={item.title}
+              description={item.description}
+              icon={`fa-solid ${item.icon}`}
+              iconWrapperClass="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/10 text-white"
+              iconClass="text-lg"
+              baseClass="h-full rounded-3xl border border-white/10 bg-white/5 p-6 shadow-soft"
+              titleClass="text-lg font-semibold text-white"
+              descriptionClass="mt-3 text-sm text-white/70"
+            />
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16">
+      <div class="mx-auto max-w-6xl space-y-12 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Data model"
+          title="Entities that power clipboard ops"
+          description="Structured Astro DB tables keep clips, assets, versions, sharing, and sync jobs observable and auditable."
+        />
+        <div class="grid gap-6 md:grid-cols-2">
+          {dataModel.map((entity) => (
+            <article class="h-full rounded-3xl border border-slate-200 bg-white p-6 shadow-soft">
+              <div class="flex items-center gap-3">
+                <span class="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-500/10 text-indigo-500">
+                  <i class="fa-solid fa-database" aria-hidden="true"></i>
+                </span>
+                <h3 class="text-lg font-semibold text-slate-900">{entity.name}</h3>
+              </div>
+              <ul class="mt-4 space-y-2 text-sm text-slate-600">
+                {entity.details.map((detail) => (
+                  <li class="flex gap-2">
+                    <i class="fa-solid fa-circle text-[6px] text-indigo-400 pt-2" aria-hidden="true"></i>
+                    <span>{detail}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-slate-900 py-16 text-white">
+      <div class="mx-auto max-w-4xl space-y-8 px-4 sm:px-6 lg:px-8">
+        <SectionHeading
+          eyebrow="Plans"
+          title="Free vs Pro at a glance"
+          description="Choose the tier that matches your storage, sharing, and automation requirements."
+          titleClass="mt-3 text-3xl font-bold tracking-tight sm:text-4xl text-white"
+          descriptionClass="mt-4 text-base text-white/70"
+          eyebrowClass="text-xs font-semibold uppercase tracking-[0.35em] text-indigo-300"
+        />
+        <div class="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-soft">
+          <table class="min-w-full divide-y divide-white/10 text-left text-sm text-white">
+            <thead class="bg-white/10 text-xs uppercase tracking-wide text-white/70">
+              <tr>
+                <th class="px-4 py-3 font-semibold">Feature</th>
+                <th class="px-4 py-3 font-semibold">Free</th>
+                <th class="px-4 py-3 font-semibold">Pro</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-white/10">
+              {planLimits.map((row) => (
+                <tr>
+                  <td class="px-4 py-4 font-medium text-white">{row.feature}</td>
+                  <td class="px-4 py-4 text-white/80">{row.free}</td>
+                  <td class="px-4 py-4 text-emerald-200">{row.pro}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <p class="text-xs text-white/60">
+          AI transforms, semantic search, OCR, extended retention, and higher device limits unlock with the Pro subscription while keeping privacy-first defaults intact.
+        </p>
+      </div>
+    </section>
+  </main>
+</Layout>
