@@ -7,4 +7,6 @@ export * from "./repos/topics.repo";
 export * from "./repos/roadmaps.repo";
 export * from "./repos/results.repo";
 export * from "./types/quiz";
+export * from "./types/pagination";
+export { runPaginatedQuery } from "./utils/pagination";
 export * from "./config";

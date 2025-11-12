@@ -28,8 +28,12 @@ const platforms = await platformsRepo.list();
 
 ## Repositories
 
-- `createPlatformsRepo` – list, get, and create platforms.
-- `createQuestionsRepo` – fetch random questions for a platform.
+- `createPlatformsRepo` – list, paginate, get, create, update, and delete platforms.
+- `createSubjectsRepo` – manage subjects with list, filtered pagination, and CRUD helpers.
+- `createTopicsRepo` – manage topics with list, filtered pagination, and CRUD helpers.
+- `createRoadmapsRepo` – manage roadmaps with list, filtered pagination, and CRUD helpers.
+- `createQuestionsRepo` – fetch, paginate, create, update, and delete questions, including random selection helpers.
+- `createResultsRepo` – list, paginate, and manage quiz results.
 
 ## Types
 
