@@ -21,6 +21,9 @@ export default defineConfig({
         '@features': new URL('./src/features', import.meta.url).pathname,
       },
     },
+    ssr: {
+      noExternal: ['@ansiversa/db'],
+    },
   },
   output: "server",
   adapter: vercel()
