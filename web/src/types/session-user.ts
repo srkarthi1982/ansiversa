@@ -1,4 +1,4 @@
-import { User } from 'astro:db';
+import type { User } from 'astro:db';
 
 type UserRow = typeof User.$inferSelect;
 
