@@ -4,6 +4,7 @@
     "paths": {
       "@ansiversa/components": ["../components/src/index.ts"],
       "@ansiversa/components/*": ["../components/src/*"],
+      "@ansiversa/db": ["../ansiversa-db/src/index.ts"],
       "@ansiversa/core/*": ["../core/src/*"],
       "@ansiversa/core/db/*": ["../core/db/*"],
       "@features/*": ["./src/features/*"]
