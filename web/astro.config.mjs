@@ -13,6 +13,7 @@ export default defineConfig({
     cacheDir: '.astro-vite-cache',
     plugins: [tailwindcss()],
     resolve: {
+      preserveSymlinks: true,
       alias: {
         '@ansiversa/components': new URL('../components/src', import.meta.url).pathname,
         '@ansiversa/core': new URL('../core/src', import.meta.url).pathname,
