@@ -1,6 +1,6 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { Result } from 'astro:db';
+import type { NewResult } from '@ansiversa/db';
 import { resultRepository } from './repositories';
 import { getSessionWithUser } from '../../utils/session.server';
 import type { SessionUser } from '../../types/session-user';
@@ -42,7 +42,7 @@ export const saveResult = defineAction({
       s: typeof response.s === 'number' ? response.s : -1,
     }));
 
-    const payload: typeof Result.$inferInsert = {
+    const payload: NewResult = {
       userId: user.id,
       platformId: input.platformId,
       subjectId: input.subjectId,
@@ -53,7 +53,7 @@ export const saveResult = defineAction({
       mark: input.mark,
     };
 
-    const [result] = await resultRepository.insert(payload);
+    const result = await resultRepository.create(payload);
     return { result };
   },
 });

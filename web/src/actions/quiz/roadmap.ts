@@ -1,31 +1,55 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { Roadmap, Topic, Subject, Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
+import type { Roadmap } from '@ansiversa/db';
 import {
   platformRepository,
-  roadmapQueryRepository,
+  quizAdminRepository,
   roadmapRepository,
   subjectRepository,
   topicRepository,
 } from './repositories';
 
-type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
+type RoadmapFiltersInput = {
+  name?: string;
+  platformId?: number;
+  subjectId?: number;
+  topicId?: number;
+  minQuestions?: number;
+  maxQuestions?: number;
+  status?: 'all' | 'active' | 'inactive';
+};
 
-type RoadmapRow = typeof Roadmap.$inferSelect;
+type RoadmapSortInput = {
+  column:
+    | 'name'
+    | 'platformName'
+    | 'subjectName'
+    | 'topicName'
+    | 'platformId'
+    | 'subjectId'
+    | 'topicId'
+    | 'qCount'
+    | 'status'
+    | 'id';
+  direction: 'asc' | 'desc';
+};
 
-const normalizeRoadmap = (
-  row: RoadmapRow & { topicName?: string | null; subjectName?: string | null; platformName?: string | null }
-) => ({
-  id: row.id,
-  platformId: row.platformId,
-  subjectId: row.subjectId,
-  topicId: row.topicId,
-  name: row.name,
-  isActive: row.isActive,
-  qCount: row.qCount ?? 0,
-  platformName: row.platformName ?? null,
-  subjectName: row.subjectName ?? null,
-  topicName: row.topicName ?? null,
+const normalizeRoadmap = (entry: {
+  roadmap: Roadmap;
+  platformName: string | null;
+  subjectName: string | null;
+  topicName: string | null;
+}) => ({
+  id: entry.roadmap.id,
+  platformId: entry.roadmap.platformId,
+  subjectId: entry.roadmap.subjectId,
+  topicId: entry.roadmap.topicId,
+  name: entry.roadmap.name,
+  isActive: entry.roadmap.isActive,
+  qCount: entry.roadmap.qCount ?? 0,
+  platformName: entry.platformName ?? null,
+  subjectName: entry.subjectName ?? null,
+  topicName: entry.topicName ?? null,
 });
 
 const roadmapPayloadSchema = z.object({
@@ -47,8 +71,6 @@ const roadmapFiltersSchema = z.object({
   status: z.enum(['all', 'active', 'inactive']).optional(),
 });
 
-type RoadmapFiltersInput = z.infer<typeof roadmapFiltersSchema>;
-
 const roadmapSortSchema = z.object({
   column: z.enum([
     'name',
@@ -64,8 +86,6 @@ const roadmapSortSchema = z.object({
   ]),
   direction: z.enum(['asc', 'desc']).default('asc'),
 });
-
-type RoadmapSortInput = z.infer<typeof roadmapSortSchema>;
 
 const normalizeInput = (input: z.infer<typeof roadmapPayloadSchema>) => {
   const name = input.name.trim();
@@ -141,78 +161,27 @@ export const fetchRoadmaps = defineAction({
   async handler({ page, pageSize, filters, sort }) {
     const normalizedFilters = normalizeFilters(filters);
     const normalizedSort = sort ?? null;
-    const conditions: SqlCondition[] = [];
-
-    if (normalizedFilters.name) {
-      conditions.push(sql`lower(${Roadmap.name}) LIKE ${`%${normalizedFilters.name.toLowerCase()}%`}`);
-    }
-
-    if (normalizedFilters.platformId !== null) {
-      conditions.push(eq(Roadmap.platformId, normalizedFilters.platformId));
-    }
-
-    if (normalizedFilters.subjectId !== null) {
-      conditions.push(eq(Roadmap.subjectId, normalizedFilters.subjectId));
-    }
-
-    if (normalizedFilters.topicId !== null) {
-      conditions.push(eq(Roadmap.topicId, normalizedFilters.topicId));
-    }
-
-    if (normalizedFilters.minQuestions !== null) {
-      conditions.push(gte(Roadmap.qCount, normalizedFilters.minQuestions));
-    }
-
-    if (normalizedFilters.maxQuestions !== null) {
-      conditions.push(lte(Roadmap.qCount, normalizedFilters.maxQuestions));
-    }
-
-    if (normalizedFilters.status === 'active') {
-      conditions.push(eq(Roadmap.isActive, true));
-    } else if (normalizedFilters.status === 'inactive') {
-      conditions.push(eq(Roadmap.isActive, false));
-    }
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-    const sortColumnMap: Record<RoadmapSortInput['column'], any> = {
-      id: Roadmap.id,
-      name: Roadmap.name,
-      platformId: Roadmap.platformId,
-      subjectId: Roadmap.subjectId,
-      topicId: Roadmap.topicId,
-      platformName: Platform.name,
-      subjectName: Subject.name,
-      topicName: Topic.name,
-      qCount: Roadmap.qCount,
-      status: Roadmap.isActive,
-    };
-    const orderExpressions: any[] = [];
-    if (normalizedSort) {
-      const columnExpr = sortColumnMap[normalizedSort.column];
-      if (columnExpr) {
-        orderExpressions.push(normalizedSort.direction === 'desc' ? desc(columnExpr) : asc(columnExpr));
-      }
-    }
-
-    if (!normalizedSort || normalizedSort.column !== 'id') {
-      orderExpressions.push(asc(Roadmap.id));
-    }
-
-    const result = await roadmapQueryRepository.getPaginatedData({
+    const result = await quizAdminRepository.searchRoadmaps({
       page,
       pageSize,
-      where: () => whereClause,
-      orderBy: () => orderExpressions,
+      name: normalizedFilters.name || null,
+      platformId: normalizedFilters.platformId,
+      subjectId: normalizedFilters.subjectId,
+      topicId: normalizedFilters.topicId,
+      minQuestions: normalizedFilters.minQuestions,
+      maxQuestions: normalizedFilters.maxQuestions,
+      status: normalizedFilters.status,
+      sortColumn: normalizedSort?.column,
+      sortDirection: normalizedSort?.direction,
     });
 
-    const items = result.data.map(({ roadmap, platformName, subjectName, topicName }) =>
+    const items = result.data.map((entry) =>
       normalizeRoadmap({
-        ...roadmap,
-        platformName: platformName ?? null,
-        subjectName: subjectName ?? null,
-        topicName: topicName ?? null,
-      })
+        roadmap: entry.roadmap,
+        platformName: entry.platformName ?? null,
+        subjectName: entry.subjectName ?? null,
+        topicName: entry.topicName ?? null,
+      }),
     );
 
     return {
@@ -224,37 +193,59 @@ export const fetchRoadmaps = defineAction({
   },
 });
 
+const assertHierarchy = async (
+  platformId: number,
+  subjectId: number,
+  topicId: number,
+): Promise<{
+  platformName: string | null;
+  subjectName: string | null;
+  topicName: string | null;
+}> => {
+  const platform = await platformRepository.getById(platformId);
+  if (!platform) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
+  }
+
+  const subject = await subjectRepository.getById(subjectId);
+  if (!subject) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
+  }
+
+  if (subject.platformId !== platformId) {
+    throw new ActionError({
+      code: 'BAD_REQUEST',
+      message: 'Subject does not belong to the selected platform',
+    });
+  }
+
+  const topic = await topicRepository.getById(topicId);
+  if (!topic) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
+  }
+
+  if (topic.platformId !== platformId || topic.subjectId !== subjectId) {
+    throw new ActionError({
+      code: 'BAD_REQUEST',
+      message: 'Topic does not align with the selected platform and subject',
+    });
+  }
+
+  return {
+    platformName: platform.name ?? null,
+    subjectName: subject.name ?? null,
+    topicName: topic.name ?? null,
+  };
+};
+
 export const createRoadmap = defineAction({
   input: roadmapPayloadSchema,
   async handler(input) {
     const payload = normalizeInput(input);
-
-    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
-
-    if (!platform) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
-    }
-
-    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
-    if (!subjectRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
-    }
-
-    if (subjectRow.platformId !== payload.platformId) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
-    }
-
-    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
-    if (!topicRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
-    }
-
-    if (topicRow.platformId !== payload.platformId || topicRow.subjectId !== payload.subjectId) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic does not align with the selected platform and subject' });
-    }
+    const names = await assertHierarchy(payload.platformId, payload.subjectId, payload.topicId);
 
     try {
-      const inserted = await roadmapRepository.insert({
+      const inserted = await roadmapRepository.create({
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
@@ -263,27 +254,12 @@ export const createRoadmap = defineAction({
         qCount: payload.qCount,
       });
 
-      const record = inserted?.[0];
-      if (!record) {
-        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create roadmap' });
+      const enriched = await quizAdminRepository.getRoadmapDetails(inserted.id);
+      if (!enriched) {
+        return normalizeRoadmap({ roadmap: inserted, ...names });
       }
 
-      const enriched = await roadmapQueryRepository.getById((table) => table.id, record.id);
-      const result =
-        enriched ??
-        ({
-          roadmap: record,
-          platformName: platform.name ?? null,
-          subjectName: subjectRow.name ?? null,
-          topicName: topicRow.name ?? null,
-        } as const);
-
-      return normalizeRoadmap({
-        ...result.roadmap,
-        platformName: result.platformName ?? null,
-        subjectName: result.subjectName ?? null,
-        topicName: result.topicName ?? null,
-      });
+      return normalizeRoadmap(enriched);
     } catch (err: unknown) {
       throw new ActionError({
         code: 'BAD_REQUEST',
@@ -294,84 +270,71 @@ export const createRoadmap = defineAction({
 });
 
 export const updateRoadmap = defineAction({
-  input: roadmapPayloadSchema.extend({
-    id: z.number().int().min(1, 'Roadmap id is required'),
+  input: z.object({
+    id: z.number().int().min(1),
+    data: roadmapPayloadSchema,
   }),
-  async handler(input) {
-    const payload = normalizeInput(input);
-    const { id } = input;
+  async handler({ id, data }) {
+    const payload = normalizeInput(data);
+    const names = await assertHierarchy(payload.platformId, payload.subjectId, payload.topicId);
 
-    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
-
-    if (!platform) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
+    const existing = await roadmapRepository.getById(id);
+    if (!existing) {
+      throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });
     }
 
-    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
-    if (!subjectRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
-    }
-
-    if (subjectRow.platformId !== payload.platformId) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
-    }
-
-    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
-    if (!topicRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
-    }
-
-    if (topicRow.platformId !== payload.platformId || topicRow.subjectId !== payload.subjectId) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic does not align with the selected platform and subject' });
-    }
-
-    const updated = await roadmapRepository.update(
-      {
+    try {
+      const updated = await roadmapRepository.update(id, {
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      },
-      (table) => eq(table.id, id),
-    );
+      });
 
-    const record = updated?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });
+      if (!updated) {
+        throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });
+      }
+
+      const enriched = await quizAdminRepository.getRoadmapDetails(updated.id);
+      if (!enriched) {
+        return normalizeRoadmap({ roadmap: updated, ...names });
+      }
+
+      return normalizeRoadmap(enriched);
+    } catch (err: unknown) {
+      if (err instanceof ActionError) {
+        throw err;
+      }
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to update roadmap',
+      });
     }
-
-    const enriched = await roadmapQueryRepository.getById((table) => table.id, record.id);
-    const result =
-      enriched ??
-      ({
-        roadmap: record,
-        platformName: platform.name ?? null,
-        subjectName: subjectRow.name ?? null,
-        topicName: topicRow.name ?? null,
-      } as const);
-
-    return normalizeRoadmap({
-      ...result.roadmap,
-      platformName: result.platformName ?? null,
-      subjectName: result.subjectName ?? null,
-      topicName: result.topicName ?? null,
-    });
   },
 });
 
 export const deleteRoadmap = defineAction({
-  input: z.object({
-    id: z.number().int().min(1, 'Roadmap id is required'),
-  }),
+  input: z.object({ id: z.number().int().min(1) }),
   async handler({ id }) {
-    const deleted = await roadmapRepository.delete((table) => eq(table.id, id));
+    try {
+      const deleted = await roadmapRepository.delete(id);
 
-    if (!deleted?.[0]) {
-      throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });
+      if (!deleted) {
+        throw new ActionError({ code: 'NOT_FOUND', message: 'Roadmap not found' });
+      }
+
+      return { success: true } as const;
+    } catch (err: unknown) {
+      if (err instanceof ActionError) {
+        throw err;
+      }
+
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to delete roadmap',
+      });
     }
-
-    return { ok: true };
   },
 });

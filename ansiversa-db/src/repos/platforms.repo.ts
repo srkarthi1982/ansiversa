@@ -13,17 +13,17 @@ import {
 export interface PlatformsRepo {
   list(): Promise<Platform[]>;
   listPaginated(options?: PaginationOptions): Promise<PaginatedResult<Platform>>;
-  getById(id: string): Promise<Platform | null>;
+  getById(id: number): Promise<Platform | null>;
   create(input: NewPlatform): Promise<Platform>;
-  update(id: string, input: UpdatePlatform): Promise<Platform | null>;
-  delete(id: string): Promise<Platform | null>;
+  update(id: number, input: UpdatePlatform): Promise<Platform | null>;
+  delete(id: number): Promise<Platform | null>;
 }
 
 const returningColumns = "id, name, description, icon, type, qCount, isActive";
 const selectClause = `SELECT ${returningColumns} FROM Platform`;
 
 export const createPlatformsRepo = (driver: DbDriver): PlatformsRepo => {
-  const getSingle = async (id: string): Promise<Platform | null> => {
+  const getSingle = async (id: number): Promise<Platform | null> => {
     const { rows } = await driver.query(`${selectClause} WHERE id = ? LIMIT 1`, [id]);
     if (rows.length === 0) {
       return null;
@@ -46,7 +46,7 @@ export const createPlatformsRepo = (driver: DbDriver): PlatformsRepo => {
         pageSize: options.pageSize,
       });
     },
-    async getById(id: string) {
+    async getById(id: number) {
       return getSingle(id);
     },
     async create(input: NewPlatform) {
@@ -69,7 +69,7 @@ export const createPlatformsRepo = (driver: DbDriver): PlatformsRepo => {
       }
       return parsePlatform(rows[0]);
     },
-    async update(id: string, input: UpdatePlatform) {
+    async update(id: number, input: UpdatePlatform) {
       const data = UpdatePlatformSchema.parse(input ?? {});
       const setClauses: string[] = [];
       const params: QueryParameter[] = [];
@@ -112,7 +112,7 @@ export const createPlatformsRepo = (driver: DbDriver): PlatformsRepo => {
       }
       return parsePlatform(rows[0]);
     },
-    async delete(id: string) {
+    async delete(id: number) {
       const { rows } = await driver.query(
         `DELETE FROM Platform WHERE id = ? RETURNING ${returningColumns}`,
         [id],

@@ -1,23 +1,36 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { Topic, Subject, Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
-import { platformRepository, subjectRepository, topicQueryRepository, topicRepository } from './repositories';
+import type { Topic } from '@ansiversa/db';
+import {
+  platformRepository,
+  quizAdminRepository,
+  subjectRepository,
+  topicRepository,
+} from './repositories';
 
-type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
+type TopicFiltersInput = {
+  name?: string;
+  platformId?: number;
+  subjectId?: number;
+  minQuestions?: number;
+  maxQuestions?: number;
+  status?: 'all' | 'active' | 'inactive';
+};
 
-type TopicRow = typeof Topic.$inferSelect;
+type TopicSortInput = {
+  column: 'name' | 'subjectName' | 'platformName' | 'platformId' | 'subjectId' | 'qCount' | 'status' | 'id';
+  direction: 'asc' | 'desc';
+};
 
-const normalizeTopic = (
-  row: TopicRow & { subjectName?: string | null; platformName?: string | null }
-) => ({
-  id: row.id,
-  platformId: row.platformId,
-  subjectId: row.subjectId,
-  name: row.name,
-  isActive: row.isActive,
-  qCount: row.qCount ?? 0,
-  subjectName: row.subjectName ?? null,
-  platformName: row.platformName ?? null,
+const normalizeTopic = (entry: { topic: Topic; subjectName: string | null; platformName: string | null }) => ({
+  id: entry.topic.id,
+  platformId: entry.topic.platformId,
+  subjectId: entry.topic.subjectId,
+  name: entry.topic.name,
+  isActive: entry.topic.isActive,
+  qCount: entry.topic.qCount ?? 0,
+  subjectName: entry.subjectName ?? null,
+  platformName: entry.platformName ?? null,
 });
 
 const topicPayloadSchema = z.object({
@@ -37,14 +50,10 @@ const topicFiltersSchema = z.object({
   status: z.enum(['all', 'active', 'inactive']).optional(),
 });
 
-type TopicFiltersInput = z.infer<typeof topicFiltersSchema>;
-
 const topicSortSchema = z.object({
   column: z.enum(['name', 'subjectName', 'platformName', 'platformId', 'subjectId', 'qCount', 'status', 'id']),
   direction: z.enum(['asc', 'desc']).default('asc'),
 });
-
-type TopicSortInput = z.infer<typeof topicSortSchema>;
 
 const normalizeInput = (input: z.infer<typeof topicPayloadSchema>) => {
   const name = input.name.trim();
@@ -107,67 +116,26 @@ export const fetchTopics = defineAction({
   async handler({ page, pageSize, filters, sort }) {
     const normalizedFilters = normalizeFilters(filters);
     const normalizedSort = sort ?? null;
-    const conditions: SqlCondition[] = [];
 
-    if (normalizedFilters.name) {
-      conditions.push(sql`lower(${Topic.name}) LIKE ${`%${normalizedFilters.name.toLowerCase()}%`}`);
-    }
-
-    if (normalizedFilters.platformId !== null) {
-      conditions.push(eq(Topic.platformId, normalizedFilters.platformId));
-    }
-
-    if (normalizedFilters.subjectId !== null) {
-      conditions.push(eq(Topic.subjectId, normalizedFilters.subjectId));
-    }
-
-    if (normalizedFilters.minQuestions !== null) {
-      conditions.push(gte(Topic.qCount, normalizedFilters.minQuestions));
-    }
-
-    if (normalizedFilters.maxQuestions !== null) {
-      conditions.push(lte(Topic.qCount, normalizedFilters.maxQuestions));
-    }
-
-    if (normalizedFilters.status === 'active') {
-      conditions.push(eq(Topic.isActive, true));
-    } else if (normalizedFilters.status === 'inactive') {
-      conditions.push(eq(Topic.isActive, false));
-    }
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-    const sortColumnMap: Record<TopicSortInput['column'], any> = {
-      id: Topic.id,
-      name: Topic.name,
-      subjectId: Topic.subjectId,
-      platformId: Topic.platformId,
-      subjectName: Subject.name,
-      platformName: Platform.name,
-      qCount: Topic.qCount,
-      status: Topic.isActive,
-    };
-    const orderExpressions: any[] = [];
-    if (normalizedSort) {
-      const columnExpr = sortColumnMap[normalizedSort.column];
-      if (columnExpr) {
-        orderExpressions.push(normalizedSort.direction === 'desc' ? desc(columnExpr) : asc(columnExpr));
-      }
-    }
-
-    if (!normalizedSort || normalizedSort.column !== 'id') {
-      orderExpressions.push(asc(Topic.id));
-    }
-
-    const result = await topicQueryRepository.getPaginatedData({
+    const result = await quizAdminRepository.searchTopics({
       page,
       pageSize,
-      where: () => whereClause,
-      orderBy: () => orderExpressions,
+      name: normalizedFilters.name || null,
+      platformId: normalizedFilters.platformId,
+      subjectId: normalizedFilters.subjectId,
+      minQuestions: normalizedFilters.minQuestions,
+      maxQuestions: normalizedFilters.maxQuestions,
+      status: normalizedFilters.status,
+      sortColumn: normalizedSort?.column,
+      sortDirection: normalizedSort?.direction,
     });
 
-    const items = result.data.map(({ topic, subjectName, platformName }) =>
-      normalizeTopic({ ...topic, subjectName: subjectName ?? null, platformName: platformName ?? null })
+    const items = result.data.map((entry) =>
+      normalizeTopic({
+        topic: entry.topic,
+        platformName: entry.platformName ?? null,
+        subjectName: entry.subjectName ?? null,
+      }),
     );
 
     return {
@@ -184,13 +152,13 @@ export const createTopic = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
+    const platform = await platformRepository.getById(payload.platformId);
 
     if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
+    const subjectRow = await subjectRepository.getById(payload.subjectId);
 
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
@@ -201,7 +169,7 @@ export const createTopic = defineAction({
     }
 
     try {
-      const inserted = await topicRepository.insert({
+      const inserted = await topicRepository.create({
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         name: payload.name,
@@ -209,25 +177,16 @@ export const createTopic = defineAction({
         qCount: payload.qCount,
       });
 
-      const record = inserted?.[0];
-      if (!record) {
-        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create topic' });
+      const enriched = await quizAdminRepository.getTopicDetails(inserted.id);
+      if (!enriched) {
+        return normalizeTopic({
+          topic: inserted,
+          platformName: platform.name ?? null,
+          subjectName: subjectRow.name ?? null,
+        });
       }
 
-      const enriched = await topicQueryRepository.getById((table) => table.id, record.id);
-      const result =
-        enriched ??
-        ({
-          topic: record,
-          subjectName: subjectRow.name ?? null,
-          platformName: platform.name ?? null,
-        } as const);
-
-      return normalizeTopic({
-        ...result.topic,
-        subjectName: result.subjectName ?? null,
-        platformName: result.platformName ?? null,
-      });
+      return normalizeTopic(enriched);
     } catch (err: unknown) {
       throw new ActionError({
         code: 'BAD_REQUEST',
@@ -238,73 +197,92 @@ export const createTopic = defineAction({
 });
 
 export const updateTopic = defineAction({
-  input: topicPayloadSchema.extend({
-    id: z.number().int().min(1, 'Topic id is required'),
+  input: z.object({
+    id: z.number().int().min(1),
+    data: topicPayloadSchema,
   }),
-  async handler(input) {
-    const payload = normalizeInput(input);
-    const { id } = input;
+  async handler({ id, data }) {
+    const payload = normalizeInput(data);
 
-    const platform = await platformRepository.getById((table) => table.id, payload.platformId);
+    const platform = await platformRepository.getById(payload.platformId);
 
     if (!platform) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
     }
 
-    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
+    const subjectRow = await subjectRepository.getById(payload.subjectId);
 
     if (!subjectRow) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
     }
 
     if (subjectRow.platformId !== payload.platformId) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: 'Subject does not belong to the selected platform',
+      });
     }
 
-    const updated = await topicRepository.update(
-      {
+    const existing = await topicRepository.getById(id);
+    if (!existing) {
+      throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });
+    }
+
+    try {
+      const updated = await topicRepository.update(id, {
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         name: payload.name,
         isActive: payload.isActive,
         qCount: payload.qCount,
-      },
-      (table) => eq(table.id, id),
-    );
+      });
 
-    const record = updated?.[0];
-    if (!record) {
-      throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });
+      if (!updated) {
+        throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });
+      }
+
+      const enriched = await quizAdminRepository.getTopicDetails(updated.id);
+      if (!enriched) {
+        return normalizeTopic({
+          topic: updated,
+          platformName: platform.name ?? null,
+          subjectName: subjectRow.name ?? null,
+        });
+      }
+
+      return normalizeTopic(enriched);
+    } catch (err: unknown) {
+      if (err instanceof ActionError) {
+        throw err;
+      }
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to update topic',
+      });
     }
-
-    const enriched = await topicQueryRepository.getById((table) => table.id, record.id);
-    const result =
-      enriched ??
-      ({
-        topic: record,
-        subjectName: subjectRow.name ?? null,
-        platformName: platform.name ?? null,
-      } as const);
-
-    return normalizeTopic({
-      ...result.topic,
-      subjectName: result.subjectName ?? null,
-      platformName: result.platformName ?? null,
-    });
   },
 });
 
 export const deleteTopic = defineAction({
-  input: z.object({
-    id: z.number().int().min(1, 'Topic id is required'),
-  }),
+  input: z.object({ id: z.number().int().min(1) }),
   async handler({ id }) {
-    const deleted = await topicRepository.delete((table) => eq(table.id, id));
+    try {
+      const deleted = await topicRepository.delete(id);
 
-    if (!deleted?.[0]) {
-      throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });
+      if (!deleted) {
+        throw new ActionError({ code: 'NOT_FOUND', message: 'Topic not found' });
+      }
+
+      return { success: true } as const;
+    } catch (err: unknown) {
+      if (err instanceof ActionError) {
+        throw err;
+      }
+
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: (err as Error)?.message ?? 'Unable to delete topic',
+      });
     }
-
-    return { ok: true };
   },
 });
