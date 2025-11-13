@@ -6,6 +6,8 @@
       "@ansiversa/components/*": ["../components/src/*"],
       "@ansiversa/core/*": ["../core/src/*"],
       "@ansiversa/core/db/*": ["../core/db/*"],
+      "@ansiversa/db": ["../ansiversa-db/src/index.ts"],
+      "@ansiversa/db/*": ["../ansiversa-db/src/*"],
       "@features/*": ["./src/features/*"]
     }
   },
