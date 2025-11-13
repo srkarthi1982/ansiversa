@@ -18,7 +18,6 @@ export default defineConfig({
         '@ansiversa/components': new URL('../components/src', import.meta.url).pathname,
         '@ansiversa/core': new URL('../core/src', import.meta.url).pathname,
         '@ansiversa/core/db': new URL('../core/db', import.meta.url).pathname,
-        '@ansiversa/db': new URL('../ansiversa-db/src', import.meta.url).pathname,
         '@features': new URL('./src/features', import.meta.url).pathname,
       },
     },
