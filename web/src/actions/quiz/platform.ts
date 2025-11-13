@@ -1,13 +1,23 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { Platform, and, asc, desc, eq, gte, lte, sql } from 'astro:db';
-import { platformRepository } from './repositories';
+import type { Platform } from '@ansiversa/db';
+import { platformRepository, quizAdminRepository } from './repositories';
 
-type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
+type PlatformFiltersInput = {
+  name?: string;
+  description?: string;
+  type?: string;
+  minQuestions?: number;
+  maxQuestions?: number;
+  status?: 'all' | 'active' | 'inactive';
+};
 
-type PlatformRow = typeof Platform.$inferSelect;
+type PlatformSortInput = {
+  column: 'name' | 'description' | 'type' | 'qCount' | 'status' | 'id';
+  direction: 'asc' | 'desc';
+};
 
-const normalizePlatform = (row: PlatformRow) => ({
+const normalizePlatform = (row: Platform) => ({
   id: row.id,
   name: row.name,
   description: row.description,
@@ -35,14 +45,10 @@ const platformFiltersSchema = z.object({
   status: z.enum(['all', 'active', 'inactive']).optional(),
 });
 
-type PlatformFiltersInput = z.infer<typeof platformFiltersSchema>;
-
 const platformSortSchema = z.object({
   column: z.enum(['name', 'description', 'type', 'qCount', 'status', 'id']),
   direction: z.enum(['asc', 'desc']).default('asc'),
 });
-
-type PlatformSortInput = z.infer<typeof platformSortSchema>;
 
 const normalizeInput = (input: z.infer<typeof platformPayloadSchema>) => {
   const name = input.name.trim();
@@ -73,7 +79,6 @@ const normalizeFilters = (filters?: PlatformFiltersInput) => {
   const name = safe.name?.trim() ?? '';
   const description = safe.description?.trim() ?? '';
   const type = safe.type?.trim() ?? '';
-  // Treat zero as "not set" so empty inputs from the UI don't force qCount filters.
   const hasMin = typeof safe.minQuestions === 'number' && Number.isFinite(safe.minQuestions) && safe.minQuestions > 0;
   const hasMax = typeof safe.maxQuestions === 'number' && Number.isFinite(safe.maxQuestions) && safe.maxQuestions > 0;
   let minQuestions = hasMin ? Math.max(0, Math.floor(safe.minQuestions)) : null;
@@ -107,62 +112,18 @@ export const fetchPlatforms = defineAction({
   async handler({ page, pageSize, filters, sort }) {
     const normalizedFilters = normalizeFilters(filters);
     const normalizedSort = sort ?? null;
-    const conditions: SqlCondition[] = [];
 
-    if (normalizedFilters.name) {
-      conditions.push(sql`lower(${Platform.name}) LIKE ${`%${normalizedFilters.name.toLowerCase()}%`}`);
-    }
-
-    if (normalizedFilters.description) {
-      conditions.push(sql`lower(${Platform.description}) LIKE ${`%${normalizedFilters.description.toLowerCase()}%`}`);
-    }
-
-    if (normalizedFilters.type) {
-      conditions.push(sql`lower(coalesce(${Platform.type}, '')) LIKE ${`%${normalizedFilters.type.toLowerCase()}%`}`);
-    }
-
-    if (normalizedFilters.minQuestions !== null) {
-      conditions.push(gte(Platform.qCount, normalizedFilters.minQuestions));
-    }
-
-    if (normalizedFilters.maxQuestions !== null) {
-      conditions.push(lte(Platform.qCount, normalizedFilters.maxQuestions));
-    }
-
-    if (normalizedFilters.status === 'active') {
-      conditions.push(eq(Platform.isActive, true));
-    } else if (normalizedFilters.status === 'inactive') {
-      conditions.push(eq(Platform.isActive, false));
-    }
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-    const sortColumnMap: Record<PlatformSortInput['column'], any> = {
-      id: Platform.id,
-      name: Platform.name,
-      description: Platform.description,
-      type: Platform.type,
-      qCount: Platform.qCount,
-      status: Platform.isActive,
-    };
-
-    const orderExpressions: any[] = [];
-    if (normalizedSort) {
-      const columnExpr = sortColumnMap[normalizedSort.column];
-      if (columnExpr) {
-        orderExpressions.push(normalizedSort.direction === 'desc' ? desc(columnExpr) : asc(columnExpr));
-      }
-    }
-
-    if (!normalizedSort || normalizedSort.column !== 'id') {
-      orderExpressions.push(asc(Platform.id));
-    }
-
-    const result = await platformRepository.getPaginatedData({
+    const result = await quizAdminRepository.searchPlatforms({
       page,
       pageSize,
-      where: () => whereClause,
-      orderBy: () => orderExpressions,
+      name: normalizedFilters.name || null,
+      description: normalizedFilters.description || null,
+      type: normalizedFilters.type || null,
+      minQuestions: normalizedFilters.minQuestions,
+      maxQuestions: normalizedFilters.maxQuestions,
+      status: normalizedFilters.status,
+      sortColumn: normalizedSort?.column,
+      sortDirection: normalizedSort?.direction,
     });
 
     return {
@@ -180,16 +141,16 @@ export const createPlatform = defineAction({
     const payload = normalizeInput(input);
 
     try {
-      const inserted = await platformRepository.insert({
+      const inserted = await platformRepository.create({
         name: payload.name,
         description: payload.description,
         icon: payload.icon,
-        type: payload.type,
+        type: payload.type ?? undefined,
         qCount: payload.qCount,
         isActive: payload.isActive,
       });
 
-      return normalizePlatform(inserted[0]);
+      return normalizePlatform(inserted);
     } catch (err: unknown) {
       throw new ActionError({
         code: 'BAD_REQUEST',
@@ -207,26 +168,30 @@ export const updatePlatform = defineAction({
   async handler({ id, data }) {
     const payload = normalizeInput(data);
 
-    const existing = await platformRepository.getById((table) => table.id, id);
+    const existing = await platformRepository.getById(id);
     if (!existing) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
     }
 
     try {
-      const updated = await platformRepository.update(
-        {
-          name: payload.name,
-          description: payload.description,
-          icon: payload.icon,
-          type: payload.type,
-          qCount: payload.qCount,
-          isActive: payload.isActive,
-        },
-        (table) => eq(table.id, id),
-      );
+      const updated = await platformRepository.update(id, {
+        name: payload.name,
+        description: payload.description,
+        icon: payload.icon,
+        type: payload.type ?? undefined,
+        qCount: payload.qCount,
+        isActive: payload.isActive,
+      });
 
-      return normalizePlatform(updated[0]);
+      if (!updated) {
+        throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
+      }
+
+      return normalizePlatform(updated);
     } catch (err: unknown) {
+      if (err instanceof ActionError) {
+        throw err;
+      }
       throw new ActionError({
         code: 'BAD_REQUEST',
         message: (err as Error)?.message ?? 'Unable to update platform',
@@ -239,13 +204,13 @@ export const deletePlatform = defineAction({
   input: z.object({ id: z.number().int().min(1) }),
   async handler({ id }) {
     try {
-      const deleted = await platformRepository.delete((table) => eq(table.id, id));
+      const deleted = await platformRepository.delete(id);
 
-      if (!deleted[0]) {
+      if (!deleted) {
         throw new ActionError({ code: 'NOT_FOUND', message: 'Platform not found' });
       }
 
-      return { success: true };
+      return { success: true } as const;
     } catch (err: unknown) {
       if (err instanceof ActionError) {
         throw err;

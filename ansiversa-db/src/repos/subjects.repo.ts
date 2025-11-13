@@ -1,5 +1,6 @@
 import type { DbDriver, QueryParameter } from "../drivers/driver";
 import { runPaginatedQuery } from "../utils/pagination";
+import { getNextNumericId } from "../utils/ids";
 import type { PaginatedResult, PaginationOptions } from "../types/pagination";
 import {
   NewSubjectSchema,
@@ -74,11 +75,12 @@ export const createSubjectsRepo = (driver: DbDriver): SubjectsRepo => {
     },
     async create(input: NewSubject) {
       const data = NewSubjectSchema.parse(input);
+      const id = data.id ?? (await getNextNumericId(driver, "Subject"));
       const { rows } = await driver.query(
         `INSERT INTO Subject (id, platformId, name, isActive, qCount)
          VALUES (?, ?, ?, ?, ?)
          RETURNING ${returningColumns}`,
-        [data.id, data.platformId, data.name, data.isActive ? 1 : 0, data.qCount],
+        [id, data.platformId, data.name, data.isActive ? 1 : 0, data.qCount],
       );
       if (rows.length === 0) {
         throw new Error("Failed to insert subject record");

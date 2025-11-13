@@ -1,5 +1,6 @@
 import type { DbDriver, QueryParameter } from "../drivers/driver";
 import { runPaginatedQuery } from "../utils/pagination";
+import { getNextNumericId } from "../utils/ids";
 import type { PaginatedResult, PaginationOptions } from "../types/pagination";
 import {
   NewRoadmapSchema,
@@ -100,12 +101,13 @@ export const createRoadmapsRepo = (driver: DbDriver): RoadmapsRepo => {
     },
     async create(input: NewRoadmap) {
       const data = NewRoadmapSchema.parse(input);
+      const id = data.id ?? (await getNextNumericId(driver, "Roadmap"));
       const { rows } = await driver.query(
         `INSERT INTO Roadmap (id, platformId, subjectId, topicId, name, isActive, qCount)
          VALUES (?, ?, ?, ?, ?, ?, ?)
          RETURNING ${returningColumns}`,
         [
-          data.id,
+          id,
           data.platformId,
           data.subjectId,
           data.topicId,

@@ -272,7 +272,7 @@ export const SubjectSchema = z.object({
 });
 
 export const NewSubjectSchema = z.object({
-  id: z.number().int().nonnegative(),
+  id: z.number().int().nonnegative().optional(),
   platformId: z.number().int().nonnegative(),
   name: z.string().min(1),
   isActive: z.boolean().default(true),
@@ -296,7 +296,7 @@ export const TopicSchema = z.object({
 });
 
 export const NewTopicSchema = z.object({
-  id: z.number().int().nonnegative(),
+  id: z.number().int().nonnegative().optional(),
   platformId: z.number().int().nonnegative(),
   subjectId: z.number().int().nonnegative(),
   name: z.string().min(1),
@@ -323,7 +323,7 @@ export const RoadmapSchema = z.object({
 });
 
 export const NewRoadmapSchema = z.object({
-  id: z.number().int().nonnegative(),
+  id: z.number().int().nonnegative().optional(),
   platformId: z.number().int().nonnegative(),
   subjectId: z.number().int().nonnegative(),
   topicId: z.number().int().nonnegative(),

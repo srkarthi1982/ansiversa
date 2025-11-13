@@ -1,5 +1,6 @@
 import type { DbDriver, QueryParameter } from "../drivers/driver";
 import { runPaginatedQuery } from "../utils/pagination";
+import { getNextNumericId } from "../utils/ids";
 import type { PaginatedResult, PaginationOptions } from "../types/pagination";
 import {
   NewTopicSchema,
@@ -87,11 +88,12 @@ export const createTopicsRepo = (driver: DbDriver): TopicsRepo => {
     },
     async create(input: NewTopic) {
       const data = NewTopicSchema.parse(input);
+      const id = data.id ?? (await getNextNumericId(driver, "Topic"));
       const { rows } = await driver.query(
         `INSERT INTO Topic (id, platformId, subjectId, name, isActive, qCount)
          VALUES (?, ?, ?, ?, ?, ?)
          RETURNING ${returningColumns}`,
-        [data.id, data.platformId, data.subjectId, data.name, data.isActive ? 1 : 0, data.qCount],
+        [id, data.platformId, data.subjectId, data.name, data.isActive ? 1 : 0, data.qCount],
       );
       if (rows.length === 0) {
         throw new Error("Failed to insert topic record");

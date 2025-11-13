@@ -1,18 +1,41 @@
 import { ActionError, defineAction } from 'astro:actions';
 import { z } from 'astro:schema';
-import { Platform, Question, Roadmap, Subject, Topic, and, asc, count, db, desc, eq, sql } from 'astro:db';
+import type { QuestionRelations } from '@ansiversa/db';
 import {
   platformRepository,
-  questionQueryRepository,
   questionRepository,
+  quizAdminRepository,
   roadmapRepository,
   subjectRepository,
   topicRepository,
 } from './repositories';
 
-type SqlCondition = NonNullable<Parameters<typeof and>[number]>;
+type QuestionFiltersInput = {
+  questionText?: string;
+  platformId?: number;
+  subjectId?: number;
+  topicId?: number;
+  roadmapId?: number;
+  level?: string;
+  status?: 'all' | 'active' | 'inactive';
+};
 
-type QuestionRow = typeof Question.$inferSelect;
+type QuestionSortInput = {
+  column:
+    | 'questionText'
+    | 'platformName'
+    | 'subjectName'
+    | 'topicName'
+    | 'roadmapName'
+    | 'platformId'
+    | 'subjectId'
+    | 'topicId'
+    | 'roadmapId'
+    | 'level'
+    | 'status'
+    | 'id';
+  direction: 'asc' | 'desc';
+};
 
 const normalizeArray = (value: unknown): string[] => {
   if (Array.isArray(value)) {
@@ -80,38 +103,29 @@ const deriveAnswerFromKey = (options: string[], answerKey?: string | null): stri
   return null;
 };
 
-const normalizeQuestion = (
-  row: QuestionRow & {
-    platformName?: string | null;
-    subjectName?: string | null;
-    topicName?: string | null;
-    roadmapName?: string | null;
-  },
-) => {
-  const options = normalizeArray(row.o);
-  const rawAnswerKey = typeof row.a === 'string' ? row.a.trim() : '';
-  const answerKey = rawAnswerKey.length > 0 ? rawAnswerKey : '0';
-  const explanation = typeof row.e === 'string' ? row.e.trim() : '';
-  const levelRaw = typeof row.l === 'string' ? row.l.trim().toUpperCase() : 'E';
-  const level: 'E' | 'M' | 'D' = levelRaw === 'M' || levelRaw === 'D' ? levelRaw : 'E';
+const normalizeQuestion = (entry: QuestionRelations) => {
+  const question = entry.question;
+  const options = normalizeArray(question.options);
+  const answerKey = typeof question.answer === 'string' ? question.answer : '';
+  const explanation = question.explanation ?? '';
 
   return {
-    id: row.id,
-    platformId: row.platformId,
-    subjectId: row.subjectId,
-    topicId: row.topicId,
-    roadmapId: row.roadmapId ?? null,
-    questionText: row.q,
+    id: question.id,
+    platformId: question.platformId,
+    subjectId: question.subjectId,
+    topicId: question.topicId,
+    roadmapId: question.roadmapId ?? null,
+    questionText: question.question,
     options,
-    answer: deriveAnswerFromKey(options, answerKey),
+    answer: deriveAnswerFromKey(options, answerKey) ?? answerKey,
     answerKey,
     explanation,
-    level,
-    isActive: Boolean(row.isActive),
-    platformName: row.platformName ?? null,
-    subjectName: row.subjectName ?? null,
-    topicName: row.topicName ?? null,
-    roadmapName: row.roadmapName ?? null,
+    level: question.level,
+    isActive: question.isActive,
+    platformName: entry.platformName ?? null,
+    subjectName: entry.subjectName ?? null,
+    topicName: entry.topicName ?? null,
+    roadmapName: entry.roadmapName ?? null,
   };
 };
 
@@ -138,8 +152,6 @@ const questionFiltersSchema = z.object({
   status: z.enum(['all', 'active', 'inactive']).optional(),
 });
 
-type QuestionFiltersInput = z.infer<typeof questionFiltersSchema>;
-
 const questionSortSchema = z.object({
   column: z.enum([
     'questionText',
@@ -157,8 +169,6 @@ const questionSortSchema = z.object({
   ]),
   direction: z.enum(['asc', 'desc']).default('asc'),
 });
-
-type QuestionSortInput = z.infer<typeof questionSortSchema>;
 
 const normalizeInput = (input: z.infer<typeof questionPayloadSchema>) => {
   const questionText = input.questionText.trim();
@@ -185,12 +195,6 @@ const normalizeInput = (input: z.infer<typeof questionPayloadSchema>) => {
     throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap is required' });
   }
 
-  const normalizeString = (value?: string | null) => {
-    if (typeof value !== 'string') return null;
-    const trimmed = value.trim();
-    return trimmed.length > 0 ? trimmed : null;
-  };
-
   const normalizeArrayField = (value?: string[]) => {
     if (!Array.isArray(value)) {
       throw new ActionError({ code: 'BAD_REQUEST', message: 'Options are required' });
@@ -205,7 +209,7 @@ const normalizeInput = (input: z.infer<typeof questionPayloadSchema>) => {
   };
 
   const normalizeRequiredString = (value: string | null, field: string) => {
-    const normalized = normalizeString(value);
+    const normalized = typeof value === 'string' ? value.trim() : '';
     if (!normalized) {
       throw new ActionError({ code: 'BAD_REQUEST', message: `${field} is required` });
     }
@@ -260,6 +264,65 @@ const normalizeFilters = (filters?: QuestionFiltersInput) => {
   };
 };
 
+const assertQuestionHierarchy = async (
+  platformId: number,
+  subjectId: number,
+  topicId: number,
+  roadmapId: number,
+) => {
+  const platformRow = await platformRepository.getById(platformId);
+  if (!platformRow) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
+  }
+
+  const subjectRow = await subjectRepository.getById(subjectId);
+  if (!subjectRow) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
+  }
+
+  if (subjectRow.platformId !== platformId) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject does not belong to the selected platform' });
+  }
+
+  const topicRow = await topicRepository.getById(topicId);
+  if (!topicRow) {
+    throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
+  }
+
+  if (topicRow.platformId !== platformId || topicRow.subjectId !== subjectId) {
+    throw new ActionError({
+      code: 'BAD_REQUEST',
+      message: 'Topic does not align with the selected platform and subject',
+    });
+  }
+
+  let roadmapRow = null;
+  if (roadmapId !== null) {
+    roadmapRow = await roadmapRepository.getById(roadmapId);
+    if (!roadmapRow) {
+      throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap not found' });
+    }
+
+    if (
+      roadmapRow.platformId !== platformId ||
+      roadmapRow.subjectId !== subjectId ||
+      roadmapRow.topicId !== topicId
+    ) {
+      throw new ActionError({
+        code: 'BAD_REQUEST',
+        message: 'Roadmap does not align with the selected platform, subject, and topic',
+      });
+    }
+  }
+
+  return {
+    platformName: platformRow.name ?? null,
+    subjectName: subjectRow.name ?? null,
+    topicName: topicRow.name ?? null,
+    roadmapName: roadmapRow?.name ?? null,
+  };
+};
+
 export const fetchQuestions = defineAction({
   input: z.object({
     page: z.number().int().min(1).default(1),
@@ -271,88 +334,22 @@ export const fetchQuestions = defineAction({
     const normalizedFilters = normalizeFilters(filters);
     const normalizedSort = sort ?? null;
 
-    const conditions: SqlCondition[] = [];
-
-    if (normalizedFilters.questionText) {
-      conditions.push(
-        sql`lower(${Question.q}) LIKE ${`%${normalizedFilters.questionText.toLowerCase()}%`}`,
-      );
-    }
-
-    if (normalizedFilters.platformId !== null) {
-      conditions.push(eq(Question.platformId, normalizedFilters.platformId));
-    }
-
-    if (normalizedFilters.subjectId !== null) {
-      conditions.push(eq(Question.subjectId, normalizedFilters.subjectId));
-    }
-
-    if (normalizedFilters.topicId !== null) {
-      conditions.push(eq(Question.topicId, normalizedFilters.topicId));
-    }
-
-    if (normalizedFilters.roadmapId !== null) {
-      conditions.push(eq(Question.roadmapId, normalizedFilters.roadmapId));
-    }
-
-    if (normalizedFilters.level) {
-      conditions.push(sql`upper(${Question.l}) = ${normalizedFilters.level.toUpperCase()}`);
-    }
-
-    if (normalizedFilters.status === 'active') {
-      conditions.push(eq(Question.isActive, true));
-    } else if (normalizedFilters.status === 'inactive') {
-      conditions.push(eq(Question.isActive, false));
-    }
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-
-    const sortColumnMap: Record<QuestionSortInput['column'], any> = {
-      id: Question.id,
-      questionText: Question.q,
-      platformId: Question.platformId,
-      subjectId: Question.subjectId,
-      topicId: Question.topicId,
-      roadmapId: Question.roadmapId,
-      platformName: Platform.name,
-      subjectName: Subject.name,
-      topicName: Topic.name,
-      roadmapName: Roadmap.name,
-      level: Question.l,
-      status: Question.isActive,
-    };
-
-    const orderExpressions: any[] = [];
-    if (normalizedSort) {
-      const columnExpr = sortColumnMap[normalizedSort.column];
-      if (columnExpr) {
-        orderExpressions.push(normalizedSort.direction === 'desc' ? desc(columnExpr) : asc(columnExpr));
-      }
-    }
-
-    if (!normalizedSort || normalizedSort.column !== 'id') {
-      orderExpressions.push(asc(Question.id));
-    }
-
-    const result = await questionQueryRepository.getPaginatedData({
+    const result = await quizAdminRepository.searchQuestions({
       page,
       pageSize,
-      where: () => whereClause,
-      orderBy: () => orderExpressions,
+      questionText: normalizedFilters.questionText || null,
+      platformId: normalizedFilters.platformId,
+      subjectId: normalizedFilters.subjectId,
+      topicId: normalizedFilters.topicId,
+      roadmapId: normalizedFilters.roadmapId,
+      level: normalizedFilters.level || null,
+      status: normalizedFilters.status,
+      sortColumn: normalizedSort?.column,
+      sortDirection: normalizedSort?.direction,
     });
 
-    const items = result.data.map(({ question, platformName, subjectName, topicName, roadmapName }) =>
-      normalizeQuestion({
-        ...question,
-        platformName: platformName ?? null,
-        subjectName: subjectName ?? null,
-        topicName: topicName ?? null,
-        roadmapName: roadmapName ?? null,
-      }),
-    );
-
     return {
-      items,
+      items: result.data.map((entry) => normalizeQuestion(entry)),
       total: result.total,
       page: result.page,
       pageSize: result.pageSize,
@@ -377,81 +374,28 @@ export const fetchRandomQuestions = defineAction({
         )
       : [];
 
-    const conditions: SqlCondition[] = [];
-
-    if (normalizedFilters.questionText) {
-      conditions.push(
-        sql`lower(${Question.q}) LIKE ${`%${normalizedFilters.questionText.toLowerCase()}%`}`,
-      );
-    }
-
-    if (normalizedFilters.platformId !== null) {
-      conditions.push(eq(Question.platformId, normalizedFilters.platformId));
-    }
-
-    if (normalizedFilters.subjectId !== null) {
-      conditions.push(eq(Question.subjectId, normalizedFilters.subjectId));
-    }
-
-    if (normalizedFilters.topicId !== null) {
-      conditions.push(eq(Question.topicId, normalizedFilters.topicId));
-    }
-
-    if (normalizedFilters.roadmapId !== null) {
-      conditions.push(eq(Question.roadmapId, normalizedFilters.roadmapId));
-    }
-
-    if (normalizedFilters.level) {
-      conditions.push(sql`upper(${Question.l}) = ${normalizedFilters.level.toUpperCase()}`);
-    }
-
-    if (normalizedFilters.status === 'active') {
-      conditions.push(eq(Question.isActive, true));
-    } else if (normalizedFilters.status === 'inactive') {
-      conditions.push(eq(Question.isActive, false));
-    }
-
-    normalizedExcludeIds.forEach((id) => {
-      conditions.push(sql`${Question.id} != ${id}`);
+    const result = await quizAdminRepository.getRandomQuestions({
+      limit: 10,
+      filters: {
+        questionText: normalizedFilters.questionText || null,
+        platformId: normalizedFilters.platformId,
+        subjectId: normalizedFilters.subjectId,
+        topicId: normalizedFilters.topicId,
+        roadmapId: normalizedFilters.roadmapId,
+        level: normalizedFilters.level || null,
+        status: normalizedFilters.status,
+      },
+      excludeIds: normalizedExcludeIds,
     });
-
-    const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
-    const pageSize = 10;
-
-    let countQuery = db.select({ value: count() }).from(Question);
-    if (whereClause) {
-      countQuery = countQuery.where(whereClause);
-    }
-    const countResult = await countQuery;
-    const rawTotal = countResult[0]?.value ?? 0;
-    const total = typeof rawTotal === 'number' ? rawTotal : Number(rawTotal);
-
-    const rows = await questionQueryRepository.getData({
-      where: () => whereClause,
-      orderBy: () => sql`random()`,
-      limit: pageSize,
-    });
-
-    const items = rows.map(({ question, platformName, subjectName, topicName, roadmapName }) =>
-      normalizeQuestion({
-        ...question,
-        platformName: platformName ?? null,
-        subjectName: subjectName ?? null,
-        topicName: topicName ?? null,
-        roadmapName: roadmapName ?? null,
-      }),
-    );
-
-    const totalPages = total > 0 ? Math.ceil(total / pageSize) : 0;
 
     return {
-      items,
-      total,
-      page: 1,
-      pageSize,
-      totalPages,
-      hasNextPage: total > pageSize,
-      hasPreviousPage: false,
+      items: result.data.map((entry) => normalizeQuestion(entry)),
+      total: result.total,
+      page: result.page,
+      pageSize: result.pageSize,
+      totalPages: result.totalPages,
+      hasNextPage: result.hasNextPage,
+      hasPreviousPage: result.hasPreviousPage,
     };
   },
 });
@@ -461,93 +405,39 @@ export const createQuestion = defineAction({
   async handler(input) {
     const payload = normalizeInput(input);
 
-    const platformRow = await platformRepository.getById((table) => table.id, payload.platformId);
-
-    if (!platformRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
-    }
-
-    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
-    if (!subjectRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
-    }
-
-    if (subjectRow.platformId !== payload.platformId) {
-      throw new ActionError({
-        code: 'BAD_REQUEST',
-        message: 'Subject does not belong to the selected platform',
-      });
-    }
-
-    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
-    if (!topicRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
-    }
-
-    if (topicRow.platformId !== payload.platformId || topicRow.subjectId !== payload.subjectId) {
-      throw new ActionError({
-        code: 'BAD_REQUEST',
-        message: 'Topic does not align with the selected platform and subject',
-      });
-    }
-
-    let roadmapRow: { id: number; name: string | null } | null = null;
-    if (payload.roadmapId !== null) {
-      const roadmap = await roadmapRepository.getById((table) => table.id, payload.roadmapId);
-      if (!roadmap) {
-        throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap not found' });
-      }
-
-      if (
-        roadmap.platformId !== payload.platformId ||
-        roadmap.subjectId !== payload.subjectId ||
-        roadmap.topicId !== payload.topicId
-      ) {
-        throw new ActionError({
-          code: 'BAD_REQUEST',
-          message: 'Roadmap does not align with the selected platform, subject, and topic',
-        });
-      }
-      roadmapRow = { id: roadmap.id, name: roadmap.name ?? null };
-    }
+    const names = await assertQuestionHierarchy(
+      payload.platformId,
+      payload.subjectId,
+      payload.topicId,
+      payload.roadmapId,
+    );
 
     try {
-      const inserted = await questionRepository.insert({
+      const inserted = await questionRepository.create({
         platformId: payload.platformId,
         subjectId: payload.subjectId,
         topicId: payload.topicId,
         roadmapId: payload.roadmapId,
-        q: payload.questionText,
-        o: payload.options ?? null,
-        a: payload.answerKey,
-        e: payload.explanation,
-        l: payload.level,
+        question: payload.questionText,
+        options: payload.options,
+        answer: payload.answerKey,
+        explanation: payload.explanation,
+        level: payload.level,
         isActive: payload.isActive,
       });
 
-      const record = inserted?.[0];
-      if (!record) {
-        throw new ActionError({ code: 'BAD_REQUEST', message: 'Unable to create question' });
+      const enriched = await quizAdminRepository.getQuestionDetails(inserted.id);
+      if (!enriched) {
+        return normalizeQuestion({
+          question: inserted,
+          platformName: names.platformName,
+          subjectName: names.subjectName,
+          topicName: names.topicName,
+          roadmapName: names.roadmapName,
+        });
       }
 
-      const enriched = await questionQueryRepository.getById((table) => table.id, record.id);
-      const result =
-        enriched ??
-        ({
-          question: record,
-          platformName: platformRow.name ?? null,
-          subjectName: subjectRow.name ?? null,
-          topicName: topicRow.name ?? null,
-          roadmapName: roadmapRow?.name ?? null,
-        } as const);
-
-      return normalizeQuestion({
-        ...result.question,
-        platformName: result.platformName ?? null,
-        subjectName: result.subjectName ?? null,
-        topicName: result.topicName ?? null,
-        roadmapName: result.roadmapName ?? null,
-      });
+      return normalizeQuestion(enriched);
     } catch (err: unknown) {
       throw new ActionError({
         code: 'BAD_REQUEST',
@@ -565,95 +455,42 @@ export const updateQuestion = defineAction({
     const payload = normalizeInput(input);
     const { id } = input;
 
-    const platformRow = await platformRepository.getById((table) => table.id, payload.platformId);
-
-    if (!platformRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Platform not found' });
-    }
-
-    const subjectRow = await subjectRepository.getById((table) => table.id, payload.subjectId);
-    if (!subjectRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Subject not found' });
-    }
-
-    if (subjectRow.platformId !== payload.platformId) {
-      throw new ActionError({
-        code: 'BAD_REQUEST',
-        message: 'Subject does not belong to the selected platform',
-      });
-    }
-
-    const topicRow = await topicRepository.getById((table) => table.id, payload.topicId);
-    if (!topicRow) {
-      throw new ActionError({ code: 'BAD_REQUEST', message: 'Topic not found' });
-    }
-
-    if (topicRow.platformId !== payload.platformId || topicRow.subjectId !== payload.subjectId) {
-      throw new ActionError({
-        code: 'BAD_REQUEST',
-        message: 'Topic does not align with the selected platform and subject',
-      });
-    }
-
-    let roadmapRow: { id: number; name: string | null } | null = null;
-    if (payload.roadmapId !== null) {
-      const roadmap = await roadmapRepository.getById((table) => table.id, payload.roadmapId);
-      if (!roadmap) {
-        throw new ActionError({ code: 'BAD_REQUEST', message: 'Roadmap not found' });
-      }
-
-      if (
-        roadmap.platformId !== payload.platformId ||
-        roadmap.subjectId !== payload.subjectId ||
-        roadmap.topicId !== payload.topicId
-      ) {
-        throw new ActionError({
-          code: 'BAD_REQUEST',
-          message: 'Roadmap does not align with the selected platform, subject, and topic',
-        });
-      }
-      roadmapRow = { id: roadmap.id, name: roadmap.name ?? null };
-    }
-
-    const updated = await questionRepository.update(
-      {
-        platformId: payload.platformId,
-        subjectId: payload.subjectId,
-        topicId: payload.topicId,
-        roadmapId: payload.roadmapId,
-        q: payload.questionText,
-        o: payload.options ?? null,
-        a: payload.answerKey,
-        e: payload.explanation,
-        l: payload.level,
-        isActive: payload.isActive,
-      },
-      (table) => eq(table.id, id),
+    const names = await assertQuestionHierarchy(
+      payload.platformId,
+      payload.subjectId,
+      payload.topicId,
+      payload.roadmapId,
     );
 
-    const record = updated?.[0];
-    if (!record) {
+    const updated = await questionRepository.update(id, {
+      platformId: payload.platformId,
+      subjectId: payload.subjectId,
+      topicId: payload.topicId,
+      roadmapId: payload.roadmapId,
+      question: payload.questionText,
+      options: payload.options,
+      answer: payload.answerKey,
+      explanation: payload.explanation,
+      level: payload.level,
+      isActive: payload.isActive,
+    });
+
+    if (!updated) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Question not found' });
     }
 
-    const enriched = await questionQueryRepository.getById((table) => table.id, record.id);
-    const result =
-      enriched ??
-      ({
-        question: record,
-        platformName: platformRow.name ?? null,
-        subjectName: subjectRow.name ?? null,
-        topicName: topicRow.name ?? null,
-        roadmapName: roadmapRow?.name ?? null,
-      } as const);
+    const enriched = await quizAdminRepository.getQuestionDetails(updated.id);
+    if (!enriched) {
+      return normalizeQuestion({
+        question: updated,
+        platformName: names.platformName,
+        subjectName: names.subjectName,
+        topicName: names.topicName,
+        roadmapName: names.roadmapName,
+      });
+    }
 
-    return normalizeQuestion({
-      ...result.question,
-      platformName: result.platformName ?? null,
-      subjectName: result.subjectName ?? null,
-      topicName: result.topicName ?? null,
-      roadmapName: result.roadmapName ?? null,
-    });
+    return normalizeQuestion(enriched);
   },
 });
 
@@ -662,9 +499,9 @@ export const deleteQuestion = defineAction({
     id: z.number().int().min(1, 'Question id is required'),
   }),
   async handler({ id }) {
-    const deleted = await questionRepository.delete((table) => eq(table.id, id));
+    const deleted = await questionRepository.delete(id);
 
-    if (!deleted?.[0]) {
+    if (!deleted) {
       throw new ActionError({ code: 'NOT_FOUND', message: 'Question not found' });
     }
 
