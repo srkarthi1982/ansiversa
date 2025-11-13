@@ -1,7 +1,40 @@
 import type { AstroCookies } from 'astro';
-import { db, Session, User, eq } from 'astro:db';
-
 const { createHash, createCipheriv, createDecipheriv, randomBytes } = await import('node:crypto');
+
+type AstroDbModule = typeof import('astro:db');
+
+let astroDbModule: AstroDbModule | null = null;
+let astroDbLoadPromise: Promise<AstroDbModule | null> | null = null;
+let hasLoggedAstroDbLoadError = false;
+
+async function loadAstroDbModule() {
+  if (astroDbModule) {
+    return astroDbModule;
+  }
+
+  if (!astroDbLoadPromise) {
+    astroDbLoadPromise = import('astro:db')
+      .then((mod) => {
+        astroDbModule = mod;
+        return mod;
+      })
+      .catch((error) => {
+        if (!hasLoggedAstroDbLoadError) {
+          console.warn(
+            '[session] Failed to load astro:db. Authentication features are disabled until the database is configured.',
+            error,
+          );
+          hasLoggedAstroDbLoadError = true;
+        }
+        return null;
+      })
+      .finally(() => {
+        astroDbLoadPromise = null;
+      });
+  }
+
+  return astroDbLoadPromise;
+}
 
 import type { SessionUser } from '../types/session-user';
 
@@ -126,6 +159,10 @@ export function hashSessionToken(token: string) {
 export async function findActiveSessionByToken(token: string | undefined | null) {
   if (!token) return null;
 
+  const astroDb = await loadAstroDbModule();
+  if (!astroDb) return null;
+  const { db, Session, eq } = astroDb;
+
   const tokenHash = hashSessionToken(token);
   const rows = await db.select().from(Session).where(eq(Session.tokenHash, tokenHash));
   const session = rows[0];
@@ -151,6 +188,12 @@ export async function getSessionWithUser(cookies: MaybeCookies | undefined) {
     return { session, user: cookieUser };
   }
 
+  const astroDb = await loadAstroDbModule();
+  if (!astroDb) {
+    return null;
+  }
+  const { db, User, eq } = astroDb;
+
   const userRows = await db.select().from(User).where(eq(User.id, session.userId));
   const user = userRows[0];
   if (!user) {
@@ -172,6 +215,9 @@ export async function getSessionWithUser(cookies: MaybeCookies | undefined) {
 
 export async function deleteSessionByToken(token: string | undefined | null) {
   if (!token) return;
+  const astroDb = await loadAstroDbModule();
+  if (!astroDb) return;
+  const { db, Session, eq } = astroDb;
   const tokenHash = hashSessionToken(token);
   await db.delete(Session).where(eq(Session.tokenHash, tokenHash));
 }
